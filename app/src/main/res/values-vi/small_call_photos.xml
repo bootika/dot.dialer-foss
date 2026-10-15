@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="small_call_photos_in_circle">Ảnh nhỏ trong vòng tròn</string>
-    <string name="small_call_photos_in_circle_summary">Hiển thị ảnh có cạnh ngắn từ 256 px trở xuống trong vòng tròn khi gọi. Ảnh từ thông báo WhatsApp luôn hiển thị trong vòng tròn.</string>
+    <string name="small_call_photos_in_circle_summary">Hiển thị ảnh có cạnh ngắn từ 256 px trở xuống trong vòng tròn khi gọi. Một số ảnh tự động hiển thị trong vòng tròn để giữ nguyên hình dạng ban đầu.</string>
 </resources>

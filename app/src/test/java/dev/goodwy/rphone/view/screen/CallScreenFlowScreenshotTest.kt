@@ -783,6 +783,62 @@ class CallScreenFlowScreenshotTest {
         rule.onNodeWithContentDescription("End call with Mara Ionescu").assertIsNotEnabled()
         capture("43-conference-ending")
         verifyNestedParticipantUpdates()
+        verifySingleParticipantPresentation()
+    }
+
+    private fun verifySingleParticipantPresentation() {
+        present(Scenario("single-conference-two", Call.STATE_ACTIVE, participants = 2, participantPhotos = true, fullPhoto = true))
+        rule.runOnIdle { ReflectionHelpers.setField(primary.details, "mCallProperties", Call.Details.PROPERTY_CONFERENCE) }
+        val original = primary.children.toList()
+        fun report(children: List<Call>) {
+            rule.runOnIdle {
+                ReflectionHelpers.setField(primary, "mChildren", ArrayList(children))
+                ReflectionHelpers.setField(primary, "mUnmodifiableChildren", Collections.unmodifiableList(children))
+                callbacks(primary).forEach { it.onChildrenChanged(primary, children.toMutableList()) }
+            }
+            rule.mainClock.advanceTimeBy(700)
+            rule.waitForIdle()
+        }
+        report(original.take(1))
+        rule.waitUntil(5_000) {
+            rule.mainClock.advanceTimeByFrame()
+            rule.onAllNodesWithTag("callFullPhotoSharp", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithText("Radu Popescu").assertExists()
+        rule.onNodeWithTag("conferenceParticipantList").assertDoesNotExist()
+        capture("single-conference-one-full-photo")
+        rule.onNodeWithContentDescription("More").performClick()
+        rule.mainClock.advanceTimeBy(700)
+        rule.waitForIdle()
+        rule.onNodeWithText("Hold").performClick()
+        rule.onNodeWithContentDescription("Cancel").performClick()
+        rule.mainClock.advanceTimeBy(700)
+        rule.waitForIdle()
+        rule.runOnIdle { org.junit.Assert.assertEquals(listOf("holdCall:$NUMBER"), telecomCommands.toList()) }
+        report(original)
+        rule.onNodeWithTag("conferenceParticipantList").assertExists()
+        rule.onNodeWithText("2 participants").assertExists()
+        capture("single-conference-restored-two")
+        report(original.drop(1))
+        rule.onNodeWithText("Mara Ionescu").assertExists()
+        rule.onNodeWithTag("conferenceParticipantList").assertDoesNotExist()
+        capture("single-conference-one-no-photo")
+        rule.onNodeWithTag("callHangupSurface").performClick()
+        rule.runOnIdle {
+            org.junit.Assert.assertEquals(listOf("holdCall:$NUMBER", "disconnectCall:$NUMBER"), telecomCommands.toList())
+        }
+        report(emptyList())
+        val unavailable = rule.activity.getString(dev.goodwy.rphone.R.string.conference_participants_unavailable)
+        rule.onNodeWithText(unavailable).assertExists()
+        report(original.drop(1))
+        rule.runOnIdle {
+            ReflectionHelpers.setField(primary.details, "mState", Call.STATE_DISCONNECTING)
+            scenario.value = scenario.value.copy(state = Call.STATE_DISCONNECTING)
+        }
+        report(emptyList())
+        rule.onNodeWithText("Mara Ionescu").assertExists()
+        rule.onNodeWithText(unavailable).assertDoesNotExist()
+        capture("single-conference-ending-retains-caller")
     }
 
     private fun verifyNestedParticipantUpdates() {

@@ -130,6 +130,59 @@ fun ExpressiveCallScreen(
     frostedWindow: Boolean = false,
     photoLookupComplete: Boolean = true,
 ) {
+    val snapshot by rememberTelecomCallSnapshot(call)
+    val participants = rememberConferenceParticipantIdentities(if (snapshot.isConference) snapshot.children else emptyList())
+    val reportedSingle = singleConferencePresentationCall(call, participants.map { it.call })
+    var lastSingle by remember(call) { mutableStateOf<Call?>(null) }
+    val ending = callState == Call.STATE_DISCONNECTING || callState == Call.STATE_DISCONNECTED
+    SideEffect { if (!ending) lastSingle = reportedSingle }
+    val single = if (ending) lastSingle else reportedSingle
+    val prefs = koinInject<PreferenceManager>()
+    val settingsVersion by prefs.settingsChanged.collectAsStateWithLifecycle()
+    val metadata by koinInject<CallViewModel>().callerMetadataMap.collectAsStateWithLifecycle()
+    val photoRevision = dev.goodwy.rphone.view.components.LocalCallPhotoRevision.current
+    val contacts = koinInject<IContactsRepository>()
+    val resolver = remember { dev.goodwy.rphone.controller.CallIdentityResolver(contacts) }
+    val identity = single?.let { participant ->
+        key(participant) {
+            resolver.rememberIdentity(participant, settingsVersion + (photoRevision ?: 0),
+                metadata[dev.goodwy.rphone.controller.eligibleCallPhotoNumber(participant)])
+        }
+    }
+    ExpressiveCallScreenContent(
+        call = call, callState = callState,
+        contactName = identity?.name ?: contactName,
+        companyName = if (identity != null) identity.company else companyName,
+        phoneNumber = identity?.number ?: phoneNumber,
+        photoUri = if (identity != null) identity.photoUri else photoUri,
+        audioState = audioState, initialConnectTime = initialConnectTime,
+        backgroundUri = if (identity != null) identity.backgroundUri else backgroundUri,
+        skipIncomingScreen = skipIncomingScreen, liquidGlassBackdrop = liquidGlassBackdrop,
+        frostedWindow = frostedWindow,
+        photoLookupComplete = identity?.photoLookupComplete ?: photoLookupComplete,
+        isConferencePresentation = snapshot.isConference && single == null,
+        conferenceIdentities = participants,
+    )
+}
+
+@Composable
+private fun ExpressiveCallScreenContent(
+    call: Call,
+    callState: Int,
+    contactName: String,
+    companyName: String?,
+    phoneNumber: String,
+    photoUri: String?,
+    audioState: CallAudioState?,
+    initialConnectTime: Long = 0L,
+    backgroundUri: String? = null,
+    skipIncomingScreen: Boolean = false,
+    liquidGlassBackdrop: LayerBackdrop,
+    frostedWindow: Boolean = false,
+    photoLookupComplete: Boolean = true,
+    isConferencePresentation: Boolean,
+    conferenceIdentities: List<ConferenceParticipantIdentity>,
+) {
     val view = LocalView.current
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -493,8 +546,7 @@ fun ExpressiveCallScreen(
         avatarAppearance,
         MaterialTheme.colorScheme,
     ).first
-    val conferenceIdentities = rememberConferenceParticipantIdentities(if (primarySnapshot.isConference) primarySnapshot.children else emptyList())
-    val conferenceAvatarSources = if (primarySnapshot.isConference) conferenceIdentities.map { identity ->
+    val conferenceAvatarSources = if (isConferencePresentation) conferenceIdentities.map { identity ->
         CallMistSource(identity.call, identity.photoUri.takeIf { avatarAppearance.showPicture }, rillAvatarColors(
             dev.goodwy.rphone.view.components.avatarIdentityColorSeed(identity.colorSeed, identity.number), avatarAppearance, MaterialTheme.colorScheme,
         ).first)
@@ -510,7 +562,7 @@ fun ExpressiveCallScreen(
             liquidGlassBackdrop = liquidGlassBackdrop,
             hideGradient = false,
             fullPhoto = useFullPhotoAppearance,
-            circularAvatarVisible = shouldShowAvatar && !primarySnapshot.isConference && !hasExpandedCallPanel,
+            circularAvatarVisible = shouldShowAvatar && !isConferencePresentation && !hasExpandedCallPanel,
             customGlassState = DialpadEffectState(
                 lgCallScreen,
                 CUSTOM_CALL_BACKGROUND_GLASS_STRENGTH,
@@ -575,7 +627,7 @@ fun ExpressiveCallScreen(
             }
             val identityVerticalCompensationDp =
                 callIdentityVerticalCompensationDp(displayedCompanyName != null)
-            val showsCircularAvatar = shouldShowAvatar && !primarySnapshot.isConference && !hasExpandedCallPanel
+            val showsCircularAvatar = shouldShowAvatar && !isConferencePresentation && !hasExpandedCallPanel
 
             // --- APPROVED CALL HERO ---
             Column(
@@ -626,12 +678,12 @@ fun ExpressiveCallScreen(
                 )
 
                 AnimatedVisibility(
-                    visible = (shouldShowAvatar || primarySnapshot.isConference) && !hasExpandedCallPanel,
+                    visible = (shouldShowAvatar || isConferencePresentation) && !hasExpandedCallPanel,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    enter = if (useFullPhotoAppearance && !primarySnapshot.isConference) EnterTransition.None else fadeIn(tween(320)),
-                    exit = if (useFullPhotoAppearance && !primarySnapshot.isConference) ExitTransition.None else fadeOut(tween(180)),
+                    enter = if (useFullPhotoAppearance && !isConferencePresentation) EnterTransition.None else fadeIn(tween(320)),
+                    exit = if (useFullPhotoAppearance && !isConferencePresentation) ExitTransition.None else fadeOut(tween(180)),
                 ) {
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize().testTag("callAvatarMiddleZone"),
@@ -641,7 +693,7 @@ fun ExpressiveCallScreen(
                             availableWidthDp = maxWidth.value.toInt(),
                             availableHeightDp = maxHeight.value.toInt(),
                         ).dp
-                        if (primarySnapshot.isConference) {
+                        if (isConferencePresentation) {
                             ConferenceParticipants(parent = call, identities = conferenceIdentities, parentState = primarySnapshot.state)
                         } else if (photoUri.isNullOrEmpty()) {
                             CalmCallAvatar(

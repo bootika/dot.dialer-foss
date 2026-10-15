@@ -76,6 +76,55 @@ class ConferenceParticipantsTest {
         assertFalse(canEndConferenceParticipant(parent, parent))
     }
 
+    @Test fun `single presentation follows two to one to two without changing the conference`() {
+        val parent = call()
+        val first = call()
+        val second = call()
+        children(parent, listOf(first, second))
+        assertNull(singleConferencePresentationCall(parent, listOf(first, second)))
+        children(parent, listOf(first))
+        assertSame(first, singleConferencePresentationCall(parent, listOf(first)))
+        assertTrue(parent.isTelecomConference())
+        children(parent, listOf(first, second))
+        assertNull(singleConferencePresentationCall(parent, listOf(first, second)))
+        assertEquals(0, shadow(parent).disconnects)
+    }
+
+    @Test fun `unknown nested topology cannot masquerade as one participant`() {
+        val parent = call()
+        val first = call()
+        val unknown = call()
+        ReflectionHelpers.setField(unknown.details, "mCallProperties", Call.Details.PROPERTY_CONFERENCE)
+        children(parent, listOf(first, unknown))
+        assertNull(singleConferencePresentationCall(parent, listOf(first)))
+        children(parent, emptyList())
+        assertNull(singleConferencePresentationCall(parent, emptyList()))
+    }
+
+    @Test fun `nested participant can supply identity while terminal and cyclic topology cannot`() {
+        val parent = call()
+        val nested = call()
+        val first = call(state = Call.STATE_HOLDING)
+        children(nested, listOf(first))
+        children(parent, listOf(nested))
+        assertSame(first, singleConferencePresentationCall(parent, listOf(first)))
+        ReflectionHelpers.setField(first.details, "mState", Call.STATE_DISCONNECTING)
+        assertNull(singleConferencePresentationCall(parent, listOf(first)))
+        ReflectionHelpers.setField(first.details, "mState", Call.STATE_ACTIVE)
+        children(nested, listOf(first, nested))
+        assertNull(singleConferencePresentationCall(parent, listOf(first)))
+    }
+
+    @Test fun `ended child does not prevent a known remaining caller but disconnecting child does`() {
+        val parent = call()
+        val first = call()
+        val second = call(state = Call.STATE_DISCONNECTING)
+        children(parent, listOf(first, second))
+        assertNull(singleConferencePresentationCall(parent, listOf(first)))
+        ReflectionHelpers.setField(second.details, "mState", Call.STATE_DISCONNECTED)
+        assertSame(first, singleConferencePresentationCall(parent, listOf(first)))
+    }
+
     private fun call(state: Int = Call.STATE_ACTIVE, canDisconnect: Boolean = false): Call {
         val call = Shadow.newInstanceOf(Call::class.java)
         val details = Shadow.newInstanceOf(Call.Details::class.java)

@@ -35,7 +35,7 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
         if (!image.exists()) image.writeBytes(bytes)
         if (!valid()) return@synchronized false
         check(image.setLastModified(now()))
-        json.put(key,JSONObject().put("file",name).put("at",now()).put("bytes",bytes.size).put("manual",manual))
+        json.put(key,JSONObject().put("file",name).put("at",now()).put("bytes",bytes.size).put("manual",manual).put("source",1).put("cut_corners",notificationAvatarHasCutCorners(bytes)))
         val entries=json.keys().asSequence().map { it to json.getJSONObject(it) }.sortedByDescending { it.second.optLong("at") }.toList()
         var total=0L
         entries.forEachIndexed { position,(id,item) ->
@@ -112,8 +112,8 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
         }.onFailure { android.util.Log.w("ContactsOptimizer","Unsaved avatar unavailable: "+it.javaClass.simpleName) }.getOrNull()
         fun ownedUri(context: Context, value: String?) = value?.let { valueUri ->
             runCatching {
-                val uri=valueUri.toUri();val prefix=File(context.noBackupFilesDir,"contact-optimization").absolutePath+"/"
-                val path=uri.path ?: return@runCatching false
+                val uri=valueUri.toUri();val prefix=File(context.noBackupFilesDir,"contact-optimization").absolutePath.replace('\\','/')+"/"
+                val path=uri.path?.let { File(it).absoluteFile.normalize().invariantSeparatorsPath } ?: return@runCatching false
                 uri.scheme=="file" && path.startsWith(prefix) &&
                     path.removePrefix(prefix).matches(Regex("[a-f0-9]{64}/unsaved-avatars/[a-f0-9]{64}-[a-f0-9]{64}\\.png"))
             }.getOrDefault(false)

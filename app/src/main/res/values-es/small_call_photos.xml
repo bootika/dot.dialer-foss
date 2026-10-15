@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="small_call_photos_in_circle">Fotos pequeñas en un círculo</string>
+    <string name="small_call_photos_in_circle_summary">Mostrar en un círculo durante las llamadas las fotos cuyo lado más corto mida 256 px o menos. Las fotos de notificaciones de WhatsApp siempre se muestran en un círculo.</string>
+</resources>

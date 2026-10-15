@@ -187,7 +187,7 @@ rule.waitUntil(5000) { rule.mainClock.advanceTimeByFrame(); var ready=false; rul
             }
         }.toURI().toString() else null
         val image = File(context.filesDir, "caller-first-frame.jpg")
-        Bitmap.createBitmap(32, 48, Bitmap.Config.ARGB_8888).also { bitmap ->
+        Bitmap.createBitmap(512, 768, Bitmap.Config.ARGB_8888).also { bitmap ->
             bitmap.eraseColor(android.graphics.Color.rgb(70, 130, 90))
             image.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
             bitmap.recycle()

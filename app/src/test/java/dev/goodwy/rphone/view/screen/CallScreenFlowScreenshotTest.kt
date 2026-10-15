@@ -536,6 +536,7 @@ class CallScreenFlowScreenshotTest {
         verifyLiveMergeAvailability()
         verifyLiveLogicalCallTopology()
         verifyLiveParticipantUpdates()
+        verifySmallCallPhotoRendering()
         verifyShiftedPhotoAppearanceMenu()
         showActivePanel("24-keypad", "Keypad")
         verifyCompactGlassKeypad()
@@ -834,6 +835,47 @@ class CallScreenFlowScreenshotTest {
         rule.waitForIdle()
         rule.onNodeWithText(if (label == "Message") "Quick Response" else "Call back reminder").assertExists()
         capture(id)
+    }
+
+    private fun verifySmallCallPhotoRendering() {
+        val original = photoFixture
+        val key = dev.goodwy.rphone.controller.util.SmallCallPhotoPreference.KEY
+        try {
+            for (size in listOf(192, 256, 512)) for (enabled in listOf(false, true)) {
+                photoFixture = createPhotoFixture(RuntimeEnvironment.getApplication(), size, size)
+                rule.runOnIdle { runBlocking { prefs.restoreAllPreferences(mapOf(key to enabled)) } }
+                val current = Scenario("small-photo-$size-$enabled", Call.STATE_ACTIVE, withPhoto = true, fullPhoto = true)
+                present(current)
+                val circle = size <= 256 && enabled
+                rule.waitUntil(5_000) {
+                    rule.onAllNodesWithTag(if (circle) "callPrimaryAvatar" else "callFullPhotoSharp", useUnmergedTree = true)
+                        .fetchSemanticsNodes().isNotEmpty()
+                }
+                rule.mainClock.advanceTimeBy(800)
+                rule.waitForIdle()
+                rule.onNodeWithTag(if (circle) "callFullPhotoSharp" else "callPrimaryAvatar", useUnmergedTree = true).assertDoesNotExist()
+                rule.onNodeWithText("Mute").assertExists()
+                org.junit.Assert.assertEquals(PreferenceManager.CALL_SCREEN_APPEARANCE_FULL_PHOTO,
+                    prefs.getString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, null))
+                capture(current.id)
+            }
+            val context = RuntimeEnvironment.getApplication()
+            val store = dev.goodwy.rphone.controller.util.UnsavedNumberAvatars(context, "avatar-render@example.test")
+            val source = createPhotoFixture(context, 512, 512)
+            val bytes = File(requireNotNull(Uri.parse(source).path)).readBytes()
+            org.junit.Assert.assertTrue(store.store("+40700000992", bytes, dev.goodwy.rphone.controller.util.ContactPhotoAutomaticPolicy.Latest, valid = { true }))
+            photoFixture = requireNotNull(store.resolve("+40700000992"))
+            runBlocking { prefs.restoreAllPreferences(mapOf(key to false)) }
+            present(Scenario("whatsapp-origin-512-toggle-off", Call.STATE_ACTIVE, withPhoto = true, fullPhoto = true))
+            rule.waitUntil(5_000) { rule.onAllNodesWithTag("callPrimaryAvatar", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
+            rule.mainClock.advanceTimeBy(800)
+            rule.onNodeWithTag("callFullPhotoSharp", useUnmergedTree = true).assertDoesNotExist()
+            waitForPhotoFixture()
+            capture("whatsapp-origin-512-toggle-off")
+        } finally {
+            photoFixture = original
+            runBlocking { prefs.restoreAllPreferences(mapOf(key to true)) }
+        }
     }
 
     private fun verifyShiftedPhotoAppearanceMenu() {

@@ -261,19 +261,10 @@ fun CallerUIScreen(navigator: DestinationsNavigator, advanced: Boolean = false) 
                     }
                     item {
                         SettingsSectionLabel(stringResource(R.string.call_appearance))
-                        DotSettingsCard { DotSettingsStringChoiceRow(
-                                title = stringResource(R.string.call_appearance),
-                                value = callAppearanceChoices
-                                    .firstOrNull { it.second == callAppearance }
-                                    ?.first
-                                    ?: stringResource(R.string.call_appearance_circular_avatar),
-                                choices = callAppearanceChoices,
-                                selectedValue = callAppearance,
-                                onValueChange = {
-                                    callAppearance = it
-                                    prefs.setString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, it)
-                                },
-                            ) }
+                        CallPhotoAppearanceSettings(prefs, callAppearance, callAppearanceChoices) {
+                            callAppearance = it
+                            prefs.setString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, it)
+                        }
                     }
                 }
                 if (!advanced) {

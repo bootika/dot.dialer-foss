@@ -315,20 +315,7 @@ fun ExpressiveCallScreen(
     val hideAvatarWithBg = remember(settingsState) {
         false // Retired D106; stored legacy value is preserved.
     }
-    var callScreenAppearance by remember {
-        mutableStateOf(
-            preferenceManager.getString(
-                PreferenceManager.KEY_CALL_SCREEN_APPEARANCE,
-                PreferenceManager.DEFAULT_CALL_SCREEN_APPEARANCE,
-            ) ?: PreferenceManager.DEFAULT_CALL_SCREEN_APPEARANCE,
-        )
-    }
-    LaunchedEffect(settingsState) {
-        callScreenAppearance = preferenceManager.getString(
-            PreferenceManager.KEY_CALL_SCREEN_APPEARANCE,
-            PreferenceManager.DEFAULT_CALL_SCREEN_APPEARANCE,
-        ) ?: PreferenceManager.DEFAULT_CALL_SCREEN_APPEARANCE
-    }
+    var callScreenAppearance by rememberCallScreenAppearance(preferenceManager, settingsState)
     fun openCallAppearanceMenu(position: Offset) {
         if (photoUri.isNullOrEmpty()) return
         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -340,7 +327,9 @@ fun ExpressiveCallScreen(
         preferenceManager.setString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, appearance)
         showCallAppearanceMenu = false
     }
-    val useFullPhotoAppearance = callScreenAppearance == PreferenceManager.CALL_SCREEN_APPEARANCE_FULL_PHOTO
+    val useFullPhotoAppearance = rememberUseFullCallPhotoAppearance(
+        callScreenAppearance, preferenceManager, settingsState, photoUri, photoRevision,
+    )
     val hasBackground = !backgroundUri.isNullOrEmpty()
     val needsIdentityFallback = photoUri.isNullOrEmpty()
     val shouldShowAvatar = showCallIdentityAvatar(

@@ -50,6 +50,7 @@ internal val settingsOptions = listOf(
     SettingsOption("C05", R.string.incoming_call_ui, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C06", R.string.incoming_answer_placement, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C01", R.string.call_appearance, SettingsEditor.CALL_UI, false, R.string.call_screen),
+    SettingsOption("C09", R.string.small_call_photos_in_circle, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C07", R.string.settings_call_default_background, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C02", R.string.frosted_call_background, SettingsEditor.ADVANCED, true, R.string.compatibility),
     SettingsOption("A05", R.string.liquid_glass_call_screen, SettingsEditor.CALL_UI, false, R.string.call_screen),

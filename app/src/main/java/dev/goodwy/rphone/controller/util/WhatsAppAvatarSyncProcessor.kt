@@ -95,6 +95,7 @@ internal class WhatsAppAvatarSyncProcessor(
             if(currentAccount()!=account || !sourceAllowed(account,item.source) || applyRejection(item)!=null ||
                 latest.photo?.contentEquals(stored)!=true) continue
             currentCoroutineContext().ensureActive()
+            CallPhotoOrigins(context).rememberApplied(latest.rawContactId,candidate,item.source)
             reviews.remove(item.id,account);removed++
             record(account,"unchanged",target.contactId)
         }
@@ -354,6 +355,7 @@ internal class WhatsAppAvatarSyncProcessor(
         captured: CapturedWhatsAppAvatar, packageName: String) {
         if (!active(account, photos = true)) return
         if (!optimizerPhotoChanged(target.photo, captured.bytes, contacts.maximumDisplayPhotoDimension())) {
+            CallPhotoOrigins(context).rememberApplied(target.rawContactId,captured.bytes,captured.source)
             reconcileAppliedPhotosLocked(account,target.rawContactId)
             record(account, "unchanged", target.contactId); return
         }
@@ -390,6 +392,7 @@ internal class WhatsAppAvatarSyncProcessor(
                     stillAllowed = { featureAllowed() && currentAccount() == account && profiles.googleAllowed(account) }) }
                 .getOrNull() == CallPhotoHydrationOutcome.Updated
         }
+        if (!hydrated) CallPhotoOrigins(context).rememberApplied(target.rawContactId,candidate.bytes,candidate.source)
         val latest = contacts.revalidateTarget(target)?.photo?.toContactPhotoImageInfo()
         profiles.record(account, ContactOptimizationResult(System.currentTimeMillis(), "updated", target.contactId,
             candidate.source, candidate.originalWidth, candidate.originalHeight, latest?.width ?: candidate.width,

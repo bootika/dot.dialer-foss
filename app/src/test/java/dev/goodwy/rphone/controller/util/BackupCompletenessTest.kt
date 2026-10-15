@@ -61,6 +61,7 @@ class BackupCompletenessTest {
         field("H09", P.KEY_RECENT_HISTORY_MAX_ENTRIES, 100, 250, 500, 1000),
         field("H10", P.KEY_SHOW_ALL_RECENT_CALLS, false, true),
         field("C01", P.KEY_CALL_SCREEN_APPEARANCE, "circular_avatar", "full_photo"),
+        field("C09", SmallCallPhotoPreference.KEY, false, true),
         field("C02", P.KEY_FROSTED_CALL_BACKGROUND, false, true),
         field("C03", AmbientDropletPreference.ENABLED_KEY, false, true),
         field("C04", AmbientDropletPreference.BRIGHTNESS_KEY, 10, 100, 200),

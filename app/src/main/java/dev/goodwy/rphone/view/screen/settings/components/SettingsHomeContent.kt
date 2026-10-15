@@ -69,13 +69,11 @@ internal fun SettingsHomeContent(
         } else {
             item {
                 SettingsHomeCard {
-                    SettingsRootRow(R.string.calls, DotDialerHandsetIcon) { navigator.navigate(CallSettingScreenDestination()) }
-                    SettingsRootRow(R.string.home_and_gestures, Icons.Default.Swipe) { navigator.navigate(HomeGesturesScreenDestination) }
-                    SettingsRootRow(R.string.contacts, Icons.Rounded.PeopleAlt) { navigator.navigate(ContactManagementScreenDestination()) }
-                    SettingsRootRow(R.string.interface_settings, Icons.Rounded.Palette) { navigator.navigate(InterfaceScreenDestination()) }
-                    SettingsRootRow(R.string.sound_and_vibration, Icons.AutoMirrored.Rounded.VolumeUp) { navigator.navigate(SoundVibrationScreenDestination()) }
-                    SettingsRootRow(R.string.accessibility, Icons.Rounded.Tune) { navigator.navigate(InterfaceScreenDestination(accessibility = true)) }
-                    SettingsRootRow(R.string.privacy_and_blocking, Icons.Rounded.Lock) { navigator.navigate(SettingsCategoryScreenDestination(category = "privacy")) }
+                    SettingsRootRow(SettingsFunction.INTERFACE.title, Icons.Rounded.Palette) { navigator.navigate(InterfaceScreenDestination()) }
+                    SettingsRootRow(SettingsFunction.CALLS.title, DotDialerHandsetIcon) { navigator.navigate(CallSettingScreenDestination()) }
+                    SettingsRootRow(SettingsFunction.CONTACTS.title, Icons.Rounded.PeopleAlt) { navigator.navigate(ContactManagementScreenDestination()) }
+                    SettingsRootRow(SettingsFunction.SOUND.title, Icons.AutoMirrored.Rounded.VolumeUp) { navigator.navigate(SoundVibrationScreenDestination()) }
+                    SettingsRootRow(SettingsFunction.PRIVACY.title, Icons.Rounded.Lock) { navigator.navigate(SettingsCategoryScreenDestination(category = "privacy")) }
                 }
             }
             item {
@@ -89,11 +87,7 @@ internal fun SettingsHomeContent(
             }
             item {
                 SettingsHomeCard {
-                    SettingsHomeListItem(headline = stringResource(R.string.advanced_settings),
-                        supporting = stringResource(R.string.advanced_settings_subtitle),
-                        leadingIcon = Icons.Rounded.Tune, trailingIcon = Icons.Default.ChevronRight,
-                        onClick = { navigator.navigate(AdvancedSettingsScreenDestination) })
-                    SettingsRootRow(R.string.help, Icons.Outlined.Info) { navigator.navigate(SettingsCategoryScreenDestination(category = "help")) }
+                    SettingsRootRow(SettingsFunction.HELP.title, Icons.Outlined.Info) { navigator.navigate(SettingsCategoryScreenDestination(category = "help")) }
                 }
             }
             item { SettingsBottomPadding(120.dp) }

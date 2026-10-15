@@ -291,7 +291,7 @@
     <string name="after_5_minutes">Después de 5 minutos</string>
     <string name="after_15_minutes">Después de 15 minutos</string>
     <string name="after_30_minutes">Después de 30 minutos</string>
-    <string name="manage_contacts">Contactos</string>
+
     <string name="display">Pantalla</string>
     <string name="sort_by">Ordenar por</string>
     <string name="name_format">Formato del nombre</string>
@@ -633,11 +633,11 @@
     <string name="accessibility">Accesibilidad</string>
     <string name="high_contrast_text">Texto de contraste alto</string>
     <string name="search_settings">Ajustes de búsqueda</string>
-    <string name="help">Ayuda e información</string>
+
     <string name="no_settings_found">No se encontraron ajustes para «%1$s»</string>
     <string name="advanced_settings">Ajustes avanzados</string>
-    <string name="advanced_settings_subtitle">Compatibilidad, ajustes precisos y diagnóstico</string>
-    <string name="advanced_settings_description">Compatibilidad, ajustes precisos y diagnóstico</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Usar Dot Dialer en Android Auto</string>
     <string name="android_auto_integration_subtitle">Muestra Favoritos, Recientes y Contactos en el coche. Desactivado de forma predeterminada.</string>

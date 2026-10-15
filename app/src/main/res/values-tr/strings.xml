@@ -291,7 +291,7 @@
     <string name="after_5_minutes">5 dakika sonra</string>
     <string name="after_15_minutes">15 dakika sonra</string>
     <string name="after_30_minutes">30 dakika sonra</string>
-    <string name="manage_contacts">Kişiler</string>
+
     <string name="display">Görüntü</string>
     <string name="sort_by">Sıralama Ölçütü</string>
     <string name="name_format">İsim Biçimi</string>
@@ -629,11 +629,11 @@
     <string name="accessibility">Erişilebilirlik</string>
     <string name="high_contrast_text">Yüksek kontrast metin</string>
     <string name="search_settings">Arama ayarları</string>
-    <string name="help">Yardım ve hakkında</string>
+
     <string name="no_settings_found">“%1$s” için ayar bulunamadı</string>
     <string name="advanced_settings">Gelişmiş ayarlar</string>
-    <string name="advanced_settings_subtitle">Uyumluluk, ince ayarlar ve tanılama</string>
-    <string name="advanced_settings_description">Uyumluluk, ince ayarlar ve tanılama</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Dot Dialer’ı Android Auto’da kullan</string>
     <string name="android_auto_integration_subtitle">Favoriler, Son Aramalar ve Kişileri araçta göster. Varsayılan olarak kapalıdır.</string>

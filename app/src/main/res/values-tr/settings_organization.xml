@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Zil Sesi Ayarları</string>
     <string name="settings_alias_managing_contact_sources">Kişi Kaynaklarını Yönetme</string>
     <string name="settings_alias_tap_haptics">Dokunma Haptiği</string>
+    <string name="contacts_and_data">Kişiler ve veriler</string>
+    <string name="help_and_diagnostics">Yardım ve tanılama</string>
 </resources>

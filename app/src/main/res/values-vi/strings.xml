@@ -287,7 +287,7 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="after_5_minutes">Sau 5 phút</string>
     <string name="after_15_minutes">Sau 15 phút</string>
     <string name="after_30_minutes">Sau 30 phút</string>
-    <string name="manage_contacts">Danh bạ</string>
+
     <string name="display">Hiển thị</string>
     <string name="sort_by">Sắp xếp theo</string>
     <string name="name_format">Định dạng tên</string>
@@ -621,11 +621,11 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="accessibility">Khả năng truy cập</string>
     <string name="high_contrast_text">Tương phản cao</string>
     <string name="search_settings">Thiết lập tìm kiếm</string>
-    <string name="help">Trợ giúp và giới thiệu</string>
+
     <string name="no_settings_found">Không tìm thấy cài đặt cho “%1$s”</string>
     <string name="advanced_settings">Cài đặt nâng cao</string>
-    <string name="advanced_settings_subtitle">Tương thích, tinh chỉnh và chẩn đoán</string>
-    <string name="advanced_settings_description">Tương thích, tinh chỉnh và chẩn đoán</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Dùng Dot Dialer trong Android Auto</string>
     <string name="android_auto_integration_subtitle">Hiện Mục yêu thích, Gần đây và Danh bạ trong ô tô. Mặc định tắt.</string>

@@ -149,28 +149,75 @@ class SettingsReorganizationTest {
         assertFalse(prefs.getBoolean(AmbientDropletPreference.ENABLED_KEY, true))
     }
 
-    @Test fun mainMenuHasCanonicalRoutesAndAdvancedHasOnlyTechnicalControls() {
-        var advanced by mutableStateOf(false)
-        show {
-            if (advanced) AdvancedSettingsScreen(navigator)
-            else SettingsHomeContent(rememberLazyListState(), PaddingValues(), "", {}, emptyList(), navigator,
-                "2.2.6-test", "Local", {}, {}, {})
-        }
+    @Test fun mainMenuClassifiesByFunctionAndInterfaceOwnsInteractionAndCallPresentation() {
+        var scene by mutableStateOf("root")
+        val before = runBlocking { prefs.getPersistedPreferences() }
+        show { key(scene) { when (scene) {
+            "interface" -> InterfaceScreen(navigator)
+            "calls" -> CallSettingScreen(navigator)
+            else -> SettingsHomeContent(rememberLazyListState(), PaddingValues(), "", {}, emptyList(), navigator,
+                "2.5.1-test", "Local", {}, {}, {})
+        } } }
         settled()
-        for (label in listOf(R.string.calls, R.string.home_and_gestures, R.string.contacts, R.string.interface_settings,
-            R.string.sound_and_vibration, R.string.accessibility, R.string.privacy_and_blocking, R.string.advanced_settings, R.string.help)) {
+        for (label in listOf(R.string.interface_settings, R.string.call_behavior, R.string.contacts_and_data,
+            R.string.sound_and_vibration, R.string.privacy_and_blocking, R.string.help_and_diagnostics)) {
             rule.onNodeWithText(rule.activity.getString(label)).performScrollTo().performClick()
         }
-        assertEquals(9, routes.size)
+        assertEquals(6, routes.size)
+        for (oldRoot in listOf(R.string.calls, R.string.home_and_gestures, R.string.accessibility, R.string.advanced_settings))
+            rule.onAllNodesWithText(rule.activity.getString(oldRoot)).assertCountEquals(0)
+        rule.runOnIdle { scene = "interface" }; settled()
+        for (label in listOf(R.string.call_screen, R.string.home_and_gestures, R.string.accessibility))
+            rule.onNodeWithText(rule.activity.getString(label)).performScrollTo().performClick()
+        capture("function-interface-links")
         assertTrue(routes.any { it.contains("accessibility=true") })
-        rule.runOnIdle { advanced = true }
-        settled()
-        rule.onNodeWithText(rule.activity.getString(R.string.ignore_system_font_scale)).performScrollTo().assertIsDisplayed()
+        rule.runOnIdle { scene = "calls" }; settled()
+        for (label in listOf(R.string.call_screen, R.string.fullscreen_calls, R.string.floating_ongoing_call,
+            R.string.incoming_call_ui, R.string.liquid_glass_call_screen))
+            rule.onAllNodesWithText(rule.activity.getString(label)).assertCountEquals(0)
         rule.onNodeWithText(rule.activity.getString(R.string.add_country_code_automatically)).performScrollTo().assertIsDisplayed()
-        rule.onAllNodesWithText(rule.activity.getString(R.string.liquid_glass_call_screen)).assertCountEquals(0)
-        rule.onAllNodesWithText(rule.activity.getString(R.string.ambient_droplets)).assertCountEquals(0)
-        rule.onAllNodesWithText(rule.activity.getString(R.string.avatar_frame)).assertCountEquals(0)
-        rule.onAllNodesWithText(rule.activity.getString(R.string.settings_interface_hide_avatar_with_bg)).assertCountEquals(0)
+        rule.onNodeWithText(rule.activity.getString(R.string.proximity_sensor)).performScrollTo().assertIsDisplayed()
+        assertEquals(before, runBlocking { prefs.getPersistedPreferences() })
+    }
+
+    @Test fun movedControlsRemainFocusedAndOnlyExplicitChangesWriteTheirOriginalKeys() {
+        var id by mutableStateOf("K09")
+        val before = runBlocking { prefs.getPersistedPreferences() }
+        show { key(id) { SettingsOptionScreen(navigator, id) } }
+        for (target in listOf("K09", "K08", "C05", "C06", "I10", "K02", "K03", "K06", "C02", "A07", "C08")) {
+            rule.runOnIdle { id = target }; settled()
+            capture("function-search-$target")
+            File(System.getProperty("user.dir"), "build/reports/visual/settings-d106/function-search-$target.txt")
+                .writeText(rule.onNode(isRoot()).printToString())
+            rule.onAllNodesWithTag("settingsFocus-$target", true).onFirst().assertIsDisplayed()
+        }
+        assertEquals(before, runBlocking { prefs.getPersistedPreferences() })
+        rule.runOnIdle { id = "K09" }; settled()
+        val original = prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULLSCREEN_CALLS,
+            io.github.bootika.dotdialer.core.call.CallPresentationPolicy.DEFAULT_ALWAYS_FULL_SCREEN)
+        rule.onNodeWithText(rule.activity.getString(R.string.fullscreen_calls)).performClick()
+        rule.waitUntil(5000) { prefs.getBoolean(PreferenceManager.KEY_ALWAYS_FULLSCREEN_CALLS, original) != original }
+        val after = runBlocking { prefs.getPersistedPreferences() }
+        assertEquals(setOf(PreferenceManager.KEY_ALWAYS_FULLSCREEN_CALLS),
+            (before.keys + after.keys).filter { before[it] != after[it] }.toSet())
+    }
+
+    @Test fun androidAutoKeepsImmediateStateWhenStoredPreferenceAlreadyMatches() {
+        val auto = dev.goodwy.rphone.auto.AndroidAutoIntegration
+        val originalComponent = auto.isEnabled(rule.activity)
+        try {
+            runBlocking { prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_ANDROID_AUTO_ENABLED to true)) }
+            auto.setEnabled(rule.activity, false)
+            show { CallSettingScreen(navigator) }; settled()
+            val label = rule.activity.getString(R.string.android_auto_integration)
+            rule.onNodeWithText(label).performScrollTo().performClick(); settled()
+            assertTrue(auto.isEnabled(rule.activity))
+            assertTrue(prefs.getBoolean(PreferenceManager.KEY_ANDROID_AUTO_ENABLED, false))
+            // A second tap must disable it even when the first write emitted no new preference value.
+            rule.onNodeWithText(label).performClick(); settled()
+            assertFalse(auto.isEnabled(rule.activity))
+            rule.waitUntil(5000) { !prefs.getBoolean(PreferenceManager.KEY_ANDROID_AUTO_ENABLED, true) }
+        } finally { auto.setEnabled(rule.activity, originalComponent) }
     }
 
     @Test fun movingRecentsAndScrollSwitchesChangesOnlyTheirExistingKeys() {
@@ -198,10 +245,17 @@ class SettingsReorganizationTest {
         }
         settled()
         assertTrue(breadcrumbs.getValue("H10").contains(rule.activity.getString(R.string.home_and_gestures)))
+        for (id in listOf("C01", "C05", "C06", "K08", "K09", "C02", "A07", "C08", "I10", "H01", "H10"))
+            assertTrue(id, breadcrumbs.getValue(id).startsWith(rule.activity.getString(R.string.settings) + " › " + rule.activity.getString(R.string.interface_settings)))
+        for (id in listOf("T02", "T03", "T19"))
+            assertTrue(id, breadcrumbs.getValue(id).contains(rule.activity.getString(R.string.contacts_and_data)))
+        for (id in listOf("K02", "K03", "K06"))
+            assertTrue(id, breadcrumbs.getValue(id).contains(rule.activity.getString(R.string.call_behavior)))
+        assertTrue(breadcrumbs.getValue("O02").contains(rule.activity.getString(R.string.help_and_diagnostics)))
         assertTrue(breadcrumbs.getValue("I11").contains(rule.activity.getString(R.string.accessibility)))
         assertTrue(breadcrumbs.getValue("B05").contains(rule.activity.getString(R.string.privacy_and_blocking)))
         assertTrue(breadcrumbs.getValue("O01").contains(rule.activity.getString(R.string.privacy_and_blocking)))
-        assertTrue(breadcrumbs.getValue("V09").contains(rule.activity.getString(R.string.settings_fine_tuning)))
+        assertTrue(breadcrumbs.getValue("V09").contains(rule.activity.getString(R.string.sound_and_vibration)))
         assertFalse(settingsOptions.single { it.id == "A04" }.isAvailable("gplay", true))
         val entry = entries.single { it.headline == rule.activity.getString(R.string.clear_search_after_call) }
         assertTrue(entry.options.contains(rule.activity.getString(R.string.settings_alias_clear_search_after_call)))
@@ -243,6 +297,15 @@ class SettingsReorganizationTest {
             )
         }
         settled()
+        rule.onNodeWithText(rule.activity.getString(R.string.interface_settings)).performScrollTo().performClick()
+        settled()
+        rule.onNodeWithText(rule.activity.getString(R.string.call_screen)).performScrollTo().performClick()
+        settled()
+        rule.onNodeWithText(rule.activity.getString(R.string.incoming_call_ui)).assertIsDisplayed()
+        rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(rule.activity.getString(R.string.fullscreen_calls)))
+        rule.onNodeWithText(rule.activity.getString(R.string.fullscreen_calls)).performScrollTo().assertIsDisplayed()
+        rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }; settled()
+        rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }; settled()
         val query = rule.activity.getString(R.string.voice_search_title)
         rule.onNode(hasSetTextAction()).performTextInput(query)
         rule.onNode(hasText(query) and !hasSetTextAction()).performClick()
@@ -321,12 +384,15 @@ class SettingsReorganizationTest {
                 "advanced" -> AdvancedSettingsScreen(navigator)
                 "recents" -> HomeGesturesScreen(navigator)
                 "accessibility" -> InterfaceScreen(navigator, accessibility = true)
+                "calls" -> CallSettingScreen(navigator)
+                "call-ui" -> CallerUIScreen(navigator)
             }
         } }
-        for ((page, label) in listOf("advanced" to R.string.customize_width,
-            "recents" to R.string.voice_search_title, "accessibility" to R.string.high_contrast_text)) {
+        for ((page, label) in listOf("advanced" to R.string.call_screen,
+            "recents" to R.string.voice_search_title, "accessibility" to R.string.high_contrast_text,
+            "calls" to R.string.add_country_code_automatically, "call-ui" to R.string.fullscreen_calls)) {
             rule.runOnIdle { scene = page }; settled()
-            rule.onNode(hasScrollToIndexAction()).performScrollToIndex(if (page == "accessibility") 0 else 3)
+            rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(rule.activity.getString(label)))
             rule.onNodeWithText(rule.activity.getString(label)).performScrollTo().assertIsDisplayed()
             capture("landscape-$page")
         }

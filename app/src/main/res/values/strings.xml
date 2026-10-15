@@ -318,7 +318,6 @@
     <string name="after_15_minutes">After 15 minutes</string>
     <string name="after_30_minutes">After 30 minutes</string>
 
-    <string name="manage_contacts">Contacts</string>
     <string name="display">Display</string>
     <string name="sort_by">Sort by</string>
     <string name="name_format">Name format</string>
@@ -732,11 +731,11 @@
     <string name="accessibility" tools:ignore="MissingTranslation">Accessibility</string>
     <string name="high_contrast_text" tools:ignore="MissingTranslation">High contrast text</string>
     <string name="search_settings" tools:ignore="MissingTranslation">Search settings</string>
-    <string name="help">Help and about</string>
+
     <string name="no_settings_found">No settings found for “%1$s”</string>
     <string name="advanced_settings">Advanced settings</string>
-    <string name="advanced_settings_subtitle">Compatibility, fine tuning and diagnostics</string>
-    <string name="advanced_settings_description">Compatibility, fine tuning and diagnostics</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Use Dot Dialer in Android Auto</string>
     <string name="android_auto_integration_subtitle">Show Favorites, Recents and Contacts in the car. Off by default.</string>

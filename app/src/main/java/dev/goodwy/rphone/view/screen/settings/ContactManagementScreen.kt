@@ -163,7 +163,7 @@ fun ContactManagementScreen(
                     if (isRotation90) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                     else WindowInsetsSides.Top
                 ),
-                title = { Title(stringResource(if (toolsOnly) R.string.contact_tools else R.string.manage_contacts)) },
+                title = { Title(stringResource(if (toolsOnly) R.string.contact_tools else R.string.contacts_and_data)) },
                 navigationIcon = {
                     NavigationIcon(onClick = { navigateBack() })
                 }

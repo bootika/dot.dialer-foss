@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Configuración de tono de llamada</string>
     <string name="settings_alias_managing_contact_sources">Gestionar fuentes de contactos</string>
     <string name="settings_alias_tap_haptics">Háptica de toque</string>
+    <string name="contacts_and_data">Contactos y datos</string>
+    <string name="help_and_diagnostics">Ayuda y diagnóstico</string>
 </resources>

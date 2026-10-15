@@ -121,7 +121,7 @@ class SettingsOrganizationRenderTest {
                     if (page == "advanced") {
                         rule.onAllNodesWithText(context.getString(R.string.contact_tools)).assertCountEquals(0)
                     }
-                    if (page == "effects" || page == "interface-advanced") {
+                    if (page == "effects") {
                         rule.onAllNodesWithText(context.getString(R.string.liquid_glass_dialpad)).assertCountEquals(0)
                         rule.onAllNodesWithText(context.getString(R.string.keypad)).assertCountEquals(0)
                     }
@@ -150,10 +150,10 @@ class SettingsOrganizationRenderTest {
         capture("interface-keypad-light-font2.5")
         rule.onNodeWithContentDescription(context.getString(R.string.keypad_effect_preview)).assertDoesNotExist()
         rule.onNodeWithText(context.getString(R.string.keypad_effect_preview)).assertDoesNotExist()
-        rule.runOnUiThread { scene = "compatibility"; font = 1f }
+        rule.runOnUiThread { scene = "interface-advanced"; font = 1f }
         rule.onNodeWithText(context.getString(R.string.ignore_system_font_scale)).performScrollTo().assertIsDisplayed()
         rule.runOnUiThread { scene = "effects" }
-        rule.onNodeWithText(context.getString(R.string.customize_width)).performScrollTo().performClick()
+        rule.onNodeWithText(context.getString(R.string.call_screen)).performScrollTo().performClick()
         rule.waitForIdle()
         assertTrue(navigation.last().contains("true"))
         assertTrue(prefs.getBoolean(PreferenceManager.KEY_LG_DIALPAD, false))
@@ -218,7 +218,7 @@ class SettingsOrganizationRenderTest {
         }
         rule.runOnIdle {
             assertTrue(entries.none { it.headline == context.getString(R.string.private_contacts) })
-            val expected = listOf(R.string.settings, R.string.contacts, R.string.manage_contacts, R.string.contact_tools)
+            val expected = listOf(R.string.settings, R.string.contacts_and_data, R.string.contact_tools)
                 .joinToString(" › ") { context.getString(it) }
             listOf(R.string.standardize_phone_numbers, R.string.merging_contacts, R.string.unmerging_contacts).forEach { label ->
                 val entry = entries.single { it.headline == context.getString(label) }
@@ -230,7 +230,7 @@ class SettingsOrganizationRenderTest {
             assertTrue(navigation[1].contains("ContactMergeDuplicatesScreen"))
             assertTrue(navigation[2].contains("ContactUnmergeDuplicatesScreen"))
             assertTrue(entries.single { it.headline == context.getString(R.string.diagnostics) }
-                .supporting?.startsWith(context.getString(R.string.advanced_settings)) == true)
+                .supporting?.contains(context.getString(R.string.help_and_diagnostics)) == true)
         }
     }
 }

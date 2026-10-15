@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Setări ton de apel</string>
     <string name="settings_alias_managing_contact_sources">Gestionarea surselor de contact</string>
     <string name="settings_alias_tap_haptics">Vibrații la atingere</string>
+    <string name="contacts_and_data">Contacte și date</string>
+    <string name="help_and_diagnostics">Ajutor și diagnostic</string>
 </resources>

@@ -38,7 +38,7 @@ import org.koin.compose.koinInject
 @Destination<RootGraph>
 @Composable
 fun InterfaceScreen(navigator: DestinationsNavigator, advanced: Boolean = false, accessibility: Boolean = false) {
-    if (advanced) { AdvancedSettingsScreen(navigator); return }
+    if (advanced) { InterfaceScreen(navigator, accessibility = true); return }
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
     val settingsVersion by prefs.settingsChanged.collectAsStateWithLifecycle()
@@ -202,6 +202,23 @@ if (!accessibility) {
                     }
                 }
             }
+            if (!accessibility) {
+                item { DotSettingsCard { DotSettingsNavigationRow(stringResource(R.string.call_screen),
+                    onClick = { navigator.navigate(com.ramcosta.composedestinations.generated.destinations.CallerUIScreenDestination()) }) } }
+                item { DotSettingsCard { DotSettingsNavigationRow(stringResource(R.string.home_and_gestures),
+                    onClick = { navigator.navigate(com.ramcosta.composedestinations.generated.destinations.HomeGesturesScreenDestination) }) } }
+                item { DotSettingsCard { DotSettingsNavigationRow(stringResource(R.string.accessibility),
+                    onClick = { navigator.navigate(com.ramcosta.composedestinations.generated.destinations.InterfaceScreenDestination(accessibility = true)) }) } }
+            } else {
+                item {
+                    SettingsSectionLabel(stringResource(R.string.advanced_settings))
+                    DotSettingsCard { SystemFontScaleSetting(ignoreSystemFontScale) {
+                        ignoreSystemFontScale = it
+                        prefs.setBoolean(PreferenceManager.KEY_IGNORE_SYSTEM_FONT_SCALE, it)
+                    } }
+                }
+            }
+
         }
     }
 }

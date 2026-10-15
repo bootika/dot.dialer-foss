@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Ringtone Settings</string>
     <string name="settings_alias_managing_contact_sources">Managing Contact Sources</string>
     <string name="settings_alias_tap_haptics">Tap Haptics</string>
+    <string name="contacts_and_data">Contacts and data</string>
+    <string name="help_and_diagnostics">Help and diagnostics</string>
 </resources>

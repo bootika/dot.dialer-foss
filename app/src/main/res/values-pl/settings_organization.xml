@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Ustawienia dzwonka</string>
     <string name="settings_alias_managing_contact_sources">Zarządzanie źródłami kontaktów</string>
     <string name="settings_alias_tap_haptics">Haptyka dotknięcia</string>
+    <string name="contacts_and_data">Kontakty i dane</string>
+    <string name="help_and_diagnostics">Pomoc i diagnostyka</string>
 </resources>

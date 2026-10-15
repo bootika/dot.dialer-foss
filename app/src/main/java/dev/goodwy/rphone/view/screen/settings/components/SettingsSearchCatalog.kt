@@ -42,27 +42,26 @@ internal fun createSettingsSearchEntries(
     }
     fun action(label: Int, category: Int, action: () -> Unit): SettingsSearchEntry = SettingsSearchEntry(
         headline = context.getString(label), supporting = when (category) {
-            R.string.contact_tools -> "$normal › ${context.getString(R.string.contacts)} › ${context.getString(R.string.manage_contacts)} › ${context.getString(category)}"
+            R.string.contact_tools -> "$normal › ${context.getString(R.string.contacts_and_data)} › ${context.getString(category)}"
             R.string.advanced_settings -> advanced
             else -> "$normal › ${context.getString(category)}"
         },
         leadingIcon = Icons.Rounded.Tune, onClick = action,
     )
     return entries + listOf(
-        action(R.string.advanced_settings, R.string.advanced_settings) { navigator.navigate(AdvancedSettingsScreenDestination) },
         action(R.string.standardize_phone_numbers, R.string.contact_tools) { navigator.navigate(ContactManagementScreenDestination(toolsOnly = true)) },
         action(R.string.merging_contacts, R.string.contact_tools) { navigator.navigate(ContactMergeDuplicatesScreenDestination) },
         action(R.string.unmerging_contacts, R.string.contact_tools) { navigator.navigate(ContactUnmergeDuplicatesScreenDestination) },
         action(R.string.create_backup, R.string.backup_and_restore, onCreateBackup),
         action(R.string.restore_backup, R.string.backup_and_restore, onRestoreBackup),
-        action(R.string.ui_tour_title, R.string.help, onStartUiTour),
-        action(R.string.diagnostics, R.string.advanced_settings) { navigator.navigate(DiagnosticsScreenDestination) },
-        action(if (BuildConfig.FLAVOR == "foss") R.string.continue_support else R.string.plans_title, R.string.help) { navigator.navigate(DonateScreenDestination) },
-        action(R.string.about, R.string.help) { navigator.navigate(AboutAppScreenDestination) },
-        action(R.string.contributors, R.string.help) { navigator.navigate(ContributorsScreenDestination) },
-        action(R.string.source_code, R.string.help) { openLink(context, GITHUB_URL) },
-        action(R.string.privacy_policy, R.string.help) { openLink(context, privacyPolicyUrl(language)) },
-        action(R.string.terms_and_conditions, R.string.help) { openLink(context, termsAndConditionsUrl(language)) },
+        action(R.string.ui_tour_title, R.string.help_and_diagnostics, onStartUiTour),
+        action(R.string.diagnostics, R.string.help_and_diagnostics) { navigator.navigate(DiagnosticsScreenDestination) },
+        action(if (BuildConfig.FLAVOR == "foss") R.string.continue_support else R.string.plans_title, R.string.help_and_diagnostics) { navigator.navigate(DonateScreenDestination) },
+        action(R.string.about, R.string.help_and_diagnostics) { navigator.navigate(AboutAppScreenDestination) },
+        action(R.string.contributors, R.string.help_and_diagnostics) { navigator.navigate(ContributorsScreenDestination) },
+        action(R.string.source_code, R.string.help_and_diagnostics) { openLink(context, GITHUB_URL) },
+        action(R.string.privacy_policy, R.string.help_and_diagnostics) { openLink(context, privacyPolicyUrl(language)) },
+        action(R.string.terms_and_conditions, R.string.help_and_diagnostics) { openLink(context, termsAndConditionsUrl(language)) },
     )
 }
 
@@ -73,14 +72,14 @@ internal fun DestinationsNavigator.openSettingsEditor(editor: SettingsEditor) {
         SettingsEditor.REPORTING -> navigate(ReportingSettingsScreenDestination)
         SettingsEditor.INTERFACE -> navigate(InterfaceScreenDestination())
         SettingsEditor.AVATARS -> navigate(AvatarsPreferenceScreenDestination())
-        SettingsEditor.FONT -> navigate(AdvancedSettingsScreenDestination)
+        SettingsEditor.FONT -> navigate(InterfaceScreenDestination(accessibility = true))
         SettingsEditor.HOME -> navigate(HomeGesturesScreenDestination)
         SettingsEditor.HISTORY -> navigate(HomeGesturesScreenDestination)
         SettingsEditor.CALL_UI -> navigate(CallerUIScreenDestination())
         SettingsEditor.CALL_EFFECTS -> navigate(CallerUIScreenDestination(advanced = true))
         SettingsEditor.ACCOUNTS -> navigate(CallAccountsScreenDestination)
-        SettingsEditor.NUMBERS -> navigate(CallSettingScreenDestination(section = "numbers"))
-        SettingsEditor.DEVICE -> navigate(CallSettingScreenDestination(section = "device"))
+        SettingsEditor.NUMBERS -> navigate(CallSettingScreenDestination())
+        SettingsEditor.DEVICE -> navigate(CallSettingScreenDestination())
         SettingsEditor.QUICK -> navigate(QuickResponsesScreenDestination)
         SettingsEditor.CALLS -> navigate(CallSettingScreenDestination())
         SettingsEditor.SOUND -> navigate(SoundVibrationScreenDestination())
@@ -128,20 +127,18 @@ private fun settingsSearchTerms(option: SettingsOption): List<String> = when (op
 
 @Composable
 internal fun settingsBreadcrumb(option: SettingsOption): String {
-    val root = when (option.editor) {
-        SettingsEditor.INTERFACE, SettingsEditor.AVATARS, SettingsEditor.KEYPAD, SettingsEditor.FRAME -> R.string.interface_settings
-        SettingsEditor.ACCESSIBILITY -> R.string.accessibility
-        SettingsEditor.HOME, SettingsEditor.HISTORY -> R.string.home_and_gestures
-        SettingsEditor.CALLS, SettingsEditor.CALL_UI, SettingsEditor.ACCOUNTS, SettingsEditor.QUICK -> R.string.calls
-        SettingsEditor.CONTACTS, SettingsEditor.SOURCES -> R.string.contacts
-        SettingsEditor.SOUND -> R.string.sound_and_vibration
-        SettingsEditor.AUTH, SettingsEditor.CALL_AUTH, SettingsEditor.BLOCKED, SettingsEditor.REPORTING -> R.string.privacy_and_blocking
-        SettingsEditor.SUPPORT -> R.string.help
-        else -> R.string.advanced_settings
+    val sections = mutableListOf(stringResource(R.string.settings), stringResource(option.function.title))
+    val category = when (option.editor) {
+        SettingsEditor.CALL_EFFECTS -> R.string.call_screen
+        SettingsEditor.SCROLL -> R.string.sound_and_vibration
+        else -> option.category
     }
-    val sections = mutableListOf(stringResource(R.string.settings), stringResource(root))
-    val category = stringResource(option.category)
-    if (category != sections.last()) sections += category
+    if (option.advanced && option.editor == SettingsEditor.CALLS)
+        sections += stringResource(R.string.advanced_settings)
+    val categoryLabel = stringResource(category)
+    if (categoryLabel != sections.last()) sections += categoryLabel
+    if (option.advanced && option.editor != SettingsEditor.CALLS && option.editor != SettingsEditor.DIAGNOSTICS && option.editor != SettingsEditor.SCROLL)
+        sections += stringResource(R.string.advanced_settings)
     if (option.editor == SettingsEditor.SCROLL) sections += stringResource(R.string.settings_scroll_calibration)
     return sections.joinToString(" › ")
 }

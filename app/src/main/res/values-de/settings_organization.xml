@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Klingelton-Einstellungen</string>
     <string name="settings_alias_managing_contact_sources">Kontaktquellen verwalten</string>
     <string name="settings_alias_tap_haptics">Tipp-Haptik</string>
+    <string name="contacts_and_data">Kontakte und Daten</string>
+    <string name="help_and_diagnostics">Hilfe und Diagnose</string>
 </resources>

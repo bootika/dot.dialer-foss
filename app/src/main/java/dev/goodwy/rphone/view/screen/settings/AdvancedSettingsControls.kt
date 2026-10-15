@@ -19,14 +19,8 @@ internal fun SettingsPreferenceSwitch(
 }
 
 @Composable
-internal fun AdvancedCompatibilityControls(prefs: PreferenceManager) {
+internal fun AdvancedCallVisualControls(prefs: PreferenceManager) {
     val version by prefs.settingsChanged.collectAsStateWithLifecycle()
-    val ignore = remember(version) { prefs.getBoolean(PreferenceManager.KEY_IGNORE_SYSTEM_FONT_SCALE,
-        PreferenceManager.DEFAULT_IGNORE_SYSTEM_FONT_SCALE) }
-    SystemFontScaleSetting(ignore) { prefs.setBoolean(PreferenceManager.KEY_IGNORE_SYSTEM_FONT_SCALE, it) }
-    DotSettingsDivider()
-    SettingsPreferenceSwitch(prefs, PreferenceManager.KEY_PROXIMITY_SENSOR, true, R.string.proximity_sensor)
-    DotSettingsDivider()
     SettingsPreferenceSwitch(prefs, PreferenceManager.KEY_FROSTED_CALL_BACKGROUND,
         PreferenceManager.DEFAULT_FROSTED_CALL_BACKGROUND, R.string.frosted_call_background,
         stringResource(R.string.frosted_call_background_supporting))

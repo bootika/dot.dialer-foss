@@ -37,7 +37,9 @@ fun SettingsOptionScreen(navigator: DestinationsNavigator, optionId: String) {
             SettingsEditor.INTERFACE, SettingsEditor.KEYPAD -> InterfaceScreen(navigator)
             SettingsEditor.ACCESSIBILITY -> InterfaceScreen(navigator, accessibility = true)
             SettingsEditor.AVATARS, SettingsEditor.FRAME -> AvatarsPreferenceScreen(navigator)
-            SettingsEditor.ADVANCED, SettingsEditor.FONT, SettingsEditor.NUMBERS, SettingsEditor.DEVICE -> AdvancedSettingsScreen(navigator)
+            SettingsEditor.ADVANCED -> AdvancedSettingsScreen(navigator)
+            SettingsEditor.FONT -> InterfaceScreen(navigator, accessibility = true)
+            SettingsEditor.NUMBERS, SettingsEditor.DEVICE -> CallSettingScreen(navigator)
             SettingsEditor.HOME, SettingsEditor.HISTORY -> HomeGesturesScreen(navigator)
             SettingsEditor.CALL_UI -> CallerUIScreen(navigator)
             SettingsEditor.CALL_EFFECTS -> CallerUIScreen(navigator, advanced = true)
@@ -82,8 +84,15 @@ internal fun settingsFocusIndex(id: String, editor: SettingsEditor): Int = when 
     SettingsEditor.AVATARS -> 1
     SettingsEditor.HOME -> when (id) { "H09" -> 1; "H01", "H02", "H03" -> 2; "H05", "H06", "H07", "I12" -> 3; else -> 0 }
     SettingsEditor.ADVANCED -> if (id == "K02" || id == "K03") 2 else 1
-    SettingsEditor.CALL_UI -> when (id) { "C01", "C09" -> 1; "A05", "C03", "C04" -> 2; "C07" -> 3; else -> 0 }
-    SettingsEditor.CALLS -> when (id) { "K04" -> 1; else -> if (dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable()) 3 else 2 }
+    SettingsEditor.CALL_UI -> when (id) { "K08", "K09" -> 4; "C01", "C09" -> 1; "A05", "C03", "C04" -> 2; "C07" -> 3; else -> 0 }
+    SettingsEditor.CALLS -> when (id) {
+        "K04" -> 1
+        "K02", "K03" -> if (dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable()) 3 else 2
+        "K06" -> if (dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable()) 4 else 3
+        else -> if (dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable()) 2 else 1
+    }
+    SettingsEditor.CALL_EFFECTS -> if (id == "C08") 0 else 1
+    SettingsEditor.ACCESSIBILITY -> if (id == "I10") 2 else 0
     SettingsEditor.ACCOUNTS -> if (id == "K10") -2 else 0
     SettingsEditor.SOUND -> when (id) { "V02" -> 1; "V03", "V04" -> 2; "V05", "V07" -> 3; else -> 0 }
     SettingsEditor.AUTH -> if (id == "B02") 0 else if (id == "B06" || id == "B07") 2 else 1

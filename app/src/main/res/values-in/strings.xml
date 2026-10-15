@@ -285,7 +285,7 @@
     <string name="after_5_minutes">Setelah 5 menit</string>
     <string name="after_15_minutes">Setelah 15 menit</string>
     <string name="after_30_minutes">Setelah 30 menit</string>
-    <string name="manage_contacts">Kontak</string>
+
     <string name="display">Tampilan</string>
     <string name="sort_by">Urut menurut</string>
     <string name="name_format">Format nama</string>
@@ -619,11 +619,11 @@
     <string name="accessibility">Aksesibilitas</string>
     <string name="high_contrast_text">Teks kontras tinggi</string>
     <string name="search_settings">Pengaturan pencarian</string>
-    <string name="help">Bantuan dan tentang</string>
+
     <string name="no_settings_found">Tidak ada pengaturan untuk “%1$s”</string>
     <string name="advanced_settings">Pengaturan lanjutan</string>
-    <string name="advanced_settings_subtitle">Kompatibilitas, penyesuaian rinci, dan diagnostik</string>
-    <string name="advanced_settings_description">Kompatibilitas, penyesuaian rinci, dan diagnostik</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Gunakan Dot Dialer di Android Auto</string>
     <string name="android_auto_integration_subtitle">Tampilkan Favorit, Terbaru, dan Kontak di mobil. Nonaktif secara default.</string>

@@ -31,4 +31,6 @@
     <string name="settings_alias_ringtone_settings">Impostazioni suoneria</string>
     <string name="settings_alias_managing_contact_sources">Gestione fonti contatti</string>
     <string name="settings_alias_tap_haptics">Feedback aptico al tocco</string>
+    <string name="contacts_and_data">Contatti e dati</string>
+    <string name="help_and_diagnostics">Aiuto e diagnostica</string>
 </resources>

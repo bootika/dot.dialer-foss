@@ -194,7 +194,7 @@ fun CallerUIScreen(navigator: DestinationsNavigator, advanced: Boolean = false) 
                     if (isRotation90) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                     else WindowInsetsSides.Top
                 ),
-                title = { Title(stringResource(if (advanced) R.string.customize_width else R.string.call_screen)) },
+                title = { Title(stringResource(if (advanced) R.string.advanced_settings else R.string.call_screen)) },
                 navigationIcon = {
                     NavigationIcon(onClick = { navigator.navigateUp() })
                 }
@@ -431,6 +431,12 @@ if (!advanced) {
 }
 
 
+                if (!advanced) {
+                    item { DotSettingsCard { CallPresentationSettings(prefs) } }
+                    item { DotSettingsCard { DotSettingsNavigationRow(stringResource(R.string.advanced_settings),
+                        onClick = { navigator.navigate(com.ramcosta.composedestinations.generated.destinations.CallerUIScreenDestination(advanced = true)) }) } }
+                }
+
                 // ── Hang Up Button ────────────────────────────────────────
 if (advanced) {
                 item {
@@ -464,6 +470,7 @@ if (advanced) {
                                         Column {
                                             Text(
                                                 stringResource(R.string.customize_width),
+                                                modifier = Modifier.settingsSearchTarget(stringResource(R.string.customize_width)),
                                                 style = MaterialTheme.typography.titleSmall,
                                                 fontWeight = FontWeight.SemiBold
                                             )
@@ -585,7 +592,12 @@ if (advanced) {
 }
 
 
-                item { SettingsBottomPadding() }
+                if (advanced) {
+                item {
+                    DotSettingsCard { AdvancedCallVisualControls(prefs) }
+                }
+            }
+            item { SettingsBottomPadding() }
             }
 
             AnimatedVisibility(

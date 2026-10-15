@@ -28,7 +28,7 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
     if (category == "effects" || category == "compatibility") { AdvancedSettingsScreen(navigator); return }
     val prefs = org.koin.compose.koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
     val title = when (category) {
-        "help" -> R.string.help
+        "help" -> R.string.help_and_diagnostics
         "privacy" -> R.string.privacy_and_blocking
         "effects" -> R.string.appearance_effects
         "compatibility" -> R.string.compatibility
@@ -57,6 +57,9 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
                             }
                         }
                         "help" -> {
+                            SettingsCategoryLink(R.string.diagnostics, Icons.Rounded.BugReport) {
+                                navigator.navigate(DiagnosticsScreenDestination)
+                            }
                             SettingsCategoryLink(R.string.ui_tour_title, Icons.Rounded.TouchApp) {
                                 prefs.setBoolean(dev.goodwy.rphone.controller.util.PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, false)
                                 navigator.navigateUp()

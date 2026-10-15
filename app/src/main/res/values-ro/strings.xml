@@ -285,7 +285,7 @@
     <string name="after_5_minutes">După 5 minute</string>
     <string name="after_15_minutes">După 15 minute</string>
     <string name="after_30_minutes">După 30 de minute</string>
-    <string name="manage_contacts">Contacte</string>
+
     <string name="display">Afișează</string>
     <string name="sort_by">Sortează după</string>
     <string name="name_format">Format de nume</string>
@@ -644,11 +644,11 @@
     <string name="accessibility">Accesibilitate</string>
     <string name="high_contrast_text">Text cu contrast ridicat</string>
     <string name="search_settings">Setări de căutare</string>
-    <string name="help">Ajutor și despre</string>
+
     <string name="no_settings_found">Nu am găsit setări pentru „%1$s”</string>
     <string name="advanced_settings">Setări avansate</string>
-    <string name="advanced_settings_subtitle">Compatibilitate, reglaje fine și diagnostic</string>
-    <string name="advanced_settings_description">Compatibilitate, reglaje fine și diagnostic</string>
+
+
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_integration">Folosește Dot Dialer în Android Auto</string>
     <string name="android_auto_integration_subtitle">Arată Favorite, Recente și Contacte în mașină. Dezactivată implicit.</string>

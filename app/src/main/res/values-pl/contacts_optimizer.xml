@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Wybór ręczny</string>
+    <string name="optimizer_manual_summary">Samodzielnie wybierasz każdą zmianę zdjęcia.</string>
+    <string name="optimizer_missing">Uzupełnij brakujące zdjęcia</string>
+    <string name="optimizer_missing_summary">Dodaje zdjęcia tylko tam, gdzie ich nie ma.</string>
+    <string name="optimizer_latest">Najnowszy awatar</string>
+    <string name="optimizer_latest_summary">Preferuje nowe awatary, nawet o niższej rozdzielczości.</string>
+    <string name="optimizer_quality">Jakość</string>
+    <string name="optimizer_quality_summary">Poprawia małe zdjęcia; zachowuje dobre o wymiarach co najmniej 512×512.</string>
+    <string name="optimizer_resume_automatic">Wznów automatyczne aktualizacje</string>
+    <string name="optimizer_manual_choices">Chronione zdjęcia wybrane ręcznie</string>
+</resources>

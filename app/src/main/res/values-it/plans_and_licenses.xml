@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Piani</string>
+    <string name="plans_description">Le chiamate essenziali restano gratuite. Pro sblocca uno sfondo chiamata personalizzato. Scegli il tuo piano.</string>
+    <string name="gift_title">Codice di attivazione</string>
+    <string name="gift_description">Hai un codice early adopter? Attivalo qui e conservalo per un altro telefono.</string>
+    <string name="gift_active">Pro early adopter attivo</string>
+    <string name="gift_activate">Attiva codice</string>
+    <string name="gift_code">Codice di attivazione</string>
+    <string name="gift_invalid">Il codice non è valido, è scaduto o revocato.</string>
+    <string name="gift_limit">Limite dispositivi raggiunto. Richiedi il ripristino delle attivazioni.</string>
+    <string name="gift_unavailable">Attivazione non riuscita. Controlla la connessione e riprova.</string>
+    <string name="plan_monthly_description">Abbonamento Pro mensile con rinnovo automatico.</string>
+    <string name="plan_yearly_description">Abbonamento Pro annuale con rinnovo automatico.</string>
+    <string name="plan_lifetime_description">Un pagamento per accesso Pro a vita.</string>
+    <string name="product_stats_description">I rapporti automatici includono statistiche minime: versioni app/Android, modello, lingua, paese/operatore SIM, regione numeri scelta e totali giornalieri di preferiti, gesti e tastiera. Nessun contatto, numero, cronologia chiamate o GPS. Solo su richiesta disattiva le statistiche automatiche.</string>
+</resources>

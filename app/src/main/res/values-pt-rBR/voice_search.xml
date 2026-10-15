@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Pesquisa por voz</string>
+    <string name="voice_search_description">Mostrar o microfone em todas as barras de pesquisa.</string>
+    <string name="voice_search_prompt">Diga o que deseja pesquisar</string>
+    <string name="voice_search_permission">Permita o acesso ao microfone para pesquisar por voz nas configurações do aplicativo.</string>
+    <string name="voice_search_unavailable">Nenhum aplicativo de reconhecimento de voz disponível. Você ainda pode digitar sua pesquisa.</string>
+</resources>

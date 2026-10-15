@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Nama dan detail dalam beberapa baris</string>
+    <string name="expanded_list_details_description">Jika ruang terbatas, tampilkan nama dan nomor dalam beberapa baris dan pindahkan waktu ke bawah.</string>
+</resources>

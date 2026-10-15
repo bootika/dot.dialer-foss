@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Tingkat log</string>
+    <string name="diagnostic_log_level_help">Normal: log standar. Debug: foto panggilan, audio, dan koneksi. Verbose: sumber kontak dan gambar. Tetap aktif sampai Anda memilih Normal. Tanpa nama, nomor, atau gambar; lalu lintas Bluetooth PBAP tidak direkam.</string>
+</resources>

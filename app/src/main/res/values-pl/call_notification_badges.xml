@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Ty</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="one">%d nieodebrane połączenie</item>
+        <item quantity="few">%d nieodebrane połączenia</item>
+        <item quantity="many">%d nieodebranych połączeń</item>
+        <item quantity="other">%d nieodebranego połączenia</item>
+    </plurals>
+</resources>

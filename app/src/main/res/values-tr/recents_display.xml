@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Tüm aramaları göster</string>
+    <string name="show_all_recent_calls_subtitle">Cevapsız aramalar dahil her aramayı ayrı göster.</string>
+</resources>

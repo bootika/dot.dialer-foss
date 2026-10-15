@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Hiển thị tất cả cuộc gọi</string>
+    <string name="show_all_recent_calls_subtitle">Hiển thị riêng từng cuộc gọi, bao gồm cuộc gọi nhỡ.</string>
+</resources>

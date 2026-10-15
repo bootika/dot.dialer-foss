@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Rapporti diagnostici</string>
+    <string name="onboarding_essential_body_gplay">I contatti e la cronologia delle chiamate restano sul telefono, non sui nostri server. Android chiederà l’app telefonica predefinita e i permessi necessari.\n\nLa diagnostica automatica invia rapporti tecnici, dati minimi sul dispositivo e sulla SIM, e conteggi giornalieri delle funzioni. Nessun contatto, contenuto delle chiamate o GPS. Puoi scegliere i rapporti su richiesta in %1$s → %2$s.</string>
+</resources>

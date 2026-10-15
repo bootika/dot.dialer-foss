@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Votre avis nous aide à nous améliorer !</string>
+    <string name="rating_star">Étoile %1$d</string>
+    <string name="rating_terrible">Très mauvais</string>
+    <string name="rating_bad">Mauvais</string>
+    <string name="rating_okay">Moyen</string>
+    <string name="rating_good">Bon</string>
+    <string name="rating_excellent">Excellent !</string>
+    <string name="rating_prompt">Touchez une étoile pour noter</string>
+    <string name="rating_appreciation">Merci de nous donner votre avis !</string>
+    <string name="rating_thanks">Merci !</string>
+    <string name="rating_submit">Envoyer l’avis</string>
+    <string name="rating_later">Pas maintenant</string>
+    <string name="about_repository">Dépôt GitHub</string>
+    <string name="standardizing_numbers">Normalisation des numéros</string>
+    <string name="standardize_progress">%1$d%% terminé</string>
+    <string name="game_title">Course de chevaux</string>
+    <string name="game_over">Partie terminée !</string>
+    <string name="game_score">Score : %1$d</string>
+    <string name="game_replay">Rejouer</string>
+    <string name="game_jump">Sautez !</string>
+    <string name="game_hint">Touchez Sautez pour éviter les obstacles !</string>
+    <string name="game_hello">Bonjour !</string>
+    <string name="label_unknown">Inconnu</string>
+</resources>

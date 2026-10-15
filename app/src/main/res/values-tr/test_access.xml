@@ -1,0 +1,7 @@
+<resources>
+    <string name="test_access_checking">Bu test sürümüne erişim kontrol ediliyor…</string>
+    <string name="test_access_unavailable">Erişim doğrulanamadı. İnternete bağlanıp tekrar deneyin.</string>
+    <string name="test_access_blocked">Bu test sürümüne erişim etkin değil. Google Play üzerinden dot.dialer yükleyin veya diler@dotdesign.ro ile iletişime geçin.</string>
+    <string name="test_access_retry">Tekrar dene</string>
+    <string name="test_access_phone_settings">Varsayılan telefon uygulaması</string>
+</resources>

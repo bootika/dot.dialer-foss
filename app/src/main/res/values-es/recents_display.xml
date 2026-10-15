@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Mostrar todas las llamadas</string>
+    <string name="show_all_recent_calls_subtitle">Muestra cada llamada por separado, incluidas las llamadas perdidas.</string>
+</resources>

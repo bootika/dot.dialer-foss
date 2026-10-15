@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Anda</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="other">%d panggilan tak terjawab</item>
+    </plurals>
+</resources>

@@ -1,0 +1,359 @@
+package dev.goodwy.rphone.view.components
+
+import dev.goodwy.rphone.view.theme.accentText
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.provider.CallLog
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.material.icons.automirrored.filled.CallMissed
+import androidx.compose.material.icons.automirrored.filled.CallReceived
+import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.Block
+import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.CheckBox
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import dev.goodwy.rphone.R
+import dev.goodwy.rphone.controller.util.forceLtr
+import dev.goodwy.rphone.controller.util.formatDate
+import dev.goodwy.rphone.controller.util.formatSecondsToShortTimeString
+import dev.goodwy.rphone.controller.util.getPhoneTypeText
+import dev.goodwy.rphone.controller.util.toast
+import dev.goodwy.rphone.modal.data.CallLogEntry
+import dev.goodwy.rphone.view.theme.customColors
+
+@Composable
+fun CallLogTileSimple(
+    log: CallLogEntry,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    onCallClick: () -> Unit = {},
+    selected: Boolean = false,
+    showNumber: Boolean,
+    showSimLabel: Boolean
+) {
+    val icon = when (log.type) {
+        CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+        CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+        CallLog.Calls.MISSED_TYPE   -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.REJECTED_TYPE   -> Icons.AutoMirrored.Filled.CallMissed
+        CallLog.Calls.BLOCKED_TYPE   -> Icons.Filled.Block
+        else                        -> DotDialerHandsetIcon
+    }
+    val context   = LocalContext.current
+    val typeText = when (log.type) {
+        CallLog.Calls.INCOMING_TYPE -> stringResource(R.string.incoming)
+        CallLog.Calls.OUTGOING_TYPE -> stringResource(R.string.outgoing)
+        CallLog.Calls.MISSED_TYPE   -> stringResource(R.string.missed)
+        CallLog.Calls.REJECTED_TYPE -> stringResource(R.string.rejected)
+        CallLog.Calls.BLOCKED_TYPE  -> stringResource(R.string.blocked)
+        else                        -> stringResource(R.string.call)
+    }
+    val headlineText = if (showNumber) log.number.forceLtr() + "  •  " + typeText else typeText
+    val simLabel = if (showSimLabel && log.simLabel != null) " • " + log.simLabel else ""
+    CallLogListItemSimple(
+        headline = headlineText,
+        supporting = context.formatDate(log.date) + simLabel,
+//        trailing = if (log.duration > 0) "${android.text.format.DateUtils.formatElapsedTime(log.duration)}" else "",
+        trailing = if (log.duration > 0) context.formatSecondsToShortTimeString(log.duration.toInt()) else "",
+        leadingIcon = icon,
+        iconContainerColor = if (log.type == CallLog.Calls.MISSED_TYPE || log.type == CallLog.Calls.REJECTED_TYPE) MaterialTheme.colorScheme.error else null,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        selected = selected
+    )
+}
+
+@Composable
+fun CallLogTile(
+    log: CallLogEntry,
+    directCall: Boolean,
+    onTileClick: (CallLogEntry) -> Unit,
+    onLongClick: (CallLogEntry) -> Unit,
+    onCallClick: (CallLogEntry) -> Unit,
+    onAvatarClick: ((CallLogEntry) -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    onShowHistory: () -> Unit,
+    isSelected: Boolean = false,
+    selectionMode: Boolean = false,
+    showSimLabel: Boolean
+) {
+    val context   = LocalContext.current
+    var showMenu  by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        val simLabel = if (showSimLabel && log.simLabel != null) " • " + log.simLabel else ""
+        val displayName = if (log.name == log.number) log.number.forceLtr() else log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" }
+        CallLogListItem(
+            headline = buildString {
+                append(displayName)
+                if (log.count > 1) append(" (${log.count})")
+            },
+            supporting = buildString {
+                if (log.name != null && log.name != log.number) {
+                    val typeLabel = getPhoneTypeText(context, log.phoneType, log.phoneLabel)
+                    append(typeLabel + " • " + context.formatDate(log.date, true) + simLabel)
+                } else {
+                    append(context.formatDate(log.date, true) + simLabel)
+                }
+            },
+            avatarName  = displayName,
+            photoUri    = log.photoUri,
+            supportingIcon = when (log.type) {
+                CallLog.Calls.MISSED_TYPE   -> Icons.AutoMirrored.Filled.CallMissed
+                CallLog.Calls.INCOMING_TYPE -> Icons.AutoMirrored.Filled.CallReceived
+                CallLog.Calls.OUTGOING_TYPE -> Icons.AutoMirrored.Filled.CallMade
+                CallLog.Calls.REJECTED_TYPE -> Icons.AutoMirrored.Filled.CallMissed
+                CallLog.Calls.BLOCKED_TYPE  -> Icons.Filled.Block
+                else                        -> DotDialerHandsetIcon
+            },
+            supportingColor = when (log.type) {
+                CallLog.Calls.MISSED_TYPE, CallLog.Calls.REJECTED_TYPE -> MaterialTheme.colorScheme.error
+                else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
+            },
+            onCallClick = { onCallClick(log) },
+            onAvatarClick = { if (onAvatarClick != null) onAvatarClick(log) },
+            onAvatarLongClick = { showMenu = true },
+            directCall = directCall,
+            onLongClick = { onLongClick(log) },
+            isMenuOpen  = showMenu && !selectionMode,
+            onClick     = { onTileClick(log) },
+            isSelected = isSelected,
+            selectionMode = selectionMode,
+        )
+
+        AnimatedVisibility(
+            visible = showMenu,
+            enter = slideInVertically(initialOffsetY = { -it }, animationSpec = tween(320, easing = FastOutSlowInEasing)) + fadeIn(tween(280)),
+            exit  = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(420, easing = FastOutLinearInEasing)) + fadeOut(tween(380))
+        ) {
+            DropdownMenu(
+                shape = MaterialTheme.shapes.large,
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false },
+                offset = DpOffset(72.dp, 72.dp),
+            ) {
+                DropdownMenuItem(
+                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                    text = { Text(stringResource(R.string.select)) },
+                    leadingIcon = { Icon(Icons.Rounded.CheckBox, null) },
+                    onClick = { showMenu = false; onLongClick(log) }
+                )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+                DropdownMenuItem(
+                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                    text = { Text(stringResource(R.string.call)) },
+                    leadingIcon = { Icon(DotDialerHandsetIcon, null) },
+                    onClick = { showMenu = false; onCallClick(log) }
+                )
+                if (log.number.isNotBlank()) {
+                    val phoneNumber = log.number.forceLtr()
+                    DropdownMenuItem(
+                        contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                        text = { Text(stringResource(R.string.message)) },
+                        leadingIcon = { Icon(ImageVector.vectorResource(id = R.drawable.ic_message_filled), null) },
+                        onClick = {
+                            showMenu = false
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = "sms:$phoneNumber".toUri()
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+                DropdownMenuItem(
+                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                    text = { Text(stringResource(R.string.copy_action)) },
+                    leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
+                    onClick = {
+                        showMenu = false
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Phone number", log.number))
+                    }
+                )
+//                DropdownMenuItem(
+//                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+//                    text = { Text("Block number") },
+//                    leadingIcon = { Icon(Icons.Default.Block, null) },
+//                    onClick = {
+//                        showMenu = false
+//                        context.toast("Number blocked")
+//                    }
+//                )
+                DropdownMenuItem(
+                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                    text = { Text(stringResource(R.string.show_full_history)) },
+                    leadingIcon = { Icon(Icons.Rounded.AccessTime, null) },
+                    onClick = {
+                        showMenu = false
+                        onShowHistory()
+                    }
+                )
+                if (onDelete != null) {
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
+                    DropdownMenuItem(
+                        contentPadding = PaddingValues(start = 20.dp, end = 24.dp),
+                        text = { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) },
+                        leadingIcon = { Icon(ImageVector.vectorResource(id = R.drawable.ic_delete), null, tint = MaterialTheme.colorScheme.error) },
+                        onClick = {
+                            showMenu = false
+                            onDelete()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BatchCallLogActionBar(
+    selectedCount: Int,
+    onClearSelection: () -> Unit,
+    onDelete: () -> Unit,
+    onBlock: (() -> Unit)? = null,
+    onDeselect: () -> Unit,
+    onSelectAll: () -> Unit,
+    isAllSelected: Boolean
+) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showBlockConfirm by remember { mutableStateOf(false) }
+
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.fillMaxWidth(),
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RillIconButton(
+                onClick = onClearSelection,
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.cancel)
+            )
+            RillTextButton(
+                onClick = if (isAllSelected) onDeselect else onSelectAll,
+                text = stringResource(R.string.selected_items, selectedCount),
+                toast = if (isAllSelected) stringResource(R.string.deselect_all) else stringResource(R.string.select_all)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            if (onBlock != null) {
+                RillIconButton(
+                    onClick = { showBlockConfirm = true },
+                    imageVector = Icons.Rounded.Block,
+                    contentDescription = stringResource(R.string.action_block_number)
+                )
+            }
+            RillIconButton(
+                onClick = { showDeleteConfirm = true },
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
+                contentDescription = stringResource(R.string.delete_call_logs)
+            )
+        }
+    }
+
+    if (showDeleteConfirm) {
+        RillDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = stringResource(R.string.delete_call_logs),
+            icon = ImageVector.vectorResource(id = R.drawable.ic_delete),
+            iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorRed,
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete()
+                    showDeleteConfirm = false
+                }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        ) {
+            Text(
+                stringResource(R.string.delete_call_logs_selected, selectedCount),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+    if (showBlockConfirm) {
+        RillDialog(
+            onDismissRequest = { showBlockConfirm = false },
+            title = stringResource(R.string.call_log_block_title),
+            icon = Icons.Rounded.Block,
+            iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorRed,
+            confirmButton = {
+                TextButton(onClick = {
+                    onBlock?.invoke()
+                    showBlockConfirm = false
+                }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                    Text(stringResource(R.string.action_block), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBlockConfirm = false }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        ) {
+            Text(
+                pluralStringResource(
+                    R.plurals.call_log_block_message,
+                    selectedCount,
+                    selectedCount,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+}

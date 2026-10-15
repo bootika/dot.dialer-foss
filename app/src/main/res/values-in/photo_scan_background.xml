@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Foto kontak</string>
+    <string name="photo_scan_notification_title">Meningkatkan foto kontak</string>
+    <string name="photo_scan_resume">Lanjutkan pemindaian</string>
+    <string name="photo_scan_retry">Coba lagi foto yang gagal</string>
+    <string name="photo_scan_background">Anda dapat menggunakan aplikasi lain saat foto diperbarui.</string>
+    <string name="photo_scan_summary">Ditingkatkan: %1$d · Tidak berubah: %2$d · Gagal: %3$d</string>
+    <string name="photo_scan_checked">Diperiksa: %1$d</string>
+    <string name="photo_scan_network">Koneksi terputus. Lanjutkan saat Anda kembali online.</string>
+    <string name="photo_scan_rate_limit">Google meminta jeda. Coba lagi nanti.</string>
+    <string name="photo_scan_google_service">Google sementara tidak tersedia. Coba lagi nanti.</string>
+    <string name="photo_scan_invalid_image">Foto tidak tersedia atau tidak valid</string>
+    <string name="photo_scan_contact_changed">Kontak berubah atau tidak dapat dicocokkan dengan aman</string>
+    <string name="photo_scan_permission">Izin kontak belum diberikan</string>
+    <string name="photo_scan_write">Foto tidak dapat disimpan</string>
+    <string name="photo_scan_other">Foto tidak dapat diproses</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Kesalahan koneksi</string>
+    <string name="photo_scan_rate_limit_count">Batas permintaan Google</string>
+    <string name="photo_scan_google_service_count">Layanan Google tidak tersedia</string>
+</resources>

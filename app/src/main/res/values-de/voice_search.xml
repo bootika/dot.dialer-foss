@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Sprachsuche</string>
+    <string name="voice_search_description">Mikrofon in allen Suchleisten anzeigen.</string>
+    <string name="voice_search_prompt">Sprich deine Suchanfrage</string>
+    <string name="voice_search_permission">Erlaube den Mikrofonzugriff für die Sprachsuche in den App-Einstellungen.</string>
+    <string name="voice_search_unavailable">Keine Spracherkennungs-App verfügbar. Du kannst deine Suche weiterhin eingeben.</string>
+</resources>

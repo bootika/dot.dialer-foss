@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_search_unavailable">A busca por nome da empresa está indisponível. A busca por site ou domínio de email ainda pode funcionar.</string>
+</resources>

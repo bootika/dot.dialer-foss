@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DotDialer.Car" parent="android:style/Theme.DeviceDefault">
+        <item name="carColorPrimary">@color/car_brand_primary</item>
+        <item name="carColorPrimaryDark">@color/car_brand_primary_dark</item>
+        <item name="carColorSecondary">@color/car_brand_secondary</item>
+        <item name="carColorSecondaryDark">@color/car_brand_secondary_dark</item>
+    </style>
+</resources>

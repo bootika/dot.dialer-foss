@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Ảnh liên hệ</string>
+    <string name="photo_scan_notification_title">Đang cải thiện ảnh liên hệ</string>
+    <string name="photo_scan_resume">Tiếp tục quét</string>
+    <string name="photo_scan_retry">Thử lại ảnh bị lỗi</string>
+    <string name="photo_scan_background">Bạn có thể dùng ứng dụng khác trong khi ảnh được cập nhật.</string>
+    <string name="photo_scan_summary">Đã cải thiện: %1$d · Không đổi: %2$d · Bị lỗi: %3$d</string>
+    <string name="photo_scan_checked">Đã kiểm tra: %1$d</string>
+    <string name="photo_scan_network">Kết nối bị gián đoạn. Tiếp tục khi có mạng.</string>
+    <string name="photo_scan_rate_limit">Google yêu cầu tạm dừng. Hãy thử lại sau.</string>
+    <string name="photo_scan_google_service">Google tạm thời không khả dụng. Hãy thử lại sau.</string>
+    <string name="photo_scan_invalid_image">Ảnh không khả dụng hoặc không hợp lệ</string>
+    <string name="photo_scan_contact_changed">Liên hệ đã thay đổi hoặc không thể khớp an toàn</string>
+    <string name="photo_scan_permission">Thiếu quyền truy cập danh bạ</string>
+    <string name="photo_scan_write">Không thể lưu ảnh</string>
+    <string name="photo_scan_other">Không thể xử lý ảnh</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Lỗi kết nối</string>
+    <string name="photo_scan_rate_limit_count">Giới hạn yêu cầu Google</string>
+    <string name="photo_scan_google_service_count">Dịch vụ Google không khả dụng</string>
+</resources>

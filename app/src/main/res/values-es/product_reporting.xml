@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Informes de diagnóstico</string>
+    <string name="onboarding_essential_body_gplay">Tus contactos y el historial de llamadas permanecen en tu teléfono, no en nuestros servidores. Android solicitará la app de teléfono predeterminada y los permisos necesarios.\n\nEl diagnóstico automático envía informes técnicos, datos mínimos del dispositivo y la SIM, y recuentos diarios de funciones. Sin contactos, contenido de llamadas ni GPS. Puedes elegir informes bajo demanda en %1$s → %2$s.</string>
+</resources>

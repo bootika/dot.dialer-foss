@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Livello del registro</string>
+    <string name="diagnostic_log_level_help">Normal: registro standard. Debug: foto, audio e connessione della chiamata. Verbose: fonti del contatto e immagini. Rimane attivo finché selezioni Normal. Nessun nome, numero o immagine; il traffico Bluetooth PBAP non viene acquisito.</string>
+</resources>

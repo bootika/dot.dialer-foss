@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Paket</string>
+    <string name="plans_description">Panggilan penting tetap gratis. Pro membuka latar panggilan kustom. Pilih paket Anda.</string>
+    <string name="gift_title">Kode aktivasi</string>
+    <string name="gift_description">Punya kode early adopter? Aktifkan di sini dan simpan untuk pemulihan di ponsel lain.</string>
+    <string name="gift_active">Pro early adopter aktif</string>
+    <string name="gift_activate">Aktifkan kode</string>
+    <string name="gift_code">Kode aktivasi</string>
+    <string name="gift_invalid">Kode tidak valid, kedaluwarsa, atau dicabut.</string>
+    <string name="gift_limit">Batas perangkat tercapai. Minta reset aktivasi.</string>
+    <string name="gift_unavailable">Tidak dapat mengaktifkan. Periksa koneksi dan coba lagi.</string>
+    <string name="plan_monthly_description">Langganan Pro bulanan yang diperpanjang otomatis.</string>
+    <string name="plan_yearly_description">Langganan Pro tahunan yang diperpanjang otomatis.</string>
+    <string name="plan_lifetime_description">Satu pembayaran untuk akses Pro seumur hidup.</string>
+    <string name="product_stats_description">Laporan otomatis memuat statistik minimal: versi aplikasi/Android, model, bahasa, negara/operator SIM, wilayah nomor pilihan, serta jumlah harian favorit, geser, dan keypad. Tanpa kontak, nomor, riwayat panggilan, atau GPS. Hanya sesuai permintaan mematikan statistik otomatis.</string>
+</resources>

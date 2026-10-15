@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Your feedback helps us improve!</string>
+    <string name="rating_star">Star %1$d</string>
+    <string name="rating_terrible">Terrible</string>
+    <string name="rating_bad">Bad</string>
+    <string name="rating_okay">Okay</string>
+    <string name="rating_good">Good</string>
+    <string name="rating_excellent">Excellent!</string>
+    <string name="rating_prompt">Tap a star to rate</string>
+    <string name="rating_appreciation">We appreciate your feedback!</string>
+    <string name="rating_thanks">Thank you!</string>
+    <string name="rating_submit">Submit feedback</string>
+    <string name="rating_later">Not now</string>
+    <string name="about_repository">GitHub repository</string>
+    <string name="standardizing_numbers">Standardizing numbers</string>
+    <string name="standardize_progress">%1$d%% completed</string>
+    <string name="game_title">Horse runner</string>
+    <string name="game_over">Game over!</string>
+    <string name="game_score">Score: %1$d</string>
+    <string name="game_replay">Replay</string>
+    <string name="game_jump">Jump!</string>
+    <string name="game_hint">Tap Jump to avoid obstacles!</string>
+    <string name="game_hello">Hello!</string>
+    <string name="label_unknown">Unknown</string>
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">Reglaje fine</string>
+    <string name="settings_scroll_calibration">Calibrarea vibrațiilor la derulare</string>
+    <string name="settings_reporting">Raportare de diagnostic</string>
+    <string name="settings_blur_dependency">Folosit când Glass din apel este oprit. Suportul depinde de dispozitiv.</string>
+    <string name="settings_repeat_contacts_explanation">Arată aceeași persoană în Recente și Contacte când cauți.</string>
+    <string name="settings_protected_numbers">Numere protejate</string>
+    <string name="settings_alias_home_and_gestures">Pagina principală și gesturi</string>
+    <string name="settings_alias_interface_settings">Interfață</string>
+    <string name="settings_alias_privacy_and_blocking">Confidențialitate și numere blocate</string>
+    <string name="settings_alias_call_settings">Setări apeluri</string>
+    <string name="settings_alias_manage_contacts">Gestionează contactele</string>
+    <string name="settings_alias_avatar_size">Dimensiunea avatarului</string>
+    <string name="settings_alias_expanded_list_details">Afișare extinsă în liste</string>
+    <string name="settings_alias_subtle_animations">Animații subtile</string>
+    <string name="settings_alias_clear_search_after_call">Șterge căutarea după un apel</string>
+    <string name="settings_alias_search_repeat_contacts">Repetă contactele în rezultatele căutării</string>
+    <string name="settings_alias_incoming_call_ui">Interfața apelurilor primite</string>
+    <string name="settings_alias_settings_call_default_background">Fundalul implicit al apelurilor</string>
+    <string name="settings_alias_vibrate_on_answer">Vibrează la răspuns</string>
+    <string name="settings_alias_authentication_method">Metoda de autentificare</string>
+    <string name="settings_alias_lock_call_actions">Blochează acțiunile de apelare</string>
+    <string name="settings_alias_lock_scope">Apeluri protejate</string>
+    <string name="settings_alias_blacklist">Lista neagră</string>
+    <string name="settings_alias_whitelist">Lista albă</string>
+    <string name="settings_alias_history_and_feedback">Istoric și feedback</string>
+    <string name="settings_alias_continue_support">Continuă</string>
+    <string name="settings_alias_authentication">Autentificare</string>
+    <string name="settings_alias_contact_tools">Unelte pentru contacte</string>
+    <string name="settings_alias_ringtone_settings">Setări ton de apel</string>
+    <string name="settings_alias_managing_contact_sources">Gestionarea surselor de contact</string>
+    <string name="settings_alias_tap_haptics">Vibrații la atingere</string>
+</resources>

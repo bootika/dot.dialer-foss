@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Bạn</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="other">%d cuộc gọi nhỡ</item>
+    </plurals>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Planuri</string>
+    <string name="plans_description">Apelurile esențiale rămân gratuite. Pro deblochează fundalul personalizat de apel. Alege planul potrivit.</string>
+    <string name="gift_title">Cod de activare</string>
+    <string name="gift_description">Ai un cod early adopter? Activează-l aici. Păstrează-l pentru recuperarea pe alt telefon.</string>
+    <string name="gift_active">Pro early adopter activ</string>
+    <string name="gift_activate">Activează codul</string>
+    <string name="gift_code">Cod de activare</string>
+    <string name="gift_invalid">Codul este invalid, expirat sau revocat.</string>
+    <string name="gift_limit">Ai atins limita de telefoane. Cere resetarea activărilor.</string>
+    <string name="gift_unavailable">Activarea nu a reușit. Verifică conexiunea și încearcă din nou.</string>
+    <string name="plan_monthly_description">Abonament Pro lunar. Se reînnoiește automat.</string>
+    <string name="plan_yearly_description">Abonament Pro anual. Se reînnoiește automat.</string>
+    <string name="plan_lifetime_description">O singură plată pentru acces Pro permanent.</string>
+    <string name="product_stats_description">Raportarea automată trimite și statistici tehnice minimale: versiunea aplicației și Android, modelul, limba, țara/operatorul SIM, regiunea aleasă pentru numere și totaluri zilnice pentru favorite, swipe și tastatură. Fără contacte, numere, istoric de apeluri sau GPS. Doar la cerere oprește statisticile automate.</string>
+</resources>

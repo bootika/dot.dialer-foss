@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Voice search</string>
+    <string name="voice_search_description">Show a microphone in all search bars.</string>
+    <string name="voice_search_prompt">Speak your search</string>
+    <string name="voice_search_permission">Allow microphone access to use voice search. You can enable it in app settings.</string>
+    <string name="voice_search_unavailable">No speech recognition app is available. You can still type your search.</string>
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">Fine tuning</string>
+    <string name="settings_scroll_calibration">Scroll vibration calibration</string>
+    <string name="settings_reporting">Diagnostic reporting</string>
+    <string name="settings_blur_dependency">Used when call Glass is off. Hardware support may vary.</string>
+    <string name="settings_repeat_contacts_explanation">Show the same person in both Recents and Contacts when searching.</string>
+    <string name="settings_protected_numbers">Protected numbers</string>
+    <string name="settings_alias_home_and_gestures">Home &amp; gestures</string>
+    <string name="settings_alias_interface_settings">Interface</string>
+    <string name="settings_alias_privacy_and_blocking">Privacy and blocked numbers</string>
+    <string name="settings_alias_call_settings">Call Settings</string>
+    <string name="settings_alias_manage_contacts">Manage Contacts</string>
+    <string name="settings_alias_avatar_size">Avatar size</string>
+    <string name="settings_alias_expanded_list_details">Expanded list details</string>
+    <string name="settings_alias_subtle_animations">Subtle animations</string>
+    <string name="settings_alias_clear_search_after_call">Clear search after a call</string>
+    <string name="settings_alias_search_repeat_contacts">Repeat contacts in search results</string>
+    <string name="settings_alias_incoming_call_ui">Incoming Call UI</string>
+    <string name="settings_alias_settings_call_default_background">Default call background</string>
+    <string name="settings_alias_vibrate_on_answer">Vibrate on Answer</string>
+    <string name="settings_alias_authentication_method">Authentication Method</string>
+    <string name="settings_alias_lock_call_actions">Lock Call Actions</string>
+    <string name="settings_alias_lock_scope">Scope of Lock Call</string>
+    <string name="settings_alias_blacklist">Blacklist</string>
+    <string name="settings_alias_whitelist">Whitelist</string>
+    <string name="settings_alias_history_and_feedback">History and feedback</string>
+    <string name="settings_alias_continue_support">Continue</string>
+    <string name="settings_alias_authentication">Authentication</string>
+    <string name="settings_alias_contact_tools">Contact tools</string>
+    <string name="settings_alias_ringtone_settings">Ringtone Settings</string>
+    <string name="settings_alias_managing_contact_sources">Managing Contact Sources</string>
+    <string name="settings_alias_tap_haptics">Tap Haptics</string>
+</resources>

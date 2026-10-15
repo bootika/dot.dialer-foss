@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">Réglages fins</string>
+    <string name="settings_scroll_calibration">Calibrage des vibrations de défilement</string>
+    <string name="settings_reporting">Rapports de diagnostic</string>
+    <string name="settings_blur_dependency">Utilisé quand Glass des appels est désactivé. Dépend de l’appareil.</string>
+    <string name="settings_repeat_contacts_explanation">Afficher la même personne dans les appels récents et les contacts lors de la recherche.</string>
+    <string name="settings_protected_numbers">Numéros protégés</string>
+    <string name="settings_alias_home_and_gestures">Accueil &amp; gestes</string>
+    <string name="settings_alias_interface_settings">Interface</string>
+    <string name="settings_alias_privacy_and_blocking">Confidentialité et numéros bloqués</string>
+    <string name="settings_alias_call_settings">Paramètres d\'appel</string>
+    <string name="settings_alias_manage_contacts">Gérer les contacts</string>
+    <string name="settings_alias_avatar_size">Taille de l\'avatar</string>
+    <string name="settings_alias_expanded_list_details">Affichage étendu des listes</string>
+    <string name="settings_alias_subtle_animations">Animations subtiles</string>
+    <string name="settings_alias_clear_search_after_call">Effacer la recherche après un appel</string>
+    <string name="settings_alias_search_repeat_contacts">Répéter les contacts dans les résultats de recherche</string>
+    <string name="settings_alias_incoming_call_ui">Interface d\'appel entrant</string>
+    <string name="settings_alias_settings_call_default_background">Arrière-plan d\'appel par défaut</string>
+    <string name="settings_alias_vibrate_on_answer">Vibrer à la réponse</string>
+    <string name="settings_alias_authentication_method">Méthode d\'authentification</string>
+    <string name="settings_alias_lock_call_actions">Verrouiller les actions d\'appel</string>
+    <string name="settings_alias_lock_scope">Portée du verrouillage d\'appel</string>
+    <string name="settings_alias_blacklist">Liste noire</string>
+    <string name="settings_alias_whitelist">Liste blanche</string>
+    <string name="settings_alias_history_and_feedback">Historique et retour</string>
+    <string name="settings_alias_continue_support">Continuer</string>
+    <string name="settings_alias_authentication">Authentification</string>
+    <string name="settings_alias_contact_tools">Outils des contacts</string>
+    <string name="settings_alias_ringtone_settings">Paramètres de sonnerie</string>
+    <string name="settings_alias_managing_contact_sources">Gestion des sources de contacts</string>
+    <string name="settings_alias_tap_haptics">Haptique de tapotement</string>
+</resources>

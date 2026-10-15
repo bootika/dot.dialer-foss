@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Fotografii contacte</string>
+    <string name="photo_scan_notification_title">Îmbunătățim fotografiile contactelor</string>
+    <string name="photo_scan_resume">Continuă scanarea</string>
+    <string name="photo_scan_retry">Reîncearcă fotografiile eșuate</string>
+    <string name="photo_scan_background">Poți folosi alte aplicații cât timp se actualizează fotografiile.</string>
+    <string name="photo_scan_summary">Îmbunătățite: %1$d · Neschimbate: %2$d · Erori: %3$d</string>
+    <string name="photo_scan_checked">Verificate: %1$d</string>
+    <string name="photo_scan_network">Conexiunea s-a întrerupt. Continuă când revii online.</string>
+    <string name="photo_scan_rate_limit">Google cere o pauză. Încearcă din nou mai târziu.</string>
+    <string name="photo_scan_google_service">Google nu este disponibil momentan. Încearcă din nou mai târziu.</string>
+    <string name="photo_scan_invalid_image">Fotografie indisponibilă sau nevalidă</string>
+    <string name="photo_scan_contact_changed">Contact modificat sau fără o potrivire sigură</string>
+    <string name="photo_scan_permission">Lipsește permisiunea pentru contacte</string>
+    <string name="photo_scan_write">Fotografia nu a putut fi salvată</string>
+    <string name="photo_scan_other">Fotografia nu a putut fi procesată</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Eroare de conexiune</string>
+    <string name="photo_scan_rate_limit_count">Limită de cereri Google</string>
+    <string name="photo_scan_google_service_count">Serviciu Google indisponibil</string>
+</resources>

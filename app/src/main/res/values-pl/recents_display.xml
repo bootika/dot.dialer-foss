@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Pokaż wszystkie połączenia</string>
+    <string name="show_all_recent_calls_subtitle">Pokazuj każde połączenie osobno, również nieodebrane.</string>
+</resources>

@@ -1,0 +1,2907 @@
+package dev.goodwy.rphone.view.screen
+
+import dev.goodwy.rphone.view.theme.accentText
+import dev.goodwy.rphone.controller.util.currentDisplayRotation
+import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
+import android.content.ContentUris
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.net.Uri
+import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.Email
+import android.provider.ContactsContract.CommonDataKinds.Event
+import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal
+import android.view.Surface
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.CrueltyFree
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Phone
+import androidx.compose.material.icons.rounded.PostAdd
+import androidx.compose.material.icons.rounded.RemoveCircleOutline
+import androidx.compose.material.icons.rounded.SwitchAccount
+import androidx.compose.material.icons.rounded.Wallpaper
+import androidx.compose.material.icons.rounded.Work
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.coroutines.CancellationException
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import dev.goodwy.rphone.R
+import dev.goodwy.rphone.controller.ContactsViewModel
+import dev.goodwy.rphone.controller.util.ContactUtils
+import dev.goodwy.rphone.controller.util.getAddressTypeText
+import dev.goodwy.rphone.controller.util.getEmailTypeText
+import dev.goodwy.rphone.controller.util.getEventTypeText
+import dev.goodwy.rphone.controller.util.getPhoneTypeText
+import dev.goodwy.rphone.controller.util.millisToString
+import dev.goodwy.rphone.controller.util.stringToMillis
+import dev.goodwy.rphone.modal.data.Contact
+import dev.goodwy.rphone.modal.data.ContactAddress
+import dev.goodwy.rphone.modal.data.ContactEmail
+import dev.goodwy.rphone.modal.data.ContactEvent
+import dev.goodwy.rphone.modal.data.ContactPhoneDetail
+import dev.goodwy.rphone.modal.data.getDisplayName
+import dev.goodwy.rphone.view.components.MoveToAccountDialog
+import dev.goodwy.rphone.view.components.NavigationIcon
+import dev.goodwy.rphone.view.components.RillAvatar
+import dev.goodwy.rphone.view.theme.customColors
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.goodwy.rphone.controller.util.CallBackgroundStore
+import dev.goodwy.rphone.controller.util.PreferenceManager
+import dev.goodwy.rphone.controller.util.retainDocumentReadAccess
+import dev.goodwy.rphone.device_only
+import dev.goodwy.rphone.private_only
+import dev.goodwy.rphone.view.components.RillDialog
+import dev.goodwy.rphone.view.components.Title
+import dev.goodwy.rphone.view.theme.RillShapeDefaults
+import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinActivityViewModel
+
+private val blankPhoneDetail = ContactPhoneDetail(Phone.TYPE_MOBILE, null, "")
+private val blankEvent = ContactEvent(Event.TYPE_BIRTHDAY, null, "")
+private val blankAddress = ContactAddress(StructuredPostal.TYPE_HOME, null, "")
+private val blankEmail = ContactEmail(Email.TYPE_HOME, null, "")
+private val paddingHorizontal = 48.dp
+@OptIn(ExperimentalMaterial3Api::class)
+@Destination<RootGraph>
+@Composable
+fun ContactEditScreen(
+    contactId: String? = null,
+    rawContactId: String? = null,
+    isEditingSource: Boolean = false,
+    initialName: String? = null,
+    initialPhone: String? = null,
+    initialAvatarColorIndex: Int? = null,
+    navigator: DestinationsNavigator
+) {
+    val context = LocalContext.current
+    val contactsVM: ContactsViewModel = koinActivityViewModel()
+    val availableAccounts by contactsVM.availableAccounts.collectAsStateWithLifecycle()
+    val availableAccountsForMoving by contactsVM.availableAccountsForMoving.collectAsStateWithLifecycle()
+    var loadedJson by rememberSaveable(contactId, rawContactId) { mutableStateOf<String?>(null) }
+    var editableRawId by rememberSaveable(contactId, rawContactId) { mutableStateOf<String?>(null) }
+    val loadError = stringResource(R.string.contact_edit_load_error)
+    LaunchedEffect(contactId, rawContactId) {
+        if (loadedJson == null) {
+            try {
+                val full = contactId?.takeUnless { it == "0" || it == "null" || it.isBlank() }
+                    ?.let { requireNotNull(contactsVM.getFullContactById(it)) }
+                val loaded = if (full != null && !full.isPrivate) {
+                    val sourceId = if (isEditingSource) requireNotNull(rawContactId)
+                        else requireNotNull(contactsVM.getPreferredEditableRawContactId(full))
+                    val sources = contactsVM.getContactSources(full.id)
+                    require(sources.any { it.rawContactId == sourceId })
+                    editableRawId = sourceId
+                    requireNotNull(contactsVM.getRawContactData(sourceId))
+                } else full ?: Contact(id = "0")
+                loadedJson = Json.encodeToString(loaded)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                android.util.Log.w("ContactEdit", "Unable to load editable contact", error)
+                android.widget.Toast.makeText(context, loadError, android.widget.Toast.LENGTH_LONG).show()
+                navigator.navigateUp()
+            }
+        }
+    }
+    if (loadedJson == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        return
+    }
+    val loadedContact = remember(loadedJson) { Json.decodeFromString<Contact>(requireNotNull(loadedJson)) }
+    val existingContact = loadedContact.takeUnless { it.id == "0" }
+    if (existingContact?.isPrivate == true || existingContact?.id?.startsWith("p") == true) {
+        LaunchedEffect(Unit) { navigator.navigateUp() }
+        return
+    }
+    val listState = rememberLazyListState()
+
+    var namePrefix by rememberSaveable(existingContact) { mutableStateOf(existingContact?.namePrefix ?: "") }
+    var givenName by rememberSaveable(existingContact) { mutableStateOf(existingContact?.givenName ?: initialName ?: "") }
+    var middleName by rememberSaveable(existingContact) { mutableStateOf(existingContact?.middleName ?: "") }
+    var familyName by rememberSaveable(existingContact) { mutableStateOf(existingContact?.familyName ?: "") }
+    var nameSuffix by rememberSaveable(existingContact) { mutableStateOf(existingContact?.nameSuffix ?: "") }
+    var nickname by rememberSaveable(existingContact) { mutableStateOf(existingContact?.nickname ?: "") }
+    var company by rememberSaveable(existingContact) { mutableStateOf(existingContact?.company ?: "") }
+    var jobTitle by rememberSaveable(existingContact) { mutableStateOf(existingContact?.jobTitle ?: "") }
+    var notes by rememberSaveable(existingContact) { mutableStateOf(existingContact?.notes) }
+    var photoUri by rememberSaveable(existingContact) { mutableStateOf<String?>(existingContact?.photoUri) }
+    var isFavorite by rememberSaveable(existingContact) { mutableStateOf<Boolean>(existingContact?.isFavorite ?: false) }
+
+    var callBackground by remember { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    var selectedBackgroundUri by rememberSaveable(stateSaver = contactEditUriSaver) { mutableStateOf<Uri?>(null) }
+    var tempCallBackground by rememberSaveable { mutableStateOf<String?>(null) }
+    var tempPhotoUri by rememberSaveable { mutableStateOf<String?>(null) }
+    var tempBackgroundDeleted by rememberSaveable { mutableStateOf(false) }
+
+    var isPrivate by rememberSaveable(existingContact) { mutableStateOf(false) }
+    var selectedAccount by rememberSaveable(existingContact, stateSaver = contactEditAccountSaver) {
+        val lastUsed = contactsVM.getLastUsedAccount()
+        mutableStateOf(
+            when {
+                // If you're editing an existing private contact
+                existingContact?.isPrivate == true -> {
+                    isPrivate = true
+                    availableAccounts.find {
+                        it.name == existingContact.accountName && it.type == existingContact.accountType
+                    }
+                }
+                // If you're editing an existing public contact
+                existingContact != null && !existingContact.isPrivate -> {
+                    isPrivate = false
+                    availableAccounts.find {
+                        it.name == existingContact.accountName && it.type == existingContact.accountType
+                    }
+                }
+                // New contact from the most recently used account
+                lastUsed != null -> {
+                    isPrivate = false
+                    availableAccounts.find { it.name == lastUsed.name && it.type == lastUsed.type }
+                }
+                // Default: device
+                else -> {
+                    isPrivate = false
+                    null
+                }
+            }
+        )
+    }
+
+    val phoneNumbers = rememberSaveable(existingContact, saver = contactEditListSaver<String>()) {
+        mutableStateListOf<String>().apply { 
+            if (existingContact != null && existingContact.phoneNumbers.isNotEmpty()) {
+                addAll(existingContact.phoneNumbers)
+            } else if (!initialPhone.isNullOrBlank()) {
+                add(initialPhone)
+            }
+            if (isEmpty()) add("") 
+        } 
+    }
+
+    val phoneDetails = rememberSaveable(existingContact, saver = contactEditListSaver<ContactPhoneDetail>()) {
+        mutableStateListOf<ContactPhoneDetail>().apply {
+            if (existingContact != null && existingContact.phoneDetails.isNotEmpty()) {
+                addAll(existingContact.phoneDetails)
+            } else if (!initialPhone.isNullOrBlank()) {
+                add(ContactPhoneDetail(Phone.TYPE_MOBILE, null, initialPhone))
+            }
+            if (isEmpty()) addAll(phoneNumbers.map { ContactPhoneDetail(number = it) })
+        }
+    }
+    
+    val emails = rememberSaveable(existingContact, saver = contactEditListSaver<ContactEmail>()) {
+        mutableStateListOf<ContactEmail>().apply {
+            if (existingContact != null && existingContact.emails.isNotEmpty()) {
+                addAll(existingContact.emails)
+            }
+            if (isEmpty()) add(blankEmail)
+        } 
+    }
+
+    val events = rememberSaveable(existingContact, saver = contactEditListSaver<ContactEvent>()) {
+        mutableStateListOf<ContactEvent>().apply {
+            if (existingContact != null && existingContact.events.isNotEmpty()) {
+                addAll(existingContact.events)
+            }
+            if (isEmpty()) add(blankEvent)
+        }
+    }
+    
+    val addresses = rememberSaveable(existingContact, saver = contactEditListSaver<ContactAddress>()) {
+        mutableStateListOf<ContactAddress>().apply {
+            if (existingContact != null && existingContact.addresses.isNotEmpty()) {
+                addAll(existingContact.addresses)
+            }
+            if (isEmpty()) add(blankAddress)
+        } 
+    }
+
+    val scope = rememberCoroutineScope()
+
+    val knownNumbers = remember(existingContact, initialPhone) {
+        ((existingContact?.phoneNumbers ?: emptyList()) + listOfNotNull(initialPhone)).distinct()
+    }
+    val backgroundContactId = existingContact?.id?.takeIf { it.isNotBlank() }
+    val backgroundNumbers = knownNumbers
+    val backgroundKeys = remember(backgroundNumbers) {
+        CallBackgroundStore.numberKeys(backgroundNumbers)
+    }
+    val backgroundAvailable = backgroundContactId != null || backgroundKeys.isNotEmpty()
+    val backgroundErrorMessage = stringResource(R.string.contact_call_background_error)
+    val backgroundNoTargetMessage = stringResource(R.string.contact_call_background_no_target)
+
+    LaunchedEffect(backgroundContactId, backgroundNumbers) {
+        callBackground = CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+    }
+
+    val backgroundPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            retainDocumentReadAccess(context, uri)
+            selectedBackgroundUri = uri
+            tempCallBackground = uri.toString()
+            tempBackgroundDeleted = false
+        }
+    }
+
+    val onBackgroundClick: () -> Unit = {
+        when {
+            !backgroundAvailable -> {
+                scope.launch { snackbarHostState.showSnackbar(backgroundNoTargetMessage) }
+            }
+            else -> {
+                backgroundPickerLauncher.launch(arrayOf("image/*"))
+            }
+        }
+    }
+
+    val currentContactForPreview = remember(
+        namePrefix, givenName, middleName, familyName, nameSuffix, nickname, company, jobTitle, notes
+    ) {
+        Contact(
+            id = "",
+            namePrefix = namePrefix,
+            givenName = givenName,
+            middleName = middleName,
+            familyName = familyName,
+            nameSuffix = nameSuffix,
+            nickname = nickname,
+            company = company,
+            jobTitle = jobTitle,
+            notes = notes,
+            phoneNumbers = phoneNumbers.filter { it.isNotBlank() }
+        )
+    }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                retainDocumentReadAccess(context, uri)
+                tempPhotoUri = uri.toString()
+            }
+        }
+    )
+    val onPhotoClick: () -> Unit = {
+        photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    var committedId by rememberSaveable { mutableStateOf<String?>(null) }
+    val editSessionId = rememberSaveable { java.util.UUID.randomUUID().toString() }
+    var isSaving by remember { mutableStateOf(false) }
+    val saveError = stringResource(R.string.contact_edit_save_error)
+    fun draftContact(): Contact = (existingContact ?: Contact(id = "0")).copy(
+        id = committedId ?: existingContact?.id ?: "0",
+        namePrefix = namePrefix, givenName = givenName, middleName = middleName,
+        familyName = familyName, nameSuffix = nameSuffix, nickname = nickname,
+        company = company, jobTitle = jobTitle, notes = notes,
+        phoneNumbers = phoneDetails.filter { it.number.isNotBlank() }.map { it.number },
+        phoneDetails = phoneDetails.filter { it.number.isNotBlank() },
+        emails = emails.filter { it.value.isNotBlank() },
+        addresses = addresses.filter { it.formattedAddress.isNotBlank() },
+        events = events.filter { it.date.isNotBlank() },
+        photoUri = tempPhotoUri ?: photoUri, isFavorite = isFavorite,
+        accountName = selectedAccount?.name ?: existingContact?.accountName,
+        accountType = selectedAccount?.type ?: existingContact?.accountType,
+        isPrivate = isPrivate)
+    fun hasChanges(): Boolean {
+        val original = existingContact ?: Contact(id = "0", givenName = initialName.orEmpty(),
+            phoneNumbers = listOfNotNull(initialPhone?.takeIf { it.isNotBlank() }),
+            phoneDetails = listOfNotNull(initialPhone?.takeIf { it.isNotBlank() }?.let { ContactPhoneDetail(number = it) }))
+        return draftContact() != original || selectedBackgroundUri != null ||
+            tempCallBackground != null || tempBackgroundDeleted
+    }
+    val canSave = !isSaving && (existingContact != null || draftContact().let {
+        it.displayName.isNotBlank() || it.emails.isNotEmpty() || it.addresses.isNotEmpty() ||
+            it.events.isNotEmpty() || !it.notes.isNullOrBlank() || it.photoUri != null
+    })
+
+    // Status for the exit confirmation dialog
+    var showExitDialog by remember { mutableStateOf(false) }
+    BackHandler(enabled = isSaving || hasChanges()) {
+        if (!isSaving) showExitDialog = true
+    }
+
+    fun exitWithoutSaving() {
+        if (isSaving) return
+        contactsVM.releaseContactEditCommit(editSessionId)
+        // Reset temporary changes
+        tempPhotoUri = null
+        selectedBackgroundUri = null
+        tempCallBackground = null
+        tempBackgroundDeleted = false
+
+        // If the photo was temporarily modified, we'll restore the original
+        if (existingContact?.photoUri != null) {
+            photoUri = existingContact.photoUri
+        }
+
+        // Restore original background if it was deleted temporarily
+        if (existingContact != null) {
+            callBackground = CallBackgroundStore.peek(context, backgroundContactId, backgroundNumbers)
+        }
+        navigator.navigateUp()
+    }
+
+    fun saveAndExit() {
+        if (!canSave) return
+        val contactToSave = draftContact()
+        isSaving = true
+        scope.launch {
+            var failed = false
+            try {
+                require(existingContact == null || existingContact.isPrivate == isPrivate)
+                val saved = contactsVM.commitContactEdit(editSessionId, contactToSave, editableRawId)
+                committedId = saved.id
+                if (!saved.isPrivate) editableRawId = saved.rawContactIds.singleOrNull() ?: editableRawId
+                val savedNumbers = saved.phoneNumbers
+                if (existingContact?.id != null && existingContact.id != saved.id) {
+                    CallBackgroundStore.carryBlocking(context, existingContact.id, saved.id, (backgroundNumbers + savedNumbers).distinct())
+                }
+                if (selectedBackgroundUri != null) {
+                    check(CallBackgroundStore.save(context, saved.id, savedNumbers, requireNotNull(selectedBackgroundUri))) {
+                        "Cannot save contact background"
+                    }
+                } else if (tempBackgroundDeleted) {
+                    CallBackgroundStore.clear(context, saved.id, (backgroundNumbers + savedNumbers).distinct())
+                }
+                tempPhotoUri = null
+                selectedBackgroundUri = null
+                tempCallBackground = null
+                tempBackgroundDeleted = false
+                contactsVM.releaseContactEditCommit(editSessionId)
+                navigator.navigateUp()
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                android.util.Log.w("ContactEdit", "Unable to commit contact edit", error)
+                failed = true
+            } finally {
+                isSaving = false
+            }
+            if (failed) snackbarHostState.showSnackbar(saveError)
+        }
+    }
+
+    LaunchedEffect(editSessionId) {
+        if (committedId == null && contactsVM.hasContactEditCommit(editSessionId)) saveAndExit()
+    }
+
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text(stringResource(R.string.unsaved_changes)) },
+            text = { Text(stringResource(R.string.unsaved_changes_subtitle)) },
+            confirmButton = {
+                TextButton(
+                    enabled = canSave,
+                    onClick = {
+                        showExitDialog = false
+
+                        scope.launch {
+                            saveAndExit()
+                        }
+                    }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showExitDialog = false
+                        exitWithoutSaving()
+                    }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            icon = {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        )
+    }
+
+    var showFieldsDialog by remember { mutableStateOf(false) }
+    var showNamePrefix by rememberSaveable { mutableStateOf(false) }
+    var showMiddleName by rememberSaveable { mutableStateOf(false) }
+    var showNameSuffix by rememberSaveable { mutableStateOf(false) }
+    var showNickname by rememberSaveable { mutableStateOf(false) }
+    var showJobTitle by rememberSaveable { mutableStateOf(false) }
+
+    val hasNamePrefix = namePrefix.isNotBlank()
+    val hasMiddleName = middleName.isNotBlank()
+    val hasNameSuffix = nameSuffix.isNotBlank()
+    val hasNickname = nickname.isNotBlank()
+    val hasJobTitle = jobTitle.isNotBlank()
+
+    LaunchedEffect(hasNamePrefix) { if (hasNamePrefix) showNamePrefix = true }
+    LaunchedEffect(hasMiddleName) { if (hasMiddleName) showMiddleName = true }
+    LaunchedEffect(hasNameSuffix) { if (hasNameSuffix) showNameSuffix = true }
+    LaunchedEffect(hasNickname) { if (hasNickname) showNickname = true }
+    LaunchedEffect(hasJobTitle) { if (hasJobTitle) showJobTitle = true }
+
+    if (showFieldsDialog) {
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { true }
+        )
+
+        ModalBottomSheet(
+            onDismissRequest = { showFieldsDialog = false },
+            sheetState = sheetState,
+            dragHandle = null
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Drag handle
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, bottom = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(3.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                        modifier = Modifier.size(width = 36.dp, height = 4.dp)
+                    ) {}
+                }
+
+                Text(
+                    stringResource(R.string.add_field),
+                    modifier = Modifier.padding(start = 24.dp, top = 8.dp),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp)
+                ) {
+                    item {
+                        FieldOption(
+                            title = stringResource(R.string.prefix),
+                            description = stringResource(R.string.prefix_description),
+                            icon = Icons.Rounded.Person,
+                            isSelected = showNamePrefix,
+                            onToggle = { showNamePrefix = !showNamePrefix }
+                        )
+                        FieldOption(
+                            title = stringResource(R.string.middle_name),
+                            description = stringResource(R.string.middle_name_description),
+                            icon = Icons.Rounded.Person,
+                            isSelected = showMiddleName,
+                            onToggle = { showMiddleName = !showMiddleName }
+                        )
+                        FieldOption(
+                            title = stringResource(R.string.suffix),
+                            description = stringResource(R.string.suffix_description),
+                            icon = Icons.Rounded.Person,
+                            isSelected = showNameSuffix,
+                            onToggle = { showNameSuffix = !showNameSuffix }
+                        )
+                        FieldOption(
+                            title = stringResource(R.string.nickname),
+                            description = stringResource(R.string.nickname_description),
+                            icon = Icons.Rounded.CrueltyFree,
+                            isSelected = showNickname,
+                            onToggle = { showNickname = !showNickname }
+                        )
+                        FieldOption(
+                            title = stringResource(R.string.job_title),
+                            description = stringResource(R.string.job_title_description),
+                            icon = Icons.Rounded.Work,
+                            isSelected = showJobTitle,
+                            onToggle = { showJobTitle = !showJobTitle }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+    }
+
+    var showPicker by remember { mutableStateOf(false) }
+    // We only show this selection for new contacts
+    val isNewContact = contactId == null || contactId == "0" || contactId == "null"
+    if (showPicker && isNewContact) {
+        MoveToAccountDialog(
+            title = stringResource(R.string.save_to_account),
+            icon = Icons.Rounded.SwitchAccount,
+            availableAccounts = availableAccountsForMoving,
+            currentAccountKey = if (isPrivate) private_only
+                                else selectedAccount?.let { "${it.name}|${it.type}" } ?: device_only,
+            onDismiss = { showPicker = false },
+            onAccountSelected = { account, private ->
+                selectedAccount = account
+                isPrivate = private
+                // If a contact becomes private, we reset the account
+                if (private) {
+                    selectedAccount = null
+                }
+                showPicker = false
+            }
+        )
+    }
+
+    val rotation = context.currentDisplayRotation()
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val isRotation90 = rotation == if (isLtr) Surface.ROTATION_90 else Surface.ROTATION_270
+    ContactEditorKeyboardMode()
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets.systemBars.only(
+                    if (isRotation90) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                    else WindowInsetsSides.Top
+                ),
+                title = { Title(if (contactId == null || contactId == "0") stringResource(R.string.create_contact) else stringResource(R.string.edit_contact), false) },
+                navigationIcon = {
+                    NavigationIcon(onClick = {
+                        if (isSaving) {
+                            // Wait for the active save before leaving.
+                        } else if (hasChanges()) {
+                            showExitDialog = true
+                        } else {
+                            navigator.navigateUp()
+                        }
+                    })
+                },
+                actions = {
+                    Spacer(modifier = Modifier.size(8.dp))
+                    if (existingContact != null) {
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+                        val cornerRadius by animateDpAsState(
+                            if (isPressed) 8.dp else 40.dp,
+                            spring(stiffness = Spring.StiffnessMediumLow),
+                            label = "ButtonShapeAnimation"
+                        )
+                        IconButton(
+                            onClick = {
+                                if (!isSaving) isFavorite = !isFavorite
+                            },
+                            interactionSource = interactionSource,
+                            modifier = Modifier.width(32.dp).testTag("contactEditFavorite"),
+                            shape = RoundedCornerShape(cornerRadius),
+                            colors = if (isFavorite) IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = Color.Transparent
+                            ) else IconButtonDefaults.iconButtonColors(containerColor = Color.Transparent)
+                        ) {
+                            Icon(
+                                if (isFavorite) Icons.Default.Star else Icons.Default.StarOutline,
+                                stringResource(R.string.favorites)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                saveAndExit()
+                            }
+                        },
+                        enabled = canSave,
+                        modifier = Modifier.then(if (contactId == null) Modifier.padding(end = 12.dp) else Modifier),
+                        shape = RoundedCornerShape(24.dp),
+                        elevation = ButtonDefaults.buttonElevation(0.dp)
+                    ) {
+//                        Icon(Icons.Default.Check, null)
+//                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.save))
+                    }
+                    if (contactId != null) {
+                        var showSelectionMenuOuter by remember { mutableStateOf(false) }
+//                        val headline = getDisplayName(currentContactForPreview)
+                        // Delete confirmation dialog
+                        if (showDeleteConfirm) {
+                            RillDialog(
+                                onDismissRequest = { showDeleteConfirm = false },
+                                title = stringResource(R.string.delete_contact),
+                                icon = ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                                iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        showDeleteConfirm = false
+                                        contactsVM.deleteContact(contactId)
+                                        navigator.navigateUp()
+                                    }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                                        Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { showDeleteConfirm = false }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                                        Text(stringResource(R.string.cancel))
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    stringResource(R.string.delete_contact_subtitle),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                        Box {
+                            IconButton(onClick = { showSelectionMenuOuter = true }) {
+                                Icon(
+                                    Icons.Default.MoreVert,
+                                    null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            DropdownMenu(
+                                shape = MaterialTheme.shapes.large,
+                                expanded = showSelectionMenuOuter,
+                                onDismissRequest = { showSelectionMenuOuter = false }
+                            ) {
+                                DropdownMenuItem(
+                                    contentPadding = PaddingValues(start = 20.dp, end = 24.dp),
+                                    text = { Text(stringResource(R.string.open)) },
+                                    leadingIcon = { Icon(Icons.AutoMirrored.Rounded.OpenInNew, stringResource(R.string.open)) },
+                                    onClick = {
+                                        showSelectionMenuOuter = false
+                                        val intent = Intent(Intent.ACTION_EDIT).apply {
+                                            data = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId.toLong())
+                                        }
+                                        context.startActivity(intent)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    contentPadding = PaddingValues(start = 20.dp, end = 24.dp),
+                                    text = { Text(stringResource(R.string.delete)) },
+                                    leadingIcon = {
+                                        Icon(
+                                            ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                            stringResource(R.string.delete),
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    },
+                                    onClick = {
+                                        showSelectionMenuOuter = false
+                                        showDeleteConfirm = true
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.size(4.dp))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
+        }
+    ) { innerPadding ->
+        val configuration = LocalConfiguration.current
+        val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        if (isLandscape) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.Top
+            ) {
+                // Left column - avatar
+                Box(
+                    modifier = Modifier.weight(1f)
+                        .then(
+                            if (isRotation90) Modifier.navigationBarsPadding()
+                            else Modifier
+                        )
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            start = 0.dp,
+                            end = 0.dp,
+                            bottom = 24.dp
+                        )
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 24.dp, top = 16.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .padding(vertical = 24.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            val displayPhotoUri = tempPhotoUri ?: photoUri
+                            RillAvatar(
+                                name = getDisplayName(currentContactForPreview),
+                                photoUri = displayPhotoUri,
+                                avatarColorIndex = initialAvatarColorIndex,
+                                modifier = Modifier.size(120.dp).testTag("contactEditPhotoSurface")
+                                    .clip(CircleShape)
+                                    .then(if (displayPhotoUri == null) Modifier.clickable(
+                                        onClickLabel = stringResource(R.string.add_photo),
+                                        role = androidx.compose.ui.semantics.Role.Button,
+                                        onClick = onPhotoClick
+                                    ) else Modifier),
+                                shape = CircleShape
+                            )
+
+                            if (displayPhotoUri != null) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        photoUri = null
+                                        tempPhotoUri = null
+                                    },
+                                    containerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                                    contentColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                                    shape = CircleShape,
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.BottomStart)
+                                        .offset(x = (-8).dp, y = 0.dp)
+                                        .border(
+                                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                            shape = CircleShape
+                                        )
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                        stringResource(R.string.delete),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            SmallFloatingActionButton(
+                                onClick = onPhotoClick,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                shape = CircleShape,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(x = 8.dp, y = 0.dp)
+                                    .border(
+                                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    if (displayPhotoUri != null) Icons.Outlined.Edit else Icons.Rounded.Add,
+                                    if (displayPhotoUri != null) stringResource(R.string.edit) else stringResource(R.string.add_photo),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(32.dp))
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            val displayBackground = tempCallBackground ?: callBackground
+                            if (displayBackground != null) {
+                                AsyncImage(
+                                    model = displayBackground,
+                                    contentDescription = stringResource(R.string.contact_call_background_preview),
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(width = 82.dp, height = 160.dp)
+                                        .clip(RoundedCornerShape(RillShapeDefaults.BaseMedium))
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 82.dp, height = 160.dp)
+                                        .clip(RoundedCornerShape(RillShapeDefaults.BaseMedium))
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                        .testTag("contactEditBackgroundSurface")
+                                        .clickable(
+                                            onClickLabel = stringResource(R.string.contact_call_background_set),
+                                            role = androidx.compose.ui.semantics.Role.Button,
+                                            onClick = onBackgroundClick
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Wallpaper,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                }
+                            }
+
+                            if (displayBackground != null) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        // If this is a temporary background (not yet saved)
+                                        if (tempCallBackground != null) {
+                                            tempCallBackground = null
+                                            selectedBackgroundUri = null
+                                            tempBackgroundDeleted = true
+                                        } else if (callBackground != null) {
+                                            // If this is a saved background, mark it for deletion when saving
+                                            tempBackgroundDeleted = true
+                                            callBackground = null
+                                        }
+                                    },
+                                    containerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                                    contentColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                                    shape = CircleShape,
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.BottomStart)
+                                        .offset(x = (-16).dp, y = 12.dp)
+                                        .border(
+                                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                            shape = CircleShape
+                                        )
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                        stringResource(R.string.contact_call_background_remove),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            SmallFloatingActionButton(
+                                onClick = onBackgroundClick,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                shape = CircleShape,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(x = 16.dp, y = 12.dp)
+                                    .border(
+                                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    if (displayBackground != null) Icons.Outlined.Edit else Icons.Rounded.Add,
+                                    if (displayBackground != null) stringResource(R.string.contact_call_background_change)
+                                    else stringResource(R.string.contact_call_background_set),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Right column contains all other content
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .testTag("contactEditFields").imePadding()
+                        .weight(1.7f)
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            start = 0.dp,
+                            end = 0.dp,
+                            bottom = 0.dp
+                        )
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                ) {
+                    item {
+                        var appeared by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) { appeared = true }
+                        val rowScale by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0.5f,
+                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            label = "rowScale"
+                        )
+                        val rowAlpha by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0f,
+                            animationSpec = tween(150),
+                            label = "rowAlpha"
+                        )
+                        Column(
+                            modifier = Modifier
+                                .animateContentSize(
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        dampingRatio = Spring.DampingRatioMediumBouncy
+                                    )
+                                )
+                                .scale(rowScale)
+                                .alpha(rowAlpha),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            AnimatedVisibility(
+                                visible = showNamePrefix,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = namePrefix,
+                                        onValueChange = { namePrefix = it },
+                                        label = { Text(stringResource(R.string.prefix)) },
+                                        modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                            .fillMaxWidth()
+                                            .padding(start = paddingHorizontal),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                    IconButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        onClick = {
+                                            namePrefix = ""
+                                            showNamePrefix = false
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.RemoveCircleOutline,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                            OutlinedTextField(
+                                value = givenName,
+                                onValueChange = { givenName = it },
+                                label = { Text(stringResource(R.string.first_name)) },
+                                modifier = Modifier.keepFocusedEditorFieldVisible()
+                                    .fillMaxWidth()
+                                    .padding(horizontal = paddingHorizontal),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            AnimatedVisibility(
+                                visible = showMiddleName,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = middleName,
+                                        onValueChange = { middleName = it },
+                                        label = { Text(stringResource(R.string.middle_name)) },
+                                        modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                            .fillMaxWidth()
+                                            .padding(start = paddingHorizontal),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                    IconButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        onClick = {
+                                            middleName = ""
+                                            showMiddleName = false
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.RemoveCircleOutline,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                            OutlinedTextField(
+                                value = familyName,
+                                onValueChange = { familyName = it },
+                                label = { Text(stringResource(R.string.last_name)) },
+                                modifier = Modifier.keepFocusedEditorFieldVisible()
+                                    .fillMaxWidth()
+                                    .padding(horizontal = paddingHorizontal),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            AnimatedVisibility(
+                                visible = showNameSuffix,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = nameSuffix,
+                                        onValueChange = { nameSuffix = it },
+                                        label = { Text(stringResource(R.string.suffix)) },
+                                        modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                            .fillMaxWidth()
+                                            .padding(start = paddingHorizontal),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                    IconButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        onClick = {
+                                            nameSuffix = ""
+                                            showNameSuffix = false
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.RemoveCircleOutline,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                            AnimatedVisibility(
+                                visible = showNickname,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = nickname,
+                                        onValueChange = { nickname = it },
+                                        label = { Text(stringResource(R.string.nickname)) },
+                                        modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                            .fillMaxWidth()
+                                            .padding(start = paddingHorizontal),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                    IconButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        onClick = {
+                                            nickname = ""
+                                            showNickname = false
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.RemoveCircleOutline,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Organization
+                    item {
+                        var appeared by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) { appeared = true }
+                        val rowScale by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0.5f,
+                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            label = "rowScale"
+                        )
+                        val rowAlpha by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0f,
+                            animationSpec = tween(150),
+                            label = "rowAlpha"
+                        )
+                        Column(
+                            modifier = Modifier
+                                .animateContentSize(
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        dampingRatio = Spring.DampingRatioMediumBouncy
+                                    )
+                                )
+                                .scale(rowScale)
+                                .alpha(rowAlpha),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = company,
+                                onValueChange = { company = it },
+                                label = { Text(stringResource(R.string.company)) },
+                                modifier = Modifier.keepFocusedEditorFieldVisible()
+                                    .fillMaxWidth()
+                                    .padding(horizontal = paddingHorizontal),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                            AnimatedVisibility(
+                                visible = showJobTitle,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = jobTitle,
+                                        onValueChange = { jobTitle = it },
+                                        label = { Text(stringResource(R.string.job_title)) },
+                                        modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                            .fillMaxWidth()
+                                            .padding(start = paddingHorizontal),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                    IconButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        onClick = {
+                                            jobTitle = ""
+                                            showJobTitle = false
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Rounded.RemoveCircleOutline,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Column(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            phoneDetails.forEachIndexed { index, phoneDetail ->
+                                EditPhoneField(
+                                    value = phoneDetail.number,
+                                    onValueChange = {
+                                        if (index < phoneDetails.size && index < phoneNumbers.size) {
+                                            phoneDetails[index] = phoneDetail.copy(number = it)
+                                            phoneNumbers[index] = it
+                                        }
+                                    },
+                                    label = getPhoneTypeText(context, phoneDetail.type, phoneDetail.label),
+                                    onDelete = if (phoneDetails.size > 1) {
+                                        {
+                                            if (index < phoneDetails.size && index < phoneNumbers.size) {
+                                                phoneDetails.removeAt(index)
+                                                phoneNumbers.removeAt(index)
+                                            }
+                                        }
+                                    } else null,
+                                    onLabelChange = { newLabel, newType ->
+                                        val newTypeValue = newType ?: Phone.TYPE_CUSTOM
+                                        phoneDetails[index] = phoneDetail.copy(
+                                            type = newTypeValue,
+                                            label = if (newType == null) newLabel else null,
+                                            number = phoneDetail.number
+                                        )
+                                        phoneNumbers[index] = phoneDetail.number
+                                    }
+                                )
+                            }
+                            AddButton(
+                                text = stringResource(R.string.add_phone),
+                                onClick = {
+                                    phoneDetails.add(blankPhoneDetail)
+                                    phoneNumbers.add("")
+                                }
+                            )
+                        }
+                    }
+
+
+                    item {
+                        Column(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            emails.forEachIndexed { index, email ->
+                                EditEmailField(
+                                    value = email.value,
+                                    onValueChange = { emails[index] = ContactEmail(email.type, email.label, it) },
+                                    label = getEmailTypeText(context, email.type, email.label),
+                                    onDelete = if (emails.size > 1) { { if (index < emails.size) { emails.removeAt(index) } } } else null,
+                                    onLabelChange = { newLabel, newType ->
+                                        val newTypeValue = newType ?: Email.TYPE_CUSTOM
+                                        emails[index] = ContactEmail(
+                                            type = newTypeValue,
+                                            label = if (newType == null) newLabel else null,
+                                            value = email.value
+                                        )
+                                    }
+                                )
+                            }
+                            AddButton(
+                                text = stringResource(R.string.add_email),
+                                onClick = { emails.add(blankEmail) }
+                            )
+                        }
+                    }
+
+
+                    item {
+                        Column(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            ),verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            events.forEachIndexed { index, event ->
+                                EditEventField(
+                                    value = event.date,
+                                    onValueChange = { events[index] = ContactEvent(event.type, event.label, it) },
+                                    label = getEventTypeText(context, event.type, event.label),
+                                    onDelete = if (events.size > 1) { { if (index < events.size) { events.removeAt(index) } } } else null,
+                                    onLabelChange = { newLabel, newType ->
+                                        val newTypeValue = newType ?: Event.TYPE_CUSTOM
+                                        events[index] = ContactEvent(
+                                            type = newTypeValue,
+                                            label = if (newType == null) newLabel else null,
+                                            date = event.date
+                                        )
+                                    }
+                                )
+                            }
+                            AddButton(
+                                text = stringResource(R.string.add_event),
+                                onClick = { events.add(blankEvent) }
+                            )
+                        }
+                    }
+
+
+                    item {
+                        Column(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            ),verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            addresses.forEachIndexed { index, address ->
+                                EditAddressField(
+                                    value = address.formattedAddress,
+                                    onValueChange = { addresses[index] = ContactAddress(address.type, address.label, it) },
+                                    label = getAddressTypeText(context, address.type, address.label),
+                                    onDelete = if (addresses.size > 1) { { if (index < addresses.size) { addresses.removeAt(index) } } } else null,
+                                    onLabelChange = { newLabel, newType ->
+                                        val newTypeValue = newType ?: StructuredPostal.TYPE_CUSTOM
+                                        addresses[index] = ContactAddress(
+                                            type = newTypeValue,
+                                            label = if (newType == null) newLabel else null,
+                                            formattedAddress = address.formattedAddress
+                                        )
+                                    }
+                                )
+                            }
+                            AddButton(
+                                text = stringResource(R.string.add_address),
+                                onClick = { addresses.add(blankAddress) }
+                            )
+                        }
+                    }
+
+                    // Notes
+                    item {
+                        var appeared by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) { appeared = true }
+                        val rowScale by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0.5f,
+                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            label = "rowScale"
+                        )
+                        val rowAlpha by animateFloatAsState(
+                            targetValue = if (appeared) 1f else 0f,
+                            animationSpec = tween(150),
+                            label = "rowAlpha"
+                        )
+                        OutlinedTextField(
+                            value = notes ?: "",
+                            onValueChange = { notes = it },
+                            label = { Text(stringResource(R.string.notes_contact)) },
+                            modifier = Modifier.keepFocusedEditorFieldVisible()
+                                .animateContentSize(
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        dampingRatio = Spring.DampingRatioMediumBouncy
+                                    )
+                                )
+                                .scale(rowScale)
+                                .alpha(rowAlpha)
+                                .fillMaxWidth()
+                                .padding(horizontal = paddingHorizontal),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+
+                    item {
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+
+                        val cornerRadius by animateDpAsState(
+                            targetValue = if (isPressed) 12.dp else 50.dp,
+                            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                            label = "ButtonShape"
+                        )
+                        Button(
+                            onClick = { showFieldsDialog = true },
+                            interactionSource = interactionSource,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = paddingHorizontal),
+                            shape = RoundedCornerShape(cornerRadius),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            contentPadding = PaddingValues(16.dp)
+                        ) {
+                            Icon(Icons.Rounded.PostAdd, null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.add_field))
+                        }
+                    }
+
+                    item {
+                        Surface(
+                            modifier = Modifier.padding(horizontal = paddingHorizontal),
+                            onClick = { showPicker = true },
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = ContactUtils.getAccountIcon(selectedAccount, isPrivate),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.save_to_account),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = selectedAccount?.let(ContactUtils::getAccountName)
+                                            ?: ContactUtils.getFriendlyAccountName(null, isPrivate),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Icon(Icons.Default.ArrowDropDown, null)
+                            }
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(100.dp)) }
+                }
+            }
+        } else {
+            // Portrait
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .testTag("contactEditFields").imePadding()
+//                .padding(innerPadding)
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                        start = 0.dp,
+                        end = 0.dp,
+                        bottom = 0.dp
+                    )
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp)
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = paddingHorizontal)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .padding(vertical = 24.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            val displayPhotoUri = tempPhotoUri ?: photoUri
+                            RillAvatar(
+                                name = getDisplayName(currentContactForPreview),
+                                photoUri = displayPhotoUri,
+                                avatarColorIndex = initialAvatarColorIndex,
+                                modifier = Modifier.size(120.dp).testTag("contactEditPhotoSurface")
+                                    .clip(CircleShape)
+                                    .then(if (displayPhotoUri == null) Modifier.clickable(
+                                        onClickLabel = stringResource(R.string.add_photo),
+                                        role = androidx.compose.ui.semantics.Role.Button,
+                                        onClick = onPhotoClick
+                                    ) else Modifier),
+                                shape = CircleShape
+                            )
+
+                            if (displayPhotoUri != null) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        photoUri = null
+                                        tempPhotoUri = null
+                                    },
+                                    containerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                                    contentColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                                    shape = CircleShape,
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.BottomStart)
+                                        .offset(x = (-8).dp, y = 0.dp)
+                                        .border(
+                                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                            shape = CircleShape
+                                        )
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                        stringResource(R.string.delete),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            SmallFloatingActionButton(
+                                onClick = onPhotoClick,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                shape = CircleShape,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(x = 8.dp, y = 0.dp)
+                                    .border(
+                                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    if (displayPhotoUri != null) Icons.Outlined.Edit else Icons.Rounded.Add,
+                                    if (displayPhotoUri != null) stringResource(R.string.edit) else stringResource(R.string.add_photo),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(32.dp))
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            val displayBackground = tempCallBackground ?: callBackground
+                            if (displayBackground != null) {
+                                AsyncImage(
+                                    model = displayBackground,
+                                    contentDescription = stringResource(R.string.contact_call_background_preview),
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(width = 82.dp, height = 160.dp)
+                                        .clip(RoundedCornerShape(RillShapeDefaults.BaseMedium))
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 82.dp, height = 160.dp)
+                                        .clip(RoundedCornerShape(RillShapeDefaults.BaseMedium))
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                        .testTag("contactEditBackgroundSurface")
+                                        .clickable(
+                                            onClickLabel = stringResource(R.string.contact_call_background_set),
+                                            role = androidx.compose.ui.semantics.Role.Button,
+                                            onClick = onBackgroundClick
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Wallpaper,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                }
+                            }
+
+                            if (displayBackground != null) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        // If this is a temporary background (not yet saved)
+                                        if (tempCallBackground != null) {
+                                            tempCallBackground = null
+                                            selectedBackgroundUri = null
+                                            tempBackgroundDeleted = true
+                                        } else if (callBackground != null) {
+                                            // If this is a saved background, mark it for deletion when saving
+                                            tempBackgroundDeleted = true
+                                            callBackground = null
+                                        }
+                                    },
+                                    containerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                                    contentColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                                    shape = CircleShape,
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.BottomStart)
+                                        .offset(x = (-16).dp, y = 12.dp)
+                                        .border(
+                                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                            shape = CircleShape
+                                        )
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.ic_delete),
+                                        stringResource(R.string.contact_call_background_remove),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            SmallFloatingActionButton(
+                                onClick = onBackgroundClick,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                shape = CircleShape,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(x = 16.dp, y = 12.dp)
+                                    .border(
+                                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.surfaceContainerLowest),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    if (displayBackground != null) Icons.Outlined.Edit else Icons.Rounded.Add,
+                                    if (displayBackground != null) stringResource(R.string.contact_call_background_change)
+                                        else stringResource(R.string.contact_call_background_set),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    var appeared by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) { appeared = true }
+                    val rowScale by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0.5f,
+                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                        label = "rowScale"
+                    )
+                    val rowAlpha by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0f,
+                        animationSpec = tween(150),
+                        label = "rowAlpha"
+                    )
+                    Column(
+                        modifier = Modifier
+                            .animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            )
+                            .scale(rowScale)
+                            .alpha(rowAlpha),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        AnimatedVisibility(
+                            visible = showNamePrefix,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = namePrefix,
+                                    onValueChange = { namePrefix = it },
+                                    label = { Text(stringResource(R.string.prefix)) },
+                                    modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                        .fillMaxWidth()
+                                        .padding(start = paddingHorizontal),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onClick = {
+                                        namePrefix = ""
+                                        showNamePrefix = false
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.RemoveCircleOutline,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                        OutlinedTextField(
+                            value = givenName,
+                            onValueChange = { givenName = it },
+                            label = { Text(stringResource(R.string.first_name)) },
+                            modifier = Modifier.keepFocusedEditorFieldVisible()
+                                .fillMaxWidth()
+                                .padding(horizontal = paddingHorizontal),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                        AnimatedVisibility(
+                            visible = showMiddleName,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = middleName,
+                                    onValueChange = { middleName = it },
+                                    label = { Text(stringResource(R.string.middle_name)) },
+                                    modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                        .fillMaxWidth()
+                                        .padding(start = paddingHorizontal),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onClick = {
+                                        middleName = ""
+                                        showMiddleName = false
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.RemoveCircleOutline,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                        OutlinedTextField(
+                            value = familyName,
+                            onValueChange = { familyName = it },
+                            label = { Text(stringResource(R.string.last_name)) },
+                            modifier = Modifier.keepFocusedEditorFieldVisible()
+                                .fillMaxWidth()
+                                .padding(horizontal = paddingHorizontal),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                        AnimatedVisibility(
+                            visible = showNameSuffix,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = nameSuffix,
+                                    onValueChange = { nameSuffix = it },
+                                    label = { Text(stringResource(R.string.suffix)) },
+                                    modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                        .fillMaxWidth()
+                                        .padding(start = paddingHorizontal),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onClick = {
+                                        nameSuffix = ""
+                                        showNameSuffix = false
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.RemoveCircleOutline,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                        AnimatedVisibility(
+                            visible = showNickname,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = nickname,
+                                    onValueChange = { nickname = it },
+                                    label = { Text(stringResource(R.string.nickname)) },
+                                    modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                        .fillMaxWidth()
+                                        .padding(start = paddingHorizontal),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onClick = {
+                                        nickname = ""
+                                        showNickname = false
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.RemoveCircleOutline,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Organization
+                item {
+                    var appeared by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) { appeared = true }
+                    val rowScale by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0.5f,
+                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                        label = "rowScale"
+                    )
+                    val rowAlpha by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0f,
+                        animationSpec = tween(150),
+                        label = "rowAlpha"
+                    )
+                    Column(
+                        modifier = Modifier
+                            .animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            )
+                            .scale(rowScale)
+                            .alpha(rowAlpha),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = company,
+                            onValueChange = { company = it },
+                            label = { Text(stringResource(R.string.company)) },
+                            modifier = Modifier.keepFocusedEditorFieldVisible()
+                                .fillMaxWidth()
+                                .padding(horizontal = paddingHorizontal),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                        AnimatedVisibility(
+                            visible = showJobTitle,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = jobTitle,
+                                    onValueChange = { jobTitle = it },
+                                    label = { Text(stringResource(R.string.job_title)) },
+                                    modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
+                                        .fillMaxWidth()
+                                        .padding(start = paddingHorizontal),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onClick = {
+                                        jobTitle = ""
+                                        showJobTitle = false
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.RemoveCircleOutline,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                item {
+                    Column(
+                        modifier = Modifier.animateContentSize(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            )
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        phoneDetails.forEachIndexed { index, phoneDetail ->
+                            EditPhoneField(
+                                value = phoneDetail.number,
+                                onValueChange = {
+                                    if (index < phoneDetails.size && index < phoneNumbers.size) {
+                                        phoneDetails[index] = phoneDetail.copy(number = it)
+                                        phoneNumbers[index] = it
+                                    }
+                                },
+                                label = getPhoneTypeText(context, phoneDetail.type, phoneDetail.label),
+                                onDelete = if (phoneDetails.size > 1) {
+                                    {
+                                        if (index < phoneDetails.size && index < phoneNumbers.size) {
+                                            phoneDetails.removeAt(index)
+                                            phoneNumbers.removeAt(index)
+                                        }
+                                    }
+                                } else null,
+                                onLabelChange = { newLabel, newType ->
+                                    val newTypeValue = newType ?: Phone.TYPE_CUSTOM
+                                    phoneDetails[index] = phoneDetail.copy(
+                                        type = newTypeValue,
+                                        label = if (newType == null) newLabel else null,
+                                        number = phoneDetail.number
+                                    )
+                                    phoneNumbers[index] = phoneDetail.number
+                                }
+                            )
+                        }
+                        AddButton(
+                            text = stringResource(R.string.add_phone),
+                            onClick = {
+                                phoneDetails.add(blankPhoneDetail)
+                                phoneNumbers.add("")
+                            }
+                        )
+                    }
+                }
+
+
+                item {
+                    Column(
+                        modifier = Modifier.animateContentSize(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            )
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        emails.forEachIndexed { index, email ->
+                            EditEmailField(
+                                value = email.value,
+                                onValueChange = { emails[index] = ContactEmail(email.type, email.label, it) },
+                                label = getEmailTypeText(context, email.type, email.label),
+                                onDelete = if (emails.size > 1) { { if (index < emails.size) { emails.removeAt(index) } } } else null,
+                                onLabelChange = { newLabel, newType ->
+                                    val newTypeValue = newType ?: Email.TYPE_CUSTOM
+                                    emails[index] = ContactEmail(
+                                        type = newTypeValue,
+                                        label = if (newType == null) newLabel else null,
+                                        value = email.value
+                                    )
+                                }
+                            )
+                        }
+                        AddButton(
+                            text = stringResource(R.string.add_email),
+                            onClick = { emails.add(blankEmail) }
+                        )
+                    }
+                }
+
+
+                item {
+                    Column(
+                        modifier = Modifier.animateContentSize(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            )
+                        ),verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        events.forEachIndexed { index, event ->
+                            EditEventField(
+                                value = event.date,
+                                onValueChange = { events[index] = ContactEvent(event.type, event.label, it) },
+                                label = getEventTypeText(context, event.type, event.label),
+                                onDelete = if (events.size > 1) { { if (index < events.size) { events.removeAt(index) } } } else null,
+                                onLabelChange = { newLabel, newType ->
+                                    val newTypeValue = newType ?: Event.TYPE_CUSTOM
+                                    events[index] = ContactEvent(
+                                        type = newTypeValue,
+                                        label = if (newType == null) newLabel else null,
+                                        date = event.date
+                                    )
+                                }
+                            )
+                        }
+                        AddButton(
+                            text = stringResource(R.string.add_event),
+                            onClick = { events.add(blankEvent) }
+                        )
+                    }
+                }
+
+
+                item {
+                    Column(
+                        modifier = Modifier.animateContentSize(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            )
+                        ),verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        addresses.forEachIndexed { index, address ->
+                            EditAddressField(
+                                value = address.formattedAddress,
+                                onValueChange = { addresses[index] = ContactAddress(address.type, address.label, it) },
+                                label = getAddressTypeText(context, address.type, address.label),
+                                onDelete = if (addresses.size > 1) { { if (index < addresses.size) { addresses.removeAt(index) } } } else null,
+                                onLabelChange = { newLabel, newType ->
+                                    val newTypeValue = newType ?: StructuredPostal.TYPE_CUSTOM
+                                    addresses[index] = ContactAddress(
+                                        type = newTypeValue,
+                                        label = if (newType == null) newLabel else null,
+                                        formattedAddress = address.formattedAddress
+                                    )
+                                }
+                            )
+                        }
+                        AddButton(
+                            text = stringResource(R.string.add_address),
+                            onClick = { addresses.add(blankAddress) }
+                        )
+                    }
+                }
+
+                // Notes
+                item {
+                    var appeared by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) { appeared = true }
+                    val rowScale by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0.5f,
+                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                        label = "rowScale"
+                    )
+                    val rowAlpha by animateFloatAsState(
+                        targetValue = if (appeared) 1f else 0f,
+                        animationSpec = tween(150),
+                        label = "rowAlpha"
+                    )
+                    OutlinedTextField(
+                        value = notes ?: "",
+                        onValueChange = { notes = it },
+                        label = { Text(stringResource(R.string.notes_contact)) },
+                        modifier = Modifier.keepFocusedEditorFieldVisible()
+                            .animateContentSize(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    dampingRatio = Spring.DampingRatioMediumBouncy
+                                )
+                            )
+                            .scale(rowScale)
+                            .alpha(rowAlpha)
+                            .fillMaxWidth()
+                            .padding(horizontal = paddingHorizontal),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+
+                item {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+
+                    val cornerRadius by animateDpAsState(
+                        targetValue = if (isPressed) 12.dp else 50.dp,
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        label = "ButtonShape"
+                    )
+                    Button(
+                        onClick = { showFieldsDialog = true },
+                        interactionSource = interactionSource,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = paddingHorizontal),
+                        shape = RoundedCornerShape(cornerRadius),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        Icon(Icons.Rounded.PostAdd, null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.add_field))
+                    }
+                }
+
+                item {
+                    val isNewContact = contactId == null || contactId == "0" || contactId == "null"
+                    Surface(
+                        modifier = Modifier.padding(horizontal = paddingHorizontal),
+                        onClick = { showPicker = true },
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = ContactUtils.getAccountIcon(selectedAccount, isPrivate),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.save_to_account),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = selectedAccount?.let(ContactUtils::getAccountName)
+                                        ?: ContactUtils.getFriendlyAccountName(null, isPrivate),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            if (isNewContact) Icon(Icons.Default.ArrowDropDown, null)
+                        }
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(100.dp)) }
+            }
+        }
+
+        if (isSaving) Box(Modifier.fillMaxSize().clickable(
+            interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}))
+    }
+}
+
+@Composable
+fun EditField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null, // label, type
+    availableLabels: List<Pair<Int, String>> = emptyList() // (type, displayName)
+) {
+    var appeared by remember { mutableStateOf(false) }
+    var showLabelEditor by remember { mutableStateOf(false) }
+    var currentLabel by remember(label) { mutableStateOf(label) }
+    var customLabelText by remember { mutableStateOf("") }
+    var showCustomLabelInput by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) { appeared = true }
+
+    val rowScale by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0.5f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "rowScale"
+    )
+    val rowAlpha by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0f,
+        animationSpec = tween(150),
+        label = "rowAlpha"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(rowScale)
+            .alpha(rowAlpha)
+            .animateContentSize()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Edit label button
+            IconButton(
+                onClick = { showLabelEditor = !showLabelEditor },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    stringResource(R.string.change_label),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            OutlinedTextField(
+                value = value,
+                onValueChange = onValueChange,
+                label = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(icon, null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(currentLabel)
+                    }
+                },
+                modifier = Modifier.keepFocusedEditorFieldVisible()
+                    .weight(1f),
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                )
+            )
+
+            if (onDelete != null) {
+                IconButton(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onClick = onDelete,
+                ) {
+                    Icon(
+                        Icons.Rounded.RemoveCircleOutline,
+                        null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.size(paddingHorizontal))
+            }
+        }
+
+        // Drop-down list for selecting a label
+        if (showLabelEditor && availableLabels.isNotEmpty()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = paddingHorizontal, end = paddingHorizontal, top = 6.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
+            ) {
+                Column(
+                    modifier = Modifier.animateContentSize()
+                ) {
+                    availableLabels.forEach { (type, labelText) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    currentLabel = labelText
+                                    onLabelChange?.invoke(labelText, type)
+                                    showLabelEditor = false
+                                    showCustomLabelInput = false
+                                }
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = labelText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (currentLabel == labelText)
+                                    MaterialTheme.colorScheme.accentText
+                                else
+                                    MaterialTheme.colorScheme.onSurface
+                            )
+                            if (currentLabel == labelText) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Option for a custom label
+                    if (showCustomLabelInput) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = customLabelText,
+                                onValueChange = { customLabelText = it },
+                                placeholder = { Text(stringResource(R.string.custom_label)) },
+                                modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            IconButton(
+                                onClick = {
+                                    if (customLabelText.isNotBlank()) {
+                                        currentLabel = customLabelText
+                                        onLabelChange?.invoke(customLabelText, null) // null means custom type
+                                        showLabelEditor = false
+                                        showCustomLabelInput = false
+                                        customLabelText = ""
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Default.Check, stringResource(R.string.save))
+                            }
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showCustomLabelInput = true
+                                }
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.custom_label),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.accentText
+                            )
+                            Icon(
+                                Icons.Default.Add,
+                                stringResource(R.string.custom_label),
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditPhoneField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null
+) {
+    val phoneTypes = listOf(
+        Phone.TYPE_MOBILE to stringResource(R.string.mobile),
+        Phone.TYPE_WORK to stringResource(R.string.work),
+        Phone.TYPE_HOME to stringResource(R.string.home),
+        Phone.TYPE_MAIN to stringResource(R.string.main_number),
+//        Phone.TYPE_FAX_WORK to stringResource(R.string.work_fax),
+//        Phone.TYPE_FAX_HOME to stringResource(R.string.home_fax),
+//        Phone.TYPE_PAGER to stringResource(R.string.pager),
+        Phone.TYPE_OTHER to stringResource(R.string.other)
+    ).distinctBy { it.first }
+
+    EditField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        icon = DotDialerHandsetIcon,
+        onDelete = onDelete,
+        onLabelChange = onLabelChange,
+        availableLabels = phoneTypes
+    )
+}
+
+@Composable
+fun EditEmailField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null
+) {
+    val emailTypes = listOf(
+        Email.TYPE_HOME to stringResource(R.string.home),
+        Email.TYPE_WORK to stringResource(R.string.work),
+        Email.TYPE_MOBILE to stringResource(R.string.mobile),
+        Email.TYPE_OTHER to stringResource(R.string.other)
+    )
+
+    EditField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        icon = Icons.Default.Email,
+        onDelete = onDelete,
+        onLabelChange = onLabelChange,
+        availableLabels = emailTypes
+    )
+}
+
+@Composable
+fun EditAddressField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null
+) {
+    val addressTypes = listOf(
+        StructuredPostal.TYPE_HOME to stringResource(R.string.home),
+        StructuredPostal.TYPE_WORK to stringResource(R.string.work),
+        StructuredPostal.TYPE_OTHER to stringResource(R.string.other)
+    )
+
+    EditField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        icon = Icons.Default.LocationOn,
+        onDelete = onDelete,
+        onLabelChange = onLabelChange,
+        availableLabels = addressTypes
+    )
+}
+
+@Composable
+fun EditFieldDate(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null,
+    availableLabels: List<Pair<Int, String>> = emptyList()
+) {
+    var appeared by remember { mutableStateOf(false) }
+    var showLabelEditor by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var currentLabel by remember(label) { mutableStateOf(label) }
+    var customLabelText by remember { mutableStateOf("") }
+    var showCustomLabelInput by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) { appeared = true }
+
+    val rowScale by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0.5f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "rowScale"
+    )
+    val rowAlpha by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0f,
+        animationSpec = tween(150),
+        label = "rowAlpha"
+    )
+
+    // Convert the YYYY-MM-DD string to milliseconds for the DatePicker
+    val initialDateMillis = remember(value) { stringToMillis(value) }
+    var selectedDateMillis by remember(initialDateMillis) { mutableStateOf(initialDateMillis) }
+
+    // Update the external status in the YYYY-MM-DD format
+    LaunchedEffect(selectedDateMillis) {
+        val dateString = millisToString(selectedDateMillis, value)
+        onValueChange(dateString)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(rowScale)
+            .alpha(rowAlpha)
+            .animateContentSize()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Edit label button
+            IconButton(
+                onClick = { showLabelEditor = !showLabelEditor },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    stringResource(R.string.change_label),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            OutlinedTextField(
+//                leadingIcon = {
+//                    Icon(
+//                        icon,
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .padding(start = 8.dp)
+//                            .clickable(
+//                                indication = ripple(bounded = false, radius = 24.dp),
+//                                interactionSource = null,
+//                            ) { showDatePicker = true }
+//                    )
+//                },
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.select),
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                },
+                value = millisToString(selectedDateMillis, value),
+                onValueChange = {},
+                label = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(icon, null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(currentLabel)
+                    }
+                },
+                modifier = Modifier.keepFocusedEditorFieldVisible()
+                    .weight(1f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { showDatePicker = true },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    // Active status
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    // We're overriding the disabled colors so the field looks like a regular one
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+                readOnly = true,
+                enabled = false,
+            )
+
+            if (onDelete != null) {
+                IconButton(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onClick = onDelete,
+                ) {
+                    Icon(
+                        Icons.Rounded.RemoveCircleOutline,
+                        null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.size(paddingHorizontal))
+            }
+        }
+
+        // Drop-down list for selecting a label
+        if (showLabelEditor && availableLabels.isNotEmpty()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = paddingHorizontal, end = paddingHorizontal, top = 6.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
+            ) {
+                Column(
+                    modifier = Modifier.animateContentSize()
+                ) {
+                    availableLabels.forEach { (type, labelText) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    currentLabel = labelText
+                                    onLabelChange?.invoke(labelText, type)
+                                    showLabelEditor = false
+                                    showCustomLabelInput = false
+                                }
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = labelText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (currentLabel == labelText)
+                                    MaterialTheme.colorScheme.accentText
+                                else
+                                    MaterialTheme.colorScheme.onSurface
+                            )
+                            if (currentLabel == labelText) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Option for a custom label
+                    if (showCustomLabelInput) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = customLabelText,
+                                onValueChange = { customLabelText = it },
+                                placeholder = { Text(stringResource(R.string.custom_label)) },
+                                modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            IconButton(
+                                onClick = {
+                                    if (customLabelText.isNotBlank()) {
+                                        currentLabel = customLabelText
+                                        onLabelChange?.invoke(customLabelText, null)
+                                        showLabelEditor = false
+                                        showCustomLabelInput = false
+                                        customLabelText = ""
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Default.Check, stringResource(R.string.save))
+                            }
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showCustomLabelInput = true
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.custom_label),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.accentText
+                            )
+                            Icon(
+                                Icons.Default.Add,
+                                stringResource(R.string.custom_label),
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Date Picker Dialog
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDateMillis ?: System.currentTimeMillis()
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { dateMillis ->
+                            selectedDateMillis = dateMillis
+                        }
+                        showDatePicker = false
+                    }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@Composable
+fun EditEventField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    onDelete: (() -> Unit)? = null,
+    onLabelChange: ((String, Int?) -> Unit)? = null
+) {
+    val eventTypes = listOf(
+        Event.TYPE_BIRTHDAY to stringResource(R.string.birthday),
+        Event.TYPE_ANNIVERSARY to stringResource(R.string.anniversary),
+        Event.TYPE_OTHER to stringResource(R.string.other),
+    )
+
+    EditFieldDate(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        icon = Icons.Default.Event,
+        onDelete = onDelete,
+        onLabelChange = onLabelChange,
+        availableLabels = eventTypes
+    )
+}
+
+@Composable
+fun FieldOption(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    isSelected: Boolean,
+    onToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle() }
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            icon,
+            null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                lineHeight = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Checkbox(
+            checked = isSelected,
+            onCheckedChange = { onToggle() },
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.primary
+            )
+        )
+    }
+}
+
+@Composable
+fun AddButton(
+    text: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .padding(horizontal = paddingHorizontal - 12.dp)
+            .clip(RoundedCornerShape(50))
+            .combinedClickable(
+                onClick = onClick,
+                interactionSource = null,
+                indication = ripple(bounded = true),
+            ),
+        shape = RoundedCornerShape(50),
+        color = Color.Transparent
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.accentText
+        )
+    }
+}

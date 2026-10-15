@@ -1,0 +1,66 @@
+package dev.goodwy.rphone.domain.usecase
+
+import dev.goodwy.rphone.domain.model.CallerMetadata
+import dev.goodwy.rphone.domain.repository.ICallerRepository
+import kotlinx.coroutines.CancellationException
+
+class GetCallerNameUseCase(private val repository: ICallerRepository) {
+    suspend operator fun invoke(incomingNumber: String, cnamName: String?, regionIso: String? = null): CallerMetadata {
+        // Contact enrichment must never bring down the call UI. In particular, Android creates
+        // address-less parent calls for conferences and OEM contact providers may reject a lookup.
+        val localContact = if (incomingNumber.isBlank()) {
+            null
+        } else {
+            try {
+                repository.getContactByNumberInRegion(incomingNumber, regionIso)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (securityFailure: SecurityException) {
+                null
+            } catch (_: IllegalArgumentException) {
+                null
+            }
+        }
+        
+        val hasLocalName = localContact != null && (
+            localContact.givenName.isNotBlank() || 
+            localContact.familyName.isNotBlank() || 
+            localContact.nickname.isNotBlank() || 
+            localContact.company.isNotBlank()
+        )
+
+        return when {
+            hasLocalName -> {
+                CallerMetadata(
+                    number = incomingNumber,
+                    name = localContact.displayName,
+                    isLocalContact = true,
+                    photoUri = localContact.photoUri
+                )
+            }
+            !cnamName.isNullOrBlank() -> {
+                CallerMetadata(
+                    number = incomingNumber,
+                    name = cnamName,
+                    isLocalContact = false
+                )
+            }
+            localContact != null -> {
+                // We have a contact but no name, maybe just use its display name (which might be the number)
+                CallerMetadata(
+                    number = incomingNumber,
+                    name = localContact.displayName,
+                    isLocalContact = true,
+                    photoUri = localContact.photoUri
+                )
+            }
+            else -> {
+                CallerMetadata(
+                    number = incomingNumber,
+                    name = incomingNumber.ifBlank { "Unknown Number" },
+                    isLocalContact = false
+                )
+            }
+        }.copy(lookupRegionIso = regionIso)
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Llamadas y contactos</string>
+    <string name="onboarding_essential_body">Tus contactos y el historial de llamadas permanecen en tu teléfono, no en nuestros servidores. Android solicitará la aplicación de teléfono predeterminada y los permisos necesarios.\n\nLos informes técnicos de errores son automáticos por defecto. Puedes elegir enviarlos solo a petición en %1$s → %2$s.</string>
+    <string name="onboarding_start">Comenzar</string>
+    <string name="diagnostic_reporting_mode">Informes de errores</string>
+    <string name="diagnostic_automatic">Automáticos</string>
+    <string name="diagnostic_on_demand">Solo a petición</string>
+    <string name="diagnostic_reporting_explanation">El registro local está disponible en ambos modos. El modo a petición envía un evento solo cuando lo solicitas.</string>
+    <string name="photo_offer_title">Fotos de contactos más nítidas</string>
+    <string name="photo_offer_body">Algunos contactos de Google tienen fotos. Puedes conectar Google opcionalmente para buscar versiones de mayor resolución.</string>
+    <string name="photo_offer_options">Ver opciones</string>
+    <string name="diagnostic_mode_save_failed">No se pudo guardar la configuración de informes. Inténtalo de nuevo.</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Diagnoseberichte</string>
+    <string name="onboarding_essential_body_gplay">Deine Kontakte und dein Anrufverlauf bleiben auf deinem Telefon, nicht auf unseren Servern. Android fragt nach der Standard-Telefon-App und den Anrufberechtigungen.\n\nDie automatische Diagnose sendet technische Fehlerberichte, minimale Geräte- und SIM-Daten sowie tägliche Funktionszähler. Keine Kontakte, Anrufinhalte oder GPS-Daten. Berichte nur auf Anfrage wählst du unter %1$s → %2$s.</string>
+</resources>

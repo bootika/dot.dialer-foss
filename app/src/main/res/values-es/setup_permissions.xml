@@ -1,0 +1,14 @@
+<resources>
+    <string name="setup_contacts_read">Leer contactos para identificar llamadas y mostrar nombres y fotos.</string>
+    <string name="setup_contacts_write">Editar contactos para guardar nombres, números y fotos.</string>
+    <string name="setup_history_read">Leer el historial para mostrar llamadas entrantes, salientes y perdidas.</string>
+    <string name="setup_history_write">Editar el historial para borrar las entradas que elijas.</string>
+    <string name="setup_phone_state">Leer el estado del teléfono para identificar tarjetas SIM y cuentas de llamadas.</string>
+    <string name="setup_phone_call">Iniciar las llamadas que hagas desde dot.dialer.</string>
+    <string name="setup_phone_answer">Gestionar llamadas entrantes y controles de respuesta.</string>
+    <string name="setup_notifications">Mostrar alertas y controles de llamadas entrantes, en curso y perdidas.</string>
+    <string name="setup_bluetooth">Usar el audio del coche y auriculares Bluetooth conectados.</string>
+    <string name="setup_fullscreen">Mostrar llamadas entrantes sobre la pantalla bloqueada. Sin este acceso, utiliza la notificación de llamada.</string>
+    <string name="setup_retry">Reintentar</string>
+    <string name="setup_continue_limited">Continuar con funciones limitadas</string>
+</resources>

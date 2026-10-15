@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Nomes e detalhes em várias linhas</string>
+    <string name="expanded_list_details_description">Quando faltar espaço, mostrar nomes e números em várias linhas e mover o horário para baixo.</string>
+</resources>

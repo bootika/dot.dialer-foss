@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Tanı dosyasını paylaş</string>
+    <string name="diagnostics_use_file">Bu günlük kopyalanamayacak kadar büyük. Dosyayı paylaş.</string>
+    <string name="diagnostics_share_failed">Tanı paylaşılamadı</string>
+    <string name="car_capture_title">Araç testi kaydı</string>
+    <string name="car_capture_steps">Yukarıdan Verbose’u seç. Testten önce Geliştirici seçeneklerinde Bluetooth HCI snoop log kaydını aç (tam, filtresiz) ve etkin arama yokken Bluetooth’u yeniden başlat. Aramaları test et. Ardından orada tam hata raporu oluştur ve HCI kaydını kapat; etkin arama yokken Bluetooth’u tekrar yeniden başlat. Dot TXT dosyasını ve Android raporunu paylaş. Rapor kişi verileri içerebilir. Test sırasında bilgisayar gerekmez.</string>
+    <string name="car_capture_developer_options">Geliştirici seçenekleri</string>
+    <string name="car_capture_settings_failed">Geliştirici seçenekleri açılamadı</string>
+</resources>

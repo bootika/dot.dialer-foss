@@ -1,0 +1,7 @@
+<resources>
+    <string name="test_access_checking">Memeriksa akses ke versi uji ini…</string>
+    <string name="test_access_unavailable">Akses tidak dapat diverifikasi. Hubungkan ke internet dan coba lagi.</string>
+    <string name="test_access_blocked">Akses ke versi uji ini tidak aktif. Instal dot.dialer dari Google Play atau hubungi diler@dotdesign.ro.</string>
+    <string name="test_access_retry">Coba lagi</string>
+    <string name="test_access_phone_settings">Aplikasi telepon default</string>
+</resources>

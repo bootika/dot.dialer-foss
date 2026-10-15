@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Calls and contacts</string>
+    <string name="onboarding_essential_body">Your contacts and call history stay on your phone, not on our servers. Android will ask for the default phone app and the permissions needed for calls.\n\nTechnical error reports are automatic by default. You can choose on-demand reporting in %1$s → %2$s.</string>
+    <string name="onboarding_start">Get started</string>
+    <string name="diagnostic_reporting_mode">Error reporting</string>
+    <string name="diagnostic_automatic">Automatic</string>
+    <string name="diagnostic_on_demand">On demand only</string>
+    <string name="diagnostic_reporting_explanation">The local journal stays available in both modes. On-demand reporting sends an event only when you request it.</string>
+    <string name="photo_offer_title">Sharper contact photos</string>
+    <string name="photo_offer_body">Some Google contacts have photos. You can optionally connect Google to look for higher-resolution versions.</string>
+    <string name="photo_offer_options">See options</string>
+    <string name="diagnostic_mode_save_failed">Could not save the reporting setting. Please try again.</string>
+</resources>

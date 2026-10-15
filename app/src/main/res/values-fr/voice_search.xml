@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Recherche vocale</string>
+    <string name="voice_search_description">Afficher le micro dans toutes les barres de recherche.</string>
+    <string name="voice_search_prompt">Dites ce que vous cherchez</string>
+    <string name="voice_search_permission">Autorisez le microphone pour la recherche vocale dans les paramètres de cette application.</string>
+    <string name="voice_search_unavailable">Aucune application de reconnaissance vocale disponible. Vous pouvez toujours saisir votre recherche.</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash background matches Material3 surface (dark) -->
+    <color name="splash_bg">#FF1C1B1F</color>
+
+    <color name="notification_color">#17191F</color>
+</resources>

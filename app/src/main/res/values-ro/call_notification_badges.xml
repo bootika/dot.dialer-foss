@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Tu</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="one">%d apel pierdut</item>
+        <item quantity="few">%d apeluri pierdute</item>
+        <item quantity="other">%d de apeluri pierdute</item>
+    </plurals>
+</resources>

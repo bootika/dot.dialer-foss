@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Afișează toate apelurile</string>
+    <string name="show_all_recent_calls_subtitle">Arată fiecare apel separat, inclusiv apelurile ratate.</string>
+</resources>

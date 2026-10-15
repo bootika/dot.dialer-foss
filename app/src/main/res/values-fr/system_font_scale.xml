@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Ignorer la taille de police du système</string>
+    <string name="ignore_system_font_scale_description">Utiliser la taille de texte standard. Les réglages de taille de l’app restent actifs.</string>
+</resources>

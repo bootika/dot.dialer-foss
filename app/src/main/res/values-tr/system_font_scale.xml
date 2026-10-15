@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Sistem yazı tipi boyutunu yoksay</string>
+    <string name="ignore_system_font_scale_description">Standart metin boyutunu kullan. Uygulamanın boyut ayarları geçerli kalır.</string>
+</resources>

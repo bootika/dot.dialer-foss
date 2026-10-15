@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Wyszukiwanie głosowe</string>
+    <string name="voice_search_description">Pokaż mikrofon na wszystkich paskach wyszukiwania.</string>
+    <string name="voice_search_prompt">Powiedz, czego szukasz</string>
+    <string name="voice_search_permission">Zezwól na dostęp do mikrofonu dla wyszukiwania głosowego w ustawieniach aplikacji.</string>
+    <string name="voice_search_unavailable">Brak aplikacji rozpoznawania mowy. Nadal możesz wpisać wyszukiwanie.</string>
+</resources>

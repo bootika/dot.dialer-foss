@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Tanılama raporları</string>
+    <string name="onboarding_essential_body_gplay">Kişileriniz ve arama geçmişiniz sunucularımızda değil, telefonunuzda kalır. Android varsayılan telefon uygulamasını ve gerekli izinleri soracaktır.\n\nOtomatik tanılama teknik hata raporları, sınırlı cihaz ve SIM bilgileri ile günlük özellik sayaçları gönderir. Kişiler, arama içeriği veya GPS gönderilmez. %1$s → %2$s bölümünde yalnızca isteğe bağlı raporlamayı seçebilirsiniz.</string>
+</resources>

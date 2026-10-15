@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Names and details on multiple lines</string>
+    <string name="expanded_list_details_description">When space is limited, show names and numbers on multiple lines and move the time below.</string>
+</resources>

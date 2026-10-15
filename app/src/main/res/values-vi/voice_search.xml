@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Tìm kiếm bằng giọng nói</string>
+    <string name="voice_search_description">Hiển thị micrô trên mọi thanh tìm kiếm.</string>
+    <string name="voice_search_prompt">Nói nội dung cần tìm</string>
+    <string name="voice_search_permission">Cho phép truy cập micrô để tìm kiếm bằng giọng nói trong cài đặt ứng dụng.</string>
+    <string name="voice_search_unavailable">Không có ứng dụng nhận dạng giọng nói. Bạn vẫn có thể nhập nội dung tìm kiếm.</string>
+</resources>

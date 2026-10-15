@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Połączenia i kontakty</string>
+    <string name="onboarding_essential_body">Kontakty i historia połączeń pozostają na telefonie, nie na naszych serwerach. Android poprosi o wybór domyślnej aplikacji telefonu i wymagane uprawnienia.\n\nTechniczne raporty błędów są domyślnie automatyczne. Możesz wybrać wysyłanie na żądanie w %1$s → %2$s.</string>
+    <string name="onboarding_start">Rozpocznij</string>
+    <string name="diagnostic_reporting_mode">Raportowanie błędów</string>
+    <string name="diagnostic_automatic">Automatycznie</string>
+    <string name="diagnostic_on_demand">Tylko na żądanie</string>
+    <string name="diagnostic_reporting_explanation">Lokalny dziennik jest dostępny w obu trybach. Tryb na żądanie wysyła zdarzenie tylko wtedy, gdy tego zażądasz.</string>
+    <string name="photo_offer_title">Wyraźniejsze zdjęcia kontaktów</string>
+    <string name="photo_offer_body">Niektóre kontakty Google mają zdjęcia. Możesz opcjonalnie połączyć Google, aby poszukać wersji w wyższej rozdzielczości.</string>
+    <string name="photo_offer_options">Zobacz opcje</string>
+    <string name="diagnostic_mode_save_failed">Nie udało się zapisać ustawienia raportów. Spróbuj ponownie.</string>
+</resources>

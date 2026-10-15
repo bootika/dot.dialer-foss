@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Offres</string>
+    <string name="plans_description">Les appels essentiels restent gratuits. Pro débloque un fond d’appel personnalisé. Choisissez votre offre.</string>
+    <string name="gift_title">Code d’activation</string>
+    <string name="gift_description">Vous avez un code early adopter ? Activez-le ici et conservez-le pour un autre téléphone.</string>
+    <string name="gift_active">Pro early adopter actif</string>
+    <string name="gift_activate">Activer le code</string>
+    <string name="gift_code">Code d’activation</string>
+    <string name="gift_invalid">Ce code est invalide, expiré ou révoqué.</string>
+    <string name="gift_limit">Limite d’appareils atteinte. Demandez la réinitialisation des activations.</string>
+    <string name="gift_unavailable">Activation impossible. Vérifiez la connexion et réessayez.</string>
+    <string name="plan_monthly_description">Abonnement Pro mensuel à renouvellement automatique.</string>
+    <string name="plan_yearly_description">Abonnement Pro annuel à renouvellement automatique.</string>
+    <string name="plan_lifetime_description">Un paiement pour un accès Pro à vie.</string>
+    <string name="product_stats_description">Les rapports automatiques incluent des statistiques minimales : versions app/Android, modèle, langue, pays/opérateur SIM, région des numéros choisie et totaux quotidiens des favoris, gestes et clavier. Aucun contact, numéro, historique d’appels ni GPS. Sur demande désactive ces statistiques.</string>
+</resources>

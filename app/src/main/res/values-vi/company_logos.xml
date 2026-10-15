@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_search_unavailable">Không thể tìm theo tên công ty. Tìm bằng trang web hoặc tên miền email vẫn có thể hoạt động.</string>
+</resources>

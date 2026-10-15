@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Relatórios de diagnóstico</string>
+    <string name="onboarding_essential_body_gplay">Seus contatos e histórico ficam no telefone, não nos nossos servidores. O Android pedirá o app de telefone padrão e as permissões necessárias.\n\nO diagnóstico automático envia relatórios técnicos, dados mínimos do aparelho e SIM e contagens diárias de funções. Sem contatos, conteúdo de chamadas ou GPS. Escolha relatórios sob demanda em %1$s → %2$s.</string>
+</resources>

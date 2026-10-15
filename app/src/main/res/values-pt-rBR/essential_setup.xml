@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Chamadas e contatos</string>
+    <string name="onboarding_essential_body">Seus contatos e histórico ficam no telefone, não nos nossos servidores. O Android pedirá o app de telefone padrão e as permissões necessárias.\n\nOs relatórios técnicos de erros são automáticos por padrão. Você pode escolher o envio sob demanda em %1$s → %2$s.</string>
+    <string name="onboarding_start">Começar</string>
+    <string name="diagnostic_reporting_mode">Relatórios de erros</string>
+    <string name="diagnostic_automatic">Automáticos</string>
+    <string name="diagnostic_on_demand">Só sob demanda</string>
+    <string name="diagnostic_reporting_explanation">O registro local continua disponível nos dois modos. O envio sob demanda envia um evento apenas quando você solicita.</string>
+    <string name="photo_offer_title">Fotos de contatos mais nítidas</string>
+    <string name="photo_offer_body">Alguns contatos do Google têm fotos. Você pode conectar o Google para buscar versões de maior resolução.</string>
+    <string name="photo_offer_options">Ver opções</string>
+    <string name="diagnostic_mode_save_failed">Não foi possível salvar a configuração de relatórios. Tente novamente.</string>
+</resources>

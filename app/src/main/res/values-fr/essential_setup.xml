@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Appels et contacts</string>
+    <string name="onboarding_essential_body">Tes contacts et ton historique restent sur ton téléphone, pas sur nos serveurs. Android demandera de choisir l’application de téléphone par défaut et les autorisations nécessaires.\n\nLes rapports techniques d’erreurs sont automatiques par défaut. Tu peux choisir les rapports sur demande dans %1$s → %2$s.</string>
+    <string name="onboarding_start">Commencer</string>
+    <string name="diagnostic_reporting_mode">Rapports d’erreurs</string>
+    <string name="diagnostic_automatic">Automatiques</string>
+    <string name="diagnostic_on_demand">Sur demande</string>
+    <string name="diagnostic_reporting_explanation">Le journal local reste disponible dans les deux modes. Le mode sur demande envoie un événement uniquement quand tu le demandes.</string>
+    <string name="photo_offer_title">Des photos de contacts plus nettes</string>
+    <string name="photo_offer_body">Certains contacts Google ont des photos. Tu peux connecter Google pour rechercher des versions de meilleure résolution.</string>
+    <string name="photo_offer_options">Voir les options</string>
+    <string name="diagnostic_mode_save_failed">Impossible d’enregistrer le réglage des rapports. Réessayez.</string>
+</resources>

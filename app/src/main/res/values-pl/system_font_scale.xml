@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Ignoruj rozmiar czcionki systemowej</string>
+    <string name="ignore_system_font_scale_description">Używaj standardowego rozmiaru tekstu. Ustawienia rozmiaru aplikacji nadal obowiązują.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Splash background matches Material3 surface (light) -->
+    <color name="splash_bg">#FFFBFE</color>
+
+    <color name="notification_color">#F7F5EF</color>
+
+    <!-- Static Android Auto branding. Host safety rules still control contrast and rendering. -->
+    <color name="car_brand_primary">#00BB77</color>
+    <color name="car_brand_primary_dark">#00875A</color>
+    <color name="car_brand_secondary">#E5485B</color>
+    <color name="car_brand_secondary_dark">#A7293E</color>
+</resources>

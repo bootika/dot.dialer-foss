@@ -1,0 +1,14 @@
+<resources>
+    <string name="setup_contacts_read">Citește contactele pentru a identifica apelanții și a afișa numele și fotografiile lor.</string>
+    <string name="setup_contacts_write">Modifică contactele pentru a salva schimbările de nume, număr și fotografie.</string>
+    <string name="setup_history_read">Citește istoricul pentru a afișa apelurile primite, efectuate și ratate.</string>
+    <string name="setup_history_write">Modifică istoricul pentru a șterge intrările pe care le alegi.</string>
+    <string name="setup_phone_state">Citește starea telefonului pentru a identifica SIM-urile și conturile de apel.</string>
+    <string name="setup_phone_call">Inițiază apelurile pe care le pornești din dot.dialer.</string>
+    <string name="setup_phone_answer">Gestionează apelurile primite și comenzile de răspuns.</string>
+    <string name="setup_notifications">Afișează alertele și comenzile pentru apeluri primite, în curs și ratate.</string>
+    <string name="setup_bluetooth">Folosește sistemul audio al mașinii și căștile Bluetooth conectate.</string>
+    <string name="setup_fullscreen">Permite afișarea apelurilor primite peste ecranul blocat. Fără acest acces, folosește notificarea apelului.</string>
+    <string name="setup_retry">Încearcă din nou</string>
+    <string name="setup_continue_limited">Continuă cu funcții limitate</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Ignoră mărimea fonturilor din sistem</string>
+    <string name="ignore_system_font_scale_description">Folosește mărimea standard a textului. Setările aplicației rămân active.</string>
+</resources>

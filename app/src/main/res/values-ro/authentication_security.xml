@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Alege cum protejezi accesul în aplicație</string>
+    <string name="authentication_unavailable">Autentificarea nu este disponibilă. Încearcă mai târziu sau folosește autentificarea telefonului pentru recuperare.</string>
+    <string name="authentication_password_minimum">Folosește cel puțin 8 caractere</string>
+    <string name="authentication_retry_later">Prea multe încercări. Așteaptă și încearcă din nou.</string>
+    <string name="authentication_recover_device">Recuperează prin autentificarea telefonului</string>
+</resources>

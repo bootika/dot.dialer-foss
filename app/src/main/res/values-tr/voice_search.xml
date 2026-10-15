@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Sesli arama</string>
+    <string name="voice_search_description">Tüm arama çubuklarında mikrofonu göster.</string>
+    <string name="voice_search_prompt">Aramak istediğinizi söyleyin</string>
+    <string name="voice_search_permission">Sesli arama için uygulama ayarlarından mikrofon erişimine izin verin.</string>
+    <string name="voice_search_unavailable">Konuşma tanıma uygulaması yok. Aramanızı yazarak devam edebilirsiniz.</string>
+</resources>

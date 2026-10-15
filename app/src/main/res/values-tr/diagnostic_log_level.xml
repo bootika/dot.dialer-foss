@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Günlük düzeyi</string>
+    <string name="diagnostic_log_level_help">Normal: standart günlük. Debug: arama fotoğrafı, ses ve bağlantı. Verbose: kişi kaynakları ve görseller. Normal seçilene kadar etkin kalır. Ad, numara veya görsel içermez; Bluetooth PBAP trafiği kaydedilmez.</string>
+</resources>

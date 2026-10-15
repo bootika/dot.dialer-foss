@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Aramalar ve kişiler</string>
+    <string name="onboarding_essential_body">Kişilerin ve arama geçmişin sunucularımızda değil, telefonunda kalır. Android varsayılan telefon uygulamasını ve gerekli izinleri sorar.\n\nTeknik hata raporları varsayılan olarak otomatiktir. %1$s → %2$s bölümünden yalnızca istek üzerine göndermeyi seçebilirsin.</string>
+    <string name="onboarding_start">Başla</string>
+    <string name="diagnostic_reporting_mode">Hata raporlama</string>
+    <string name="diagnostic_automatic">Otomatik</string>
+    <string name="diagnostic_on_demand">Yalnızca istekle</string>
+    <string name="diagnostic_reporting_explanation">Yerel günlük her iki modda da kullanılabilir. İsteğe bağlı mod, yalnızca istediğinde olay gönderir.</string>
+    <string name="photo_offer_title">Daha net kişi fotoğrafları</string>
+    <string name="photo_offer_body">Bazı Google kişilerinin fotoğrafları var. Daha yüksek çözünürlüklü sürümleri aramak için Google bağlantısını isteğe bağlı kurabilirsin.</string>
+    <string name="photo_offer_options">Seçenekleri gör</string>
+    <string name="diagnostic_mode_save_failed">Raporlama ayarı kaydedilemedi. Lütfen tekrar deneyin.</string>
+</resources>

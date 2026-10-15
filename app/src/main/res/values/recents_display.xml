@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Show all calls</string>
+    <string name="show_all_recent_calls_subtitle">Show each call separately, including missed calls.</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Anrufe und Kontakte</string>
+    <string name="onboarding_essential_body">Deine Kontakte und Anrufliste bleiben auf deinem Telefon, nicht auf unseren Servern. Android fragt nach der Standard-Telefon-App und den nötigen Berechtigungen.\n\nTechnische Fehlerberichte werden standardmäßig automatisch gesendet. Unter %1$s → %2$s kannst du Berichte nur auf Anfrage wählen.</string>
+    <string name="onboarding_start">Loslegen</string>
+    <string name="diagnostic_reporting_mode">Fehlerberichte</string>
+    <string name="diagnostic_automatic">Automatisch</string>
+    <string name="diagnostic_on_demand">Nur auf Anfrage</string>
+    <string name="diagnostic_reporting_explanation">Das lokale Protokoll bleibt in beiden Modi verfügbar. Im Anfragemodus wird ein Ereignis nur auf deinen Wunsch gesendet.</string>
+    <string name="photo_offer_title">Schärfere Kontaktfotos</string>
+    <string name="photo_offer_body">Einige Google-Kontakte haben Fotos. Du kannst Google optional verbinden, um nach höher aufgelösten Versionen zu suchen.</string>
+    <string name="photo_offer_options">Optionen ansehen</string>
+    <string name="diagnostic_mode_save_failed">Die Berichtseinstellung konnte nicht gespeichert werden. Bitte erneut versuchen.</string>
+</resources>

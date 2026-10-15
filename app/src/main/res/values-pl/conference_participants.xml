@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="conference_participant_count">
+        <item quantity="one">%d uczestnik</item>
+        <item quantity="few">%d uczestników</item>
+        <item quantity="many">%d uczestników</item>
+        <item quantity="other">%d uczestnika</item>
+    </plurals>
+    <string name="conference_participants_unavailable">Szczegóły uczestników są niedostępne</string>
+    <string name="end_conference_participant">Zakończ połączenie z %1$s</string>
+</resources>

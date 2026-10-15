@@ -1,0 +1,2323 @@
+package dev.goodwy.rphone.view.screen
+
+import dev.goodwy.rphone.view.theme.accentText
+
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.os.Build
+import android.provider.ContactsContract
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.unit.Dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.alpha
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import dev.goodwy.rphone.view.components.rememberClipboardAccess
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import android.view.WindowManager
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.platform.LocalView
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import dev.goodwy.rphone.controller.ContactsViewModel
+import dev.goodwy.rphone.controller.util.DialCodeHandler
+import dev.goodwy.rphone.controller.util.PreferenceManager
+import dev.goodwy.rphone.controller.util.makeCall
+import dev.goodwy.rphone.controller.util.getCallingAccounts
+import dev.goodwy.rphone.controller.util.resolveCallingAccount
+import dev.goodwy.rphone.controller.util.playDialpadTone
+import dev.goodwy.rphone.view.components.SimPickerDialog
+import dev.goodwy.rphone.view.components.SingleTile
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinActivityViewModel
+import dev.goodwy.rphone.liquidglass.drawBackdrop
+import dev.goodwy.rphone.liquidglass.drawPlainBackdrop
+import dev.goodwy.rphone.liquidglass.effects.blur
+import dev.goodwy.rphone.liquidglass.effects.lens
+import dev.goodwy.rphone.liquidglass.effects.colorControls
+import dev.goodwy.rphone.liquidglass.highlight.Highlight
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.icons.automirrored.outlined.Backspace
+import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.SearchOff
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.goodwy.rphone.R
+import dev.goodwy.rphone.bottomBarHeight
+import dev.goodwy.rphone.controller.CallLogViewModel
+import dev.goodwy.rphone.liquidglass.LocalLiquidGlassBackdrop
+import dev.goodwy.rphone.view.components.PermissionDeniedView
+import dev.goodwy.rphone.view.components.PlaceholderView
+import dev.goodwy.rphone.view.theme.MyColors.dialpadColor
+import dev.goodwy.rphone.view.theme.MyColors.dialpadKeyColor
+import dev.goodwy.rphone.view.theme.TabTransitionStyle
+import dev.goodwy.rphone.view.theme.color_call_button
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
+import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
+import dev.goodwy.rphone.controller.UssdRepository
+import dev.goodwy.rphone.controller.util.SocialUtils
+import dev.goodwy.rphone.controller.util.SocialUtils.getInstalledMessenger
+import dev.goodwy.rphone.controller.util.SocialUtils.messengerPackages
+import dev.goodwy.rphone.controller.util.forceLtr
+import dev.goodwy.rphone.liquidglass.backdrops.layerBackdrop
+import dev.goodwy.rphone.liquidglass.backdrops.rememberLayerBackdrop
+import dev.goodwy.rphone.modal.data.CallLogEntry
+import dev.goodwy.rphone.modal.data.Contact
+import dev.goodwy.rphone.modal.data.getDisplayContactInfo
+import dev.goodwy.rphone.modal.data.getDisplayName
+import dev.goodwy.rphone.view.components.RillDialog
+import dev.goodwy.rphone.view.components.RillExpressiveButton
+import dev.goodwy.rphone.view.components.AZListScroll
+import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
+import dev.goodwy.rphone.view.components.DialpadFloatingActionButton
+import dev.goodwy.rphone.view.components.performAppHaptic
+import io.github.bootika.dotdialer.core.search.SearchTextNormalizer
+import dev.goodwy.rphone.domain.search.DotDialerHomeDirectory
+import dev.goodwy.rphone.domain.search.DotDialerSearchIndex
+import dev.goodwy.rphone.domain.search.DotDialerSearchPayload
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlin.time.Duration.Companion.milliseconds
+
+/**
+ * Keeps the in-progress dialed digits alive across the dialpad bottom sheet being dismissed
+ * (e.g. by swiping down on the drag handle) and reopened. The sheet's composable is fully torn
+ * down on dismiss, so a plain `remember` loses the typed number; this small in-memory holder
+ * survives that as long as the process is alive, matching what users expect from a dialer.
+ */
+private object DialpadDraftHolder {
+    var pendingNumber: String = ""
+}
+
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Destination<RootGraph>(style = TabTransitionStyle::class)
+@Composable
+fun DialPadScreen(
+    navController: NavController,
+    navigator: DestinationsNavigator,
+    initialNumber: String? = null
+) {
+    // Lock the window so the keyboard never pushes the bottom sheet up.
+    // WindowCompat.setDecorFitsSystemWindows(false) in MainActivity normally causes
+    // the sheet to resize with the IME; overriding softInputMode here prevents that.
+    val view = LocalView.current
+    DisposableEffect(Unit) {
+        val window = (view.context as? android.app.Activity)?.window
+        val prevMode = window?.attributes?.softInputMode ?: 0
+        window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        onDispose {
+            window?.setSoftInputMode(prevMode)
+        }
+    }
+
+    var number by remember { mutableStateOf(initialNumber?.ifBlank { DialpadDraftHolder.pendingNumber } ?: DialpadDraftHolder.pendingNumber) }
+    // Keep the draft holder in sync so dismissing the sheet (including swipe-down-to-dismiss)
+    // and reopening it restores whatever digits were typed, instead of clearing them.
+    LaunchedEffect(number) { DialpadDraftHolder.pendingNumber = number }
+
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentWindowInsets = WindowInsets(0)
+    ) { innerPadding ->
+        Box(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+        ) {
+            DialPadContent(
+                initialNumber = number,
+                navigator = navigator,
+                onDismiss = { navigator.navigateUp() },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
+@Composable
+fun DialPadContent(
+    initialNumber: String? = null,
+    navigator: DestinationsNavigator? = null,
+    onDismiss: (() -> Unit)? = null,
+    isBottomSheet: Boolean = false
+) {
+    val permStateLogs = rememberPermissionState(Manifest.permission.READ_CALL_LOG)
+    val isGrantedLogs = permStateLogs.status == PermissionStatus.Granted
+    val permStateContacts = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+    val isGrantedContacts = permStateContacts.status == PermissionStatus.Granted
+
+    if (isGrantedLogs && isGrantedContacts) {
+        val context = LocalContext.current
+        val haptic = LocalHapticFeedback.current
+        val clipboard = rememberClipboardAccess()
+        val focusManager = LocalFocusManager.current
+        val contactsVM: ContactsViewModel = koinActivityViewModel()
+        val logsViewModel: CallLogViewModel = koinActivityViewModel()
+        val prefs = koinInject<PreferenceManager>()
+        val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
+        val displayOrder by remember(settingsState) {
+            mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_CONTACT_DISPLAY_ORDER, 0))
+        }
+        val enableAnimations by remember(settingsState) {
+            mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_DIALPAD_ANIMATION, true))
+        }
+
+        val allContacts by contactsVM.filteredContacts.collectAsStateWithLifecycle()
+        var contactListQuery by rememberSaveable { mutableStateOf("") }
+        val logs by logsViewModel.allCallLogs.collectAsStateWithLifecycle()
+        LaunchedEffect(contactsVM) {
+            contactsVM.fetchContacts()
+        }
+        var number by remember { mutableStateOf(initialNumber ?: DialpadDraftHolder.pendingNumber) }
+        // Where new digits get inserted / backspace deletes from. Defaults to the end of the number
+        // (normal typing behaviour), but the user can tap anywhere in the number to move it, so they
+        // can fill in a missing digit in the middle without having to delete and retype everything.
+        var cursorPosition by remember { mutableIntStateOf(number.length) }
+
+        // Route every edit through these so the cursor position stays correct and consistent no
+        // matter where the edit originates from (dialpad keys, backspace, paste, clipboard banner,
+        // clearing on secret-code detection, etc.)
+        fun insertAtCursor(text: String) {
+            val at = cursorPosition.coerceIn(0, number.length)
+            number = number.substring(0, at) + text + number.substring(at)
+            cursorPosition = at + text.length
+        }
+        fun backspaceAtCursor() {
+            val at = cursorPosition.coerceIn(0, number.length)
+            if (at > 0) {
+                number = number.removeRange(at - 1, at)
+                cursorPosition = at - 1
+            }
+        }
+        fun replaceNumber(text: String) {
+            number = text
+            cursorPosition = text.length
+        }
+        // Keep the draft holder in sync so dismissing the sheet (including swipe-down-to-dismiss)
+        // and reopening it restores whatever digits were typed, instead of clearing them.
+        LaunchedEffect(number) { DialpadDraftHolder.pendingNumber = number }
+
+        // Collect USSD / MMI responses from CallService and show inline dialog
+        val ussdResult by UssdRepository.response.collectAsStateWithLifecycle()
+        DisposableEffect(Unit) { onDispose { UssdRepository.clear() } }
+
+        ussdResult?.let { (request, response) ->
+            AlertDialog(
+                onDismissRequest = { UssdRepository.clear() },
+                title = {
+                    Text(
+                        request,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = { Text(response, style = MaterialTheme.typography.bodyMedium) },
+                confirmButton = {
+                    TextButton(onClick = { UssdRepository.clear() }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                        Text(stringResource(R.string.ok))
+                    }
+                },
+                shape = MaterialTheme.shapes.extraLarge
+            )
+        }
+
+        var showSocialDialog by remember { mutableStateOf(false) }
+        val installedWhatsApp = messengerPackages["WhatsApp"]?.let { context.getInstalledMessenger(it) }
+        val installedTelegram = messengerPackages["Telegram"]?.let { context.getInstalledMessenger(it) }
+        val installedSignal = messengerPackages["Signal"]?.let { context.getInstalledMessenger(it) }
+        val initiateMessage = { number: String ->
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    "sms:$number".toUri()
+                )
+            )
+        }
+
+        val t9Enabled = prefs.getBoolean(PreferenceManager.KEY_T9_DIALING, true)
+        var showSimPicker by remember { mutableStateOf(false) }
+        var pendingSearchCallNumber by remember { mutableStateOf<String?>(null) }
+
+        // Helper: place a call respecting the default SIM preference
+        fun placeCallWithSimPreference(num: String) {
+            val accountInfos = getCallingAccounts(context)
+            val accounts = accountInfos.map { it.handle }
+            if (accounts.size > 1) {
+                val stableAccount = resolveCallingAccount(
+                    context,
+                    prefs.getString(PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT, null),
+                    accountInfos,
+                )
+                val simPref = prefs.getInt(PreferenceManager.KEY_DEFAULT_SIM, prefs.getDefaultSimIndexDefault())
+                when {
+                    stableAccount != null -> {
+                        replaceNumber("")
+                        makeCall(context, num, stableAccount)
+                    }
+                    simPref == 1 && accounts.isNotEmpty() -> {
+                        replaceNumber("")
+                        makeCall(context, num, accounts[0])
+                    }
+
+                    simPref == 2 && accounts.size >= 2 -> {
+                        replaceNumber("")
+                        makeCall(context, num, accounts[1])
+                    }
+
+                    else -> {
+                        pendingSearchCallNumber = num
+                        showSimPicker = true
+                    }
+                }
+            } else {
+                replaceNumber("")
+                makeCall(context, num)
+            }
+        }
+
+        val clipboardSuggestion = rememberDialpadClipboardSuggestion(number)
+        val clipText = clipboardSuggestion.number.orEmpty()
+        val showClipboardBanner = clipText.isNotEmpty() && number.isEmpty()
+        fun useClipboardSuggestion() {
+            clipboardSuggestion.use(number)?.let(::replaceNumber)
+        }
+
+        var showOverflowMenu by remember { mutableStateOf(false) }
+
+        var openDialpadDefault by remember {
+            mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_OPEN_DIALPAD_DEFAULT, true))
+        }
+
+        val take = 30
+        val foldSearchDiacritics = remember(settingsState) {
+            prefs.getBoolean(PreferenceManager.KEY_SEARCH_DIACRITIC_NORMALIZATION, true)
+        }
+        // Home and the dialpad now use the exact same immutable index and matching rules.
+        val sharedSearchIndex = remember(allContacts, logs) {
+            DotDialerSearchIndex.build(allContacts, logs)
+        }
+        val sharedSearchSections = remember(
+            sharedSearchIndex,
+            number,
+            t9Enabled,
+            foldSearchDiacritics,
+        ) {
+            if (number.isBlank()) null else DotDialerHomeDirectory.sections(
+                index = sharedSearchIndex,
+                query = number,
+                foldDiacritics = foldSearchDiacritics,
+                includeT9 = t9Enabled,
+                limit = take * 2,
+                repeatContactsInSearchResults = true,
+            )
+        }
+        val searchResults = remember(sharedSearchSections) {
+            sharedSearchSections?.contacts
+                ?.mapNotNull { (it.payload as? DotDialerSearchPayload.ContactResult)?.contact }
+                ?.take(take)
+                .orEmpty()
+        }
+        val searchLogsResults = remember(sharedSearchSections) {
+            sharedSearchSections?.recents
+                ?.mapNotNull { (it.payload as? DotDialerSearchPayload.CallResult)?.call }
+                ?.take(take)
+                .orEmpty()
+        }
+
+        // Create a set of all phone numbers and names from contacts for quick searching
+        val contactNumbers = remember(allContacts) {
+            allContacts.flatMap { contact ->
+                contact.phoneNumbers.map { it.replace(" ", "").replace("-", "") }
+            }.toSet()
+        }
+
+        val contactNames = remember(allContacts) {
+            allContacts.map { it.displayName.lowercase() }.toSet()
+        }
+
+        // Filtering logs
+        val filteredSearchLogsResults = remember(searchLogsResults, contactNumbers, contactNames) {
+            searchLogsResults.filter { log ->
+                val logNumber = log.number.replace(" ", "").replace("-", "")
+                val logName = log.name?.lowercase() ?: ""
+
+                // Exclude if the number is in contacts OR the name is in contacts
+                logNumber !in contactNumbers && logName !in contactNames
+            }
+        }
+
+        val callPermissionLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            if (permissions[Manifest.permission.CALL_PHONE] == true) {
+                val numToCall = pendingSearchCallNumber ?: number
+                pendingSearchCallNumber = null
+                val hasPhoneState = ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_PHONE_STATE
+                ) == PackageManager.PERMISSION_GRANTED
+                if (hasPhoneState) {
+                    placeCallWithSimPreference(numToCall)
+                } else {
+                    replaceNumber("")
+                    makeCall(context, numToCall)
+                }
+            } else {
+                pendingSearchCallNumber = null
+            }
+        }
+
+        // Auto-process Android hidden/secret codes and MMI codes as the user types
+        fun processSecretCodeIfNeeded(input: String): Boolean {
+            return DialCodeHandler.handle(context, input) { carrierCode ->
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.CALL_PHONE,
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    placeCallWithSimPreference(carrierCode)
+                } else {
+                    pendingSearchCallNumber = carrierCode
+                    callPermissionLauncher.launch(
+                        arrayOf(Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE),
+                    )
+                }
+            }
+        }
+
+        fun initiateCall(num: String) {
+            val cleanNum = num.trim()
+            if (cleanNum.isEmpty() || cleanNum == "Unknown") return
+            // MMI/USSD codes (*#06#, *#*#4636#*#*, *21*1234#, *124#, ##002#, etc.) are handled
+            // by processSecretCodeIfNeeded which uses telecomManager.placeCall() with the raw URI
+            // for proper carrier-stack routing without looping back to this app.
+            if (processSecretCodeIfNeeded(cleanNum)) {
+                replaceNumber("")
+                return
+            }
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                val hasPhoneState = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                if (hasPhoneState) {
+                    placeCallWithSimPreference(cleanNum)
+                } else {
+                    replaceNumber("")
+                    makeCall(context, cleanNum)
+                }
+            } else {
+                pendingSearchCallNumber = cleanNum
+                callPermissionLauncher.launch(arrayOf(Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE))
+            }
+        }
+
+        if (showSimPicker) {
+            SimPickerDialog(
+                onDismissRequest = { showSimPicker = false },
+                onSimSelected = { handle ->
+                    replaceNumber("")
+                    makeCall(context, pendingSearchCallNumber ?: number, handle)
+                    pendingSearchCallNumber = null
+                    showSimPicker = false
+                }
+            )
+        }
+
+        if (showSocialDialog) {
+            RillDialog(
+                onDismissRequest = { showSocialDialog = false },
+                title = stringResource(R.string.connect_via_social),
+                icon = ImageVector.vectorResource(id = R.drawable.ic_message_outline),
+                confirmButton = {
+                    TextButton(onClick = { showSocialDialog = false }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (installedWhatsApp != null) {
+                        RillExpressiveButton(
+                            modifier = Modifier.weight(1f),
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_whatsapp),
+                            label = "WhatsApp",
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            iconSize = 32.dp,
+                            onClick = {
+                                SocialUtils.openWhatsApp(context, number)
+                                showSocialDialog = false
+                            }
+                        )
+                    }
+                    if (installedTelegram != null) {
+                        RillExpressiveButton(
+                            modifier = Modifier.weight(1f),
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_telegram),
+                            label = "Telegram",
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            iconSize = 32.dp,
+                            onClick = {
+                                SocialUtils.openTelegram(context, number)
+                                showSocialDialog = false
+                            }
+                        )
+                    }
+                    if (installedSignal != null) {
+                        RillExpressiveButton(
+                            modifier = Modifier.weight(1f),
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_signal),
+                            label = "Signal",
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            iconSize = 32.dp,
+                            onClick = {
+                                SocialUtils.openSignal(context, number)
+                                showSocialDialog = false
+                            }
+                        )
+                    }
+                    RillExpressiveButton(
+                        modifier = Modifier.weight(1f),
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_message_outline),
+                        label = "SMS",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        iconSize = 32.dp,
+                        onClick = {
+                            initiateMessage(number)
+                            showSocialDialog = false
+                        }
+                    )
+                }
+            }
+        }
+
+        val configuration = LocalConfiguration.current
+        val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        if (isLandscape) {
+            // Landscape: side-by-side layout — left=search+search results, right=dialpad keys+number+actions
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(horizontal = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left panel: search bar + results only
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(horizontal = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .background(if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface),
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        val searchLogsNotEmpty = filteredSearchLogsResults.isNotEmpty()
+                        val searchResultsNotEmpty = searchResults.isNotEmpty()
+                        val searchResultsPadding = if (searchLogsNotEmpty) 16.dp else 4.dp
+                        // Search contacts results
+                        AnimatedVisibility(
+                            visible = searchResultsNotEmpty,
+                            enter = fadeIn(tween(380, easing = FastOutSlowInEasing)) +
+                                    expandVertically(tween(420, easing = FastOutSlowInEasing)),
+                            exit = fadeOut(tween(280, easing = FastOutLinearInEasing)) +
+                                    shrinkVertically(tween(320, easing = FastOutLinearInEasing))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(top = 4.dp, bottom = searchResultsPadding)
+                                    .then(
+                                        if (searchLogsNotEmpty) Modifier
+                                        else Modifier.navigationBarsPadding()
+                                    )
+                                    .then(if (!isBottomSheet) Modifier.statusBarsPadding() else Modifier)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.contacts),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.accentText,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                Surface(
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    color = if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .background(if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface),
+                                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    ) {
+                                        searchResults.forEach { contact ->
+                                            val defaultOrFirstPhone = contact.phoneDetails.firstOrNull { it.isPrimary }?.number ?: contact.phoneNumbers.firstOrNull()
+                                            SingleTile(
+                                                title = getDisplayName(contact, displayOrder), //contact.displayName,
+                                                subtitle = getDisplayContactInfo(contact),
+                                                photoUri = contact.photoUri,
+                                                avatarColorSeed = contact.displayName,
+                                                phoneNumber = defaultOrFirstPhone,
+                                                trailingContent = {
+                                                    if (defaultOrFirstPhone != null) {
+                                                        IconButton(onClick = { initiateCall(defaultOrFirstPhone) }) {
+                                                            Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.primary)
+                                                        }
+                                                    }
+                                                },
+                                                onCall = { if (defaultOrFirstPhone != null) initiateCall(defaultOrFirstPhone) },
+                                                onClick = {
+                                                    navigator?.navigate(
+                                                        ContactDetailsScreenDestination(
+                                                            contactId = contact.id
+                                                        )
+                                                    )
+                                                },
+                                                menuOffset = DpOffset(56.dp, 0.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Search logs results
+                        AnimatedVisibility(
+                            visible = searchLogsNotEmpty,
+                            enter = fadeIn(tween(380, easing = FastOutSlowInEasing)) +
+                                    expandVertically(tween(420, easing = FastOutSlowInEasing)),
+                            exit = fadeOut(tween(280, easing = FastOutLinearInEasing)) +
+                                    shrinkVertically(tween(320, easing = FastOutLinearInEasing))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(top = 4.dp, bottom = 4.dp)
+                                    .navigationBarsPadding()
+                                    .then(if (!isBottomSheet && !searchResultsNotEmpty) Modifier.statusBarsPadding() else Modifier)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.recents),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.accentText,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                Surface(
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    color = if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+//                                        .padding(vertical = 8.dp)
+                                            .background(if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface),
+                                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    ) {
+                                        filteredSearchLogsResults.forEach { log ->
+                                            val displayName = if (log.name == log.number) log.number.forceLtr() else log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" }
+                                            SingleTile(
+                                                title = displayName,
+                                                subtitle = if (log.name == log.number) null else log.number,
+                                                photoUri = log.photoUri,
+                                                phoneNumber = log.number,
+                                                trailingContent = {
+                                                    IconButton(onClick = { initiateCall(log.number) }) {
+                                                        Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.primary)
+                                                    }
+                                                },
+                                                onCall = { initiateCall(log.number) },
+                                                onClick = {
+                                                    if (prefs.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
+                                                        performAppHaptic(
+                                                            context,
+                                                            prefs.getString(PreferenceManager.KEY_APP_HAPTICS_STRENGTH, "light") ?: "light",
+                                                            prefs.getFloat(PreferenceManager.KEY_HAPTICS_CUSTOM_INTENSITY, 0.5f)
+                                                        )
+                                                    }
+                                                    navigator?.navigate(ContactDetailsScreenDestination(phoneNumber = log.number))
+                                                },
+                                                showCreateContact = log.contactId == null,
+                                                menuOffset = DpOffset(56.dp, 0.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.weight(1f))
+                    }
+                }
+
+                // Right panel: dialpad keys + action buttons below
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    DialpadGlassSurface(
+                        state = rememberDialpadEffectState(prefs),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .navigationBarsPadding()
+                            .padding(horizontal = 6.dp, vertical = 12.dp)
+                            .then(if (!isBottomSheet) Modifier.statusBarsPadding() else Modifier),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)//.SpaceEvenly
+                        ) {
+                            // Number display
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1.2f)
+                                    .clip(MaterialTheme.shapes.large)
+                                    .animateContentSize(
+                                        animationSpec = spring(
+                                            stiffness = Spring.StiffnessLow,
+                                            dampingRatio = Spring.DampingRatioMediumBouncy
+                                        )
+                                    )
+                                    .padding(vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val numberLength = number.length
+                                // Smooth mathematical scaling formula:
+                                // Start with 30sp. The more characters there are, the more the font size decreases.
+                                val dynamicFontSize = (30f - (numberLength * 0.45f)).coerceIn(10f, 30f).toInt()
+                                DialpadNumberDisplay(
+                                    number = number,
+                                    fontSize = dynamicFontSize,
+                                    cursorPosition = cursorPosition,
+                                    onCursorPositionChange = { cursorPosition = it },
+                                    onLongPress = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        showOverflowMenu = true
+                                    },
+                                    enableAnimations = enableAnimations
+                                )
+                            }
+                            val keys = listOf(
+                                listOf("1", "2", "3"),
+                                listOf("4", "5", "6"),
+                                listOf("7", "8", "9"),
+                                listOf("*", "0", "#")
+                            )
+                            val subKeys = mapOf(
+                                "1" to "   ",
+                                "2" to "ABC",
+                                "3" to "DEF",
+                                "4" to "GHI",
+                                "5" to "JKL",
+                                "6" to "MNO",
+                                "7" to "PQRS",
+                                "8" to "TUV",
+                                "9" to "WXYZ",
+                                "0" to "+"
+                            )
+                            keys.forEach { row ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    row.forEach { key ->
+                                        DialPadKey(
+                                            number = key,
+                                            letters = subKeys[key] ?: "",
+                                            onClick = { digit -> insertAtCursor(digit) },
+                                            onLongClick = { digit -> insertAtCursor(digit) },
+                                            compact = true,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                            // Action row — below the keys
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1.2f)
+                                    .padding(vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                FadeScaleBox(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight(),
+                                    visible = number.isNotEmpty()
+                                ) {
+                                    DialerActionExpressive(
+                                        onClick = {
+                                            navigator?.navigate(
+                                                ContactEditScreenDestination(
+                                                    initialPhone = number
+                                                )
+                                            )
+                                        },
+                                        icon = Icons.Default.PersonAdd,
+                                        contentDescription = stringResource(R.string.create_contact),
+                                        containerColor = Color.Transparent //MaterialTheme.colorScheme.surfaceContainerLow
+                                    )
+                                }
+                                DialerActionExpressive(
+                                    onClick = {
+                                        if (number.isNotEmpty()) {
+                                            initiateCall(number)
+                                        }
+                                    },
+                                    onLongClick = {
+                                        val pasteText = clipboard.getText()?.text
+                                            ?.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+                                            ?: ""
+                                        if (number.isEmpty() && pasteText.isNotEmpty()) {
+                                            replaceNumber(pasteText)
+                                        } else if (number.isNotEmpty() && getCallingAccounts(context).size > 1) {
+                                            pendingSearchCallNumber = number
+                                            showSimPicker = true
+                                        } else {
+                                            clipboard.setText(AnnotatedString(number))
+                                        }
+                                    },
+                                    icon = DotDialerHandsetIcon,
+                                    contentDescription = stringResource(R.string.call),
+                                    containerColor = color_call_button,
+                                    contentColor = Color.White,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight(),
+                                    isLarge = true
+                                )
+                                FadeScaleBox(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight(),
+                                    visible = number.isNotEmpty()
+                                ) {
+                                    DialerActionExpressive(
+                                        onLongClick = {
+                                            replaceNumber("")
+                                        },
+                                        onClick = {
+                                            backspaceAtCursor()
+                                        },
+                                        icon = Icons.AutoMirrored.Outlined.Backspace,
+                                        contentDescription = stringResource(R.string.backspace),
+                                        containerColor = Color.Transparent //MaterialTheme.colorScheme.surfaceContainerLow
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // Prevent keyboard from auto-opening on composition
+            LaunchedEffect(Unit) { focusManager.clearFocus() }
+
+            val dialpadBackdrop = rememberLayerBackdrop()
+            var isDialpadVisible by remember { mutableStateOf(true) }
+            val pillNav = remember { prefs.getBoolean(PreferenceManager.KEY_PILL_NAV, false) }
+
+            CompositionLocalProvider(LocalLiquidGlassBackdrop provides dialpadBackdrop) {
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(if (!isBottomSheet) Modifier.statusBarsPadding() else Modifier),
+                    containerColor = Color.Transparent,
+                    contentWindowInsets = WindowInsets(0),
+                    floatingActionButton = {
+                        AnimatedVisibility(
+                            visible = !isDialpadVisible,
+                            enter = scaleIn() + fadeIn(),
+                            exit = scaleOut() + fadeOut(),
+                        ) {
+                            DialpadFloatingActionButton(
+                                onClick = { isDialpadVisible = true },
+                            )
+                        }
+                    },
+//            .padding(top = 16.dp)
+                ) { scaffoldPadding ->
+                    BoxWithConstraints(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(scaffoldPadding),
+                    ) {
+                        val screenHeight = maxHeight
+                        val screenWidth = maxWidth
+
+                        // Layout: search bar fixed at top, scrollable middle (results/pills/clipboard),
+                        // dialpad card fixed at bottom. Nothing moves when results appear.
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+//                verticalArrangement = Arrangement.Top
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            // ── Middle section: results / pills / clipboard (scrollable, fills space) ──
+                            val listScrollState = rememberScrollState()
+                            val contactsListState = rememberLazyListState()
+                            val showDefaultContactList = number.isEmpty() && navigator != null
+                            var defaultContactsPositioned by rememberSaveable { mutableStateOf(false) }
+
+                        LaunchedEffect(showDefaultContactList, allContacts.isNotEmpty(), showClipboardBanner) {
+                            if (
+                                showDefaultContactList &&
+                                allContacts.isNotEmpty() &&
+                                (!defaultContactsPositioned || showClipboardBanner)
+                            ) {
+                                contactsListState.scrollToItem(if (showClipboardBanner) 0 else 1)
+                                defaultContactsPositioned = true
+                            }
+                        }
+
+                        LaunchedEffect(listScrollState.isScrollInProgress) {
+                            snapshotFlow { listScrollState.isScrollInProgress }
+                                .collect { isScrolling ->
+                                    if (isScrolling && isDialpadVisible && listScrollState.value > 0) {
+                                        isDialpadVisible = false
+                                    }
+                                }
+                        }
+                        LaunchedEffect(contactsListState, showDefaultContactList) {
+                            if (!showDefaultContactList) return@LaunchedEffect
+                            snapshotFlow {
+                                Triple(
+                                    contactsListState.isScrollInProgress,
+                                    contactsListState.firstVisibleItemIndex,
+                                    contactsListState.firstVisibleItemScrollOffset,
+                                )
+                            }.collect { (isScrolling, index, offset) ->
+                                if (isScrolling && isDialpadVisible && (index > 0 || offset > 0)) {
+                                    isDialpadVisible = false
+                                }
+                            }
+                        }
+
+                        if (showDefaultContactList) {
+                            dev.goodwy.rphone.view.components.ContactDirectoryContent(
+                                contacts = allContacts,
+                                query = contactListQuery,
+                                displayOrder = displayOrder,
+                                navigator = checkNotNull(navigator),
+                                listState = contactsListState,
+                                modifier = Modifier.layerBackdrop(dialpadBackdrop),
+                                headerContent = {
+                                    dev.goodwy.rphone.view.components.ContactDirectoryHeader(
+                                        query = contactListQuery,
+                                        onQueryChange = { contactListQuery = it },
+                                        showClipboardBanner = showClipboardBanner,
+                                        clipboardText = clipText,
+                                        onUseClipboard = {
+                                            useClipboardSuggestion()
+                                        },
+                                        onDismissClipboard = { clipboardSuggestion.dismiss() },
+                                    )
+                                },
+                            )
+                        } else {
+                            Surface(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .layerBackdrop(dialpadBackdrop),
+                            shape = MaterialTheme.shapes.large,
+                            color = Color.Transparent
+                        ) {
+                            Column(
+                                modifier = Modifier
+//                        .weight(1f)
+                                    .fillMaxSize()
+//                                .navigationBarsPadding()
+                                    .verticalScroll(listScrollState),
+                                verticalArrangement = Arrangement.Top
+                            ) {
+
+                                AnimatedVisibility(
+                                    visible = number.isNotEmpty(),// && searchResults.isEmpty() && searchQuery.isEmpty(),
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically()
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 8.dp, start = 2.dp, end = 2.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Surface(
+                                            onClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                navigator?.navigate(
+                                                    ContactEditScreenDestination(
+                                                        initialPhone = number
+                                                    )
+                                                )
+                                            },
+                                            shape = RoundedCornerShape(50.dp),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 12.dp,
+                                                    vertical = 10.dp
+                                                ),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                val create = stringResource(R.string.create_contact)
+                                                Icon(
+                                                    Icons.Default.PersonAdd,
+                                                    create,
+                                                    modifier = Modifier.size(16.dp),
+                                                    tint = MaterialTheme.colorScheme.onPrimary
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    create,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    color = MaterialTheme.colorScheme.onPrimary,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+                                        Surface(
+                                            onClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                val intent =
+                                                    Intent(Intent.ACTION_INSERT_OR_EDIT).apply {
+                                                        type =
+                                                            ContactsContract.Contacts.CONTENT_ITEM_TYPE
+                                                        putExtra(
+                                                            ContactsContract.Intents.Insert.PHONE,
+                                                            number
+                                                        )
+                                                    }
+                                                context.startActivity(intent)
+                                            },
+                                            shape = RoundedCornerShape(50.dp),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 12.dp,
+                                                    vertical = 10.dp
+                                                ),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                val add = stringResource(R.string.add_to_contact)
+                                                Icon(
+                                                    Icons.Default.Person,
+                                                    add,
+                                                    modifier = Modifier.size(16.dp),
+                                                    tint = MaterialTheme.colorScheme.onPrimary
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    add,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    color = MaterialTheme.colorScheme.onPrimary,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+
+                                        Surface(
+                                            onClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                if (
+                                                    installedWhatsApp != null ||
+                                                    installedTelegram != null ||
+                                                    installedSignal != null
+                                                ) showSocialDialog = true
+                                                else initiateMessage(number)
+                                            },
+                                            shape = RoundedCornerShape(50.dp),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 12.dp,
+                                                    vertical = 10.dp
+                                                ),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                val message = stringResource(R.string.message)
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_message_outline),
+                                                    message,
+                                                    modifier = Modifier.size(16.dp),
+                                                    tint = MaterialTheme.colorScheme.onPrimary
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    message,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    color = MaterialTheme.colorScheme.onPrimary,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                val screenHeightDp = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+                                val searchResultsBottomPadding = screenHeightDp * 0.50f
+                                val searchResultsPadding =
+                                    if (filteredSearchLogsResults.isNotEmpty()) 16.dp else searchResultsBottomPadding
+                                // Search contacts results
+                                AnimatedVisibility(
+                                    visible = searchResults.isNotEmpty(),
+                                    enter = fadeIn(tween(380, easing = FastOutSlowInEasing)) +
+                                            expandVertically(
+                                                tween(
+                                                    420,
+                                                    easing = FastOutSlowInEasing
+                                                )
+                                            ),
+                                    exit = fadeOut(tween(280, easing = FastOutLinearInEasing)) +
+                                            shrinkVertically(
+                                                tween(
+                                                    320,
+                                                    easing = FastOutLinearInEasing
+                                                )
+                                            )
+                                ) {
+                                    Column(
+                                        modifier = Modifier//.padding(horizontal = 16.dp, vertical = 4.dp)
+                                            .padding(
+//                                        start = 16.dp,
+//                                        end = 16.dp,
+                                                top = 4.dp,
+                                                bottom = searchResultsPadding
+                                            )
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.contacts),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.accentText,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                        )
+                                        Surface(
+                                            shape = MaterialTheme.shapes.extraLarge,
+                                            color = if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Column(
+                                                modifier = Modifier
+//                                        .padding(vertical = 8.dp)
+                                                    .background(if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface),
+                                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                                            ) {
+                                                searchResults.forEach { contact ->
+                                                    val defaultOrFirstPhone =
+                                                        contact.phoneDetails.firstOrNull { it.isPrimary }?.number
+                                                            ?: contact.phoneNumbers.firstOrNull()
+                                                    SingleTile(
+                                                        title = getDisplayName(
+                                                            contact,
+                                                            displayOrder
+                                                        ), //contact.displayName,
+                                                        subtitle = getDisplayContactInfo(contact),
+                                                        photoUri = contact.photoUri,
+                                                avatarColorSeed = contact.displayName,
+                                                        phoneNumber = defaultOrFirstPhone,
+                                                        trailingContent = {
+                                                            if (defaultOrFirstPhone != null) {
+                                                                IconButton(onClick = {
+                                                                    initiateCall(
+                                                                        defaultOrFirstPhone
+                                                                    )
+                                                                }) {
+                                                                    Icon(
+                                                                        DotDialerHandsetIcon,
+                                                                        contentDescription = stringResource(
+                                                                            R.string.call
+                                                                        ),
+                                                                        tint = MaterialTheme.colorScheme.primary
+                                                                    )
+                                                                }
+                                                            }
+                                                        },
+                                                        onCall = {
+                                                            if (defaultOrFirstPhone != null) initiateCall(
+                                                                defaultOrFirstPhone
+                                                            )
+                                                        },
+                                                        onClick = {
+                                                            navigator?.navigate(
+                                                                ContactDetailsScreenDestination(
+                                                                    contactId = contact.id
+                                                                )
+                                                            )
+                                                        },
+                                                        menuOffset = DpOffset(56.dp, 64.dp),
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Search logs results
+                                AnimatedVisibility(
+                                    visible = filteredSearchLogsResults.isNotEmpty(),
+                                    enter = fadeIn(tween(380, easing = FastOutSlowInEasing)) +
+                                            expandVertically(
+                                                tween(
+                                                    420,
+                                                    easing = FastOutSlowInEasing
+                                                )
+                                            ),
+                                    exit = fadeOut(tween(280, easing = FastOutLinearInEasing)) +
+                                            shrinkVertically(
+                                                tween(
+                                                    320,
+                                                    easing = FastOutLinearInEasing
+                                                )
+                                            )
+                                ) {
+                                    Column(
+                                        modifier = Modifier//.padding(horizontal = 16.dp, vertical = 4.dp)
+                                            .padding(
+//                                        start = 16.dp,
+//                                        end = 16.dp,
+                                                top = 4.dp,
+                                                bottom = searchResultsBottomPadding
+                                            )
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.recents),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.accentText,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                        )
+                                        Surface(
+                                            shape = MaterialTheme.shapes.extraLarge,
+                                            color = if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Column(
+                                                modifier = Modifier
+//                                        .padding(vertical = 8.dp)
+                                                    .background(if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface),
+                                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                                            ) {
+                                                filteredSearchLogsResults.forEach { log ->
+                                                    val displayName =
+                                                        if (log.name == log.number) log.number.forceLtr() else log.name?.ifEmpty { log.number }
+                                                            ?: log.number.ifEmpty { "Unknown" }
+                                                    SingleTile(
+                                                        title = displayName,
+                                                        subtitle = if (log.name == log.number) null else log.number,
+                                                        photoUri = log.photoUri,
+                                                        phoneNumber = log.number,
+                                                        trailingContent = {
+                                                            IconButton(onClick = { initiateCall(log.number) }) {
+                                                                Icon(
+                                                                    DotDialerHandsetIcon,
+                                                                    contentDescription = stringResource(
+                                                                        R.string.call
+                                                                    ),
+                                                                    tint = MaterialTheme.colorScheme.primary
+                                                                )
+                                                            }
+                                                        },
+                                                        onCall = { initiateCall(log.number) },
+                                                        onClick = {
+                                                            if (prefs.getBoolean(
+                                                                    PreferenceManager.KEY_APP_HAPTICS,
+                                                                    true
+                                                                )
+                                                            ) {
+                                                                performAppHaptic(
+                                                                    context,
+                                                                    prefs.getString(
+                                                                        PreferenceManager.KEY_APP_HAPTICS_STRENGTH,
+                                                                        "light"
+                                                                    ) ?: "light",
+                                                                    prefs.getFloat(
+                                                                        PreferenceManager.KEY_HAPTICS_CUSTOM_INTENSITY,
+                                                                        0.5f
+                                                                    )
+                                                                )
+                                                            }
+                                                            navigator?.navigate(
+                                                                ContactDetailsScreenDestination(
+                                                                    phoneNumber = log.number
+                                                                )
+                                                            )
+                                                        },
+                                                        showCreateContact = log.contactId == null,
+                                                        menuOffset = DpOffset(56.dp, 64.dp),
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Clipboard banner
+                                AnimatedVisibility(
+                                    visible = showClipboardBanner && number.isEmpty(),
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically()
+                                ) {
+                                    Surface(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+//                                        horizontal = 16.dp,
+                                                vertical = 4.dp
+                                            ),
+                                        shape = MaterialTheme.shapes.extraLarge,
+                                        color = MaterialTheme.colorScheme.secondaryContainer
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(
+                                                start = 24.dp, end = 8.dp, top = 8.dp, bottom = 8.dp
+                                            ),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                Icons.Default.ContentPaste,
+                                                null,
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                            Text(
+                                                text = clipText,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .padding(horizontal = 20.dp)
+                                            )
+                                            TextButton(onClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                useClipboardSuggestion()
+                                            }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                                                Text(
+                                                    stringResource(R.string.use),
+                                                    color = MaterialTheme.colorScheme.accentText
+                                                )
+                                            }
+                                            IconButton(
+                                                onClick = { clipboardSuggestion.dismiss() },
+//                                        modifier = Modifier.size(cardCornerBig)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Close,
+                                                    stringResource(R.string.close)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                AnimatedVisibility(
+                                    visible = searchResults.isEmpty() && filteredSearchLogsResults.isEmpty() && number.isNotEmpty(),
+                                    enter = fadeIn(tween(380, easing = FastOutSlowInEasing)) +
+                                            expandVertically(
+                                                tween(
+                                                    420,
+                                                    easing = FastOutSlowInEasing
+                                                )
+                                            ),
+                                    exit = fadeOut(tween(280, easing = FastOutLinearInEasing)) +
+                                            shrinkVertically(
+                                                tween(
+                                                    320,
+                                                    easing = FastOutLinearInEasing
+                                                )
+                                            )
+                                ) {
+                                    PlaceholderView(
+                                        icon = Icons.Rounded.SearchOff,
+                                        title = stringResource(R.string.no_results),
+                                    )
+                                }
+                            } // end scrollable middle Column
+                        }
+                        }
+                        // ── Dialpad card — hides with animation when search is active ──
+                        AnimatedVisibility(
+                            visible = isDialpadVisible,
+                            enter = slideInVertically(
+                                initialOffsetY = { it },
+                                animationSpec = tween(
+                                    durationMillis = 320,
+                                    easing = FastOutSlowInEasing
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 280,
+                                    easing = FastOutSlowInEasing
+                                )
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it },
+                                animationSpec = tween(
+                                    durationMillis = 260,
+                                    easing = FastOutLinearInEasing
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 200,
+                                    easing = FastOutLinearInEasing
+                                )
+                            )
+                        ) {
+                            // ── Dialpad card — always at bottom, never moves ───────────────
+                            BoxWithConstraints(
+                                contentAlignment = Alignment.BottomCenter,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp)
+                            ) {
+                                // Scale based on the SMALLER of width-derived and height-derived factors
+                                // so the dialpad always fits on screen regardless of device size.
+                                val availableWidth = maxWidth.value
+
+                                // Height budget: total screen height minus search bar (~64dp) minus spacing (~24dp)
+                                // The dialpad card needs: header(~56dp) + 4 key rows + action row(~72dp) + padding(~40dp)
+                                // Reference key height = 68dp, so 4 rows = 272dp + overhead ~168dp = ~440dp total card
+                                val scaleFactor = dialpadPanelScale(availableWidth, screenHeight.value)
+
+                                val keyWidth: Dp = (108 * scaleFactor).dp
+                                val keyHeight: Dp = (56 * scaleFactor).dp //58
+//                                val actionSize: Dp = (64 * scaleFactor).dp
+                                val callW: Dp = (108 * scaleFactor).dp
+                                val callH: Dp = (58 * scaleFactor).dp
+                                val spacing = if (isBottomSheet) 8 else 6
+                                val keySpacing: Dp = (spacing * scaleFactor).dp //8
+
+                                val dialpadEffect = rememberDialpadEffectState(prefs)
+
+                                val backdropVisibility = dialpadBackdropVisibility(dialpadEffect)
+                                if (backdropVisibility < 1f) Box( // Only the Glass switch controls the list mask.
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(if (isBottomSheet) 100.dp else 200.dp)
+                                        .background((if (isBottomSheet) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface).copy(alpha = 1f - backdropVisibility))
+                                )
+                                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                                    val dialpadContent: @Composable () -> Unit = {
+                                        val topBottom = if (isBottomSheet) 16 else 8
+                                        Column(
+                                            modifier = Modifier.padding(
+                                                horizontal = 8.dp,
+                                                vertical = (topBottom * scaleFactor).coerceIn(6f, 16f).dp
+                                            ),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.spacedBy(keySpacing)
+                                        ) {
+                                            // Header row
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = if (isBottomSheet) 8.dp else 0.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                val pasteText = clipboard.getText()?.text
+                                                    ?.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+                                                    ?: ""
+                                                if (number.isNotEmpty() || pasteText.isNotEmpty()) {
+                                                    Surface(
+                                                        onClick = {
+                                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                            showOverflowMenu = true
+                                                        },
+                                                        modifier = Modifier
+                                                            .padding(2.dp)
+                                                            .size(44.dp),
+                                                        shape = RoundedCornerShape(16.dp),
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                                                    ) {
+                                                        Box(contentAlignment = Alignment.Center) {
+                                                            Icon(
+                                                                imageVector = Icons.Default.MoreVert,
+                                                                contentDescription = stringResource(R.string.more),
+                                                                modifier = Modifier.size(24.dp),
+                                                            )
+                                                        }
+                                                    }
+                                                    AnimatedVisibility(
+                                                        visible = showOverflowMenu,
+                                                        enter = slideInVertically(
+                                                            initialOffsetY = { -it },
+                                                            animationSpec = tween(
+                                                                320,
+                                                                easing = FastOutSlowInEasing
+                                                            )
+                                                        ) + fadeIn(tween(280)),
+                                                        exit = slideOutVertically(
+                                                            targetOffsetY = { -it },
+                                                            animationSpec = tween(
+                                                                420,
+                                                                easing = FastOutLinearInEasing
+                                                            )
+                                                        ) + fadeOut(tween(380))
+                                                    ) {
+                                                        DropdownMenu(
+                                                            shape = MaterialTheme.shapes.large,
+                                                            expanded = showOverflowMenu,
+                                                            onDismissRequest = {
+                                                                showOverflowMenu = false
+                                                            },
+                                                            offset = DpOffset((-24).dp, 32.dp),
+                                                        ) {
+                                                            if (number.isNotEmpty()) {
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(
+                                                                        horizontal = 24.dp
+                                                                    ),
+                                                                    text = { Text(stringResource(R.string.copy_number)) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        clipboard.setText(AnnotatedString(number))
+                                                                    }
+                                                                )
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(
+                                                                        horizontal = 24.dp
+                                                                    ),
+                                                                    text = { Text(stringResource(R.string.share_number)) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                                                            type = "text/plain"
+                                                                            putExtra(Intent.EXTRA_TEXT, number)
+                                                                        }
+                                                                        context.startActivity(Intent.createChooser(shareIntent, null))
+                                                                    }
+                                                                )
+                                                            }
+                                                            if (pasteText.isNotEmpty()) {
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(
+                                                                        horizontal = 24.dp
+                                                                    ),
+                                                                    text = { Text(stringResource(R.string.paste)) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        insertAtCursor(pasteText)
+                                                                    }
+                                                                )
+                                                                if (number.isNotEmpty()) {
+                                                                    DropdownMenuItem(
+                                                                        contentPadding = PaddingValues(horizontal = 24.dp),
+                                                                        text = { Text(stringResource(R.string.replace_with_clipboard)) },
+                                                                        onClick = {
+                                                                            showOverflowMenu = false
+                                                                            replaceNumber(pasteText)
+                                                                        },
+                                                                    )
+                                                                }
+                                                            }
+                                                            if (number.isNotEmpty()) {
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(horizontal = 24.dp),
+                                                                    text = { Text(stringResource(R.string.add_pause)) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        insertAtCursor(",")
+                                                                    },
+                                                                )
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(horizontal = 24.dp),
+                                                                    text = { Text(stringResource(R.string.add_wait)) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        insertAtCursor(";")
+                                                                    },
+                                                                )
+                                                                HorizontalDivider()
+                                                                DropdownMenuItem(
+                                                                    contentPadding = PaddingValues(horizontal = 24.dp),
+                                                                    text = { Text(stringResource(R.string.clear_number), color = MaterialTheme.colorScheme.error) },
+                                                                    onClick = {
+                                                                        showOverflowMenu = false
+                                                                        replaceNumber("")
+                                                                    },
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                // Number display
+                                                Box(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+//                                            .defaultMinSize(minHeight = if (number.isEmpty()) 64.dp else 0.dp)
+                                                        .clip(MaterialTheme.shapes.large)
+                                                        .animateContentSize(
+                                                            animationSpec = spring(
+                                                                stiffness = Spring.StiffnessLow,
+                                                                dampingRatio = Spring.DampingRatioMediumBouncy
+                                                            )
+                                                        )
+                                                        .padding(vertical = 8.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    val numberLength = number.length
+                                                    // Smooth mathematical scaling formula:
+                                                    // Start with 30sp. The more characters there are, the more the font size decreases.
+                                                    val dynamicFontSize =
+                                                        (30f - (numberLength * 0.5f)).coerceIn(
+                                                            10f,
+                                                            30f
+                                                        ).toInt()
+                                                    DialpadNumberDisplay(
+                                                        number = number,
+                                                        fontSize = dynamicFontSize,
+                                                        cursorPosition = cursorPosition,
+                                                        onCursorPositionChange = {
+                                                            cursorPosition = it
+                                                        },
+                                                        onLongPress = {
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.LongPress
+                                                            )
+                                                            showOverflowMenu = true
+                                                        },
+                                                        enableAnimations = enableAnimations
+                                                    )
+                                                }
+
+                                                Box(modifier = Modifier.padding(12.dp)) {
+                                                    val backspaceSource =
+                                                        remember { MutableInteractionSource() }
+//                                    FadeScaleBox(visible = number.isNotEmpty()) {
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Outlined.Backspace,
+                                                        contentDescription = stringResource(R.string.backspace),
+                                                        tint = if (number.isNotEmpty()) MaterialTheme.colorScheme.onSurfaceVariant
+                                                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                            alpha = 0.5f
+                                                        ),
+                                                        modifier = Modifier
+                                                            .combinedClickable(
+                                                                onClick = { backspaceAtCursor() },
+                                                                onLongClick = { replaceNumber("") },
+                                                                interactionSource = backspaceSource,
+                                                                indication = ripple(
+                                                                    bounded = false,
+                                                                    radius = 26.dp
+                                                                )
+                                                            ),
+                                                    )
+//                                    }
+                                                }
+                                            }
+
+                                            // Dialpad keys
+                                            val keys = listOf(
+                                                listOf("1", "2", "3"),
+                                                listOf("4", "5", "6"),
+                                                listOf("7", "8", "9"),
+                                                listOf("*", "0", "#")
+                                            )
+                                            val subKeys = mapOf(
+                                                "1" to "   ",
+                                                "2" to "ABC",
+                                                "3" to "DEF",
+                                                "4" to "GHI",
+                                                "5" to "JKL",
+                                                "6" to "MNO",
+                                                "7" to "PQRS",
+                                                "8" to "TUV",
+                                                "9" to "WXYZ",
+                                                "0" to "+"
+                                            )
+
+                                            keys.forEach { row ->
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                                ) {
+                                                    row.forEach { key ->
+                                                        DialPadKey(
+                                                            number = key,
+                                                            letters = subKeys[key] ?: "",
+                                                            onClick = { digit ->
+                                                                insertAtCursor(
+                                                                    digit
+                                                                )
+                                                            },
+                                                            onLongClick = { digit ->
+                                                                insertAtCursor(
+                                                                    digit
+                                                                )
+                                                            },
+                                                            overrideWidth = keyWidth,
+                                                            overrideHeight = keyHeight,
+                                                            scaleFactor = scaleFactor
+                                                        )
+                                                    }
+                                                }
+                                            }
+
+                                            // Action row
+                                            val top = if (isBottomSheet) 6.dp else 1.dp
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(start = 16.dp, end = 16.dp, top = top),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                val lgBackdrop = LocalLiquidGlassBackdrop.current
+                                                val lgDialpadEnabled = remember(settingsState) {
+                                                    prefs.getBoolean(PreferenceManager.KEY_LIQUID_GLASS, false) &&
+                                                            prefs.getBoolean(PreferenceManager.KEY_LG_DIALPAD_CALL_BUTTON, false)
+                                                }
+                                                val blurDialpadEnabled = remember(settingsState) {
+                                                    prefs.getBoolean(PreferenceManager.KEY_BLUR_EFFECTS, false) &&
+                                                            prefs.getBoolean(PreferenceManager.KEY_BLUR_DIALPAD_CALL_BUTTON, false) &&
+                                                            !lgDialpadEnabled
+                                                }
+                                                DialerActionExpressive(
+                                                    onClick = {
+                                                        if (number.isNotEmpty()) {
+                                                            initiateCall(number)
+                                                        }
+                                                    },
+                                                    onLongClick = {
+                                                        val pasteText = clipboard.getText()?.text
+                                                            ?.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+                                                            ?: ""
+                                                        if (number.isEmpty() && pasteText.isNotEmpty()) {
+                                                            replaceNumber(pasteText)
+                                                        } else if (number.isNotEmpty() && getCallingAccounts(context).size > 1) {
+                                                            pendingSearchCallNumber = number
+                                                            showSimPicker = true
+                                                        } else {
+                                                            clipboard.setText(AnnotatedString(number))
+                                                        }
+                                                    },
+                                                    icon = DotDialerHandsetIcon,
+                                                    contentDescription = stringResource(R.string.call),
+                                                    containerColor = color_call_button,
+                                                    contentColor = Color.White,
+                                                    modifier = Modifier
+                                                        .width(callW)
+                                                        .height(callH),
+                                                    isLarge = true,
+                                                    liquidGlassBackdrop = lgBackdrop,
+                                                    liquidGlassEnabled = lgDialpadEnabled,
+                                                    blurEnabled = blurDialpadEnabled
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    // Dialpad Card
+                                    val dialpadCardShape = MaterialTheme.shapes.extraLargeIncreased
+                                    val baseModifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = if (isBottomSheet) 12.dp else if (pillNav) 88.dp else bottomBarHeight + 12.dp)
+                                        .navigationBarsPadding()
+                                    DialpadGlassSurface(state = dialpadEffect, modifier = baseModifier,
+                                        shape = dialpadCardShape) { dialpadContent() }
+                                }
+                            } // end BoxWithConstraints (dialpad card)
+                        } // end AnimatedVisibility (dialpad card)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        } // end outer Column
+                    } // end BoxWithConstraints (screen)
+                } // end Scaffold
+            }
+        }
+    } else {
+        if (isGrantedLogs) {
+            PermissionDeniedView(
+                icon = Icons.Rounded.People,
+                title = stringResource(R.string.contacts_permission),
+                description = stringResource(R.string.contacts_permission_description),
+                onGrantClick = { permStateContacts.launchPermissionRequest() }
+            )
+        } else {
+            PermissionDeniedView(
+                icon = DotDialerHandsetIcon,
+                title = stringResource(R.string.call_history),
+                description = stringResource(R.string.call_history_permission),
+                onGrantClick = { permStateLogs.launchPermissionRequest() }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DialerActionExpressive(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    containerColor: Color,
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    isLarge: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
+    liquidGlassBackdrop: dev.goodwy.rphone.liquidglass.Backdrop? = null,
+    liquidGlassEnabled: Boolean = false,
+    blurEnabled: Boolean = false,
+) {
+    val sizedModifier = modifier.size(64.dp)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val prefs = koinInject<PreferenceManager>()
+    val haptic = LocalHapticFeedback.current
+    val wrappedOnClick: () -> Unit = {
+        if (prefs.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+        onClick()
+    }
+    val wrappedOnLongClick: (() -> Unit)? = if (onLongClick != null) ({
+        if (prefs.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
+        onLongClick()
+    }) else null
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isPressed) (if (isLarge) 42.dp else 14.dp) else (if (isLarge) 42.dp else 24.dp),
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow), label = "ButtonShape"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) (if (isLarge) 1.08f else 1.2f) else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow), label = "ButtonScale"
+    )
+    val buttonShape = RoundedCornerShape(cornerRadius)
+    val useLiquidGlass =
+        liquidGlassEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && liquidGlassBackdrop != null
+    val useBackdropBlur =
+        blurEnabled && !useLiquidGlass && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+    if (useLiquidGlass) {
+        Box(
+            modifier = sizedModifier
+                .scale(scale)
+                .drawBackdrop(
+                    backdrop = liquidGlassBackdrop,
+                    shape = { buttonShape },
+                    effects = {
+                        val d = density
+                        colorControls(saturation = 1.3f)
+                        blur(2f * d)
+                        lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
+                    },
+                    highlight = { Highlight.Default }
+                )
+                .combinedClickable(
+                    onClick = wrappedOnClick,
+                    onLongClick = wrappedOnLongClick,
+                    interactionSource = interactionSource,
+                    indication = null
+                )
+        ) {
+            Surface(
+                shape = buttonShape,
+                color = containerColor.copy(alpha = 0.5f),
+                contentColor = contentColor,
+                modifier = Modifier.matchParentSize()
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        icon,
+                        contentDescription,
+                        modifier = Modifier.size(if (isLarge) 32.dp else 24.dp)
+                    )
+                }
+            }
+        }
+    } else if (useBackdropBlur && liquidGlassBackdrop != null) {
+        Surface(
+            modifier = sizedModifier
+                .scale(scale)
+                .drawPlainBackdrop(
+                    backdrop = liquidGlassBackdrop,
+                    shape = { buttonShape },
+                    effects = { blur(30f * density) }
+                )
+                .combinedClickable(
+                    onClick = wrappedOnClick,
+                    onLongClick = wrappedOnLongClick,
+                    interactionSource = interactionSource,
+                    indication = null
+                ),
+            shape = buttonShape,
+            color = containerColor.copy(alpha = 0.72f),
+            contentColor = contentColor
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    icon,
+                    contentDescription,
+                    modifier = Modifier.size(if (isLarge) 32.dp else 24.dp)
+                )
+            }
+        }
+    } else {
+        Surface(
+            modifier = sizedModifier
+                .scale(scale)
+                .combinedClickable(
+                    onClick = wrappedOnClick,
+                    onLongClick = wrappedOnLongClick,
+                    interactionSource = interactionSource,
+                    indication = null
+                ),
+            shape = buttonShape,
+            color = containerColor,
+            contentColor = contentColor
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    icon,
+                    contentDescription,
+                    modifier = Modifier.size(if (isLarge) 32.dp else 24.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DialPadKey(
+    number: String,
+    letters: String,
+    onClick: (String) -> Unit,
+    onLongClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+    overrideWidth: Dp? = null,
+    overrideHeight: Dp? = null,
+    scaleFactor: Float = 1f,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val prefs = koinInject<PreferenceManager>()
+    val haptic = LocalHapticFeedback.current
+    val cornerRadius by animateDpAsState(
+        if (isPressed) 16.dp else 42.dp,
+        spring(stiffness = Spring.StiffnessMediumLow),
+        label = "ButtonShapeAnimation"
+    )
+
+    val scale by animateFloatAsState(
+        if (isPressed) 1.04f else 1f,
+        spring(stiffness = Spring.StiffnessMediumLow),
+        label = "DialKeyScale"
+    )
+
+    val bgColor by animateColorAsState(
+        if (isPressed) MaterialTheme.colorScheme.primaryContainer else dialpadKeyColor, //MaterialTheme.colorScheme.surfaceContainerLow,
+        spring(stiffness = Spring.StiffnessMedium), "DialKeyColor"
+    )
+
+    val keyWidth = overrideWidth ?: if (compact) 82.dp else 108.dp
+    val keyHeight = overrideHeight ?: if (compact) 52.dp else 58.dp
+    Surface(
+        shape = RoundedCornerShape(cornerRadius),
+        color = bgColor,
+        modifier = modifier
+            .size(width = keyWidth, height = keyHeight)
+            .scale(scale)
+    ) {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val textWidth = maxWidth
+            val textHeight = maxHeight
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .combinedClickable(
+                        onClick = {
+                            if (prefs.getBoolean(
+                                    PreferenceManager.KEY_APP_HAPTICS,
+                                    true
+                                )
+                            ) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, false)) {
+                                playDialpadTone(number)
+                            }
+                            onClick(number)
+                        },
+                        onLongClick = {
+                            if (prefs.getBoolean(
+                                    PreferenceManager.KEY_APP_HAPTICS,
+                                    true
+                                )
+                            ) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, false)) {
+                                playDialpadTone(number)
+                            }
+                            val newNumber = when (number) {
+                                "0" -> "+"
+                                "*" -> ","
+                                "#" -> ";"
+                                else -> number
+                            }
+                            onLongClick(newNumber)
+                        },
+                        interactionSource = interactionSource,
+                        indication = ripple()
+                    ),
+            ) {
+                DialpadKeyLabels(number, letters, compact, scaleFactor, textWidth, textHeight)
+            }
+        }
+    }
+}
+
+/**
+ * Renders a phone number with smooth per-character animations:
+ * - New chars slide up + fade + scale in from below
+ * - Deleted chars slide down + fade + scale out
+ * - Existing chars animate their horizontal position smoothly when neighbours appear/disappear
+ *
+ * Uses a stable monotonically-increasing ID per character insertion so Compose can
+ * distinguish "same char shifted left" from "new char at this slot".
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun DialpadNumberDisplay(
+    number: String,
+    fontSize: Int,
+    cursorPosition: Int = number.length,
+    onCursorPositionChange: (Int) -> Unit = {},
+    onLongPress: () -> Unit = {},
+    enableAnimations: Boolean
+) {
+    val easeOutExpo = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.displaySmall.copy(
+        fontSize = fontSize.sp,
+        fontWeight = FontWeight.Light
+    )
+
+    // Stable list of (uniqueId, char) — each insertion gets a fresh monotonic id
+    // so position shifts use animateItem, not a full recompose.
+    val idCounter = remember { mutableIntStateOf(0) }
+    val stableChars = remember { mutableStateListOf<Pair<Int, Char>>() }
+
+    LaunchedEffect(number) {
+        val current = stableChars.map { it.second }.joinToString("")
+        if (number == current) return@LaunchedEffect
+
+        // Diff by common prefix/suffix so an insert or delete anywhere in the middle of the
+        // string (not just at the end) only touches the characters that actually changed —
+        // everything else keeps its stable id and simply slides over.
+        val minLen = minOf(current.length, number.length)
+        var prefixLen = 0
+        while (prefixLen < minLen && current[prefixLen] == number[prefixLen]) prefixLen++
+
+        var suffixLen = 0
+        val maxSuffix = minLen - prefixLen
+        while (suffixLen < maxSuffix &&
+            current[current.length - 1 - suffixLen] == number[number.length - 1 - suffixLen]
+        ) suffixLen++
+
+        val removeCount = current.length - prefixLen - suffixLen
+        repeat(removeCount) {
+            if (stableChars.size > prefixLen) stableChars.removeAt(prefixLen)
+        }
+        val insertText = number.substring(prefixLen, number.length - suffixLen)
+        insertText.forEachIndexed { i, ch ->
+            stableChars.add(prefixLen + i, Pair(idCounter.intValue++, ch))
+        }
+    }
+
+    // Blinking caret alpha
+    val cursorBlink = rememberInfiniteTransition(label = "cursorBlink")
+    val cursorAlpha by cursorBlink.animateFloat(
+        initialValue = 1f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 1000
+                1f at 0
+                1f at 500
+                0f at 501
+                0f at 999
+            }
+        ),
+        label = "cursorAlpha"
+    )
+
+    val clampedCursor = cursorPosition.coerceIn(0, stableChars.size)
+
+    LazyRow(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        userScrollEnabled = false,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Leading spacer matching the trailing tap zone's width below, so the digits (and the
+        // cursor) are actually centered in the box instead of being pulled off-center by an
+        // unbalanced zone that only exists on the trailing side.
+        item(key = "leading_cursor_area") {
+            Box(modifier = Modifier.width(28.dp))
+        }
+        itemsIndexed(
+            items = stableChars,
+            key = { _, pair -> pair.first }
+        ) { index, pair ->
+            // If animations are disabled, display it straight away
+            var appeared by remember { mutableStateOf(!enableAnimations) }
+            LaunchedEffect(Unit) {
+                if (enableAnimations) appeared = true
+            }
+
+            val offsetY by animateDpAsState(
+                targetValue = if (appeared) 0.dp else 20.dp,
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessLow,
+                    dampingRatio = Spring.DampingRatioMediumBouncy
+                ),
+                label = "charOffY"
+            )
+            val alpha by animateFloatAsState(
+                targetValue = if (appeared) 1f else 0f,
+                animationSpec = tween(360, easing = easeOutExpo),
+                label = "charAlpha"
+            )
+            val scale by animateFloatAsState(
+                targetValue = if (appeared) 1f else 0.55f,
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessLow,
+                    dampingRatio = Spring.DampingRatioMediumBouncy
+                ),
+                label = "charScale"
+            )
+
+            Box(contentAlignment = Alignment.CenterStart) {
+                // A thin blinking bar rendered just before this character when the cursor sits
+                // here, so it visually sits between the two adjacent digits.
+                if (clampedCursor == index) {
+                    Box(
+                        modifier = Modifier
+                            .offset(x = (-2).dp)
+                            .width(2.dp)
+                            .height(with(LocalDensity.current) { textStyle.fontSize.toDp() * 0.9f })
+                            .align(Alignment.CenterStart)
+                            .graphicsLayer { this.alpha = cursorAlpha }
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                }
+                Text(
+                    text = pair.second.toString(),
+                    style = textStyle,
+                    color = textColor,
+                    modifier = Modifier
+                        .animateItem(
+                            placementSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow,
+                                dampingRatio = Spring.DampingRatioMediumBouncy
+                            ),
+                            fadeInSpec = tween(360, easing = easeOutExpo),
+                            fadeOutSpec = tween(220)
+                        )
+                        .offset { androidx.compose.ui.unit.IntOffset(0, offsetY.roundToPx()) }
+                        .alpha(alpha)
+                        .scale(scale)
+                        .pointerInput(pair.first) {
+                            detectTapGestures(
+                                onLongPress = { onLongPress() }
+                            ) { tapOffset ->
+                                // Tapping the left half of a digit places the cursor before it,
+                                // the right half places it after — like a normal text field.
+                                val newPos = if (tapOffset.x < size.width / 2f) index else index + 1
+                                onCursorPositionChange(newPos)
+                            }
+                        }
+                )
+            }
+        }
+
+        if (number.isNotEmpty()) {
+            item(key = "trailing_cursor_area") {
+                Box(
+                    modifier = Modifier
+                        .width(28.dp)
+                        .height(with(LocalDensity.current) { textStyle.fontSize.toDp() * 1.4f })
+                        .pointerInput(stableChars.size) {
+                            detectTapGestures(
+                                onLongPress = { onLongPress() }
+                            ) { onCursorPositionChange(stableChars.size) }
+                        },
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (clampedCursor == stableChars.size) {
+                        Box(
+                            modifier = Modifier
+                                .width(2.dp)
+                                .height(with(LocalDensity.current) { textStyle.fontSize.toDp() * 0.9f })
+                                .graphicsLayer { this.alpha = cursorAlpha }
+                                .background(MaterialTheme.colorScheme.primary)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+object T9Matcher {
+    fun isMatch(contactName: String, query: String): Boolean {
+        if (query.isEmpty()) return false
+
+        val startIndices = mutableListOf(0)
+        for (i in 0 until contactName.length - 1) {
+            val c = contactName[i]
+            if (c == ' ' || c == '-' || c == '.' || c == '_') {
+                startIndices.add(i + 1)
+            }
+        }
+
+        for (startIndex in startIndices) {
+            var qIdx = 0
+            var nIdx = startIndex
+
+            while (qIdx < query.length && nIdx < contactName.length) {
+                val nC = contactName[nIdx]
+                if (nC == ' ' || nC == '-' || nC == '.' || nC == '_') {
+                    nIdx++
+                    continue
+                }
+
+                if (charToT9(nC) != query[qIdx]) {
+                    break
+                }
+                qIdx++
+                nIdx++
+            }
+
+            if (qIdx == query.length) return true
+        }
+
+        return false
+    }
+
+    private fun charToT9(c: Char): Char = when (c.uppercaseChar()) {
+        'A', 'B', 'C' -> '2'
+        'D', 'E', 'F' -> '3'
+        'G', 'H', 'I' -> '4'
+        'J', 'K', 'L' -> '5'
+        'M', 'N', 'O' -> '6'
+        'P', 'Q', 'R', 'S' -> '7'
+        'T', 'U', 'V' -> '8'
+        'W', 'X', 'Y', 'Z' -> '9'
+        '0' -> '0'
+        '1' -> '1'
+        '2' -> '2'
+        '3' -> '3'
+        '4' -> '4'
+        '5' -> '5'
+        '6' -> '6'
+        '7' -> '7'
+        '8' -> '8'
+        '9' -> '9'
+        else -> ' '
+    }
+}
+
+@Composable
+private fun FadeScaleBox(modifier: Modifier, visible: Boolean, content: @Composable () -> Unit) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
+        ) {
+            content()
+        }
+    }
+}
+

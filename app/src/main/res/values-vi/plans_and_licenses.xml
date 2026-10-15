@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Gói</string>
+    <string name="plans_description">Các cuộc gọi cơ bản vẫn miễn phí. Pro mở khóa nền cuộc gọi tùy chỉnh. Chọn gói phù hợp.</string>
+    <string name="gift_title">Mã kích hoạt</string>
+    <string name="gift_description">Có mã early adopter? Kích hoạt tại đây và giữ mã để khôi phục trên điện thoại khác.</string>
+    <string name="gift_active">Pro early adopter đang hoạt động</string>
+    <string name="gift_activate">Kích hoạt mã</string>
+    <string name="gift_code">Mã kích hoạt</string>
+    <string name="gift_invalid">Mã không hợp lệ, hết hạn hoặc bị thu hồi.</string>
+    <string name="gift_limit">Đã đạt giới hạn thiết bị. Hãy yêu cầu đặt lại lượt kích hoạt.</string>
+    <string name="gift_unavailable">Không thể kích hoạt. Kiểm tra kết nối rồi thử lại.</string>
+    <string name="plan_monthly_description">Gói Pro hàng tháng tự động gia hạn.</string>
+    <string name="plan_yearly_description">Gói Pro hàng năm tự động gia hạn.</string>
+    <string name="plan_lifetime_description">Thanh toán một lần để dùng Pro trọn đời.</string>
+    <string name="product_stats_description">Báo cáo tự động gồm thống kê tối thiểu: phiên bản ứng dụng/Android, mẫu máy, ngôn ngữ, quốc gia/nhà mạng SIM, vùng số đã chọn và tổng hằng ngày của mục yêu thích, vuốt, bàn phím. Không có danh bạ, số điện thoại, lịch sử gọi hay GPS. Chỉ theo yêu cầu tắt thống kê tự động.</string>
+</resources>

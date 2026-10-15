@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Pilih cara melindungi akses ke aplikasi</string>
+    <string name="authentication_unavailable">Autentikasi tidak tersedia. Coba lagi nanti atau gunakan autentikasi perangkat untuk memulihkan akses.</string>
+    <string name="authentication_password_minimum">Gunakan setidaknya 8 karakter</string>
+    <string name="authentication_retry_later">Terlalu banyak percobaan. Tunggu dan coba lagi.</string>
+    <string name="authentication_recover_device">Pulihkan dengan autentikasi perangkat</string>
+</resources>

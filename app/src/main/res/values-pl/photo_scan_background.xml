@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Zdjęcia kontaktów</string>
+    <string name="photo_scan_notification_title">Poprawianie zdjęć kontaktów</string>
+    <string name="photo_scan_resume">Wznów skanowanie</string>
+    <string name="photo_scan_retry">Ponów nieudane zdjęcia</string>
+    <string name="photo_scan_background">Możesz używać innych aplikacji podczas aktualizacji zdjęć.</string>
+    <string name="photo_scan_summary">Poprawione: %1$d · Bez zmian: %2$d · Błędy: %3$d</string>
+    <string name="photo_scan_checked">Sprawdzone: %1$d</string>
+    <string name="photo_scan_network">Połączenie przerwane. Wznów po powrocie do sieci.</string>
+    <string name="photo_scan_rate_limit">Google prosi o przerwę. Spróbuj ponownie później.</string>
+    <string name="photo_scan_google_service">Google jest chwilowo niedostępny. Spróbuj ponownie później.</string>
+    <string name="photo_scan_invalid_image">Zdjęcie niedostępne lub nieprawidłowe</string>
+    <string name="photo_scan_contact_changed">Kontakt zmieniony lub brak bezpiecznego dopasowania</string>
+    <string name="photo_scan_permission">Brak uprawnienia do kontaktów</string>
+    <string name="photo_scan_write">Nie udało się zapisać zdjęcia</string>
+    <string name="photo_scan_other">Nie udało się przetworzyć zdjęcia</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Błąd połączenia</string>
+    <string name="photo_scan_rate_limit_count">Limit żądań Google</string>
+    <string name="photo_scan_google_service_count">Usługa Google niedostępna</string>
+</resources>

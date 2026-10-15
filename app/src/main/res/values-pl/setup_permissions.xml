@@ -1,0 +1,14 @@
+<resources>
+    <string name="setup_contacts_read">Odczytuj kontakty, aby rozpoznać rozmówców i pokazać ich nazwy oraz zdjęcia.</string>
+    <string name="setup_contacts_write">Edytuj kontakty, aby zapisać nazwy, numery i zdjęcia.</string>
+    <string name="setup_history_read">Odczytuj historię, aby pokazać połączenia przychodzące, wychodzące i nieodebrane.</string>
+    <string name="setup_history_write">Edytuj historię, aby usunąć wybrane wpisy.</string>
+    <string name="setup_phone_state">Odczytuj stan telefonu, aby rozpoznać karty SIM i konta połączeń.</string>
+    <string name="setup_phone_call">Nawiązuj połączenia uruchamiane w dot.dialer.</string>
+    <string name="setup_phone_answer">Obsługuj połączenia przychodzące i przyciski odbierania.</string>
+    <string name="setup_notifications">Pokazuj alerty i przyciski dla połączeń przychodzących, trwających i nieodebranych.</string>
+    <string name="setup_bluetooth">Korzystaj z podłączonego systemu audio samochodu i słuchawek Bluetooth.</string>
+    <string name="setup_fullscreen">Pokazuj połączenia przychodzące na ekranie blokady. Bez tego dostępu użyj powiadomienia o połączeniu.</string>
+    <string name="setup_retry">Spróbuj ponownie</string>
+    <string name="setup_continue_limited">Kontynuuj z ograniczonymi funkcjami</string>
+</resources>

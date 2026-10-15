@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">Feineinstellungen</string>
+    <string name="settings_scroll_calibration">Scroll-Vibration kalibrieren</string>
+    <string name="settings_reporting">Diagnoseberichte</string>
+    <string name="settings_blur_dependency">Wird verwendet, wenn Glas bei Anrufen aus ist. Geräteunterstützung kann variieren.</string>
+    <string name="settings_repeat_contacts_explanation">Bei der Suche dieselbe Person in letzten Anrufen und Kontakten anzeigen.</string>
+    <string name="settings_protected_numbers">Geschützte Nummern</string>
+    <string name="settings_alias_home_and_gestures">Home &amp; Gesten</string>
+    <string name="settings_alias_interface_settings">Oberfläche</string>
+    <string name="settings_alias_privacy_and_blocking">Datenschutz und gesperrte Nummern</string>
+    <string name="settings_alias_call_settings">Anrufeinstellungen</string>
+    <string name="settings_alias_manage_contacts">Kontakte verwalten</string>
+    <string name="settings_alias_avatar_size">Größe des Avatars</string>
+    <string name="settings_alias_expanded_list_details">Erweiterte Listendetails</string>
+    <string name="settings_alias_subtle_animations">Subtile Animationen</string>
+    <string name="settings_alias_clear_search_after_call">Klare Suche nach einem Anruf</string>
+    <string name="settings_alias_search_repeat_contacts">Wiederholen Sie Kontakte in den Suchergebnissen</string>
+    <string name="settings_alias_incoming_call_ui">UI für eingehende Anrufe</string>
+    <string name="settings_alias_settings_call_default_background">Standard-Anrufhintergrund</string>
+    <string name="settings_alias_vibrate_on_answer">Vibration bei Annahme</string>
+    <string name="settings_alias_authentication_method">Authentifizierungsmethode</string>
+    <string name="settings_alias_lock_call_actions">Anrufaktionen sperren</string>
+    <string name="settings_alias_lock_scope">Geltungsbereich der Anrufsperre</string>
+    <string name="settings_alias_blacklist">Schwarze Liste</string>
+    <string name="settings_alias_whitelist">Weiße Liste</string>
+    <string name="settings_alias_history_and_feedback">Verlauf und Feedback</string>
+    <string name="settings_alias_continue_support">Fortfahren</string>
+    <string name="settings_alias_authentication">Authentifizierung</string>
+    <string name="settings_alias_contact_tools">Kontaktwerkzeuge</string>
+    <string name="settings_alias_ringtone_settings">Klingelton-Einstellungen</string>
+    <string name="settings_alias_managing_contact_sources">Kontaktquellen verwalten</string>
+    <string name="settings_alias_tap_haptics">Tipp-Haptik</string>
+</resources>

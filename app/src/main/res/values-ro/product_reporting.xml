@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Raportare diagnostic</string>
+    <string name="onboarding_essential_body_gplay">Contactele și istoricul apelurilor rămân pe telefon, nu pe serverele noastre. Android va cere aplicația implicită pentru apeluri și permisiunile necesare.\n\nDiagnosticul automat trimite rapoarte tehnice de erori, detalii minime despre telefon și SIM, și contoare zilnice de funcții. Fără contacte, conținutul apelurilor sau GPS. Poți alege raportarea doar la cerere în %1$s → %2$s.</string>
+</resources>

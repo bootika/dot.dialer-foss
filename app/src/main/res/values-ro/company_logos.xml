@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_search_unavailable">Căutarea după numele firmei este indisponibilă. Căutarea după site sau domeniul e-mailului poate funcționa.</string>
+</resources>

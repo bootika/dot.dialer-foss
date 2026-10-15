@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Share diagnostics file</string>
+    <string name="diagnostics_use_file">This log is too large to copy. Share the file instead.</string>
+    <string name="diagnostics_share_failed">Could not share diagnostics</string>
+    <string name="car_capture_title">Car test capture</string>
+    <string name="car_capture_steps">Select Verbose above. Before the test, enable Bluetooth HCI snoop logging in Developer options (full, not filtered) and restart Bluetooth with no call active. Run your call tests. Afterwards, take a full bug report in Developer options, then turn snoop logging off and restart Bluetooth again with no call active. Share the Dot TXT and Android bug report. The bug report can contain contact data. No PC is needed during the test.</string>
+    <string name="car_capture_developer_options">Developer options</string>
+    <string name="car_capture_settings_failed">Could not open Developer options</string>
+</resources>

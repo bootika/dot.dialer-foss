@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="conference_participant_count">
+        <item quantity="other">%d người tham gia</item>
+    </plurals>
+    <string name="conference_participants_unavailable">Không có thông tin về người tham gia</string>
+    <string name="end_conference_participant">Kết thúc cuộc gọi với %1$s</string>
+</resources>

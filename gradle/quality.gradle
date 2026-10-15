@@ -1,0 +1,257 @@
+def normalizePath = { File file ->
+    rootDir.toPath().relativize(file.toPath()).toString().replace('\\', '/')
+}
+
+tasks.register('architectureCheck') {
+    group = 'verification'
+    description = 'Enforces dependency and concurrency boundaries that compilation alone cannot express.'
+
+    def coreSources = files(
+        fileTree('core/diagnostics/src/main') { include '**/*.kt' },
+        fileTree('core/domain/src/main') { include '**/*.kt' },
+    )
+    def productionSources = fileTree('app/src') {
+        include 'main/**/*.kt', 'foss/**/*.kt', 'gplay/**/*.kt', 'rustore/**/*.kt'
+    }
+    inputs.files(coreSources, productionSources)
+    outputs.upToDateWhen { false }
+
+    doLast {
+        def violations = []
+        def forbiddenCoreImports = [
+            'import android.',
+            'import androidx.',
+            'import org.koin.',
+        ]
+        def forbiddenSettingsIconColors = [
+            'colorCyan',
+            'colorDarkCyan',
+            'colorGreen',
+            'colorDarkGreen',
+            'colorPink',
+            'colorDarkPink',
+            'colorBlue',
+            'colorDarkBlue',
+            'colorIndigo',
+            'colorDarkIndigo',
+            'colorPurple',
+            'colorDarkPurple',
+            'colorOliva',
+            'colorDarkOliva',
+            'tertiaryContainer',
+            'onTertiaryContainer',
+        ]
+
+        coreSources.files.sort().each { file ->
+            file.readLines('UTF-8').eachWithIndex { line, index ->
+                if (forbiddenCoreImports.any { line.trim().startsWith(it) }) {
+                    violations << "${normalizePath(file)}:${index + 1}: core modules must remain platform-free"
+                }
+            }
+        }
+
+        productionSources.files.sort().each { file ->
+            def path = normalizePath(file)
+            file.readLines('UTF-8').eachWithIndex { line, index ->
+                if (line.contains('GlobalScope')) {
+                    violations << "${path}:${index + 1}: GlobalScope is forbidden in production code"
+                }
+                if (line.contains('defaultDisplay') && file.name != 'DisplayRotation.kt' && file.name != 'FloatingCallService.kt') {
+                    violations << "${path}:${index + 1}: display compatibility belongs in DisplayRotation"
+                }
+                def isSettingsIconAssignment = path.contains('/view/screen/settings/') &&
+                    line =~ /\b(?:iconContainerColor|iconBgContainerColor|iconColor|iconBgColor)\s*=/
+                if (isSettingsIconAssignment && forbiddenSettingsIconColors.any { line.contains(it) }) {
+                    violations << "${path}:${index + 1}: Settings icons use only accent, cream, or danger colors"
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException("Architecture contract violations:\n - ${violations.join('\n - ')}")
+        }
+    }
+}
+
+tasks.register('sourceSizeRatchet') {
+    group = 'verification'
+    description = 'Prevents legacy oversized Kotlin files from growing and rejects new files over 500 lines.'
+
+    def baselineFile = file('config/quality/legacy-file-size-baseline.txt')
+    def sources = fileTree('app/src') {
+        include 'main/**/*.kt', 'foss/**/*.kt', 'gplay/**/*.kt', 'rustore/**/*.kt'
+    }
+    inputs.file(baselineFile)
+    inputs.files(sources)
+    outputs.upToDateWhen { false }
+
+    doLast {
+        if (!baselineFile.isFile()) {
+            throw new GradleException("Missing source-size baseline: ${normalizePath(baselineFile)}")
+        }
+
+        def ceilings = [:]
+        baselineFile.readLines('UTF-8').eachWithIndex { rawLine, index ->
+            def line = rawLine.trim()
+            if (line.isEmpty() || line.startsWith('#')) return
+            def parts = line.split('=', 2)
+            if (parts.length != 2 || !parts[1].isInteger()) {
+                throw new GradleException("Invalid source-size baseline at line ${index + 1}: ${rawLine}")
+            }
+            ceilings[parts[0]] = parts[1].toInteger()
+        }
+
+        def violations = []
+        sources.files.sort().each { file ->
+            def path = normalizePath(file)
+            def lineCount = file.readLines('UTF-8').size()
+            def ceiling = ceilings[path]
+            if (ceiling == null && lineCount > 500) {
+                violations << "${path} has ${lineCount} lines; new production files are limited to 500"
+            } else if (ceiling != null && lineCount > ceiling) {
+                violations << "${path} grew from its ${ceiling}-line ceiling to ${lineCount} lines"
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException("Source-size ratchet violations:\n - ${violations.join('\n - ')}")
+        }
+    }
+}
+
+tasks.register('lintWarningRatchet') {
+    group = 'verification'
+    description = 'Allows the existing lint warning inventory only to decrease.'
+    dependsOn ':app:lintFossDebug'
+
+    def baselineFile = file('config/quality/lint-warning-baseline.txt')
+    def reportFile = project(':app').layout.buildDirectory.file(
+        'reports/lint-results-fossDebug.xml',
+    )
+    inputs.file(baselineFile)
+    inputs.file(reportFile)
+    outputs.upToDateWhen { false }
+
+    doLast {
+        def ceilings = [:]
+        baselineFile.readLines('UTF-8').eachWithIndex { rawLine, index ->
+            def line = rawLine.trim()
+            if (line.isEmpty() || line.startsWith('#')) return
+            def parts = line.split('=', 2)
+            if (parts.length != 2 || !parts[1].isInteger()) {
+                throw new GradleException("Invalid lint baseline at line ${index + 1}: ${rawLine}")
+            }
+            ceilings[parts[0]] = parts[1].toInteger()
+        }
+
+        def actual = [:].withDefault { 0 }
+        def report = new groovy.xml.XmlSlurper().parse(reportFile.get().asFile)
+        report.issue.findAll { it.@severity.text() == 'Warning' }.each { issue ->
+            actual[issue.@id.text()]++
+        }
+
+        def violations = actual.findAll { id, count -> count > (ceilings[id] ?: 0) }
+            .collect { id, count -> "${id}: ${count} warning(s), ceiling ${ceilings[id] ?: 0}" }
+        if (!violations.isEmpty()) {
+            throw new GradleException("Lint warning ratchet violations:\n - ${violations.join('\n - ')}")
+        }
+    }
+}
+
+tasks.register('legacySmellRatchet') {
+    group = 'verification'
+    description = 'Prevents known legacy Kotlin smells from spreading while they are removed incrementally.'
+
+    def baselineFile = file('config/quality/legacy-code-smell-baseline.txt')
+    def appSources = fileTree('app/src') {
+        include 'main/**/*.kt', 'foss/**/*.kt', 'gplay/**/*.kt', 'rustore/**/*.kt'
+    }
+    def coreSources = files(
+        fileTree('core/diagnostics/src/main') { include '**/*.kt' },
+        fileTree('core/domain/src/main') { include '**/*.kt' },
+    )
+    def sources = appSources + coreSources
+    inputs.file(baselineFile)
+    inputs.files(sources)
+    outputs.upToDateWhen { false }
+
+    doLast {
+        if (!baselineFile.isFile()) {
+            throw new GradleException("Missing code-smell baseline: ${normalizePath(baselineFile)}")
+        }
+
+        def patterns = [
+            printStackTrace : ~/printStackTrace\s*\(/,
+            nonNullAssertion: ~/!!/,
+            todoFixme       : ~/\b(?:TODO|FIXME)\b/,
+            runBlocking     : ~/\brunBlocking\b/,
+            emptyCatch      : ~/catch\s*\([^)]*\)\s*\{\s*\}/,
+            ignoredBroadCatch: ~/catch\s*\(\s*_\s*:\s*(?:Exception|RuntimeException|SecurityException)\s*\)/,
+        ]
+        def ceilings = [:]
+        baselineFile.readLines('UTF-8').eachWithIndex { rawLine, index ->
+            def line = rawLine.trim()
+            if (line.isEmpty() || line.startsWith('#')) return
+            def parts = line.split('=', 2)
+            def identity = parts[0].split('\\|', 2)
+            if (parts.length != 2 || identity.length != 2 || !patterns.containsKey(identity[0]) || !parts[1].isInteger()) {
+                throw new GradleException("Invalid code-smell baseline at line ${index + 1}: ${rawLine}")
+            }
+            ceilings[parts[0]] = parts[1].toInteger()
+        }
+
+        def violations = []
+        sources.files.sort().each { source ->
+            def path = normalizePath(source)
+            def text = source.getText('UTF-8')
+            patterns.each { metric, pattern ->
+                def count = (text =~ pattern).count
+                def identity = "${metric}|${path}"
+                def ceiling = ceilings[identity] ?: 0
+                if (count > ceiling) {
+                    violations << "${path}: ${metric} count ${count}, ceiling ${ceiling}"
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException("Legacy code-smell ratchet violations:\n - ${violations.join('\n - ')}")
+        }
+    }
+}
+
+tasks.register('qualityGate') {
+    group = 'verification'
+    description = 'Runs every check required before a Dot Dialer change can be merged.'
+
+    dependsOn(
+        'architectureCheck',
+        'legacySmellRatchet',
+        'lintWarningRatchet',
+        'sourceSizeRatchet',
+        ':core:diagnostics:test',
+        ':core:domain:test',
+        ':app:compileFossDebugKotlin',
+        ':app:compileGplayDebugKotlin',
+        ':app:compileRustoreDebugKotlin',
+        ':app:testFossDebugUnitTest',
+        ':app:compileFossDebugAndroidTestKotlin',
+        ':app:lintFossDebug',
+        ':app:assembleFossDebug',
+        // Exercise R8, resource shrinking and release-only lint on every merge.
+        // The app module deliberately emits an unsigned APK when release credentials are absent.
+        ':app:assembleFossRelease',
+    )
+}
+
+// Compose Destinations writes variant-specific KSP sources below one generated-source tree.
+// Keep FOSS lint analysis away from concurrent Google Play/RuStore generation so the gate is
+// deterministic on both developer machines and CI.
+project(':app').tasks.matching { task ->
+    task.name.startsWith('lintAnalyzeFossDebug')
+}.configureEach {
+    mustRunAfter(
+        ':app:compileGplayDebugKotlin',
+        ':app:compileRustoreDebugKotlin',
+    )
+}

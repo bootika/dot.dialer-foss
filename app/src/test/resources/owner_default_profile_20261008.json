@@ -1,0 +1,87 @@
+[
+  {
+    "Key": "ambient_droplet_brightness",
+    "Type": "Int",
+    "Value": 140
+  },
+  {
+    "Key": "android_auto_enabled",
+    "Type": "Boolean",
+    "Value": false
+  },
+  {
+    "Key": "BLUR_dialpad",
+    "Type": "Boolean",
+    "Value": false
+  },
+  {
+    "Key": "call_avatar_size",
+    "Type": "String",
+    "Value": "small"
+  },
+  {
+    "Key": "call_screen_appearance",
+    "Type": "String",
+    "Value": "full_photo"
+  },
+  {
+    "Key": "contact_avatar_size",
+    "Type": "String",
+    "Value": "medium"
+  },
+  {
+    "Key": "custom_quick_responses",
+    "Type": "String",
+    "Value": "Nu pot vorbi, scrie-mi pe WhatsApp|||Nu pot vorbi, te sun eu mai tarziu|||Nu pot vorbi, suna-ma mai tarziu"
+  },
+  {
+    "Key": "dialpad_glass_strength_percent",
+    "Type": "Int",
+    "Value": 30
+  },
+  {
+    "Key": "frosted_call_background",
+    "Type": "Boolean",
+    "Value": false
+  },
+  {
+    "Key": "hangup_button_width",
+    "Type": "Float",
+    "Value": 0.4
+  },
+  {
+    "Key": "ignore_system_font_scale",
+    "Type": "Boolean",
+    "Value": true
+  },
+  {
+    "Key": "incoming_call_ui_mode",
+    "Type": "Int",
+    "Value": 10
+  },
+  {
+    "Key": "lg_dialpad",
+    "Type": "Boolean",
+    "Value": true
+  },
+  {
+    "Key": "recent_history_max_entries",
+    "Type": "Int",
+    "Value": 1000
+  },
+  {
+    "Key": "show_first_letter",
+    "Type": "Boolean",
+    "Value": true
+  },
+  {
+    "Key": "show_picture",
+    "Type": "Boolean",
+    "Value": true
+  },
+  {
+    "Key": "theme_mode",
+    "Type": "String",
+    "Value": "light"
+  }
+]

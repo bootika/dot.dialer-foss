@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Chiamate e contatti</string>
+    <string name="onboarding_essential_body">I tuoi contatti e la cronologia restano sul telefono, non sui nostri server. Android chiederà di scegliere l’app telefono predefinita e concedere i permessi necessari.\n\nLe segnalazioni tecniche degli errori sono automatiche per impostazione predefinita. Puoi scegliere l’invio su richiesta in %1$s → %2$s.</string>
+    <string name="onboarding_start">Inizia</string>
+    <string name="diagnostic_reporting_mode">Segnalazione errori</string>
+    <string name="diagnostic_automatic">Automatica</string>
+    <string name="diagnostic_on_demand">Solo su richiesta</string>
+    <string name="diagnostic_reporting_explanation">Il registro locale rimane disponibile in entrambe le modalità. L’invio su richiesta invia un evento solo quando lo richiedi.</string>
+    <string name="photo_offer_title">Foto dei contatti più nitide</string>
+    <string name="photo_offer_body">Alcuni contatti Google hanno foto. Puoi collegare Google per cercare versioni a risoluzione maggiore.</string>
+    <string name="photo_offer_options">Vedi le opzioni</string>
+    <string name="diagnostic_mode_save_failed">Impossibile salvare l’impostazione dei rapporti. Riprova.</string>
+</resources>

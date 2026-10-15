@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Diagnosedatei teilen</string>
+    <string name="diagnostics_use_file">Dieses Protokoll ist zum Kopieren zu groß. Teile die Datei.</string>
+    <string name="diagnostics_share_failed">Diagnose konnte nicht geteilt werden</string>
+    <string name="car_capture_title">Aufzeichnung für einen Autotest</string>
+    <string name="car_capture_steps">Wähle oben Verbose. Aktiviere vor dem Test Bluetooth HCI snoop log in den Entwickleroptionen (vollständig, ungefiltert) und starte Bluetooth ohne aktiven Anruf neu. Teste die Anrufe. Erstelle danach dort einen vollständigen Fehlerbericht und deaktiviere die HCI-Aufzeichnung. Starte Bluetooth danach ohne aktiven Anruf erneut. Teile die Dot-TXT-Datei und den Android-Bericht. Der Bericht kann Kontaktdaten enthalten. Während des Tests ist kein PC nötig.</string>
+    <string name="car_capture_developer_options">Entwickleroptionen</string>
+    <string name="car_capture_settings_failed">Entwickleroptionen konnten nicht geöffnet werden</string>
+</resources>

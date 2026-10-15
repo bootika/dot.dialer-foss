@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Plans</string>
+    <string name="plans_description">Essential calling stays free. Pro unlocks a custom call background. Choose the plan that suits you.</string>
+    <string name="gift_title">Activation code</string>
+    <string name="gift_description">Have an early-adopter code? Activate it here. Keep it for recovery on another phone.</string>
+    <string name="gift_active">Early-adopter Pro active</string>
+    <string name="gift_activate">Activate code</string>
+    <string name="gift_code">Activation code</string>
+    <string name="gift_invalid">This code is invalid, expired or revoked.</string>
+    <string name="gift_limit">Device limit reached. Ask us to reset the activations.</string>
+    <string name="gift_unavailable">Could not activate. Check your connection and try again.</string>
+    <string name="plan_monthly_description">Monthly Pro subscription. Renews automatically.</string>
+    <string name="plan_yearly_description">Annual Pro subscription. Renews automatically.</string>
+    <string name="plan_lifetime_description">One payment for lifetime Pro access.</string>
+    <string name="product_stats_description">Automatic reporting also sends minimal technical and usage statistics: app and Android versions, phone model, language, SIM country/operator, selected number region, and daily counts of favorites, swipes and dial pad use. No contacts, phone numbers, call history or GPS. On demand disables automatic statistics.</string>
+</resources>

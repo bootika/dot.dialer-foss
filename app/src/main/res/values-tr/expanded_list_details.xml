@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Adlar ve ayrıntılar birden çok satırda</string>
+    <string name="expanded_list_details_description">Yer yetmediğinde adları ve numaraları birden fazla satırda göster ve saati alta taşı.</string>
+</resources>

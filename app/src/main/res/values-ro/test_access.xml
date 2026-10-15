@@ -1,0 +1,7 @@
+<resources>
+    <string name="test_access_checking">Se verifică accesul la această versiune de test…</string>
+    <string name="test_access_unavailable">Accesul nu a putut fi verificat. Conectează-te la internet și încearcă din nou.</string>
+    <string name="test_access_blocked">Accesul la această versiune de test nu este activ. Instalează dot.dialer din Google Play sau contactează-ne la diler@dotdesign.ro.</string>
+    <string name="test_access_retry">Încearcă din nou</string>
+    <string name="test_access_phone_settings">Aplicația de telefon implicită</string>
+</resources>

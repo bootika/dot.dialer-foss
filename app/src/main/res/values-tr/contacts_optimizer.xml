@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Elle seçim</string>
+    <string name="optimizer_manual_summary">Her fotoğraf değişikliğini siz seçersiniz.</string>
+    <string name="optimizer_missing">Eksik fotoğrafları tamamla</string>
+    <string name="optimizer_missing_summary">Yalnızca fotoğrafı olmayan kişilere fotoğraf ekler.</string>
+    <string name="optimizer_latest">En yeni avatar</string>
+    <string name="optimizer_latest_summary">Daha düşük çözünürlüklü olsa bile yeni avatarı tercih eder.</string>
+    <string name="optimizer_quality">Kalite</string>
+    <string name="optimizer_quality_summary">Küçük fotoğrafları iyileştirir; en az 512×512 olan iyi fotoğrafları korur.</string>
+    <string name="optimizer_resume_automatic">Otomatik güncellemeleri sürdür</string>
+    <string name="optimizer_manual_choices">Korunan elle seçilmiş fotoğraflar</string>
+</resources>

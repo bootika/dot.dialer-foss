@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Il tuo parere ci aiuta a migliorare!</string>
+    <string name="rating_star">Stella %1$d</string>
+    <string name="rating_terrible">Pessimo</string>
+    <string name="rating_bad">Scarso</string>
+    <string name="rating_okay">Discreto</string>
+    <string name="rating_good">Buono</string>
+    <string name="rating_excellent">Ottimo!</string>
+    <string name="rating_prompt">Tocca una stella per valutare</string>
+    <string name="rating_appreciation">Grazie per il tuo parere!</string>
+    <string name="rating_thanks">Grazie!</string>
+    <string name="rating_submit">Invia valutazione</string>
+    <string name="rating_later">Non ora</string>
+    <string name="about_repository">Repository su GitHub</string>
+    <string name="standardizing_numbers">Normalizzazione dei numeri</string>
+    <string name="standardize_progress">%1$d%% completato</string>
+    <string name="game_title">Corsa dei cavalli</string>
+    <string name="game_over">Partita finita!</string>
+    <string name="game_score">Punteggio: %1$d</string>
+    <string name="game_replay">Gioca di nuovo</string>
+    <string name="game_jump">Salta!</string>
+    <string name="game_hint">Tocca Salta per evitare gli ostacoli!</string>
+    <string name="game_hello">Ciao!</string>
+    <string name="label_unknown">Sconosciuto</string>
+</resources>

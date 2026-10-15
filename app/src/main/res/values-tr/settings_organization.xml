@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">İnce ayarlar</string>
+    <string name="settings_scroll_calibration">Kaydırma titreşimi kalibrasyonu</string>
+    <string name="settings_reporting">Tanılama raporları</string>
+    <string name="settings_blur_dependency">Arama Glass kapalıyken kullanılır. Cihaz desteği değişebilir.</string>
+    <string name="settings_repeat_contacts_explanation">Aramada aynı kişiyi Son aramalar ve Kişiler bölümlerinde göster.</string>
+    <string name="settings_protected_numbers">Korunan numaralar</string>
+    <string name="settings_alias_home_and_gestures">Ana ekran ve hareketler</string>
+    <string name="settings_alias_interface_settings">Arayüz</string>
+    <string name="settings_alias_privacy_and_blocking">Gizlilik ve engellenen numaralar</string>
+    <string name="settings_alias_call_settings">Arama Ayarları</string>
+    <string name="settings_alias_manage_contacts">Kişileri Yönet</string>
+    <string name="settings_alias_avatar_size">Avatar büyüklüğü</string>
+    <string name="settings_alias_expanded_list_details">Genişletilmiş liste ayrıntıları</string>
+    <string name="settings_alias_subtle_animations">Hafif animasyonlar</string>
+    <string name="settings_alias_clear_search_after_call">Aramadan sonra aramayı temizle</string>
+    <string name="settings_alias_search_repeat_contacts">Arama sonuçlarında kişileri tekrarla</string>
+    <string name="settings_alias_incoming_call_ui">Gelen Arama Arayüzü</string>
+    <string name="settings_alias_settings_call_default_background">Varsayılan arama arka planı</string>
+    <string name="settings_alias_vibrate_on_answer">Cevaplarken Titreşim</string>
+    <string name="settings_alias_authentication_method">Kimlik Doğrulama Yöntemi</string>
+    <string name="settings_alias_lock_call_actions">Arama İşlemlerini Kilitle</string>
+    <string name="settings_alias_lock_scope">Arama Kilidi Kapsamı</string>
+    <string name="settings_alias_blacklist">Kara Liste</string>
+    <string name="settings_alias_whitelist">Beyaz Liste</string>
+    <string name="settings_alias_history_and_feedback">Geçmiş ve geri bildirim</string>
+    <string name="settings_alias_continue_support">Devam Et</string>
+    <string name="settings_alias_authentication">Kimlik Doğrulama</string>
+    <string name="settings_alias_contact_tools">Kişi araçları</string>
+    <string name="settings_alias_ringtone_settings">Zil Sesi Ayarları</string>
+    <string name="settings_alias_managing_contact_sources">Kişi Kaynaklarını Yönetme</string>
+    <string name="settings_alias_tap_haptics">Dokunma Haptiği</string>
+</resources>

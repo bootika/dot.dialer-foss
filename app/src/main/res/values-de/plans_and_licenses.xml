@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Tarife</string>
+    <string name="plans_description">Wichtige Anruffunktionen bleiben kostenlos. Pro schaltet einen eigenen Anrufhintergrund frei. Wähle deinen Tarif.</string>
+    <string name="gift_title">Aktivierungscode</string>
+    <string name="gift_description">Hast du einen Early-Adopter-Code? Aktiviere ihn hier und bewahre ihn für ein anderes Telefon auf.</string>
+    <string name="gift_active">Early-Adopter-Pro aktiv</string>
+    <string name="gift_activate">Code aktivieren</string>
+    <string name="gift_code">Aktivierungscode</string>
+    <string name="gift_invalid">Dieser Code ist ungültig, abgelaufen oder widerrufen.</string>
+    <string name="gift_limit">Gerätelimit erreicht. Bitte um Zurücksetzen der Aktivierungen.</string>
+    <string name="gift_unavailable">Aktivierung fehlgeschlagen. Prüfe die Verbindung und versuche es erneut.</string>
+    <string name="plan_monthly_description">Monatliches Pro-Abo mit automatischer Verlängerung.</string>
+    <string name="plan_yearly_description">Jährliches Pro-Abo mit automatischer Verlängerung.</string>
+    <string name="plan_lifetime_description">Einmalzahlung für lebenslangen Pro-Zugang.</string>
+    <string name="product_stats_description">Automatische Berichte enthalten minimale Statistiken: App-/Android-Version, Modell, Sprache, SIM-Land/-Anbieter, gewählte Nummernregion und Tageszahlen für Favoriten, Wischen und Wähltastatur. Keine Kontakte, Nummern, Anruflisten oder GPS. Nur auf Anfrage deaktiviert automatische Statistiken.</string>
+</resources>

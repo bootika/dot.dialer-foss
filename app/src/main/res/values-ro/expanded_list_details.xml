@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Nume și detalii pe mai multe rânduri</string>
+    <string name="expanded_list_details_description">Când informațiile nu încap, afișează numele și numerele pe mai multe rânduri și mută ora dedesubt.</string>
+</resources>

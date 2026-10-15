@@ -1,0 +1,14 @@
+<resources>
+    <string name="setup_contacts_read">Baca kontak untuk mengenali penelepon dan menampilkan nama serta foto.</string>
+    <string name="setup_contacts_write">Edit kontak untuk menyimpan perubahan nama, nomor, dan foto.</string>
+    <string name="setup_history_read">Baca riwayat untuk menampilkan panggilan masuk, keluar, dan tak terjawab.</string>
+    <string name="setup_history_write">Edit riwayat untuk menghapus entri yang dipilih.</string>
+    <string name="setup_phone_state">Baca status telepon untuk mengenali SIM dan akun panggilan.</string>
+    <string name="setup_phone_call">Lakukan panggilan yang kamu mulai dari dot.dialer.</string>
+    <string name="setup_phone_answer">Kelola panggilan masuk dan kontrol jawaban.</string>
+    <string name="setup_notifications">Tampilkan pemberitahuan dan kontrol panggilan masuk, berlangsung, dan tak terjawab.</string>
+    <string name="setup_bluetooth">Gunakan audio mobil dan headset Bluetooth yang terhubung.</string>
+    <string name="setup_fullscreen">Tampilkan panggilan masuk di layar kunci. Tanpa akses ini, gunakan pemberitahuan panggilan.</string>
+    <string name="setup_retry">Coba lagi</string>
+    <string name="setup_continue_limited">Lanjutkan dengan fitur terbatas</string>
+</resources>

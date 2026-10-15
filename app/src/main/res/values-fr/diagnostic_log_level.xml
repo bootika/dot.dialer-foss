@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Niveau du journal</string>
+    <string name="diagnostic_log_level_help">Normal : journal standard. Debug : photo, audio et connexion de l’appel. Verbose : sources du contact et images. Reste actif jusqu’à la sélection de Normal. Sans noms, numéros ni images ; le trafic Bluetooth PBAP n’est pas capturé.</string>
+</resources>

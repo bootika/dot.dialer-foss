@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Distribuie fișierul de diagnostic</string>
+    <string name="diagnostics_use_file">Jurnalul este prea mare pentru copiere. Distribuie fișierul.</string>
+    <string name="diagnostics_share_failed">Nu s-a putut distribui diagnosticul</string>
+    <string name="car_capture_title">Captură pentru testul în mașină</string>
+    <string name="car_capture_steps">Selectează Verbose mai sus. Înainte de test, activează Bluetooth HCI snoop log în Opțiuni pentru dezvoltatori (complet, nu filtrat) și repornește Bluetooth fără apel activ. Fă testele de apel. Apoi generează un raport complet de erori din Opțiuni pentru dezvoltatori și oprește captura HCI, apoi repornește din nou Bluetooth fără apel activ. Distribuie TXT-ul Dot și raportul Android. Raportul poate conține date din agendă. Nu ai nevoie de PC în timpul testului.</string>
+    <string name="car_capture_developer_options">Opțiuni pentru dezvoltatori</string>
+    <string name="car_capture_settings_failed">Nu s-au putut deschide Opțiunile pentru dezvoltatori</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="test_access_checking">Đang kiểm tra quyền truy cập phiên bản thử nghiệm này…</string>
+    <string name="test_access_unavailable">Không thể xác minh quyền truy cập. Kết nối internet và thử lại.</string>
+    <string name="test_access_blocked">Quyền truy cập phiên bản thử nghiệm này chưa được kích hoạt. Cài đặt dot.dialer từ Google Play hoặc liên hệ diler@dotdesign.ro.</string>
+    <string name="test_access_retry">Thử lại</string>
+    <string name="test_access_phone_settings">Ứng dụng điện thoại mặc định</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Nazwy i szczegóły w wielu wierszach</string>
+    <string name="expanded_list_details_description">Gdy brakuje miejsca, wyświetlaj nazwy i numery w kilku wierszach, a godzinę poniżej.</string>
+</resources>

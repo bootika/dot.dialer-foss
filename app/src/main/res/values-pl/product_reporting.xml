@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Raporty diagnostyczne</string>
+    <string name="onboarding_essential_body_gplay">Kontakty i historia połączeń pozostają na telefonie, nie na naszych serwerach. Android poprosi o domyślną aplikację telefonu i wymagane uprawnienia.\n\nAutomatyczna diagnostyka wysyła raporty techniczne, minimalne dane urządzenia i karty SIM oraz dzienne liczniki funkcji. Bez kontaktów, treści połączeń i GPS. Raporty tylko na żądanie wybierzesz w %1$s → %2$s.</string>
+</resources>

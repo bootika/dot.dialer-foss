@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Wähle, wie du den App-Zugriff schützt</string>
+    <string name="authentication_unavailable">Authentifizierung nicht verfügbar. Versuche es später erneut oder nutze die Geräteauthentifizierung zur Wiederherstellung.</string>
+    <string name="authentication_password_minimum">Verwende mindestens 8 Zeichen</string>
+    <string name="authentication_retry_later">Zu viele Versuche. Warte und versuche es erneut.</string>
+    <string name="authentication_recover_device">Mit Geräteauthentifizierung wiederherstellen</string>
+</resources>

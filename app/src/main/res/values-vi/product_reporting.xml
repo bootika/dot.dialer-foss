@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Báo cáo chẩn đoán</string>
+    <string name="onboarding_essential_body_gplay">Danh bạ và lịch sử cuộc gọi nằm trên điện thoại, không phải máy chủ của chúng tôi. Android sẽ yêu cầu ứng dụng gọi mặc định và các quyền cần thiết.\n\nChẩn đoán tự động gửi báo cáo kỹ thuật, thông tin thiết bị và SIM tối thiểu cùng số lần dùng tính năng mỗi ngày. Không gửi danh bạ, nội dung cuộc gọi hay GPS. Chọn chỉ báo cáo theo yêu cầu tại %1$s → %2$s.</string>
+</resources>

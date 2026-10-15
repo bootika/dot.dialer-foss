@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Pilihan manual</string>
+    <string name="optimizer_manual_summary">Anda memilih setiap perubahan foto.</string>
+    <string name="optimizer_missing">Lengkapi foto yang kosong</string>
+    <string name="optimizer_missing_summary">Tambahkan foto hanya jika belum ada.</string>
+    <string name="optimizer_latest">Avatar terbaru</string>
+    <string name="optimizer_latest_summary">Utamakan avatar baru, meskipun resolusinya lebih rendah.</string>
+    <string name="optimizer_quality">Kualitas</string>
+    <string name="optimizer_quality_summary">Perbaiki foto kecil; pertahankan foto bagus berukuran minimal 512×512.</string>
+    <string name="optimizer_resume_automatic">Lanjutkan pembaruan otomatis</string>
+    <string name="optimizer_manual_choices">Foto manual yang dilindungi</string>
+</resources>

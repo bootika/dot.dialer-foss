@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Diagnostic reporting</string>
+    <string name="onboarding_essential_body_gplay">Your contacts and call history stay on your phone, not on our servers. Android will ask for the default phone app and call permissions.\n\nAutomatic diagnostics sends technical error reports, minimal device and SIM details, and daily feature counts. No contacts, call content or GPS. You can choose on-demand reporting in %1$s → %2$s.</string>
+</resources>

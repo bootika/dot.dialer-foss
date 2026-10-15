@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Kişi fotoğrafları</string>
+    <string name="photo_scan_notification_title">Kişi fotoğrafları iyileştiriliyor</string>
+    <string name="photo_scan_resume">Taramaya devam et</string>
+    <string name="photo_scan_retry">Başarısız fotoğrafları yeniden dene</string>
+    <string name="photo_scan_background">Fotoğraflar güncellenirken diğer uygulamaları kullanabilirsiniz.</string>
+    <string name="photo_scan_summary">İyileştirilen: %1$d · Değişmeyen: %2$d · Başarısız: %3$d</string>
+    <string name="photo_scan_checked">Kontrol edilen: %1$d</string>
+    <string name="photo_scan_network">Bağlantı kesildi. Yeniden çevrimiçi olduğunuzda devam edin.</string>
+    <string name="photo_scan_rate_limit">Google ara vermenizi istiyor. Daha sonra tekrar deneyin.</string>
+    <string name="photo_scan_google_service">Google geçici olarak kullanılamıyor. Daha sonra tekrar deneyin.</string>
+    <string name="photo_scan_invalid_image">Fotoğraf kullanılamıyor veya geçersiz</string>
+    <string name="photo_scan_contact_changed">Kişi değişti veya güvenli eşleşme bulunamadı</string>
+    <string name="photo_scan_permission">Kişiler izni eksik</string>
+    <string name="photo_scan_write">Fotoğraf kaydedilemedi</string>
+    <string name="photo_scan_other">Fotoğraf işlenemedi</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Bağlantı hatası</string>
+    <string name="photo_scan_rate_limit_count">Google istek sınırı</string>
+    <string name="photo_scan_google_service_count">Google hizmeti kullanılamıyor</string>
+</resources>

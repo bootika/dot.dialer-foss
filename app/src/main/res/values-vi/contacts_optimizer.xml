@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Chọn thủ công</string>
+    <string name="optimizer_manual_summary">Bạn chọn từng thay đổi ảnh.</string>
+    <string name="optimizer_missing">Bổ sung ảnh còn thiếu</string>
+    <string name="optimizer_missing_summary">Chỉ thêm ảnh cho liên hệ chưa có ảnh.</string>
+    <string name="optimizer_latest">Ảnh đại diện mới nhất</string>
+    <string name="optimizer_latest_summary">Ưu tiên ảnh mới, kể cả khi độ phân giải thấp hơn.</string>
+    <string name="optimizer_quality">Chất lượng</string>
+    <string name="optimizer_quality_summary">Cải thiện ảnh nhỏ; giữ ảnh tốt từ 512×512 trở lên.</string>
+    <string name="optimizer_resume_automatic">Tiếp tục cập nhật tự động</string>
+    <string name="optimizer_manual_choices">Ảnh thủ công được bảo vệ</string>
+</resources>

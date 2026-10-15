@@ -1,0 +1,7 @@
+<resources>
+    <string name="test_access_checking">Sprawdzanie dostępu do tej wersji testowej…</string>
+    <string name="test_access_unavailable">Nie można zweryfikować dostępu. Połącz się z internetem i spróbuj ponownie.</string>
+    <string name="test_access_blocked">Dostęp do tej wersji testowej jest nieaktywny. Zainstaluj dot.dialer z Google Play lub skontaktuj się z diler@dotdesign.ro.</string>
+    <string name="test_access_retry">Spróbuj ponownie</string>
+    <string name="test_access_phone_settings">Domyślna aplikacja telefonu</string>
+</resources>

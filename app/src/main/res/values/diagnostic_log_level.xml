@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Log level</string>
+    <string name="diagnostic_log_level_help">Normal: standard log. Debug: call photo and audio state. Verbose: contact source and image checks. Extended logging stays active until you select Normal. No names, numbers or images; Bluetooth PBAP traffic is not captured.</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Chia sẻ tệp chẩn đoán</string>
+    <string name="diagnostics_use_file">Nhật ký quá lớn để sao chép. Hãy chia sẻ tệp.</string>
+    <string name="diagnostics_share_failed">Không thể chia sẻ chẩn đoán</string>
+    <string name="car_capture_title">Ghi lại thử nghiệm trên xe</string>
+    <string name="car_capture_steps">Chọn Verbose ở trên. Trước khi thử, bật Bluetooth HCI snoop log trong Tùy chọn nhà phát triển (đầy đủ, không lọc), rồi khởi động lại Bluetooth khi không có cuộc gọi. Thử các cuộc gọi. Sau đó tạo báo cáo lỗi đầy đủ tại đó và tắt ghi HCI, rồi khởi động lại Bluetooth khi không có cuộc gọi. Chia sẻ TXT của Dot và báo cáo Android. Báo cáo có thể chứa dữ liệu liên hệ. Không cần máy tính trong lúc thử.</string>
+    <string name="car_capture_developer_options">Tùy chọn nhà phát triển</string>
+    <string name="car_capture_settings_failed">Không thể mở tùy chọn nhà phát triển</string>
+</resources>

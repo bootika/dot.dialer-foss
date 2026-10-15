@@ -1,0 +1,1 @@
+# No warning debt remains. Any future lint warning is a quality-gate regression.

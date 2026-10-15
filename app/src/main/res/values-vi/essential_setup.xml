@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_essential_title">Cuộc gọi và danh bạ</string>
+    <string name="onboarding_essential_body">Danh bạ và lịch sử cuộc gọi ở trên điện thoại, không nằm trên máy chủ của chúng tôi. Android sẽ yêu cầu chọn ứng dụng điện thoại mặc định và cấp quyền cần thiết.\n\nBáo cáo lỗi kỹ thuật được gửi tự động theo mặc định. Bạn có thể chọn chỉ gửi khi yêu cầu trong %1$s → %2$s.</string>
+    <string name="onboarding_start">Bắt đầu</string>
+    <string name="diagnostic_reporting_mode">Báo cáo lỗi</string>
+    <string name="diagnostic_automatic">Tự động</string>
+    <string name="diagnostic_on_demand">Chỉ khi yêu cầu</string>
+    <string name="diagnostic_reporting_explanation">Nhật ký cục bộ vẫn có trong cả hai chế độ. Chế độ theo yêu cầu chỉ gửi sự kiện khi bạn yêu cầu.</string>
+    <string name="photo_offer_title">Ảnh liên hệ rõ hơn</string>
+    <string name="photo_offer_body">Một số liên hệ Google có ảnh. Bạn có thể kết nối Google để tìm phiên bản có độ phân giải cao hơn.</string>
+    <string name="photo_offer_options">Xem tùy chọn</string>
+    <string name="diagnostic_mode_save_failed">Không thể lưu cài đặt báo cáo. Vui lòng thử lại.</string>
+</resources>

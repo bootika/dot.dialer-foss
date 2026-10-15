@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Compartilhar arquivo de diagnóstico</string>
+    <string name="diagnostics_use_file">Este registro é grande demais para copiar. Compartilhe o arquivo.</string>
+    <string name="diagnostics_share_failed">Não foi possível compartilhar o diagnóstico</string>
+    <string name="car_capture_title">Captura para teste no carro</string>
+    <string name="car_capture_steps">Selecione Verbose acima. Antes do teste, ative Bluetooth HCI snoop log nas Opções do desenvolvedor (completo, sem filtro) e reinicie o Bluetooth sem chamada ativa. Teste as chamadas. Depois, gere um relatório de bugs completo ali e desative a captura HCI; reinicie o Bluetooth novamente sem chamada ativa. Compartilhe o TXT do Dot e o relatório do Android. O relatório pode conter dados de contatos. Não é preciso um PC durante o teste.</string>
+    <string name="car_capture_developer_options">Opções do desenvolvedor</string>
+    <string name="car_capture_settings_failed">Não foi possível abrir as opções do desenvolvedor</string>
+</resources>

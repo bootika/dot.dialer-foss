@@ -1,0 +1,67 @@
+name: Android quality gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Keep internal documentation private
+        shell: pwsh
+        run: ./tools/check-private-documentation.ps1
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Android platform
+        shell: bash
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" \
+            "platforms;android-37.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Verify foundation
+        run: ./gradlew --no-daemon qualityGate
+
+      - name: Upload test and lint reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: android-quality-reports
+          if-no-files-found: ignore
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
+            app/build/reports/lint-results-*.html
+            app/build/reports/lint-results-*.xml
+            core/diagnostics/build/reports/tests/
+            core/diagnostics/build/test-results/
+            core/domain/build/reports/tests/
+            core/domain/build/test-results/
+
+      - name: Upload installable test APK
+        if: success()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dot-dialer-test-apk
+          if-no-files-found: error
+          path: app/build/outputs/apk/foss/debug/*.apk

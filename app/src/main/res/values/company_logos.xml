@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_search_unavailable">Company-name search is unavailable. Website and email-domain lookup can still work.</string>
+</resources>

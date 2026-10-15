@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Mức nhật ký</string>
+    <string name="diagnostic_log_level_help">Normal: nhật ký tiêu chuẩn. Debug: ảnh cuộc gọi, âm thanh và kết nối. Verbose: nguồn liên hệ và hình ảnh. Duy trì hoạt động cho đến khi bạn chọn Normal. Không có tên, số điện thoại hoặc hình ảnh; không ghi lưu lượng Bluetooth PBAP.</string>
+</resources>

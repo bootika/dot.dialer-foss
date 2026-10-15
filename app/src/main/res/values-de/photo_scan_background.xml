@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Kontaktfotos</string>
+    <string name="photo_scan_notification_title">Kontaktfotos werden verbessert</string>
+    <string name="photo_scan_resume">Scan fortsetzen</string>
+    <string name="photo_scan_retry">Fehlgeschlagene Fotos erneut versuchen</string>
+    <string name="photo_scan_background">Du kannst andere Apps verwenden, während die Fotos aktualisiert werden.</string>
+    <string name="photo_scan_summary">Verbessert: %1$d · Unverändert: %2$d · Fehler: %3$d</string>
+    <string name="photo_scan_checked">Geprüft: %1$d</string>
+    <string name="photo_scan_network">Verbindung unterbrochen. Setze den Scan fort, wenn du wieder online bist.</string>
+    <string name="photo_scan_rate_limit">Google fordert eine Pause. Versuche es später erneut.</string>
+    <string name="photo_scan_google_service">Google ist vorübergehend nicht verfügbar. Versuche es später erneut.</string>
+    <string name="photo_scan_invalid_image">Foto nicht verfügbar oder ungültig</string>
+    <string name="photo_scan_contact_changed">Kontakt geändert oder nicht eindeutig zugeordnet</string>
+    <string name="photo_scan_permission">Berechtigung für Kontakte fehlt</string>
+    <string name="photo_scan_write">Foto konnte nicht gespeichert werden</string>
+    <string name="photo_scan_other">Foto konnte nicht verarbeitet werden</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Verbindungsfehler</string>
+    <string name="photo_scan_rate_limit_count">Google-Anfragelimit</string>
+    <string name="photo_scan_google_service_count">Google-Dienst nicht verfügbar</string>
+</resources>

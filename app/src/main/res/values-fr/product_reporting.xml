@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Rapports de diagnostic</string>
+    <string name="onboarding_essential_body_gplay">Vos contacts et votre historique restent sur votre téléphone, pas sur nos serveurs. Android demandera l’application téléphonique par défaut et les autorisations nécessaires.\n\nLe diagnostic automatique transmet des rapports techniques, des informations minimales sur le téléphone et la SIM, et des compteurs quotidiens de fonctions. Aucun contact, contenu d’appel ni GPS. Choisissez les rapports à la demande dans %1$s → %2$s.</string>
+</resources>

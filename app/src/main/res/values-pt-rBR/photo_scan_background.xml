@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Fotos de contatos</string>
+    <string name="photo_scan_notification_title">Melhorando fotos de contatos</string>
+    <string name="photo_scan_resume">Retomar verificação</string>
+    <string name="photo_scan_retry">Tentar novamente fotos com erro</string>
+    <string name="photo_scan_background">Você pode usar outros aplicativos enquanto as fotos são atualizadas.</string>
+    <string name="photo_scan_summary">Melhoradas: %1$d · Sem alterações: %2$d · Erros: %3$d</string>
+    <string name="photo_scan_checked">Verificados: %1$d</string>
+    <string name="photo_scan_network">Conexão interrompida. Retome quando estiver online.</string>
+    <string name="photo_scan_rate_limit">O Google pediu uma pausa. Tente novamente mais tarde.</string>
+    <string name="photo_scan_google_service">O Google está temporariamente indisponível. Tente novamente mais tarde.</string>
+    <string name="photo_scan_invalid_image">Foto indisponível ou inválida</string>
+    <string name="photo_scan_contact_changed">Contato alterado ou sem correspondência segura</string>
+    <string name="photo_scan_permission">Falta permissão para contatos</string>
+    <string name="photo_scan_write">Não foi possível salvar a foto</string>
+    <string name="photo_scan_other">Não foi possível processar a foto</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Erro de conexão</string>
+    <string name="photo_scan_rate_limit_count">Limite de solicitações do Google</string>
+    <string name="photo_scan_google_service_count">Serviço do Google indisponível</string>
+</resources>

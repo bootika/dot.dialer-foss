@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_search_unavailable">Die Suche nach Firmennamen ist nicht verfügbar. Die Suche über Websites und E-Mail-Domains kann weiterhin funktionieren.</string>
+</resources>

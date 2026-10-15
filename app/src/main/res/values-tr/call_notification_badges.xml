@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Siz</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="one">%d cevapsız arama</item>
+        <item quantity="other">%d cevapsız arama</item>
+    </plurals>
+</resources>

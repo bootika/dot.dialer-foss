@@ -1,0 +1,185 @@
+package dev.goodwy.rphone.view.screen.settings
+
+import dev.goodwy.rphone.view.components.DotDialerHangupIcon
+
+import android.content.Context
+import android.view.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.CallEnd
+import androidx.compose.material.icons.rounded.CallToAction
+import androidx.compose.material.icons.rounded.Dialpad
+import androidx.compose.material.icons.rounded.SmartButton
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import dev.goodwy.rphone.controller.util.PreferenceManager
+import dev.goodwy.rphone.view.components.NavigationIcon
+import dev.goodwy.rphone.view.screen.settings.components.SettingsImmediateSection
+import dev.goodwy.rphone.view.components.RillExpressiveCard
+import dev.goodwy.rphone.view.components.RillSwitchListItem
+import dev.goodwy.rphone.view.theme.color_call_button
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.components.Title
+import dev.goodwy.rphone.view.theme.customColors
+import org.koin.compose.koinInject
+
+private data class BlurElement(
+    val key: String,
+    val headline: String,
+    val supporting: String,
+    val icon: ImageVector,
+    val iconColor: Color,
+    val iconBgColor: Color,
+    val default: Boolean
+)
+
+@Composable
+private fun rememberBlurElements(): List<BlurElement> {
+    val accentIconColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val accentIconBackground = MaterialTheme.colorScheme.primaryContainer
+    val callScreen = stringResource(R.string.call_screen)
+    val callScreenSubtitle = stringResource(R.string.blur_effect_call_screen)
+    return remember(
+        accentIconColor,
+        accentIconBackground,
+        callScreen,
+        callScreenSubtitle,
+    ) {
+            listOf(
+                BlurElement(
+                    key = PreferenceManager.KEY_BLUR_CALL_SCREEN,
+                    headline = callScreen,
+                    supporting = callScreenSubtitle,
+                    icon = DotDialerHangupIcon,
+                    iconColor = accentIconColor,
+                    iconBgColor = accentIconBackground,
+                    default = true
+                ),
+//    BlurElement(
+//        key = PreferenceManager.KEY_BLUR_DROPDOWN_MENU,
+//        headline = "Dropdown Menu",
+//        supporting = "Apply blur to context and overflow dropdown menus",
+//        icon = Icons.Outlined.MoreVert,
+//        iconColor = Color(0xFF9C27B0)
+//    ),
+//    BlurElement(
+//        key = PreferenceManager.KEY_BLUR_DIALPAD_CALL_BUTTON,
+//        headline = "Dialpad Call Button",
+//        supporting = "Apply blur to the call button on the dialpad",
+//        icon = Icons.Outlined.Dialpad,
+//        iconColor = color_call_button
+//    ),
+//    BlurElement(
+//        key = PreferenceManager.KEY_BLUR_CONTACTS_FAB,
+//        headline = "Contacts Add Button",
+//        supporting = "Apply blur to the add contact floating action button",
+//        icon = Icons.Outlined.PersonAdd,
+//        iconColor = Color(0xFF2196F3)
+//    ),
+//    BlurElement(
+//        key = PreferenceManager.KEY_BLUR_RECENTS_FAB,
+//        headline = "Recents Dialpad Button",
+//        supporting = "Apply blur to the dialpad button on recents screen",
+//        icon = Icons.Rounded.AccessTime,
+//        iconColor = Color(0xFFFF9800)
+//    ),
+            )
+        }
+    }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Destination<RootGraph>
+@Composable
+fun BlurEffectsElementsScreen(navigator: DestinationsNavigator) {
+    val prefs = koinInject<PreferenceManager>()
+    val blurElements = rememberBlurElements()
+
+    val states = remember(blurElements) {
+        blurElements.associate { el ->
+            el.key to mutableStateOf(prefs.getBoolean(el.key, el.default))
+        }
+    }
+
+    val context = LocalContext.current
+    val rotation = context.currentDisplayRotation()
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val isRotation90 = rotation == if (isLtr) Surface.ROTATION_90 else Surface.ROTATION_270
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets.systemBars.only(
+                    if (isRotation90) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                    else WindowInsetsSides.Top
+                ),
+                title = { Title(stringResource(R.string.blur_effect_elements)) },
+                navigationIcon = {
+                    NavigationIcon(onClick = { navigator.navigateUp() })
+                }
+            )
+        }
+    ) { padding ->
+        androidx.compose.foundation.lazy.LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+//                .padding(padding)
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    start = 0.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                )
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(vertical = 12.dp)
+        ) {
+            item {
+                SettingsImmediateSection() {
+                    Text(
+                        text = stringResource(R.string.blur_effect_elements_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                    )
+                }
+            }
+
+            item {
+                SettingsImmediateSection() {
+                    RillExpressiveCard {
+                        blurElements.forEachIndexed { index, element ->
+                            val state = states.getValue(element.key)
+                            val checked by state
+                            RillSwitchListItem(
+                                headline = element.headline,
+                                supporting = element.supporting,
+                                leadingIcon = element.icon,
+                                iconContainerColor = element.iconColor,
+                                iconBgContainerColor = element.iconBgColor,
+                                checked = checked,
+                                onCheckedChange = { newValue ->
+                                    state.value = newValue
+                                    prefs.setBoolean(element.key, newValue)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            item { SettingsBottomPadding() }
+        }
+    }
+}

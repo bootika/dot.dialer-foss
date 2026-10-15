@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Wybierz sposób ochrony dostępu do aplikacji</string>
+    <string name="authentication_unavailable">Uwierzytelnianie niedostępne. Spróbuj później lub użyj uwierzytelniania urządzenia, aby odzyskać dostęp.</string>
+    <string name="authentication_password_minimum">Użyj co najmniej 8 znaków</string>
+    <string name="authentication_retry_later">Zbyt wiele prób. Poczekaj i spróbuj ponownie.</string>
+    <string name="authentication_recover_device">Odzyskaj przez uwierzytelnianie telefonu</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Tampilkan semua panggilan</string>
+    <string name="show_all_recent_calls_subtitle">Tampilkan setiap panggilan secara terpisah, termasuk panggilan tak terjawab.</string>
+</resources>

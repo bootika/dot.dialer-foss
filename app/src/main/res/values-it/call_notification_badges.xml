@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_local_user">Tu</string>
+    <plurals name="notification_missed_calls_count">
+        <item quantity="one">%d chiamata persa</item>
+        <item quantity="many">%d chiamate perse</item>
+        <item quantity="other">%d chiamate perse</item>
+    </plurals>
+</resources>

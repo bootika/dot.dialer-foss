@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Ignora dimensione caratteri di sistema</string>
+    <string name="ignore_system_font_scale_description">Usa testo di dimensione standard. Le impostazioni di dimensione dell’app restano attive.</string>
+</resources>

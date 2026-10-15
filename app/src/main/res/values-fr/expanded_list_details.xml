@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Noms et détails sur plusieurs lignes</string>
+    <string name="expanded_list_details_description">Si la place manque, affiche les noms et numéros sur plusieurs lignes et déplace l’heure en dessous.</string>
+</resources>

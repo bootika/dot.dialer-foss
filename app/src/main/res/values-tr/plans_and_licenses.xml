@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Planlar</string>
+    <string name="plans_description">Temel aramalar ücretsiz kalır. Pro özel arama arka planını açar. Planınızı seçin.</string>
+    <string name="gift_title">Etkinleştirme kodu</string>
+    <string name="gift_description">Early adopter kodunuz var mı? Burada etkinleştirin ve başka telefonda kullanmak için saklayın.</string>
+    <string name="gift_active">Early adopter Pro etkin</string>
+    <string name="gift_activate">Kodu etkinleştir</string>
+    <string name="gift_code">Etkinleştirme kodu</string>
+    <string name="gift_invalid">Kod geçersiz, süresi dolmuş veya iptal edilmiş.</string>
+    <string name="gift_limit">Cihaz sınırına ulaşıldı. Etkinleştirmeleri sıfırlamamızı isteyin.</string>
+    <string name="gift_unavailable">Etkinleştirilemedi. Bağlantıyı kontrol edip tekrar deneyin.</string>
+    <string name="plan_monthly_description">Otomatik yenilenen aylık Pro aboneliği.</string>
+    <string name="plan_yearly_description">Otomatik yenilenen yıllık Pro aboneliği.</string>
+    <string name="plan_lifetime_description">Ömür boyu Pro erişimi için tek ödeme.</string>
+    <string name="product_stats_description">Otomatik raporlar asgari istatistikleri içerir: uygulama/Android sürümleri, model, dil, SIM ülkesi/operatörü, seçilen numara bölgesi ve favori, kaydırma, tuş takımı günlük toplamları. Kişiler, numaralar, arama geçmişi veya GPS yok. Yalnızca istek üzerine otomatik istatistikleri kapatır.</string>
+</resources>

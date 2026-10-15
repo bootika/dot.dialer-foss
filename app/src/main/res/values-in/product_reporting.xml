@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_reporting_title">Laporan diagnostik</string>
+    <string name="onboarding_essential_body_gplay">Kontak dan riwayat panggilan tetap di ponsel, bukan di server kami. Android akan meminta aplikasi telepon default dan izin yang diperlukan.\n\nDiagnostik otomatis mengirim laporan teknis, detail perangkat dan SIM minimal, serta hitungan fitur harian. Tanpa kontak, isi panggilan, atau GPS. Pilih laporan hanya sesuai permintaan di %1$s → %2$s.</string>
+</resources>

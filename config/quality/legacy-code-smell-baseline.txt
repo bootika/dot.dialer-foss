@@ -1,0 +1,3 @@
+# Per-file ceilings for inherited Kotlin debt. New files start at zero.
+# Entries may only be lowered or removed as the implementation is cleaned up.
+runBlocking|app/src/main/java/dev/goodwy/rphone/controller/util/PreferenceManager.kt=1

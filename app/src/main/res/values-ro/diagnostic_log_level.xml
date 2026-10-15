@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Nivel log</string>
+    <string name="diagnostic_log_level_help">Normal: jurnal standard. Debug: fotografia apelului și ruta audio. Verbose: verificarea surselor contactului și imaginilor. Rămâne activ până când selectezi Normal. Fără nume, numere sau imagini; nu înregistrează traficul Bluetooth PBAP.</string>
+</resources>

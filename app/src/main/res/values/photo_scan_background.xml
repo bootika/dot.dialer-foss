@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_scan_notification_channel">Contact photos</string>
+    <string name="photo_scan_notification_title">Improving contact photos</string>
+    <string name="photo_scan_resume">Resume scan</string>
+    <string name="photo_scan_retry">Retry failed photos</string>
+    <string name="photo_scan_background">You can use other apps while photos are updated.</string>
+    <string name="photo_scan_summary">Improved: %1$d · Unchanged: %2$d · Failed: %3$d</string>
+    <string name="photo_scan_checked">Checked: %1$d</string>
+    <string name="photo_scan_network">Connection interrupted. Resume when you are online.</string>
+    <string name="photo_scan_rate_limit">Google asked us to slow down. Try again later.</string>
+    <string name="photo_scan_google_service">Google is temporarily unavailable. Try again later.</string>
+    <string name="photo_scan_invalid_image">Photo unavailable or invalid</string>
+    <string name="photo_scan_contact_changed">Contact changed or could not be matched safely</string>
+    <string name="photo_scan_permission">Contacts permission missing</string>
+    <string name="photo_scan_write">Photo could not be saved</string>
+    <string name="photo_scan_other">Could not complete this photo</string>
+    <string name="photo_scan_failure_count">%1$s: %2$d</string>
+    <string name="photo_scan_network_count">Connection error</string>
+    <string name="photo_scan_rate_limit_count">Google request limit</string>
+    <string name="photo_scan_google_service_count">Google service unavailable</string>
+</resources>

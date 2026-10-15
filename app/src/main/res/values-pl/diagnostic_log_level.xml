@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Poziom dziennika</string>
+    <string name="diagnostic_log_level_help">Normal: standardowy dziennik. Debug: zdjęcie, dźwięk i połączenie. Verbose: źródła kontaktu i obrazy. Pozostaje aktywny do wybrania Normal. Bez nazw, numerów i obrazów; ruch Bluetooth PBAP nie jest rejestrowany.</string>
+</resources>

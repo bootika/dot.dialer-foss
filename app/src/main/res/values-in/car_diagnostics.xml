@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Bagikan file diagnostik</string>
+    <string name="diagnostics_use_file">Log ini terlalu besar untuk disalin. Bagikan filenya.</string>
+    <string name="diagnostics_share_failed">Tidak dapat membagikan diagnostik</string>
+    <string name="car_capture_title">Rekam pengujian di mobil</string>
+    <string name="car_capture_steps">Pilih Verbose di atas. Sebelum pengujian, aktifkan Bluetooth HCI snoop log di Opsi developer (lengkap, bukan terfilter) dan mulai ulang Bluetooth tanpa panggilan aktif. Uji panggilan. Setelahnya, buat laporan bug lengkap di sana lalu matikan perekaman HCI dan mulai ulang Bluetooth lagi tanpa panggilan aktif. Bagikan TXT Dot dan laporan Android. Laporan dapat berisi data kontak. Tidak perlu PC saat pengujian.</string>
+    <string name="car_capture_developer_options">Opsi developer</string>
+    <string name="car_capture_settings_failed">Tidak dapat membuka opsi developer</string>
+</resources>

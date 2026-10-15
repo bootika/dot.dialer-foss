@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="conference_participant_count">
+        <item quantity="one">%d participante</item>
+        <item quantity="many">%d participantes</item>
+        <item quantity="other">%d participantes</item>
+    </plurals>
+    <string name="conference_participants_unavailable">Os detalhes dos participantes não estão disponíveis</string>
+    <string name="end_conference_participant">Encerrar chamada com %1$s</string>
+</resources>

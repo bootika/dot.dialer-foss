@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Abaikan ukuran font sistem</string>
+    <string name="ignore_system_font_scale_description">Gunakan ukuran teks standar. Pengaturan ukuran aplikasi tetap berlaku.</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="diagnostic_log_level">Protokollstufe</string>
+    <string name="diagnostic_log_level_help">Normal: Standardprotokoll. Debug: Anruffoto, Audio und Verbindung. Verbose: Kontaktquellen und Bildprüfung. Bleibt aktiv, bis du Normal auswählst. Keine Kontaktnamen, Nummern oder Bilder; kein Bluetooth-PBAP-Verkehr.</string>
+</resources>

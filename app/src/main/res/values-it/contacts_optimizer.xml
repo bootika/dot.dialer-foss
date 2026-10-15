@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Scelta manuale</string>
+    <string name="optimizer_manual_summary">Scegli ogni modifica della foto.</string>
+    <string name="optimizer_missing">Completa le foto mancanti</string>
+    <string name="optimizer_missing_summary">Aggiunge foto solo dove mancano.</string>
+    <string name="optimizer_latest">Avatar più recente</string>
+    <string name="optimizer_latest_summary">Preferisce nuovi avatar, anche con risoluzione inferiore.</string>
+    <string name="optimizer_quality">Qualità</string>
+    <string name="optimizer_quality_summary">Migliora le foto piccole; conserva quelle buone di almeno 512×512.</string>
+    <string name="optimizer_resume_automatic">Riprendi gli aggiornamenti automatici</string>
+    <string name="optimizer_manual_choices">Foto manuali protette</string>
+</resources>

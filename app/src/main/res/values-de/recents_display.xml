@@ -1,0 +1,4 @@
+<resources>
+    <string name="show_all_recent_calls">Alle Anrufe anzeigen</string>
+    <string name="show_all_recent_calls_subtitle">Jeden Anruf einzeln anzeigen, einschließlich verpasster Anrufe.</string>
+</resources>

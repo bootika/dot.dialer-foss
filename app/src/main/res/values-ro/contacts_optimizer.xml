@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Alegere manuală</string>
+    <string name="optimizer_manual_summary">Tu alegi fiecare schimbare de fotografie.</string>
+    <string name="optimizer_missing">Completează lipsurile</string>
+    <string name="optimizer_missing_summary">Pune poze numai contactelor care nu au.</string>
+    <string name="optimizer_latest">Ultimul avatar</string>
+    <string name="optimizer_latest_summary">Preferă avatarul nou, chiar dacă are rezoluție mai mică.</string>
+    <string name="optimizer_quality">Calitate</string>
+    <string name="optimizer_quality_summary">Îmbunătățește pozele mici; păstrează pozele bune de minimum 512×512.</string>
+    <string name="optimizer_resume_automatic">Reia actualizările automate</string>
+    <string name="optimizer_manual_choices">Poze manuale protejate</string>
+</resources>

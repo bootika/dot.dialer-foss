@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Chọn cách bảo vệ quyền truy cập ứng dụng</string>
+    <string name="authentication_unavailable">Không thể xác thực. Thử lại sau hoặc dùng xác thực thiết bị để khôi phục quyền truy cập.</string>
+    <string name="authentication_password_minimum">Sử dụng ít nhất 8 ký tự</string>
+    <string name="authentication_retry_later">Quá nhiều lần thử. Hãy đợi và thử lại.</string>
+    <string name="authentication_recover_device">Khôi phục bằng xác thực điện thoại</string>
+</resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contact_photos_title" translatable="false">Contacts Optimizer</string>
+    <string name="contact_photos_permission">Allow contact access to read and update photos and phone numbers.</string>
+    <string name="contact_photos_account">Google account</string>
+    <string name="contact_photos_no_account">No Google contacts are available. Add an account in Android Settings.</string>
+    <string name="contact_photos_google_foss">Cloud photo downloads from Google are unavailable in this edition. Local photo updates still work.</string>
+    <string name="contact_photos_gravatar">Gravatar photos</string>
+    <string name="contact_photos_gravatar_summary">Find photos using a contact’s single e-mail address.</string>
+    <string name="contact_photos_gravatar_disclosure">Gravatar receives a code derived from the contact’s e-mail address to look up a public avatar. No names, phone numbers or messages are sent. Photos may be applied automatically according to your selected policy. Manual choices remain protected.</string>
+    <string name="contact_photos_agree">I agree</string>
+    <string name="contact_photos_updated">Photo applied.</string>
+    <string name="contact_photos_unchanged">Checked. Existing photos and uncertain numbers were left unchanged.</string>
+    <string name="contact_photos_review_required">Contact changes need your review.</string>
+    <string name="contact_photos_retry">The contact or access changed. Check permissions and try again.</string>
+    <string name="contact_photos_choose_contact">Choose the correct contact, or ignore this photo.</string>
+    <string name="contact_photos_ignore">Ignore photo</string>
+    <string name="contact_photos_business">Company logos</string>
+    <string name="contact_photos_business_summary">Find company logos using websites, business email domains or company names. Personal photos stay.</string>
+    <string name="contact_photos_business_disclosure">Dot Dialer checks public icons on company websites and business email domains. With your permission, only the company name is sent to Dot Dialer and Logo.dev for matching. Phone numbers, full email addresses, personal names and messages are not sent. Unclear matches need your choice; existing personal photos remain.</string>
+    <string name="contact_photos_proposals">Proposals</string>
+    <string name="contact_photos_apply">Apply selection</string>
+    <string name="contact_photos_select">Choose photo</string>
+    <string name="contact_photos_no_site">No usable site or logo is available. Add the company’s official HTTPS website to the contact.</string>
+    <string name="contact_photos_find_numbers">Review phone numbers</string>
+    <string name="contact_photos_connect_google">Connect Google below to find cloud photos.</string>
+    <string name="contact_photos_network_error">Could not finish the search. Check your connection and try again.</string>
+    <string name="contact_photos_storage_error">Could not save local data. Check free storage space and try again.</string>
+    <string name="contact_photos_unknown_contact">Choose contact</string>
+    <string name="contact_photos_searching">Searching…</string>
+    <string name="contact_photos_stopped">Search stopped. Previously found proposals are kept.</string>
+    <string name="contact_photos_auto_update">Update existing photos automatically</string>
+    <string name="contact_photos_whatsapp_summary">Use sender avatars from WhatsApp notifications.</string>
+    <string name="contact_photos_disclosure">Dot Dialer reads sender identity and avatars from WhatsApp notifications. Messages are not saved or sent to a server. Photos are processed locally. Photos may be applied automatically according to your selected policy. Manual choices remain protected.</string>
+    <string name="contact_photos_only_same_or_larger">Only if same or larger</string>
+    <string name="contact_photos_only_same_or_larger_summary">For automatic WhatsApp updates, require both width and height to be at least equal. Turn off to allow smaller photos.</string>
+    <string name="contact_photos_source_consent_required">Confirm this photo source before searching.</string>
+    <string name="contact_photos_google_source_summary">Find higher-resolution photos in Google Contacts. Connect before searching.</string>
+    <string name="contact_photos_google_connect_action">Connect to Google</string>
+    <string name="contact_photos_find_title">Choose manually</string>
+    <string name="contact_photos_find_summary">Find photos and number changes for your selected Google account. Review before applying.</string>
+    <string name="contact_photos_numbers_scan_summary">Find numbers that can use international formatting. You choose which changes to apply.</string>
+    <string name="contact_photos_find_action">Find</string>
+    <string name="contact_photos_check_action">Check</string>
+    <string name="contact_photos_google_find_title">Google photos</string>
+    <string name="contact_photos_scan_preparing">Preparing search…</string>
+    <string name="contact_photos_scan_count">Contacts checked: %1$d / %2$d</string>
+    <string name="contact_photos_scan_results">Results to review: %1$d</string>
+    <string name="contact_photos_scan_complete">Search complete</string>
+    <string name="contact_photos_review_results">Review results (%1$d)</string>
+    <string name="contact_photos_review_summary">Choose photos and phone number changes before applying.</string>
+    <string name="contact_photos_google_disabled">Turn on Google photos to search.</string>
+    <string name="contact_photos_reset">Reset results</string>
+    <string name="contact_photos_reset_confirm">Reset search results?</string>
+    <string name="contact_photos_reset_summary">Stop the current search and clear this account’s results. Applied photos, phone numbers and settings stay unchanged.</string>
+</resources>

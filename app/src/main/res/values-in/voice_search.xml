@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_search_title">Penelusuran suara</string>
+    <string name="voice_search_description">Tampilkan mikrofon di semua bilah penelusuran.</string>
+    <string name="voice_search_prompt">Ucapkan yang ingin dicari</string>
+    <string name="voice_search_permission">Izinkan akses mikrofon untuk penelusuran suara di setelan aplikasi.</string>
+    <string name="voice_search_unavailable">Tidak ada aplikasi pengenalan suara. Anda tetap dapat mengetik penelusuran.</string>
+</resources>

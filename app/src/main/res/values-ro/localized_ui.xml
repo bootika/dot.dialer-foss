@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Părerea ta ne ajută să îmbunătățim aplicația!</string>
+    <string name="rating_star">Steaua %1$d</string>
+    <string name="rating_terrible">Foarte slab</string>
+    <string name="rating_bad">Slab</string>
+    <string name="rating_okay">Acceptabil</string>
+    <string name="rating_good">Bun</string>
+    <string name="rating_excellent">Excelent!</string>
+    <string name="rating_prompt">Atinge o stea pentru evaluare</string>
+    <string name="rating_appreciation">Îți mulțumim pentru părere!</string>
+    <string name="rating_thanks">Mulțumim!</string>
+    <string name="rating_submit">Trimite evaluarea</string>
+    <string name="rating_later">Nu acum</string>
+    <string name="about_repository">Proiect pe GitHub</string>
+    <string name="standardizing_numbers">Standardizez numerele</string>
+    <string name="standardize_progress">%1$d%% finalizat</string>
+    <string name="game_title">Cursa calului</string>
+    <string name="game_over">Joc încheiat!</string>
+    <string name="game_score">Scor: %1$d</string>
+    <string name="game_replay">Joacă din nou</string>
+    <string name="game_jump">Sari!</string>
+    <string name="game_hint">Apasă Sari ca să eviți obstacolele!</string>
+    <string name="game_hello">Salut!</string>
+    <string name="label_unknown">Necunoscut</string>
+</resources>

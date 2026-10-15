@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="device_file" path="datastore/rill_prefs.preferences_pb" />
+        <include domain="file" path="datastore/rill_prefs.preferences_pb" />
+        <include domain="device_file" path="call_backgrounds/" />
+        <include domain="file" path="call_backgrounds/" />
+        <include domain="external" path="Notes/" />
+    </cloud-backup>
+
+    <device-transfer>
+        <include domain="device_file" path="datastore/rill_prefs.preferences_pb" />
+        <include domain="file" path="datastore/rill_prefs.preferences_pb" />
+        <include domain="device_file" path="call_backgrounds/" />
+        <include domain="file" path="call_backgrounds/" />
+        <include domain="external" path="Notes/" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Dein Feedback hilft uns, die App zu verbessern!</string>
+    <string name="rating_star">Stern %1$d</string>
+    <string name="rating_terrible">Sehr schlecht</string>
+    <string name="rating_bad">Schlecht</string>
+    <string name="rating_okay">Okay</string>
+    <string name="rating_good">Gut</string>
+    <string name="rating_excellent">Ausgezeichnet!</string>
+    <string name="rating_prompt">Tippe zum Bewerten auf einen Stern</string>
+    <string name="rating_appreciation">Danke für dein Feedback!</string>
+    <string name="rating_thanks">Vielen Dank!</string>
+    <string name="rating_submit">Bewertung senden</string>
+    <string name="rating_later">Nicht jetzt</string>
+    <string name="about_repository">Repository auf GitHub</string>
+    <string name="standardizing_numbers">Nummern werden vereinheitlicht</string>
+    <string name="standardize_progress">%1$d%% abgeschlossen</string>
+    <string name="game_title">Pferderennen</string>
+    <string name="game_over">Spiel vorbei!</string>
+    <string name="game_score">Punkte: %1$d</string>
+    <string name="game_replay">Erneut spielen</string>
+    <string name="game_jump">Springen!</string>
+    <string name="game_hint">Tippe auf Springen, um Hindernissen auszuweichen!</string>
+    <string name="game_hello">Hallo!</string>
+    <string name="label_unknown">Unbekannt</string>
+</resources>

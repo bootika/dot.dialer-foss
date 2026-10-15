@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="optimizer_manual">Manuelle Auswahl</string>
+    <string name="optimizer_manual_summary">Du wählst jede Fotoänderung.</string>
+    <string name="optimizer_missing">Fehlende Fotos ergänzen</string>
+    <string name="optimizer_missing_summary">Fügt Fotos nur hinzu, wenn noch keines vorhanden ist.</string>
+    <string name="optimizer_latest">Neuestes Profilbild</string>
+    <string name="optimizer_latest_summary">Bevorzugt neue Profilbilder, auch bei geringerer Auflösung.</string>
+    <string name="optimizer_quality">Qualität</string>
+    <string name="optimizer_quality_summary">Verbessert kleine Fotos; behält gute Fotos ab 512×512.</string>
+    <string name="optimizer_resume_automatic">Automatische Aktualisierung fortsetzen</string>
+    <string name="optimizer_manual_choices">Geschützte manuelle Fotos</string>
+</resources>

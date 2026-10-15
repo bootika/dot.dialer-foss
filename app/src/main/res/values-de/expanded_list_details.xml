@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Namen und Details in mehreren Zeilen</string>
+    <string name="expanded_list_details_description">Bei wenig Platz Namen und Nummern mehrzeilig anzeigen und die Uhrzeit darunter verschieben.</string>
+</resources>

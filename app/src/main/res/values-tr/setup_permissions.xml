@@ -1,0 +1,14 @@
+<resources>
+    <string name="setup_contacts_read">Arayanları tanımak, adlarını ve fotoğraflarını göstermek için kişileri oku.</string>
+    <string name="setup_contacts_write">Ad, numara ve fotoğraf değişikliklerini kaydetmek için kişileri düzenle.</string>
+    <string name="setup_history_read">Gelen, giden ve cevapsız aramaları göstermek için arama geçmişini oku.</string>
+    <string name="setup_history_write">Seçtiğin kayıtları silmek için arama geçmişini düzenle.</string>
+    <string name="setup_phone_state">SIM kartları ve arama hesaplarını tanımak için telefon durumunu oku.</string>
+    <string name="setup_phone_call">dot.dialer üzerinden başlattığın aramaları yap.</string>
+    <string name="setup_phone_answer">Gelen aramaları ve yanıt kontrollerini yönet.</string>
+    <string name="setup_notifications">Gelen, devam eden ve cevapsız aramaların bildirimlerini ve kontrollerini göster.</string>
+    <string name="setup_bluetooth">Bağlı araç ses sistemini ve Bluetooth kulaklıkları kullan.</string>
+    <string name="setup_fullscreen">Gelen aramaları kilit ekranında göster. Bu erişim olmadan arama bildirimini kullan.</string>
+    <string name="setup_retry">Tekrar dene</string>
+    <string name="setup_continue_limited">Sınırlı özelliklerle devam et</string>
+</resources>

@@ -1,0 +1,272 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.google.devtools.ksp'
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
+def productId = localProperties.getProperty('PRODUCT_ID_X1', '')
+def subscriptionId = localProperties.getProperty('SUBSCRIPTION_ID_X1', '')
+def subscriptionYearId = localProperties.getProperty('SUBSCRIPTION_YEAR_ID_X1', '')
+def sentryDsn = System.getenv('SENTRY_DSN') ?: localProperties.getProperty('SENTRY_DSN', '')
+def escapedSentryDsn = sentryDsn.replace('\\', '\\\\').replace('"', '\\"')
+def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificationAvatars').orElse('true').get()
+if (!(gplayNotificationAvatars in ['true', 'false'])) {
+    throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
+}
+def baseVersionCode = 248
+def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
+def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
+def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"
+def releaseKeystore = file('keystore.jks')
+def releaseStorePassword = System.getenv('KEYSTORE_PASSWORD')
+def releaseKeyAlias = System.getenv('KEY_ALIAS')
+def releaseKeyPassword = System.getenv('KEY_PASSWORD')
+def hasReleaseSigning = releaseKeystore.exists() &&
+    releaseStorePassword && releaseKeyAlias && releaseKeyPassword
+
+android {
+    namespace = 'dev.goodwy.rphone'
+    compileSdk = 37
+
+    defaultConfig {
+        applicationId = "dot.dialer"
+        minSdk = 29
+        targetSdk = 37
+        versionCode = effectiveVersionCode
+        versionName = effectiveVersionName
+
+        // Keep the shipped language set deliberate. Additional source translations
+        // may remain in the repository without silently appearing in the app.
+        resourceConfigurations += [
+            'en', 'ro', 'es', 'pt-rBR', 'fr', 'de', 'it', 'in', 'tr', 'pl', 'vi'
+        ]
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+
+        buildConfigField "String", "PRODUCT_ID_X1", "\"$productId\""
+        buildConfigField "String", "SUBSCRIPTION_ID_X1", "\"$subscriptionId\""
+        buildConfigField "String", "SUBSCRIPTION_YEAR_ID_X1", "\"$subscriptionYearId\""
+        buildConfigField "String", "SENTRY_DSN", "\"$escapedSentryDsn\""
+        buildConfigField "boolean", "NOTIFICATION_AVATARS_AVAILABLE", "true"
+    }
+
+    base {
+        archivesName = "dot-dialer-${defaultConfig.versionCode}"
+    }
+
+    signingConfigs {
+        debug {
+            // A project-local key keeps APK upgrades compatible on developer devices. CI and
+            // clean clones deliberately fall back to Android's generated debug key.
+            if (file("debug.keystore").exists()) {
+                storeFile = file("debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+        release {
+            if (hasReleaseSigning) {
+                storeFile = releaseKeystore
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = true
+            shrinkResources = true
+            // CI and clean clones must still be able to exercise the complete R8/resource
+            // shrinking pipeline. Sign only when the keystore and every credential exist.
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.release
+            }
+            debuggable = false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig = signingConfigs.debug
+            applicationIdSuffix = ".test"
+            versionNameSuffix = "-test"
+        }
+    }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        register("gplay") {
+            dimension = "distribution"
+            buildConfigField "boolean", "NOTIFICATION_AVATARS_AVAILABLE", gplayNotificationAvatars
+        }
+        register("foss") { dimension = "distribution" }
+        register("rustore") { dimension = "distribution" }
+    }
+    if (gplayNotificationAvatars == 'false') {
+        sourceSets.gplay.manifest.srcFile 'src/gplay/AndroidManifest.no-notification-avatars.xml'
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            allWarningsAsErrors.set(true)
+
+            freeCompilerArgs.addAll(
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+            )
+        }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    androidResources {
+        // The explicit config keeps the Android language picker in the same
+        // order and scope as resourceConfigurations above.
+        generateLocaleConfig = false
+    }
+
+    testOptions {
+        execution = 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+
+        // These warnings previously exposed real correctness, lifecycle and accessibility defects.
+        // Keep them fatal so the project cannot silently regress to the old behavior.
+        fatal 'ContentDescription',
+            'ExifInterface',
+            'InlinedApi',
+            'MutableCollectionMutableState',
+            'PrivateResource',
+            'ScopedStorage',
+            'StaticFieldLeak',
+            'Untranslatable'
+    }
+}
+
+// Robolectric SDK sandboxes/native Compose accumulate across this large suite.
+// Bound worker lifetime while keeping every test and all quality thresholds unchanged.
+tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {
+    maxHeapSize = '1g'
+    forkEvery = 40
+    maxParallelForks = 1
+}
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+}
+
+dependencies {
+    implementation project(':core:diagnostics')
+    implementation project(':core:domain')
+
+    // UI Stack managed by BOM
+    implementation platform('androidx.compose:compose-bom:2025.12.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.material3:material3:1.5.0-alpha18'
+    implementation 'androidx.exifinterface:exifinterface:1.3.6'
+    implementation 'androidx.graphics:graphics-shapes:1.0.1'
+    implementation 'androidx.activity:activity-compose'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.material:material-icons-extended'
+
+    // Core Android / Kotlin
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.core:core-splashscreen:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.7'
+
+    // Android Auto templated calling experience. The manifest registration is intentionally
+    // debug-only while Google Play limits calling apps to Internal/Closed testing.
+    debugImplementation 'androidx.car.app:app:1.8.0-rc01'
+    debugImplementation 'androidx.car.app:app-projected:1.8.0-rc01'
+
+    // Navigation & Serialization
+    // 2.9.8 guards predictive-back transitions when the back stack shrinks to one entry.
+    // Older versions can index currentBackStack[-1] after an activity stop/resume cycle.
+    implementation 'androidx.navigation:navigation-compose:2.9.8'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation 'androidx.datastore:datastore-preferences:1.2.1'
+
+    // Biometrics
+    implementation 'androidx.biometric:biometric:1.2.0-alpha05'
+    implementation 'androidx.fragment:fragment-ktx:1.8.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
+
+    // Crash and ANR reporting. Initialization and privacy controls live in AppTelemetry.
+    implementation 'io.sentry:sentry-android:8.57.0'
+
+    // Compose Destinations
+    implementation 'io.github.raamcosta.compose-destinations:core:2.1.0'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:2.1.0'
+
+    // Accompanist
+    implementation "com.google.accompanist:accompanist-permissions:0.37.3"
+
+    // DI: Koin
+    implementation platform("io.insert-koin:koin-bom:4.1.1")
+    implementation "io.insert-koin:koin-android"
+    implementation "io.insert-koin:koin-androidx-compose"
+
+    // Room
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
+
+    // Image & Utility
+    implementation "io.coil-kt:coil-compose:2.7.0"
+    implementation 'com.google.zxing:core:3.5.4'
+
+
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
+    testImplementation 'app.cash.turbine:turbine:1.2.1'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation platform('androidx.compose:compose-bom:2025.12.01')
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4-accessibility'
+    androidTestUtil 'androidx.test:orchestrator:1.5.1'
+
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // Goodwy
+    gplayImplementation 'com.android.billingclient:billing:8.0.0'
+    // Incremental, user-consented read-only access to Google Contacts. The FOSS and
+    // RuStore variants use a no-op implementation and do not bundle Google Play services.
+    gplayImplementation 'com.google.android.gms:play-services-auth:22.0.0'
+    rustoreImplementation 'ru.rustore.sdk:bom:2026.04.01'
+    rustoreImplementation 'ru.rustore.sdk:pay:10.3.1'
+}

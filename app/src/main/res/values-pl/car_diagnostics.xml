@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Udostępnij plik diagnostyczny</string>
+    <string name="diagnostics_use_file">Ten dziennik jest za duży do skopiowania. Udostępnij plik.</string>
+    <string name="diagnostics_share_failed">Nie udało się udostępnić diagnostyki</string>
+    <string name="car_capture_title">Rejestrowanie testu w samochodzie</string>
+    <string name="car_capture_steps">Wybierz powyżej Verbose. Przed testem włącz Bluetooth HCI snoop log w Opcjach programisty (pełny, bez filtrowania) i uruchom ponownie Bluetooth bez aktywnego połączenia. Przetestuj rozmowy. Następnie utwórz tam pełny raport błędów i wyłącz rejestrowanie HCI. Ponownie uruchom Bluetooth bez aktywnego połączenia. Udostępnij TXT Dot oraz raport Androida. Raport może zawierać dane kontaktów. Komputer nie jest potrzebny podczas testu.</string>
+    <string name="car_capture_developer_options">Opcje programisty</string>
+    <string name="car_capture_settings_failed">Nie udało się otworzyć opcji programisty</string>
+</resources>

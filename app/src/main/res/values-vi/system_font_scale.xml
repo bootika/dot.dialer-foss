@@ -1,0 +1,4 @@
+<resources>
+    <string name="ignore_system_font_scale">Bỏ qua cỡ chữ hệ thống</string>
+    <string name="ignore_system_font_scale_description">Dùng cỡ chữ tiêu chuẩn. Cài đặt kích thước của ứng dụng vẫn được áp dụng.</string>
+</resources>

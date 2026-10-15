@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Choose how to protect access to the app</string>
+    <string name="authentication_unavailable">Authentication is unavailable. Try again later or use device authentication to recover access.</string>
+    <string name="authentication_password_minimum">Use at least 8 characters</string>
+    <string name="authentication_retry_later">Too many attempts. Wait and try again.</string>
+    <string name="authentication_recover_device">Recover using phone authentication</string>
+</resources>

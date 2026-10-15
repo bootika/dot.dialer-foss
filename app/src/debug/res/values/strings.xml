@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">dot.dialer</string>
+    <string name="call_lab_title" translatable="false">Dot Dialer Call Lab</string>
+    <string name="call_lab_subtitle" translatable="false">Debug-only Telecom scenarios</string>
+    <string name="call_lab_account_ready" translatable="false">Lab account enabled</string>
+    <string name="call_lab_account_disabled" translatable="false">Enable the lab account once in Android phone account settings</string>
+    <string name="call_lab_register" translatable="false">Register lab account</string>
+    <string name="call_lab_account_settings" translatable="false">Open phone account settings</string>
+    <string name="call_lab_incoming" translatable="false">Incoming call</string>
+    <string name="call_lab_second_incoming" translatable="false">Second incoming</string>
+    <string name="call_lab_outgoing" translatable="false">Outgoing call</string>
+    <string name="call_lab_activate" translatable="false">Connect latest</string>
+    <string name="call_lab_hold" translatable="false">Hold latest</string>
+    <string name="call_lab_resume" translatable="false">Resume latest</string>
+    <string name="call_lab_conference" translatable="false">Conference all</string>
+    <string name="call_lab_disconnect" translatable="false">End latest</string>
+    <string name="call_lab_reset" translatable="false">Reset all calls</string>
+    <string name="call_lab_status" translatable="false">Connections: %1$d · conferences: %2$d · latest: %3$s</string>
+    <string name="call_lab_no_latest" translatable="false">none</string>
+    <string name="call_lab_adb_hint" translatable="false">ADB action: dev.goodwy.rphone.debug.CALL_LAB\nCommands: register, incoming, outgoing, active, hold, resume, conference, disconnect, reset</string>
+</resources>

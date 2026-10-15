@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Nomi e dettagli su più righe</string>
+    <string name="expanded_list_details_description">Se lo spazio non basta, mostra nomi e numeri su più righe e sposta l’ora sotto.</string>
+</resources>

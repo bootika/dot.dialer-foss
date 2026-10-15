@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plans_title">Plany</string>
+    <string name="plans_description">Podstawowe połączenia pozostają bezpłatne. Pro odblokowuje własne tło połączeń. Wybierz plan.</string>
+    <string name="gift_title">Kod aktywacyjny</string>
+    <string name="gift_description">Masz kod early adopter? Aktywuj go tutaj i zachowaj na inny telefon.</string>
+    <string name="gift_active">Pro early adopter aktywne</string>
+    <string name="gift_activate">Aktywuj kod</string>
+    <string name="gift_code">Kod aktywacyjny</string>
+    <string name="gift_invalid">Kod jest nieprawidłowy, wygasł lub został unieważniony.</string>
+    <string name="gift_limit">Osiągnięto limit urządzeń. Poproś o reset aktywacji.</string>
+    <string name="gift_unavailable">Nie udało się aktywować. Sprawdź połączenie i spróbuj ponownie.</string>
+    <string name="plan_monthly_description">Miesięczna subskrypcja Pro z automatycznym odnawianiem.</string>
+    <string name="plan_yearly_description">Roczna subskrypcja Pro z automatycznym odnawianiem.</string>
+    <string name="plan_lifetime_description">Jedna płatność za dożywotni dostęp Pro.</string>
+    <string name="product_stats_description">Raporty automatyczne obejmują minimalne statystyki: wersje aplikacji/Androida, model, język, kraj/operatora SIM, wybrany region numerów i dzienne liczniki ulubionych, gestów i klawiatury. Bez kontaktów, numerów, historii połączeń ani GPS. Na żądanie wyłącza statystyki automatyczne.</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Dot's DataStore lives in device-protected storage because the dialer must also work
+         before the first unlock. Include it explicitly so every UI/call preference migrates. -->
+    <include
+        domain="device_file"
+        path="datastore/rill_prefs.preferences_pb" />
+    <!-- Compatibility: older versions actually used credential-protected files. -->
+    <include domain="file" path="datastore/rill_prefs.preferences_pb" />
+    <include domain="device_file" path="call_backgrounds/" />
+    <include domain="file" path="call_backgrounds/" />
+    <include domain="external" path="Notes/" />
+    <!-- Secrets, licenses, diagnostics, databases and caches remain outside this allowlist. -->
+</full-backup-content>

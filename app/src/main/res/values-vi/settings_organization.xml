@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_fine_tuning">Tinh chỉnh</string>
+    <string name="settings_scroll_calibration">Hiệu chỉnh rung khi cuộn</string>
+    <string name="settings_reporting">Báo cáo chẩn đoán</string>
+    <string name="settings_blur_dependency">Dùng khi Glass cuộc gọi tắt. Tùy khả năng của thiết bị.</string>
+    <string name="settings_repeat_contacts_explanation">Hiển thị cùng một người trong Gần đây và Danh bạ khi tìm kiếm.</string>
+    <string name="settings_protected_numbers">Số được bảo vệ</string>
+    <string name="settings_alias_home_and_gestures">&amp; Điệu bộ Nhà</string>
+    <string name="settings_alias_interface_settings">Giao diện</string>
+    <string name="settings_alias_privacy_and_blocking">Quyền riêng tư và số bị chặn</string>
+    <string name="settings_alias_call_settings">Thiết lập gọi</string>
+    <string name="settings_alias_manage_contacts">Quản lý liên hệ</string>
+    <string name="settings_alias_avatar_size">Kích cỡ Avatar</string>
+    <string name="settings_alias_expanded_list_details">Thông tin danh sách mở rộng</string>
+    <string name="settings_alias_subtle_animations">Hoạt hình tinh tế</string>
+    <string name="settings_alias_clear_search_after_call">Xoá tìm kiếm sau khi gọi</string>
+    <string name="settings_alias_search_repeat_contacts">Lặp lại liên hệ trong kết quả tìm kiếm</string>
+    <string name="settings_alias_incoming_call_ui">Giao diện cuộc gọi đến</string>
+    <string name="settings_alias_settings_call_default_background">Nền cuộc gọi mặc định</string>
+    <string name="settings_alias_vibrate_on_answer">Vi phạm câu trả lời</string>
+    <string name="settings_alias_authentication_method">Phương pháp xác thực</string>
+    <string name="settings_alias_lock_call_actions">Khoá hành động gọi</string>
+    <string name="settings_alias_lock_scope">Phạm vi gọi khoá</string>
+    <string name="settings_alias_blacklist">Danh sách đen</string>
+    <string name="settings_alias_whitelist">Danh sách trắng</string>
+    <string name="settings_alias_history_and_feedback">Lịch sử và phản hồi</string>
+    <string name="settings_alias_continue_support">Tiếp tục</string>
+    <string name="settings_alias_authentication">Xác thực</string>
+    <string name="settings_alias_contact_tools">Công cụ danh bạ</string>
+    <string name="settings_alias_ringtone_settings">Thiết lập chuông gọi</string>
+    <string name="settings_alias_managing_contact_sources">Quản lý nguồn liên lạc</string>
+    <string name="settings_alias_tap_haptics">Rung khi chạm</string>
+</resources>

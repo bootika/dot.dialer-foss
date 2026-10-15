@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rating_feedback_body">Masukan Anda membantu kami menjadi lebih baik!</string>
+    <string name="rating_star">Bintang %1$d</string>
+    <string name="rating_terrible">Sangat buruk</string>
+    <string name="rating_bad">Buruk</string>
+    <string name="rating_okay">Cukup</string>
+    <string name="rating_good">Baik</string>
+    <string name="rating_excellent">Luar biasa!</string>
+    <string name="rating_prompt">Ketuk bintang untuk memberi nilai</string>
+    <string name="rating_appreciation">Terima kasih atas masukan Anda!</string>
+    <string name="rating_thanks">Terima kasih!</string>
+    <string name="rating_submit">Kirim penilaian</string>
+    <string name="rating_later">Nanti saja</string>
+    <string name="about_repository">Repositori GitHub</string>
+    <string name="standardizing_numbers">Menyeragamkan nomor</string>
+    <string name="standardize_progress">%1$d%% selesai</string>
+    <string name="game_title">Pacuan kuda</string>
+    <string name="game_over">Permainan berakhir!</string>
+    <string name="game_score">Skor: %1$d</string>
+    <string name="game_replay">Main lagi</string>
+    <string name="game_jump">Lompat!</string>
+    <string name="game_hint">Ketuk Lompat untuk menghindari rintangan!</string>
+    <string name="game_hello">Halo!</string>
+    <string name="label_unknown">Tidak dikenal</string>
+</resources>

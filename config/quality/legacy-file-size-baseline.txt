@@ -1,0 +1,26 @@
+# Oversized inherited files are technical debt, not the standard for new code.
+# A ceiling may be lowered or removed after extraction; it must never be raised.
+app/src/gplay/java/dev/goodwy/rphone/view/screen/settings/DonateScreen.kt=654
+app/src/main/java/dev/goodwy/rphone/MainActivity.kt=829
+app/src/main/java/dev/goodwy/rphone/controller/CallService.kt=621
+app/src/main/java/dev/goodwy/rphone/controller/FloatingCallService.kt=747
+app/src/main/java/dev/goodwy/rphone/controller/util/CallBackgroundStore.kt=712
+app/src/main/java/dev/goodwy/rphone/controller/util/PreferenceManager.kt=710
+app/src/main/java/dev/goodwy/rphone/modal/repository/ContactsRepository.kt=2966
+app/src/main/java/dev/goodwy/rphone/view/components/AZListScroll.kt=666
+app/src/main/java/dev/goodwy/rphone/view/components/BottomBar.kt=696
+app/src/main/java/dev/goodwy/rphone/view/components/RillDialogs.kt=1053
+app/src/main/java/dev/goodwy/rphone/view/components/RillExpressiveUI.kt=1499
+app/src/main/java/dev/goodwy/rphone/view/screen/CallScreen.kt=1420
+app/src/main/java/dev/goodwy/rphone/view/screen/CallScreenComponents.kt=3024
+app/src/main/java/dev/goodwy/rphone/view/screen/Contact.kt=946
+app/src/main/java/dev/goodwy/rphone/view/screen/ContactDetails.kt=2406
+app/src/main/java/dev/goodwy/rphone/view/screen/ContactEdit.kt=2936
+app/src/main/java/dev/goodwy/rphone/view/screen/Dialpad.kt=2513
+app/src/main/java/dev/goodwy/rphone/view/screen/FavoritesScreen.kt=728
+app/src/main/java/dev/goodwy/rphone/view/screen/NotesScreen.kt=876
+app/src/main/java/dev/goodwy/rphone/view/screen/UnifiedHomeScreen.kt=1514
+app/src/main/java/dev/goodwy/rphone/view/screen/settings/About.kt=1522
+app/src/main/java/dev/goodwy/rphone/view/screen/settings/BiometricScreen.kt=1743
+app/src/main/java/dev/goodwy/rphone/view/screen/settings/CallerUIScreen.kt=654
+app/src/main/java/dev/goodwy/rphone/view/theme/Color.kt=693

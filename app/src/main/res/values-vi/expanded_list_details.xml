@@ -1,0 +1,4 @@
+<resources>
+    <string name="expanded_list_details">Tên và chi tiết trên nhiều dòng</string>
+    <string name="expanded_list_details_description">Khi thiếu chỗ, hiển thị tên và số trên nhiều dòng và chuyển thời gian xuống bên dưới.</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authentication_enable_subtitle">Scegli come proteggere l’accesso all’app</string>
+    <string name="authentication_unavailable">Autenticazione non disponibile. Riprova più tardi o usa quella del dispositivo per recuperare l’accesso.</string>
+    <string name="authentication_password_minimum">Usa almeno 8 caratteri</string>
+    <string name="authentication_retry_later">Troppi tentativi. Attendi e riprova.</string>
+    <string name="authentication_recover_device">Recupera con l’autenticazione del telefono</string>
+</resources>

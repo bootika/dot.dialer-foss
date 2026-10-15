@@ -1,0 +1,248 @@
+package dev.goodwy.rphone.view.screen.settings
+
+import dev.goodwy.rphone.view.theme.accentText
+
+import dev.goodwy.rphone.view.components.DotDialerHangupIcon
+
+import android.content.Context
+import android.telecom.TelecomManager
+import android.util.Log
+import android.view.Surface
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.rounded.DisabledVisible
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.goodwy.rphone.R
+import dev.goodwy.rphone.controller.util.PreferenceManager
+import dev.goodwy.rphone.controller.util.getBlockedNumbers
+import dev.goodwy.rphone.view.components.NavigationIcon
+import dev.goodwy.rphone.view.screen.settings.components.SettingsImmediateSection
+import dev.goodwy.rphone.view.components.RillExpressiveCard
+import dev.goodwy.rphone.view.components.RillListItem
+import dev.goodwy.rphone.view.components.RillSelectListItem
+import dev.goodwy.rphone.view.theme.customColors
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.goodwy.rphone.view.components.RillDialog
+import dev.goodwy.rphone.view.components.Title
+import org.koin.compose.koinInject
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Destination<RootGraph>
+@Composable
+fun BlockedNumbersScreen(
+    navigator: DestinationsNavigator
+) {
+    val context = LocalContext.current
+    val prefs = koinInject<PreferenceManager>()
+    val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
+    
+    var blockMethod by remember(settingsState) { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_BLOCK_METHOD, 0)) }
+    var logVisibility by remember(settingsState) { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, 0)) }
+    var blockNotification by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, true)) }
+
+    var visible by remember { mutableStateOf(false) }
+    val screenAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(350),
+        label = "spamAlpha"
+    )
+    LaunchedEffect(Unit) { visible = true }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var blockedNumbersSize by remember { mutableStateOf(context.getBlockedNumbers().size.toString()) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                blockedNumbersSize = context.getBlockedNumbers().size.toString()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    val rotation = context.currentDisplayRotation()
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val isRotation90 = rotation == if (isLtr) Surface.ROTATION_90 else Surface.ROTATION_270
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                windowInsets = WindowInsets.systemBars.only(
+                    if (isRotation90) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                    else WindowInsetsSides.Top
+                ),
+                title = { Title(stringResource(R.string.manage_blocked)) },
+                navigationIcon = {
+                    NavigationIcon(onClick = { navigator.navigateUp() })
+                }
+            )
+        }
+    ) { padding ->
+        LazyColumn(state = rememberSettingsListState(),
+            modifier = Modifier
+                .fillMaxSize()
+//                .padding(padding)
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    start = 0.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                )
+                .alpha(screenAlpha),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                SettingsImmediateSection() {
+                    var showAboutNotesDialog by remember { mutableStateOf(false) }
+                    Column {
+                        SettingsSectionLabel(stringResource(R.string.system_settings))
+                        RillExpressiveCard {
+                            RillListItem(
+                                expandText = true,
+                                headline = stringResource(R.string.blocked_numbers),
+                                supporting = stringResource(R.string.blocked_size, blockedNumbersSize),
+                                leadingIcon = Icons.AutoMirrored.Rounded.List,
+                                iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkOrange,
+                                iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorOrange,
+                                preTrailingIcon = Icons.AutoMirrored.Rounded.Help,
+                                modifierPreTrailingIcon = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(24.dp)
+                                    .combinedClickable(
+                                        interactionSource = null,
+                                        indication = ripple(
+                                            bounded = false,
+                                            radius = 24.dp
+                                        ),
+                                        onClick = { showAboutNotesDialog = true }),
+                                trailingIcon = Icons.Default.ChevronRight,
+                                onClick = {
+                                    val telecomManager =
+                                        context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+                                    try {
+                                        val intent =
+                                            telecomManager.createManageBlockedNumbersIntent()
+                                        context.startActivity(intent)
+                                    } catch (error: Exception) {
+                                        Log.w("BlockedNumbersScreen", "Unable to open Android's blocked-number settings", error)
+                                    }
+                                }
+                            )
+                        }
+
+                        if (showAboutNotesDialog) {
+                            RillDialog(
+                                onDismissRequest = { showAboutNotesDialog = false },
+                                title = stringResource(R.string.blocked_numbers),
+                                icon = Icons.AutoMirrored.Rounded.Help,
+                                iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
+                                iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        showAboutNotesDialog = false
+                                    }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
+                                        Text(
+                                            stringResource(R.string.close),
+                                            textAlign = TextAlign.End,
+                                        )
+                                    }
+                                },
+                            ) {
+                                Text(stringResource(R.string.blocked_numbers_system_info))
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Our app's rules do not apply to blocked numbers on the system list; such calls are blocked by the system beforehand.
+//            item {
+//                SettingsImmediateSection() {
+//                    RillExpressiveCard {
+//                        RillSwitchListItem(
+//                            headline = stringResource(R.string.blocking_notifications),
+//                            supporting = stringResource(R.string.blocking_notifications_subtitle),
+//                            leadingIcon = Icons.Rounded.NotificationsPaused,
+//                            iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
+//                            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
+//                            checked = blockNotification,
+//                            onCheckedChange = {
+//                                blockNotification = it
+//                                prefs.setBoolean(PreferenceManager.KEY_BLOCK_NOTIFICATION, it)
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+
+            item {
+                SettingsImmediateSection() {
+                    RillExpressiveCard {
+                        // Our app's rules do not apply to blocked numbers on the system list; such calls are blocked by the system beforehand.
+//                        RillSelectListItem(
+//                            headline = stringResource(R.string.block_method),
+//                            supporting = stringResource(R.string.block_method_subtitle),
+//                            leadingIcon = if (blockMethod == 0) DotDialerHangupIcon else Icons.Rounded.MusicOff,
+//                            iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+//                            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorRed,
+//                            options = listOf(
+//                                stringResource(R.string.decline_automatically) to 0,
+//                                stringResource(R.string.ring_silently) to 1
+//                            ),
+//                            selectedValue = blockMethod,
+//                            onValueChange = {
+//                                blockMethod = it
+//                                prefs.setInt(PreferenceManager.KEY_BLOCK_METHOD, it)
+//                            }
+//                        )
+                        RillSelectListItem(
+                            headline = stringResource(R.string.log_visibility),
+                            supporting = stringResource(R.string.log_visibility_subtitle),
+                            leadingIcon = if (logVisibility == 0) Icons.Rounded.DisabledVisible else Icons.Rounded.Visibility,
+                            iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkRed,
+                            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorRed,
+                            options = listOf(
+                                stringResource(R.string.hide_from_logs) to 0,
+                                stringResource(R.string.show_in_logs) to 1
+                            ),
+                            selectedValue = logVisibility,
+                            onValueChange = {
+                                logVisibility = it
+                                prefs.setInt(PreferenceManager.KEY_BLOCK_LOG_VISIBILITY, it)
+                            }
+                        )
+                    }
+                }
+            }
+
+            item { SettingsBottomPadding() }
+        }
+    }
+}

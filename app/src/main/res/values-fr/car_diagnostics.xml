@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diagnostics_share_file">Partager le fichier de diagnostic</string>
+    <string name="diagnostics_use_file">Ce journal est trop volumineux pour être copié. Partage le fichier.</string>
+    <string name="diagnostics_share_failed">Impossible de partager le diagnostic</string>
+    <string name="car_capture_title">Capture pour un test en voiture</string>
+    <string name="car_capture_steps">Sélectionne Verbose ci-dessus. Avant le test, active Bluetooth HCI snoop log dans les Options pour les développeurs (complet, sans filtre) et redémarre Bluetooth sans appel actif. Teste les appels. Ensuite, génère un rapport de bug complet dans ces options et désactive la capture HCI, puis redémarre encore Bluetooth sans appel actif. Partage le TXT de Dot et le rapport Android. Le rapport peut contenir des données de contacts. Aucun PC nécessaire pendant le test.</string>
+    <string name="car_capture_developer_options">Options pour les développeurs</string>
+    <string name="car_capture_settings_failed">Impossible d’ouvrir les options pour les développeurs</string>
+</resources>

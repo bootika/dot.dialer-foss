@@ -2,13 +2,6 @@ package dev.goodwy.rphone.view.screen
 
 import android.telecom.Call
 import android.util.Log
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import dev.goodwy.rphone.view.components.callPressFeedback
-import dev.goodwy.rphone.view.components.rememberCallPressColor
-import dev.goodwy.rphone.view.components.rememberCallTapHaptic
-import dev.goodwy.rphone.view.components.rememberCallTapFeedback
-import dev.goodwy.rphone.view.components.rememberEnabledCallAction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -18,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -34,12 +26,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
@@ -154,11 +143,6 @@ private fun ConferenceParticipantRow(parent: Call, identity: ConferenceParticipa
     val name = identity.name
     val enabled = parentState in listOf(Call.STATE_ACTIVE, Call.STATE_HOLDING) && canEndConferenceParticipant(parent, participant)
     val endDescription = stringResource(R.string.end_conference_participant, name)
-    val interaction = remember { MutableInteractionSource() }
-    val feedback = rememberCallTapFeedback(interaction, enabled)
-    val pressed = feedback.pressed
-    val haptic = rememberCallTapHaptic()
-    val fill = rememberCallPressColor(MaterialTheme.colorScheme.onSurface.copy(alpha = 0f), pressed, enabled)
     val connectTime = details?.connectTimeMillis ?: 0L
     val elapsed = rememberCallElapsedSeconds(snapshot.state, connectTime)
     val status = stringResource(
@@ -187,21 +171,16 @@ private fun ConferenceParticipantRow(parent: Call, identity: ConferenceParticipa
                 Text(status, style = MaterialTheme.typography.labelSmall, color = callParticipantStatusColor(snapshot.state, MaterialTheme.colorScheme), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             CallElapsedTimer(elapsed, "conferenceParticipantTimer")
-            Surface(
-                onClick = rememberEnabledCallAction(enabled) { feedback.acknowledge(); haptic(); endConferenceParticipant(parent, participant) },
+            SecondaryCallAction(
+                icon = DotDialerHangupIcon,
+                label = endDescription,
+                tint = color_call_end,
+                compactEnd = true,
                 enabled = enabled,
-                modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                    .alpha(if (enabled) 1f else 0.5f)
-                    .semantics { contentDescription = endDescription }.callPressFeedback(pressed, enabled, fill.alpha),
-                interactionSource = interaction,
-                color = fill,
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    Icon(DotDialerHangupIcon, contentDescription = null, tint = color_call_end, modifier = Modifier.size(22.dp))
-                    Text(stringResource(R.string.end_call_short), style = MaterialTheme.typography.labelSmall, color = color_call_end)
-                }
-            }
+                modifier = Modifier.size(48.dp),
+                testTag = "conferenceParticipantEndAction",
+                onClick = { endConferenceParticipant(parent, participant) },
+            )
         }
     }
 }

@@ -10,9 +10,8 @@ import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.device_only
 import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.modal.data.ContactGroupMembership
+import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.modal.data.StandardizeStats
-import dev.goodwy.rphone.modal.repository.ContactsRepository
-import dev.goodwy.rphone.modal.repository.CachingContactsRepository
 import dev.goodwy.rphone.private_only
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -138,19 +137,17 @@ class ContactsViewModel(
             }
         }
         fetchAccounts()
-        (contactsRepo as? CachingContactsRepository)?.let { cachingRepository ->
-            viewModelScope.launch {
-                cachingRepository.changes.collect {
-                    editCommits.notifyChanged()
-                    providerRefreshJob?.cancel()
-                    providerRefreshJob = viewModelScope.launch {
-                        delay(CONTACT_PROVIDER_DEBOUNCE_MILLIS)
-                        val refreshFullSnapshot = isFullContactsLoaded
-                        fetchContacts()
-                        if (refreshFullSnapshot) {
-                            isFullContactsLoaded = false
-                            fetchContactsFull()
-                        }
+        viewModelScope.launch {
+            contactsRepo.changes.collect {
+                editCommits.notifyChanged()
+                providerRefreshJob?.cancel()
+                providerRefreshJob = viewModelScope.launch {
+                    delay(CONTACT_PROVIDER_DEBOUNCE_MILLIS)
+                    val refreshFullSnapshot = isFullContactsLoaded
+                    fetchContacts()
+                    if (refreshFullSnapshot) {
+                        isFullContactsLoaded = false
+                        fetchContactsFull()
                     }
                 }
             }
@@ -171,7 +168,7 @@ class ContactsViewModel(
 
     private suspend fun loadContacts(forceRefresh: Boolean) = contactsFetchMutex.withLock {
         if (forceRefresh) {
-            (contactsRepo as? CachingContactsRepository)?.invalidate()
+            contactsRepo.invalidate()
             isFullContactsLoaded = false
         }
         if (_allContacts.value.isEmpty()) {
@@ -454,7 +451,7 @@ class ContactsViewModel(
 
     val contactCountByAccount: Map<String, Int> get() = contactCountByAccount(_allContacts.value)
 
-    suspend fun getContactSources(contactId: String): List<ContactsRepository.ContactSource> =
+    suspend fun getContactSources(contactId: String): List<ContactSource> =
         contactSources(contactsRepo.getRawContactsForContact(contactId))
 
     suspend fun getPreferredEditableRawContactId(contact: Contact): String? =

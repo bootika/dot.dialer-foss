@@ -1,12 +1,20 @@
 package dev.goodwy.rphone.modal.repository
 
+import dev.goodwy.rphone.modal.data.RawContactInfo
 import android.Manifest
 import android.accounts.Account
+import android.app.Application
 import android.net.Uri
+import android.os.Looper
+import android.provider.ContactsContract
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
 import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.modal.data.ContactGroupMembership
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -19,7 +27,8 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [36])
+@OptIn(ExperimentalCoroutinesApi::class)
+@Config(sdk = [36], application = Application::class)
 class CachingContactsRepositoryTest {
     @After
     fun tearDownKoin() {
@@ -32,7 +41,7 @@ class CachingContactsRepositoryTest {
         shadowOf(context).denyPermissions(Manifest.permission.READ_CONTACTS)
         val delegate = EmptyContactsRepository()
 
-        val repository = CachingContactsRepository(context, delegate)
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
 
         assertTrue(repository.getContacts().isEmpty())
     }
@@ -44,7 +53,7 @@ class CachingContactsRepositoryTest {
         val delegate = MutableContactsRepository(
             contacts = listOf(Contact(id = "first", givenName = "Alexandru")),
         )
-        val repository = CachingContactsRepository(context, delegate)
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
 
         assertEquals("first", repository.getContacts().single().id)
         delegate.contacts = listOf(Contact(id = "second", givenName = "Mara"))
@@ -53,6 +62,133 @@ class CachingContactsRepositoryTest {
         repository.invalidate()
 
         assertEquals("second", repository.getContacts().single().id)
+    }
+
+    @Test
+    fun `non caching repository keeps inert refresh defaults`() = runTest {
+        val repository: IContactsRepository = EmptyContactsRepository()
+
+        repository.invalidate()
+        repository.invalidateAndNotify()
+
+        assertTrue(repository.changes.toList().isEmpty())
+        assertTrue(repository.getContacts().isEmpty())
+    }
+
+    @Test
+    fun `notifying invalidation clears both snapshots before publishing`() = runTest {
+        val context = RuntimeEnvironment.getApplication()
+        val delegate = MutableContactsRepository(listOf(Contact(id = "before")))
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
+        repository.getContacts()
+        repository.getContactsFull()
+        val seen = mutableListOf<Pair<String, String>>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.changes.collect {
+                seen += repository.getContacts().single().id to repository.getContactsFull().single().id
+            }
+        }
+        delegate.contacts = listOf(Contact(id = "after"))
+
+        repository.invalidateAndNotify()
+
+        assertEquals(listOf("after" to "after"), seen)
+    }
+
+    @Test
+    fun `manual invalidation clears both snapshots without publishing`() = runTest {
+        val context = RuntimeEnvironment.getApplication()
+        val delegate = MutableContactsRepository(listOf(Contact(id = "before")))
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
+        repository.getContacts()
+        repository.getContactsFull()
+        var events = 0
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.changes.collect { events++ } }
+        delegate.contacts = listOf(Contact(id = "after"))
+
+        repository.invalidate()
+
+        assertEquals(0, events)
+        assertEquals("after", repository.getContacts().single().id)
+        assertEquals("after", repository.getContactsFull().single().id)
+    }
+
+    @Test
+    fun `provider callback invalidates before notifying subscribers`() = runTest {
+        val context = RuntimeEnvironment.getApplication()
+        shadowOf(context).grantPermissions(Manifest.permission.READ_CONTACTS)
+        val delegate = MutableContactsRepository(listOf(Contact(id = "before")))
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
+        repository.getContacts()
+        val seen = mutableListOf<String>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.changes.collect { seen += repository.getContacts().single().id }
+        }
+        delegate.contacts = listOf(Contact(id = "after"))
+
+        context.contentResolver.notifyChange(ContactsContract.Contacts.CONTENT_URI, null)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertTrue(seen.isNotEmpty())
+        assertTrue(seen.all { it == "after" })
+    }
+
+    @Test
+    fun `all successful mutation paths invalidate and publish once`() = runTest {
+        val context = RuntimeEnvironment.getApplication()
+        val delegate = MutableContactsRepository(listOf(Contact(id = "initial")))
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
+        val mutations: List<suspend () -> Unit> = listOf(
+            { repository.toggleFavorite("id", true) },
+            { repository.saveContact(Contact(id = "id")) },
+            { repository.saveContactAndRead(Contact(id = "id")) },
+            { repository.deleteContact("id") },
+            { repository.deleteContacts(listOf("id")) },
+            { repository.moveContacts(listOf("id"), null, null); Unit },
+            { repository.mergeContacts("id", listOf("source")) },
+            { repository.unmergeAllSources("id") },
+            { repository.setCustomRingtone("id", null) },
+            { repository.formatAllPhoneNumbers(null) },
+            { repository.setDefaultPhoneNumber("id", "0700000011", true) },
+            { repository.setContactGroups("id", emptySet()) },
+            { repository.createContactGroup("id", "Test group"); Unit },
+            { repository.renameContactGroup(1, "Test group") },
+            { repository.deleteContactGroup(1) },
+            { repository.updateRawContact("raw", Contact(id = "id")) },
+            { repository.makeContactPrivate("id"); Unit },
+            { repository.makeContactPublic("id"); Unit },
+            { repository.setContactHidden("id", false) },
+            { repository.importPrivateContacts(Uri.EMPTY) },
+        )
+        val seen = mutableListOf<String>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.changes.collect { seen += repository.getContacts().single().id }
+        }
+        mutations.forEachIndexed { index, mutate ->
+            repository.getContacts()
+            delegate.contacts = listOf(Contact(id = "revision-$index"))
+            mutate()
+            assertEquals(index + 1, seen.size)
+            assertEquals("revision-$index", seen.last())
+        }
+    }
+
+    @Test
+    fun `failed write does not invalidate or publish a successful change`() = runTest {
+        val context = RuntimeEnvironment.getApplication()
+        val delegate = MutableContactsRepository(listOf(Contact(id = "before")))
+        val repository: IContactsRepository = CachingContactsRepository(context, delegate)
+        repository.getContacts()
+        var events = 0
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.changes.collect { events++ } }
+        delegate.contacts = listOf(Contact(id = "after"))
+        delegate.failSave = true
+
+        val failure = runCatching { repository.saveContact(Contact(id = "id")) }.exceptionOrNull()
+
+        assertTrue(failure is SecurityException)
+        assertEquals(0, events)
+        assertEquals("before", repository.getContacts().single().id)
     }
 
     private class EmptyContactsRepository : IContactsRepository {
@@ -75,7 +211,7 @@ class CachingContactsRepositoryTest {
         override suspend fun setDefaultPhoneNumber(contactId: String, phoneNumber: String, isPrimary: Boolean) = Unit
         override suspend fun getContactGroups(contactId: String) = emptyList<ContactGroupMembership>()
         override suspend fun setContactGroups(contactId: String, selectedGroupIds: Set<Long>) = Unit
-        override suspend fun getRawContactsForContact(contactId: String) = emptyList<ContactsRepository.RawContactInfo>()
+        override suspend fun getRawContactsForContact(contactId: String) = emptyList<RawContactInfo>()
         override suspend fun getRawContactData(rawContactId: String) = null
         override suspend fun updateRawContact(rawContactId: String, contact: Contact) = Unit
         override suspend fun dumpContact(contactId: String) = ""
@@ -91,6 +227,12 @@ class CachingContactsRepositoryTest {
     private class MutableContactsRepository(
         var contacts: List<Contact>,
     ) : IContactsRepository by EmptyContactsRepository() {
+        var failSave = false
         override suspend fun getContacts(includePrivate: Boolean, includeHidden: Boolean) = contacts
+        override suspend fun getContactsFull(includePrivate: Boolean, includeHidden: Boolean) = contacts
+        override suspend fun saveContact(contact: Contact) {
+            if (failSave) throw SecurityException("Write refused")
+        }
+        override suspend fun saveContactAndRead(contact: Contact): Contact = contact
     }
 }

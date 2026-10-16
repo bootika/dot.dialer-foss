@@ -1,6 +1,6 @@
 package dev.goodwy.rphone.controller
 
-import dev.goodwy.rphone.modal.repository.ContactsRepository
+import dev.goodwy.rphone.modal.data.RawContactInfo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -64,7 +64,7 @@ class ContactEditSourceSelectorTest {
         accountName: String?,
         accountType: String?,
         isReadOnly: Boolean = false,
-    ) = ContactsRepository.RawContactInfo(
+    ) = RawContactInfo(
         rawContactId = id,
         accountName = accountName,
         accountType = accountType,

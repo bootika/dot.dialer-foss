@@ -86,17 +86,23 @@ class CallPresentationPolicyTest {
     }
 
     @Test
+    fun `only managed calls and pending launch own the screen`() {
+        assertTrue(CallPresentationPolicy.shouldFinishBeforeRendering(false, false))
+        assertFalse(CallPresentationPolicy.shouldFinishBeforeRendering(true, false))
+        assertFalse(CallPresentationPolicy.shouldFinishBeforeRendering(false, true))
+        assertFalse(CallPresentationPolicy.shouldFinishBeforeRendering(true, true))
+    }
+
+    @Test
     fun `foreground outgoing launch survives the telecom registration race`() {
         assertFalse(
             CallPresentationPolicy.shouldFinishBeforeRendering(
-                telecomInCall = false,
                 repositoryHasActiveCall = false,
                 pendingOutgoingLaunch = true,
             )
         )
         assertTrue(
             CallPresentationPolicy.shouldFinishBeforeRendering(
-                telecomInCall = false,
                 repositoryHasActiveCall = false,
                 pendingOutgoingLaunch = false,
             )

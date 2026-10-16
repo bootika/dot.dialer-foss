@@ -59,7 +59,8 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
     private val callViewModel: CallViewModel by inject()
     private var proximityWakeLock: PowerManager.WakeLock? = null
     private val isFinishingCall = java.util.concurrent.atomic.AtomicBoolean(false)
-    private var pendingOutgoingLaunch = false
+    private val outgoingLaunch = PendingOutgoingCallLaunch()
+    private val pendingOutgoingLaunch get() = outgoingLaunch.isPending
     private val identityResolver by lazy { CallIdentityResolver(contactsRepo) }
     private var crossWindowBlurEnabled by mutableStateOf(false)
     private var crossWindowBlurListener: Consumer<Boolean>? = null
@@ -76,14 +77,11 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
         super.onCreate(savedInstanceState)
         setupCrossWindowBlurCapability()
 
-        pendingOutgoingLaunch = intent.getBooleanExtra(EXTRA_PENDING_OUTGOING_CALL, false)
+        outgoingLaunch.restore(savedInstanceState, intent.getBooleanExtra(EXTRA_PENDING_OUTGOING_CALL, false))
 
         CallBackgroundStore.attach(preferenceManager)
 
         val isTelecomInCall = telecomInCall()
-        val repositoryHasActiveCall = callViewModel.allCalls.value.any {
-            it.currentTelecomState() != Call.STATE_DISCONNECTED && it.currentTelecomState() != Call.STATE_DISCONNECTING
-        }
         AppDiagnostics.record(
             DiagnosticEvent.CallActivityLifecycle(
                 stage = ActivityStage.CREATED,
@@ -93,8 +91,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
         )
         if (
             CallPresentationPolicy.shouldFinishBeforeRendering(
-                telecomInCall = isTelecomInCall,
-                repositoryHasActiveCall = repositoryHasActiveCall,
+                repositoryHasActiveCall = hasManagedCall(),
                 pendingOutgoingLaunch = pendingOutgoingLaunch,
             )
         ) {
@@ -120,11 +117,14 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                 val callerMetadata by callViewModel.callerMetadataMap.collectAsStateWithLifecycle()
                 val settingsState by preferenceManager.settingsChanged.collectAsStateWithLifecycle()
                 var retainedSession by remember { mutableStateOf<CallSession?>(null) }
-                var awaitingOutgoingSession by remember { mutableStateOf(pendingOutgoingLaunch) }
-                LaunchedEffect(session) {
+                val awaitingOutgoingSession = pendingOutgoingLaunch
+                LaunchedEffect(outgoingLaunch.deadlineMillis) {
+                    if (outgoingLaunch.awaitExpiry()) dismissCallScreen()
+                }
+                LaunchedEffect(session, outgoingLaunch.deadlineMillis) {
                     session?.let {
                         retainedSession = it
-                        awaitingOutgoingSession = false
+                        outgoingLaunch.consume()
                     }
                 }
 
@@ -218,9 +218,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                                 awaitingOutgoingSession = awaitingOutgoingSession,
                             ).milliseconds
                         )
-                        if (callViewModel.allCalls.value.none { it.currentTelecomState() != Call.STATE_DISCONNECTED }) {
-                            dismissCallScreen()
-                        }
+                        dismissCallScreen()
                     }
                 }
 
@@ -301,12 +299,20 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
         if (hasPresentableCall()) {
             turnScreenOnAndShowWhileLocked()
             applyKeepScreenOnPreference()
+        } else {
+            dismissCallScreen()
+            return
         }
         isInForeground.value = true
         val state = callViewModel.currentCallSession.value?.state
         if (state == Call.STATE_ACTIVE || state == Call.STATE_DIALING) {
             acquireProximityLock()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outgoingLaunch.save(outState)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onPause() {
@@ -380,7 +386,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        pendingOutgoingLaunch = intent.getBooleanExtra(EXTRA_PENDING_OUTGOING_CALL, false)
+        outgoingLaunch.start(intent.getBooleanExtra(EXTRA_PENDING_OUTGOING_CALL, false))
         AppDiagnostics.record(
             DiagnosticEvent.CallActivityLifecycle(
                 stage = ActivityStage.NEW_INTENT,
@@ -388,20 +394,18 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                 telecomInCall = telecomInCall(),
             )
         )
-        if (!isFinishingCall.get() && callViewModel.allCalls.value.any { it.currentTelecomState() != Call.STATE_DISCONNECTED }) {
+        if (!isFinishingCall.get() && hasPresentableCall()) {
             turnScreenOnAndShowWhileLocked()
             applyKeepScreenOnPreference()
+        } else {
+            dismissCallScreen()
         }
     }
 
     private fun dismissCallScreen() {
         if (isFinishingCall.getAndSet(true)) return
 
-        val repositoryHasActiveCall = callViewModel.allCalls.value.any {
-            it.currentTelecomState() != Call.STATE_DISCONNECTED && it.currentTelecomState() != Call.STATE_DISCONNECTING
-        }
-        val isTelecomInCall = telecomInCall()
-        if (isTelecomInCall == true || (isTelecomInCall == null && repositoryHasActiveCall)) {
+        if (hasPresentableCall()) {
             isFinishingCall.set(false)
             return
         }
@@ -409,11 +413,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
         finishCallTaskWithoutTransition()
     }
 
-    /**
-     * Telecom is authoritative when it can be queried. A null result means the platform denied
-     * access, so callers may fall back to the repository without mistaking that denial for an
-     * ended call.
-     */
+    /** Global Telecom state is diagnostic: an external app's call does not own this screen. */
     private fun telecomInCall(): Boolean? = try {
         (getSystemService(Context.TELECOM_SERVICE) as? TelecomManager)?.isInCall
     } catch (error: SecurityException) {
@@ -437,14 +437,14 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
         }
     }
 
+    private fun hasManagedCall(): Boolean = callViewModel.allCalls.value.any {
+        it.currentTelecomState() != Call.STATE_DISCONNECTED &&
+            it.currentTelecomState() != Call.STATE_DISCONNECTING
+    }
+
     private fun hasPresentableCall(): Boolean {
-        val repositoryHasActiveCall = callViewModel.allCalls.value.any {
-            it.currentTelecomState() != Call.STATE_DISCONNECTED &&
-                it.currentTelecomState() != Call.STATE_DISCONNECTING
-        }
         return !CallPresentationPolicy.shouldFinishBeforeRendering(
-            telecomInCall = telecomInCall(),
-            repositoryHasActiveCall = repositoryHasActiveCall,
+            repositoryHasActiveCall = hasManagedCall(),
             pendingOutgoingLaunch = pendingOutgoingLaunch,
         )
     }

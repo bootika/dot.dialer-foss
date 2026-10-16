@@ -209,6 +209,8 @@ class CallScreenFlowScreenshotTest {
         val knownContact = Contact(id = "local-test", givenName = "Test Alexandru", familyName = "Butica", phoneNumbers = listOf(NUMBER))
         val contacts = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader, arrayOf(IContactsRepository::class.java)) { _, method, args ->
             when (method.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+
                 "getContactByNumber", "getContactByNumberInRegion" -> when (args?.firstOrNull()) {
                     NUMBER -> knownContact
                     "0700000001" -> Contact(id = "local-second", givenName = "Mara", familyName = "Ionescu", phoneNumbers = listOf("0700000001"))

@@ -85,7 +85,10 @@ class SettingsReorganizationTest {
             when (method.name) { "getIsPro", "isPro" -> flow; "hashCode" -> 1; else -> null }
         } as PurchaseHelper
         val contacts = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
-            arrayOf(IContactsRepository::class.java)) { _, _, _ -> emptyList<Any>() } as IContactsRepository
+            arrayOf(IContactsRepository::class.java)) { _, contractMethod, _ ->
+            if (contractMethod.name == "getChanges") kotlinx.coroutines.flow.emptyFlow<Unit>()
+            else emptyList<Any>()
+        } as IContactsRepository
         val authorization = object : GoogleContactsAuthorization {
             override val isAvailable = dev.goodwy.rphone.BuildConfig.FLAVOR == "gplay"
             override suspend fun authorize(accountName: String?) = GoogleContactsAuthorizationResult.Unavailable

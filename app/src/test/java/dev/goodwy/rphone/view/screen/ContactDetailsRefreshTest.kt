@@ -48,7 +48,7 @@ class ContactDetailsRefreshTest {
     @Suppress("DEPRECATION")
     @get:Rule val rule=createAndroidComposeRule<ComponentActivity>()
     private lateinit var memory: DetailsContacts
-    private lateinit var repository: CachingContactsRepository
+    private lateinit var repository: IContactsRepository
     private lateinit var prefs: PreferenceManager
     private val starts=AtomicInteger()
     private val successes=AtomicInteger()
@@ -71,7 +71,7 @@ class ContactDetailsRefreshTest {
         memory=DetailsContacts(Contact(id="101",givenName="Test Alexandru Butica",photoUri=android.net.Uri.fromFile(photo).toString(),
             phoneNumbers=listOf("0700000011"),phoneDetails=listOf(ContactPhoneDetail(number="0700000011")),
             accountName="first@example.test",accountType="com.google"))
-        repository=CachingContactsRepository(app,memory)
+        repository=object : IContactsRepository by CachingContactsRepository(app,memory) {}
         coil.Coil.setImageLoader(coil.ImageLoader.Builder(app).components {
             add(object:coil.intercept.Interceptor {
                 override suspend fun intercept(chain:coil.intercept.Interceptor.Chain):coil.request.ImageResult {
@@ -215,6 +215,8 @@ class ContactDetailsRefreshTest {
         companion object {
             private fun emptyRepository()=Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
                 arrayOf(IContactsRepository::class.java)) { _,method,_ -> when(method.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+
                     "getAvailableAccounts","getAvailableAccountsForMoving" -> listOf(Account("first@example.test","com.google"))
                     "getContactsFull","getContactGroups","getRawContactsForContact","getRawContactsForAccount","getWritableRawContacts" -> emptyList<Any>()
                     "getRawContactData","getPhotoBytes" -> null

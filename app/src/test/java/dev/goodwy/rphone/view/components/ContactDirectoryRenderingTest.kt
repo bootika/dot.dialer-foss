@@ -47,6 +47,8 @@ class ContactDirectoryRenderingTest {
         } } + Contact(id="symbol", givenName="123 Test", phoneNumbers=emptyList())
         val repo=Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
             arrayOf(IContactsRepository::class.java)) { _,m,_ -> when(m.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+
                 "getContacts","getContactsFull" -> contacts
                 "getAvailableAccounts","getAvailableAccountsForMoving","getHiddenNumbers","getAllGroups" -> emptyList<Any>()
                 else -> null

@@ -27,7 +27,7 @@ import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.ContactsViewModel
 import dev.goodwy.rphone.controller.util.*
 import dev.goodwy.rphone.modal.data.Contact
-import dev.goodwy.rphone.modal.repository.ContactsRepository.RawContactInfo
+import dev.goodwy.rphone.modal.data.RawContactInfo
 import dev.goodwy.rphone.view.components.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch

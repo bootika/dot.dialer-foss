@@ -1,7 +1,7 @@
 package dev.goodwy.rphone.view.screen.settings
 
 import dev.goodwy.rphone.modal.data.Contact
-import dev.goodwy.rphone.modal.repository.ContactsRepository.ContactSource
+import dev.goodwy.rphone.modal.data.ContactSource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

@@ -196,6 +196,8 @@ rule.waitUntil(5000) { rule.mainClock.advanceTimeByFrame(); var ready=false; rul
         @Suppress("UNCHECKED_CAST")
         val contacts = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader, arrayOf(IContactsRepository::class.java)) { _, method, args ->
             when (method.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+
                 "getContactByNumber", "getContactByNumberInRegion" -> suspend { if (args!![0] == NUMBER) lookup.await() else replacementLookup.await() }
                     .startCoroutineUninterceptedOrReturn(args!!.last() as Continuation<Contact?>)
                 "toString" -> "Local contacts fixture"

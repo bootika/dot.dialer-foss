@@ -14,7 +14,6 @@ import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.modal.data.CallLogEntry
 import dev.goodwy.rphone.modal.data.CallLogFilter
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
-import dev.goodwy.rphone.modal.repository.CachingContactsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -129,14 +128,12 @@ class CallLogViewModel(
         // A contact can receive a photo or a new aggregate ID without the call-log provider
         // changing. Refresh the enriched call rows whenever the address book changes so Recents
         // cannot remain attached to a deleted contact snapshot.
-        (contactsRepository as? CachingContactsRepository)?.let { cachingRepository ->
-            viewModelScope.launch {
-                cachingRepository.changes.collect {
-                    contactRefreshJob?.cancel()
-                    contactRefreshJob = viewModelScope.launch {
-                        delay(CONTACT_REFRESH_DEBOUNCE_MILLIS)
-                        fetchLogs(forceRefresh = true)
-                    }
+        viewModelScope.launch {
+            contactsRepository.changes.collect {
+                contactRefreshJob?.cancel()
+                contactRefreshJob = viewModelScope.launch {
+                    delay(CONTACT_REFRESH_DEBOUNCE_MILLIS)
+                    fetchLogs(forceRefresh = true)
                 }
             }
         }

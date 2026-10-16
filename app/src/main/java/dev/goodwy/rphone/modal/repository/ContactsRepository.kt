@@ -22,6 +22,7 @@ import dev.goodwy.rphone.modal.data.ContactGroupMembership
 import dev.goodwy.rphone.modal.data.ContactPhoneDetail
 import dev.goodwy.rphone.modal.db.PrivateContactDao
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
+import dev.goodwy.rphone.modal.data.RawContactInfo
 import androidx.core.net.toUri
 import androidx.core.graphics.scale
 import dev.goodwy.rphone.controller.util.CallBackgroundStore
@@ -1419,22 +1420,6 @@ class ContactsRepository(
         val clean = number.replace(" ", "")
         return@withContext getHiddenNumbers().any { areNumbersEqual(it, clean) }
     }
-
-    // Goodwy
-    data class ContactSource(
-        val accountName: String?,
-        val accountType: String?,
-        val isPrimary: Boolean = false,
-        val rawContactId: String
-    )
-
-    data class RawContactInfo(
-        val rawContactId: String,
-        val accountName: String?,
-        val accountType: String?,
-        val contactId: String,
-        val isReadOnly: Boolean = false,
-    )
 
     override suspend fun getRawContactsForContact(contactId: String): List<RawContactInfo> = withContext(Dispatchers.IO) {
         val rawContacts = mutableListOf<RawContactInfo>()

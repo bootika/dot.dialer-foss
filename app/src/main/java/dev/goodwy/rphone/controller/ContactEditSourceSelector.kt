@@ -1,14 +1,15 @@
 package dev.goodwy.rphone.controller
 
-import dev.goodwy.rphone.modal.repository.ContactsRepository
+import dev.goodwy.rphone.modal.data.ContactSource
+import dev.goodwy.rphone.modal.data.RawContactInfo
 
 /** Selects an editable Android raw contact without routing users through linked app profiles. */
 internal fun selectPreferredEditableRawContact(
-    sources: List<ContactsRepository.RawContactInfo>,
+    sources: List<RawContactInfo>,
     preferredAccountName: String?,
     preferredAccountType: String?,
-): ContactsRepository.RawContactInfo? {
-    val writableSources = sources.filterNot(ContactsRepository.RawContactInfo::isReadOnly)
+): RawContactInfo? {
+    val writableSources = sources.filterNot(RawContactInfo::isReadOnly)
 
     return writableSources.firstOrNull { source ->
         source.accountName == preferredAccountName && source.accountType == preferredAccountType
@@ -18,9 +19,9 @@ internal fun selectPreferredEditableRawContact(
 }
 
 internal fun contactSources(
-    rawContacts: List<ContactsRepository.RawContactInfo>,
-): List<ContactsRepository.ContactSource> = rawContacts.mapIndexed { index, raw ->
-    ContactsRepository.ContactSource(
+    rawContacts: List<RawContactInfo>,
+): List<ContactSource> = rawContacts.mapIndexed { index, raw ->
+    ContactSource(
         accountName = raw.accountName?.takeIf(String::isNotBlank),
         accountType = raw.accountType?.takeIf(String::isNotBlank),
         isPrimary = index == 0,

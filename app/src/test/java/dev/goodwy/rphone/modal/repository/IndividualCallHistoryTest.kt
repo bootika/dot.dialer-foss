@@ -53,7 +53,8 @@ class IndividualCallHistoryTest {
         prefs.setInt(PreferenceManager.KEY_RECENT_HISTORY_MAX_ENTRIES,100)
         prefs.setInt(PreferenceManager.KEY_RECENT_HISTORY_PERIOD_DAYS,0)
         val contacts=Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,arrayOf(IContactsRepository::class.java)) { _, method, _ ->
-            if(method.name=="getContacts") emptyList<dev.goodwy.rphone.modal.data.Contact>() else null
+            if (method.name == "getChanges") kotlinx.coroutines.flow.emptyFlow<Unit>()
+            else if(method.name=="getContacts") emptyList<dev.goodwy.rphone.modal.data.Contact>() else null
         } as IContactsRepository
         ShadowContentResolver.registerProviderInternal(CallLog.AUTHORITY,HistoryProvider(System.currentTimeMillis()))
         val repository=CallLogRepository(app,app.contentResolver,contacts,prefs)

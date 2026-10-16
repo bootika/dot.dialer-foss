@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen
 
+import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.view.theme.accentText
 
 import android.accounts.Account
@@ -37,7 +38,6 @@ import dev.goodwy.rphone.controller.util.ContactUtils
 import dev.goodwy.rphone.controller.util.QrCodeUtils
 import dev.goodwy.rphone.controller.util.getPhoneTypeText
 import dev.goodwy.rphone.modal.data.Contact
-import dev.goodwy.rphone.modal.repository.ContactsRepository
 import dev.goodwy.rphone.view.components.RillAvatar
 import dev.goodwy.rphone.view.components.RillDialog
 import dev.goodwy.rphone.view.components.RillExpressiveCard
@@ -47,7 +47,7 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 
 internal suspend fun loadPhoneSourceData(
     contactsViewModel: ContactsViewModel,
-    sources: List<ContactsRepository.ContactSource>,
+    sources: List<ContactSource>,
 ): List<ContactPhoneSourceData> = sources.mapNotNull { source ->
     try {
         contactsViewModel.getRawContactData(source.rawContactId)?.let { rawContact ->
@@ -286,7 +286,7 @@ internal fun SourceItem(
 @Composable
 internal fun SourcesDialog(
     contact: Contact,
-    sources: List<ContactsRepository.ContactSource>,
+    sources: List<ContactSource>,
     navigator: DestinationsNavigator,
     navigateBack: () -> Unit,
     onDismiss: () -> Unit

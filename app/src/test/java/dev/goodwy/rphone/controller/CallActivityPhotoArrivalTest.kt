@@ -75,7 +75,9 @@ class CallActivityPhotoArrivalTest {
         val contact = Contact(id = "local-test", givenName = "Test Alexandru", familyName = "Butica", company = "Atelier local", photoUri = Uri.fromFile(image).toString())
         val currentContact = AtomicReference(contact)
         val contacts = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader, arrayOf(IContactsRepository::class.java)) { _, method, _ ->
-            when (method.name) { "getContactByNumber", "getContactByNumberInRegion" -> currentContact.get(); "toString" -> "Local contact fixture"; else -> null }
+            when (method.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+                "getContactByNumber", "getContactByNumberInRegion" -> currentContact.get(); "toString" -> "Local contact fixture"; else -> null }
         } as IContactsRepository
         val repo = CallRepositoryImpl()
         val manager = CallStateManager(GetCallerNameUseCase(object : ICallerRepository {

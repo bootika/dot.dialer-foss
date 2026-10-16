@@ -32,7 +32,7 @@ class CachingContactsRepository(
     private val contactCache = InvalidatableCache<ContactQuery, List<Contact>>()
     private val fullContactCache = InvalidatableCache<ContactQuery, List<Contact>>()
     private val _changes = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-    val changes: SharedFlow<Unit> = _changes.asSharedFlow()
+    override val changes: SharedFlow<Unit> = _changes.asSharedFlow()
 
     private val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
@@ -178,7 +178,7 @@ class CachingContactsRepository(
         invalidateAndNotify()
     }
 
-    fun invalidateAndNotify() {
+    override fun invalidateAndNotify() {
         invalidate()
         _changes.tryEmit(Unit)
     }
@@ -189,7 +189,7 @@ class CachingContactsRepository(
      * Manual refresh owns the subsequent reload itself, so emitting [changes] here would schedule
      * a second, redundant provider query through the UI observer.
      */
-    fun invalidate() {
+    override fun invalidate() {
         contactCache.invalidate()
         fullContactCache.invalidate()
     }

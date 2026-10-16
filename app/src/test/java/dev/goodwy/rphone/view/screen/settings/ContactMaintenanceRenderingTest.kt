@@ -19,8 +19,8 @@ import dev.goodwy.rphone.controller.ContactsViewModel
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
-import dev.goodwy.rphone.modal.repository.ContactsRepository.RawContactInfo
-import dev.goodwy.rphone.modal.repository.ContactsRepository.ContactSource
+import dev.goodwy.rphone.modal.data.RawContactInfo
+import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.view.components.MoveToAccountDialog
 import dev.goodwy.rphone.view.theme.DotDialerTheme
 import java.io.File
@@ -55,6 +55,8 @@ class ContactMaintenanceRenderingTest {
         var writes=0
         val repo=Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
             arrayOf(IContactsRepository::class.java)) { _,method,args -> when(method.name) {
+                "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+
             "getContacts","getContactsFull" -> group
             "getAvailableAccounts","getAvailableAccountsForMoving" -> listOf(account)
             "findDuplicates" -> listOf(group)

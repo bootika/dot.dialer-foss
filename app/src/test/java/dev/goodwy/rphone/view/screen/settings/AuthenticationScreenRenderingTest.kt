@@ -48,7 +48,8 @@ class AuthenticationScreenRenderingTest {
         val prefs = PreferenceManager(context)
         val repo = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
             arrayOf(IContactsRepository::class.java)) { _, method, _ ->
-            if (method.name == "getContacts") emptyList<Any>() else null
+            if (method.name == "getChanges") kotlinx.coroutines.flow.emptyFlow<Unit>()
+            else if (method.name == "getContacts") emptyList<Any>() else null
         } as IContactsRepository
         val navigator = Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,
             arrayOf(DestinationsNavigator::class.java)) { _, method, _ ->
@@ -97,7 +98,8 @@ class AuthenticationScreenRenderingTest {
         }
         val repo = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
             arrayOf(IContactsRepository::class.java)) { _, method, _ ->
-            if (method.name == "getContacts") emptyList<Any>() else null
+            if (method.name == "getChanges") kotlinx.coroutines.flow.emptyFlow<Unit>()
+            else if (method.name == "getContacts") emptyList<Any>() else null
         } as IContactsRepository
         val navigator = Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,
             arrayOf(DestinationsNavigator::class.java)) { _, method, _ ->

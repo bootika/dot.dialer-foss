@@ -56,6 +56,13 @@ tasks.register('architectureCheck') {
                 if (line.contains('GlobalScope')) {
                     violations << "${path}:${index + 1}: GlobalScope is forbidden in production code"
                 }
+                if ((path.contains('/modal/interface/') || path.contains('/modal/data/')) &&
+                    line.trim().startsWith('import dev.goodwy.rphone.modal.repository.')) {
+                    violations << "${path}:${index + 1}: contact/data contracts must not depend on repository implementations"
+                }
+                if (line =~ /\bas\??\s+(?:dev\.goodwy\.rphone\.modal\.repository\.)?CachingContactsRepository\b/) {
+                    violations << "${path}:${index + 1}: contact refresh consumers must use the repository contract, not cache downcasts"
+                }
                 if (line.contains('defaultDisplay') && file.name != 'DisplayRotation.kt' && file.name != 'FloatingCallService.kt') {
                     violations << "${path}:${index + 1}: display compatibility belongs in DisplayRotation"
                 }

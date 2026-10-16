@@ -34,12 +34,11 @@ object CallPresentationPolicy {
         requestedHighPriority: Boolean,
     ): Boolean = requestedHighPriority && !(isIncomingRinging && suppressIncomingAlert)
 
+    /** Only managed calls or an unexpired outgoing launch can keep our call screen alive. */
     fun shouldFinishBeforeRendering(
-        telecomInCall: Boolean?,
         repositoryHasActiveCall: Boolean,
         pendingOutgoingLaunch: Boolean,
-    ): Boolean = !pendingOutgoingLaunch &&
-        (telecomInCall == false || (telecomInCall == null && !repositoryHasActiveCall))
+    ): Boolean = !pendingOutgoingLaunch && !repositoryHasActiveCall
 
     fun missingSessionDismissDelayMillis(awaitingOutgoingSession: Boolean): Long =
         if (awaitingOutgoingSession) OUTGOING_SESSION_GRACE_MILLIS else 400L

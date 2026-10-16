@@ -3,7 +3,7 @@ package dev.goodwy.rphone.controller
 import android.app.Activity
 import android.os.Build
 
-/** Used only after the terminal Telecom guard; ordinary Back keeps platform navigation. */
+/** Used only after the managed-session guard; ordinary Back keeps platform navigation. */
 internal fun Activity.finishCallTaskWithoutTransition() {
     // Window flags disappear with the task. Changing lock-screen visibility first
     // can reveal the underlying window before this translucent window is removed.

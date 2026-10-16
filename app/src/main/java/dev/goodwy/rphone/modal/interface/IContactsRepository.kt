@@ -4,9 +4,9 @@ import android.accounts.Account
 import android.net.Uri
 import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.modal.data.ContactGroupMembership
-import dev.goodwy.rphone.modal.repository.ContactsRepository.RawContactInfo
+import dev.goodwy.rphone.modal.data.RawContactInfo
 
-interface IContactsRepository {
+interface IContactsRepository : ContactUpdates {
     suspend fun getContacts(includePrivate: Boolean = false, includeHidden: Boolean = false): List<Contact>
     suspend fun getContactsFull(includePrivate: Boolean = false, includeHidden: Boolean = false): List<Contact>
     suspend fun getContactById(contactId: String): Contact?

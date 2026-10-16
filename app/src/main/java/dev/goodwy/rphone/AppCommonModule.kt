@@ -63,7 +63,7 @@ internal val commonAppModule = module {
     single {
         dev.goodwy.rphone.controller.util.WhatsAppAvatarSyncProcessor(
             androidContext(), get(), get(), get(), get(),
-            featureAllowed = { dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed }, onUnknownPhoto = { (get<IContactsRepository>() as? CachingContactsRepository)?.invalidateAndNotify() },
+            featureAllowed = { dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed }, onUnknownPhoto = { get<IContactsRepository>().invalidateAndNotify() },
         )
     }
     // Clean Architecture Wires

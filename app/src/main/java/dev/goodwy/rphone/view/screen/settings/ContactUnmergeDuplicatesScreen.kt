@@ -52,7 +52,7 @@ import dev.goodwy.rphone.cardCornerExtraSmall
 import dev.goodwy.rphone.controller.util.ContactUtils
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.modal.data.getDisplayName
-import dev.goodwy.rphone.modal.repository.ContactsRepository.ContactSource
+import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.view.components.NavigationIcon
 import dev.goodwy.rphone.view.components.RillAvatar
 import dev.goodwy.rphone.view.components.ScrollHapticsEffect

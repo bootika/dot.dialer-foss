@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen
 
+import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.view.theme.accentText
 
 import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
@@ -119,7 +120,6 @@ import dev.goodwy.rphone.controller.util.forceLtr
 import dev.goodwy.rphone.controller.util.hasDualSim
 import dev.goodwy.rphone.device_only
 import dev.goodwy.rphone.modal.data.getDisplayName
-import dev.goodwy.rphone.modal.repository.ContactsRepository
 import dev.goodwy.rphone.private_only
 import java.util.Calendar
 
@@ -193,7 +193,7 @@ fun ContactDetailsScreen(
 
     val companyAndJob = contact.companyAndJobLabel()
 
-    var contactSources by remember { mutableStateOf<List<ContactsRepository.ContactSource>>(emptyList()) }
+    var contactSources by remember { mutableStateOf<List<ContactSource>>(emptyList()) }
     var phoneSourceData by remember { mutableStateOf<List<ContactPhoneSourceData>>(emptyList()) }
     LaunchedEffect(contact) {
         val currentContact = contact

@@ -55,8 +55,7 @@ class CallService : InCallService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private val photoSessions by lazy {
         CallPhotoSessionCoordinator(serviceScope, callStateManager, photoHydration::hydrateForCall,
-            (contactsRepository as? dev.goodwy.rphone.modal.repository.CachingContactsRepository)?.changes
-                ?: kotlinx.coroutines.flow.emptyFlow(),
+            contactsRepository.changes,
             isPresent = { callSessionIds[it]?.let(lifecycleCoordinator.state.value.sessions::containsKey) == true && it.currentTelecomState() !in
                 listOf(Call.STATE_DISCONNECTED, Call.STATE_DISCONNECTING) },
             regionForCall = { dev.goodwy.rphone.controller.util.resolveContactLookupRegion(this, it.details?.accountHandle) },

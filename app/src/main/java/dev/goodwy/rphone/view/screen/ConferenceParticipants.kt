@@ -108,7 +108,7 @@ internal fun ConferenceParticipants(parent: Call, identities: List<ConferencePar
             } else {
                 Text(
                     pluralStringResource(R.plurals.conference_participant_count, participants.size, participants.size),
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 LazyColumn(

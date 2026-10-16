@@ -669,6 +669,13 @@ class CallScreenFlowScreenshotTest {
         rule.onNodeWithContentDescription(label).performClick()
         rule.waitForIdle()
         rule.mainClock.advanceTimeBy(650)
+        if (id == "26-more") {
+            val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+            rule.onNodeWithText(label, useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            org.junit.Assert.assertEquals(androidx.compose.ui.text.font.FontWeight.SemiBold,
+                layouts.single().layoutInput.style.fontWeight)
+        }
         capture(id)
     }
 
@@ -944,6 +951,14 @@ class CallScreenFlowScreenshotTest {
             }
         rule.waitForIdle()
         rule.onNodeWithText(rule.activity.getString(dev.goodwy.rphone.R.string.call_appearance_full_photo)).assertExists()
+        for (labelId in listOf(dev.goodwy.rphone.R.string.call_appearance_circular_avatar,
+            dev.goodwy.rphone.R.string.call_appearance_full_photo, dev.goodwy.rphone.R.string.ambient_droplets)) {
+            val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+            rule.onNodeWithText(rule.activity.getString(labelId), useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            org.junit.Assert.assertEquals(androidx.compose.ui.text.font.FontWeight.Medium,
+                layouts.single().layoutInput.style.fontWeight)
+        }
         val dropletsLabel = rule.activity.getString(dev.goodwy.rphone.R.string.ambient_droplets)
         val savedBrightness = prefs.getInt(AmbientDropletPreference.BRIGHTNESS_KEY, AmbientDropletPreference.DEFAULT_BRIGHTNESS)
         rule.runOnIdle { prefs.setBoolean(AmbientDropletPreference.ENABLED_KEY, true) }

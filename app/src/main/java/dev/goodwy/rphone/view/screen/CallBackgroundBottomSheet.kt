@@ -92,7 +92,7 @@ internal fun CallBackgroundBottomSheet(
                 Text(
                     text = stringResource(R.string.contact_call_background),
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
                 IconButton(onClick = onDismiss) {
                     Icon(Icons.Default.Close, stringResource(R.string.close))

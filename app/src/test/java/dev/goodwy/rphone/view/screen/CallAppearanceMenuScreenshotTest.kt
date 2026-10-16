@@ -11,6 +11,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.test.assertIsOn
@@ -78,6 +82,13 @@ class CallAppearanceMenuScreenshotTest {
         val circular = composeRule.activity.getString(R.string.call_appearance_circular_avatar)
         val full = composeRule.activity.getString(R.string.call_appearance_full_photo)
         val drops = composeRule.activity.getString(R.string.ambient_droplets)
+        for (label in listOf(circular, full, drops)) {
+            val layouts = mutableListOf<TextLayoutResult>()
+            composeRule.onNodeWithText(label, useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            org.junit.Assert.assertEquals("Avatar menu actions share the same weight", FontWeight.Medium,
+                layouts.single().layoutInput.style.fontWeight)
+        }
         composeRule.onNodeWithText(circular).assertIsSelected()
         composeRule.onNodeWithText(drops).performScrollTo().assertIsOn().performClick()
         composeRule.onNodeWithText(drops).assertIsOff().performClick()

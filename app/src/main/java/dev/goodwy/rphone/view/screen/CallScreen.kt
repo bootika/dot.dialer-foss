@@ -801,6 +801,7 @@ private fun ExpressiveCallScreenContent(
                                                 else if (showNoteWindow) stringResource(R.string.add_note)
                                                 else stringResource(R.string.more),
                                                 style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.SemiBold,
                                                 color = controlBtnFg
                                             )
                                             CallTapIconButton(onClick = {

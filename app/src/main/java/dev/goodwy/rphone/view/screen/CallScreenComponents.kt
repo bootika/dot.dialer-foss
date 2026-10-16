@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
 import dev.goodwy.rphone.view.components.DotDialerHangupIcon
 import dev.goodwy.rphone.view.components.CallControlIcons
@@ -190,7 +191,7 @@ fun PocketModeOverlay(
             Text(
                 text = stringResource(R.string.pocket_mode_active),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
             Spacer(Modifier.height(8.dp))
@@ -276,7 +277,7 @@ fun QuickResponsesBottomSheet(
                     Text(
                         text = stringResource(R.string.quick_response),
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = stringResource(R.string.decline_call_and_reply_to, contactName.ifBlank { phoneNumber }),
@@ -310,7 +311,7 @@ fun QuickResponsesBottomSheet(
                     ) {
                         Text(
                             text = responseText,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             modifier = Modifier.weight(1f)
                         )
                         Spacer(Modifier.width(12.dp))
@@ -496,7 +497,7 @@ fun CallBackReminderBottomSheet(
             Text(
                 text = stringResource(R.string.call_back_reminder),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
             )
             ReminderChoiceRow(
@@ -542,7 +543,7 @@ private fun ReminderChoiceRow(
         ) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(14.dp))
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.controlLabel)
         }
     }
 }
@@ -568,7 +569,7 @@ fun UnknownCallerActionsBottomSheet(
             Text(
                 text = stringResource(R.string.unknown_caller_actions),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
             )
             ReminderChoiceRow(
@@ -594,7 +595,7 @@ fun UnknownCallerActionsBottomSheet(
                     Spacer(Modifier.width(14.dp))
                     Text(
                         stringResource(R.string.block_and_report_spam),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.controlLabel,
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
@@ -1201,6 +1202,7 @@ fun AnimatedCallButton(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Medium,
             fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
             color = fgColor.copy(0.7f),
             modifier = Modifier.padding(top = 8.dp),
@@ -1337,7 +1339,7 @@ fun HorizontalSwipeToAnswer(
                             .padding(start = 20.dp, end = 4.dp)
                             .alpha((1f - (dragProgress.value * -2f).coerceIn(0f, 1f)) * hintAlpha),
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = leftColor.copy(alpha = 0.82f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -1354,7 +1356,7 @@ fun HorizontalSwipeToAnswer(
                             .padding(start = 4.dp, end = 20.dp)
                             .alpha((1f - (dragProgress.value * 2f).coerceIn(0f, 1f)) * hintAlpha),
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = rightColor.copy(alpha = 0.82f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -1572,7 +1574,7 @@ fun VerticalSwipeToAnswer(
                 stringResource(if (answerOnStart) R.string.swipe_up_to_answer else R.string.swipe_up_to_reject),
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor.copy(alpha = 0.9f),
-                fontWeight = FontWeight.Light,
+                fontWeight = FontWeight.Medium,
                 fontStyle = FontStyle.Italic
             )
         }
@@ -1591,7 +1593,7 @@ fun VerticalSwipeToAnswer(
                 stringResource(if (answerOnStart) R.string.swipe_down_to_reject else R.string.swipe_down_to_answer),
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor.copy(alpha = 0.9f),
-                fontWeight = FontWeight.Light,
+                fontWeight = FontWeight.Medium,
                 fontStyle = FontStyle.Italic
             )
             Icon(Icons.Rounded.KeyboardArrowDown, null, tint = textColor, modifier = Modifier.size(36.dp))
@@ -2098,7 +2100,7 @@ fun IPhoneSwipeToAnswer(
                 }
                 Text(
                     stringResource(R.string.decline),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                     color = buttonContentColor,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -2144,7 +2146,7 @@ fun IPhoneSwipeToAnswer(
                 }
                 Text(
                     stringResource(R.string.message),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                     color = buttonContentColor,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -2763,7 +2765,7 @@ private fun DefaultIncomingDeclineAction(
         }
         Text(
             stringResource(R.string.decline),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
             color = buttonContentColor,
             modifier = Modifier.padding(top = 8.dp)
         )
@@ -2824,7 +2826,7 @@ fun MoreItem(
             Text(
                 modifier = Modifier.weight(1f),
                 text = headline,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.controlLabel,
                 lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

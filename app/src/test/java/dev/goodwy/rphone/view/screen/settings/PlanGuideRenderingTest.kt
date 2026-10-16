@@ -44,10 +44,10 @@ class PlanGuideRenderingTest {
         rule.setContent {CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
             DotDialerTheme(systemDark=dark) {PlanGuideContent(tier,{next++},{more++})}
         }}
-        for(value in listOf(AppPlan.PLUS,AppPlan.PREMIUM)) for(mode in listOf(false,true)) for(font in listOf(1f,1.5f)) {
+        for(value in listOf(AppPlan.PLUS,AppPlan.PREMIUM)) for(mode in listOf(false,true)) for(font in listOf(1f,1.5f,2f)) {
             rule.runOnIdle {tier=value;dark=mode;scale=font}
             rule.onNodeWithTag("plan-guide-${value.name}").assertExists()
-            rule.onNodeWithTag("plan-guide-more").performScrollTo().assertIsDisplayed().performClick()
+            rule.onNodeWithTag("plan-guide-more").assertIsDisplayed().performClick()
             rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
             rule.runOnIdle {
                 val view=rule.activity.window.decorView
@@ -58,7 +58,7 @@ class PlanGuideRenderingTest {
                 image.recycle()
             }
         }
-        assertEquals(8,more);assertEquals(8,next)
+        assertEquals(12,more);assertEquals(12,next)
     }
     @Test fun `premium guide edits same persisted appearance settings without changing consent`() {
         rule.setContent {DotDialerTheme(systemDark=false) {PlanGuideContent(AppPlan.PREMIUM,{},{})}}
@@ -70,4 +70,38 @@ class PlanGuideRenderingTest {
         assertEquals(prior,ContactOptimizationProfiles(rule.activity).settings(null))
         assertFalse(prefs.getBoolean(GoogleContactPhotoPreferences.ENABLED,false))
     }
+    @Test fun `premium replay orders pages supports back and never changes automatic acknowledgement`() {
+        prefs.setInt(PLAN_GUIDE_ACK, AppPlan.PREMIUM.ordinal)
+        runBlocking { PreferenceWriteBarrier.awaitPending() }
+        var closed = 0
+        val editors = mutableListOf<AppPlan>()
+        rule.setContent { DotDialerTheme(systemDark=false) {
+            PlanGuideReplayContent(AppPlan.PREMIUM, { closed++ }, { editors.add(it) })
+        } }
+        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithTag("plan-guide-more").performClick()
+        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.onNodeWithTag("plan-guide-PREMIUM").assertExists()
+        rule.onNodeWithTag("plan-guide-more").performClick()
+        rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }
+        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }
+        rule.runOnIdle {
+            assertEquals(1, closed)
+            assertEquals(listOf(AppPlan.PLUS, AppPlan.PREMIUM), editors)
+            assertEquals(AppPlan.PREMIUM.ordinal, prefs.getInt(PLAN_GUIDE_ACK, 0))
+        }
+    }
+    @Test fun `plus replay ends after optimizer without exposing premium`() {
+        var closed = 0
+        rule.setContent { DotDialerTheme(systemDark=false) {
+            PlanGuideReplayContent(AppPlan.PLUS, { closed++ }, {})
+        } }
+        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithTag("plan-guide-PREMIUM").assertDoesNotExist()
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.runOnIdle { assertEquals(1, closed) }
+    }
+
 }

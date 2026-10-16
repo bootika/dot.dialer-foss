@@ -39,4 +39,6 @@
     <string name="plan_included">In deinem Tarif enthalten</string>
     <string name="plan_upgrade_to">Auf %1$s upgraden</string>
     <string name="plan_base">Nach dem Test: %1$s</string>
+    <string name="plan_guide_title">Tarif-Anleitung</string>
+    <string name="plan_guide_replay">Tarif-Anleitung erneut ansehen</string>
 </resources>

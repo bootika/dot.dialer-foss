@@ -41,4 +41,6 @@
     <string name="plan_included">Inclus în planul tău</string>
     <string name="plan_upgrade_to">Treci la %1$s</string>
     <string name="plan_base">După trial: %1$s</string>
+    <string name="plan_guide_title">Ghidul planului</string>
+    <string name="plan_guide_replay">Revezi ghidul planului</string>
 </resources>

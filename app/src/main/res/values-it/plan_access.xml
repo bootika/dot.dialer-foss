@@ -41,4 +41,6 @@
     <string name="plan_included">Incluso nel tuo piano</string>
     <string name="plan_upgrade_to">Passa a %1$s</string>
     <string name="plan_base">Dopo la prova: %1$s</string>
+    <string name="plan_guide_title">Guida del piano</string>
+    <string name="plan_guide_replay">Rivedi la guida del piano</string>
 </resources>

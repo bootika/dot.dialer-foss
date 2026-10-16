@@ -37,4 +37,6 @@
     <string name="plan_included">Termasuk dalam paket Anda</string>
     <string name="plan_upgrade_to">Tingkatkan ke %1$s</string>
     <string name="plan_base">Setelah uji coba: %1$s</string>
+    <string name="plan_guide_title">Panduan paket</string>
+    <string name="plan_guide_replay">Lihat kembali panduan paket</string>
 </resources>

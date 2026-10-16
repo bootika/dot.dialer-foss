@@ -40,4 +40,6 @@
     <string name="plan_included">Included in your plan</string>
     <string name="plan_upgrade_to">Upgrade to %1$s</string>
     <string name="plan_base">After the trial: %1$s</string>
+    <string name="plan_guide_title">Plan guide</string>
+    <string name="plan_guide_replay">Review your plan guide</string>
 </resources>

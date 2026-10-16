@@ -27,7 +27,7 @@ import io.github.bootika.dotdialer.core.license.*
 import org.koin.compose.koinInject
 
 @Composable
-internal fun PlanAccessContent(onClose: () -> Unit) {
+internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = null) {
     val manager=rememberPlanAccessManager()
     val state by manager.state.collectAsState()
     val helper=koinInject<PurchaseHelper>()
@@ -65,6 +65,11 @@ internal fun PlanAccessContent(onClose: () -> Unit) {
                         style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.testTag("plan-current"))
                     Text(stringResource(planSummary(effective)), style = MaterialTheme.typography.bodyMedium)
+                    if (effective > AppPlan.FREE && onGuides != null) {
+                        TextButton(onClick = onGuides, modifier = Modifier.testTag("plan-guide-replay")) {
+                            Text(stringResource(R.string.plan_guide_replay))
+                        }
+                    }
                     if (trialActive) {
                         val days = ((trialEnd - now + 86399) / 86400).toInt()
                         Text(pluralStringResource(R.plurals.plan_trial_remaining, days, days),
@@ -208,6 +213,6 @@ internal fun PlanUpgradeHost() {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(manager) {manager.upgradeRequests.collect { visible=true }}
     if(visible)Dialog(onDismissRequest={visible=false},properties=DialogProperties(usePlatformDefaultWidth=false)) {
-        Surface(Modifier.fillMaxWidth().fillMaxHeight(.92f)) {PlanAccessContent {visible=false}}
+        Surface(Modifier.fillMaxWidth().fillMaxHeight(.92f)) {PlanAccessContent(onClose={visible=false})}
     }
 }

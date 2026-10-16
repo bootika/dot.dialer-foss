@@ -60,6 +60,9 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
                             SettingsCategoryLink(R.string.diagnostics, Icons.Rounded.BugReport) {
                                 navigator.navigate(DiagnosticsScreenDestination)
                             }
+                            SettingsCategoryLink(R.string.plan_guide_title, Icons.Rounded.AutoAwesome) {
+                                navigator.navigate(PlanGuideReplayScreenDestination)
+                            }
                             SettingsCategoryLink(R.string.ui_tour_title, Icons.Rounded.TouchApp) {
                                 prefs.setBoolean(dev.goodwy.rphone.controller.util.PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, false)
                                 navigator.navigateUp()

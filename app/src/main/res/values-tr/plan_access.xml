@@ -39,4 +39,6 @@
     <string name="plan_included">Planına dahil</string>
     <string name="plan_upgrade_to">%1$s planına geç</string>
     <string name="plan_base">Denemeden sonra: %1$s</string>
+    <string name="plan_guide_title">Plan rehberi</string>
+    <string name="plan_guide_replay">Plan rehberini yeniden görüntüle</string>
 </resources>

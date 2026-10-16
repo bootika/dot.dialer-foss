@@ -41,4 +41,6 @@
     <string name="plan_included">Inclus dans votre offre</string>
     <string name="plan_upgrade_to">Passer à %1$s</string>
     <string name="plan_base">Après l’essai : %1$s</string>
+    <string name="plan_guide_title">Guide de votre offre</string>
+    <string name="plan_guide_replay">Revoir le guide de votre offre</string>
 </resources>

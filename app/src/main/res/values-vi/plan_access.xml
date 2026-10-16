@@ -37,4 +37,6 @@
     <string name="plan_included">Đã có trong gói của bạn</string>
     <string name="plan_upgrade_to">Nâng cấp lên %1$s</string>
     <string name="plan_base">Sau dùng thử: %1$s</string>
+    <string name="plan_guide_title">Hướng dẫn gói</string>
+    <string name="plan_guide_replay">Xem lại hướng dẫn gói</string>
 </resources>

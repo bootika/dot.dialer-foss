@@ -43,4 +43,6 @@
     <string name="plan_included">W ramach Twojego planu</string>
     <string name="plan_upgrade_to">Przejdź na %1$s</string>
     <string name="plan_base">Po okresie próbnym: %1$s</string>
+    <string name="plan_guide_title">Przewodnik po planie</string>
+    <string name="plan_guide_replay">Zobacz ponownie przewodnik po planie</string>
 </resources>

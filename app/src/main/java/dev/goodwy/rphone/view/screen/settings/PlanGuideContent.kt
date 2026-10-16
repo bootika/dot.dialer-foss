@@ -1,6 +1,7 @@
 package dev.goodwy.rphone.view.screen.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -57,8 +58,14 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
                 if(premium && account != null) DotSettingsCard {
                     ContactsOptimizerPolicyControl(settings) {policy -> profiles.update(account) {it.copy(automaticPhotoPolicy=policy,autoUpdateExisting=policy!=ContactPhotoAutomaticPolicy.FillMissing)}}
                 }
-                TextButton(onClick=onMore,modifier=Modifier.testTag("plan-guide-more")) {Text(stringResource(R.string.plan_more_settings))}
             }
+            Spacer(Modifier.height(16.dp))
+            OutlinedButton(onClick=onMore,
+                border=BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant),
+                modifier=Modifier.fillMaxWidth().heightIn(min=48.dp).testTag("plan-guide-more")) {
+                Text(stringResource(R.string.plan_more_settings))
+            }
+            Spacer(Modifier.height(8.dp))
             Button(onClick=onNext,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("plan-guide-next")) {
                 Text(stringResource(R.string.plan_guide_continue))
             }
@@ -80,6 +87,6 @@ internal fun PlanGuideHost(onMore: (AppPlan) -> Unit) {
     fun acknowledge() {prefs.setInt(PLAN_GUIDE_ACK,maxOf(acknowledged,tier).ordinal)}
     androidx.compose.ui.window.Dialog(onDismissRequest=::acknowledge,
         properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false,decorFitsSystemWindows=false)) {
-        PlanGuideContent(tier,onNext=::acknowledge,onMore={acknowledge();deferred=true;onMore(tier)})
+        key(tier) { PlanGuideContent(tier,onNext=::acknowledge,onMore={acknowledge();deferred=true;onMore(tier)}) }
     }
 }

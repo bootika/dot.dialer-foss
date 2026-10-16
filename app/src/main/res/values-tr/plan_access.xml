@@ -14,7 +14,6 @@
     <string name="plan_connection_required">Planı doğrulamak veya denemeyi başlatmak için bağlanın.</string>
     <string name="plan_refresh">Planı yenile</string>
     <string name="plan_lifetime">Ömür boyu</string>
-    <string name="plan_buy">Yükselt</string>
     <string name="plan_restore">Satın almaları geri yükle</string>
     <string name="plan_whatsapp_manual_summary">Mevcut bildirimlerde avatar ara. Arama bitene kadar bildirimi açmayın.</string>
     <string name="plan_photo_sources">Fotoğraf kaynakları</string>
@@ -34,4 +33,10 @@
     <string name="invitation_confirm">Bu telefonda etkinleştir</string>
     <string name="invitation_unavailable">Davet etkinleştirilemedi. Bağlantıyı ve interneti kontrol edin; davetin süresi dolmuş, iptal edilmiş veya başka telefonda kullanılmış olabilir.</string>
     <string name="invitation_activated">Davetiniz etkinleştirildi.</string>
+    <string name="plan_choose">Planını seç</string>
+    <string name="plan_period">Faturalandırma dönemi</string>
+    <string name="plan_access_options">Zaten erişimin var mı?</string>
+    <string name="plan_included">Planına dahil</string>
+    <string name="plan_upgrade_to">%1$s planına geç</string>
+    <string name="plan_base">Denemeden sonra: %1$s</string>
 </resources>

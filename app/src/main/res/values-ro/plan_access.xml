@@ -15,7 +15,6 @@
     <string name="plan_connection_required">Conectează-te pentru verificarea planului sau pornirea trial-ului.</string>
     <string name="plan_refresh">Actualizează planul</string>
     <string name="plan_lifetime">Pe viață</string>
-    <string name="plan_buy">Continuă</string>
     <string name="plan_restore">Restaurează achizițiile</string>
     <string name="plan_whatsapp_manual_summary">Caută avataruri în notificările disponibile acum. Lasă notificarea nedeschisă până se termină căutarea.</string>
     <string name="plan_photo_sources">Surse pentru fotografii</string>
@@ -36,4 +35,10 @@
     <string name="invitation_confirm">Activează pe acest telefon</string>
     <string name="invitation_unavailable">Invitația nu a putut fi activată. Verifică linkul și conexiunea; poate fi expirată, revocată sau folosită pe alt telefon.</string>
     <string name="invitation_activated">Invitația a fost activată.</string>
+    <string name="plan_choose">Alege planul</string>
+    <string name="plan_period">Perioada de facturare</string>
+    <string name="plan_access_options">Ai deja acces?</string>
+    <string name="plan_included">Inclus în planul tău</string>
+    <string name="plan_upgrade_to">Treci la %1$s</string>
+    <string name="plan_base">După trial: %1$s</string>
 </resources>

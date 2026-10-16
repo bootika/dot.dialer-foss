@@ -14,7 +14,6 @@
     <string name="plan_connection_required">Verbinde dich, um deinen Plan zu prüfen oder den Test zu starten.</string>
     <string name="plan_refresh">Plan aktualisieren</string>
     <string name="plan_lifetime">Dauerlizenz</string>
-    <string name="plan_buy">Fortfahren</string>
     <string name="plan_restore">Käufe wiederherstellen</string>
     <string name="plan_whatsapp_manual_summary">Avatare in vorhandenen Benachrichtigungen suchen. Bis zum Ende der Suche ungeöffnet lassen.</string>
     <string name="plan_photo_sources">Fotoquellen</string>
@@ -34,4 +33,10 @@
     <string name="invitation_confirm">Auf diesem Telefon aktivieren</string>
     <string name="invitation_unavailable">Die Einladung konnte nicht aktiviert werden. Prüfe Link und Verbindung; sie ist möglicherweise abgelaufen, widerrufen oder auf einem anderen Telefon verwendet.</string>
     <string name="invitation_activated">Die Einladung wurde aktiviert.</string>
+    <string name="plan_choose">Tarif auswählen</string>
+    <string name="plan_period">Abrechnungszeitraum</string>
+    <string name="plan_access_options">Bereits Zugang?</string>
+    <string name="plan_included">In deinem Tarif enthalten</string>
+    <string name="plan_upgrade_to">Auf %1$s upgraden</string>
+    <string name="plan_base">Nach dem Test: %1$s</string>
 </resources>

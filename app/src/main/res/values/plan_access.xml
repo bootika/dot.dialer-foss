@@ -14,7 +14,6 @@
     <string name="plan_connection_required">Connect to verify your plan or start the trial.</string>
     <string name="plan_refresh">Refresh plan</string>
     <string name="plan_lifetime">Lifetime</string>
-    <string name="plan_buy">Upgrade</string>
     <string name="plan_restore">Restore purchases</string>
     <string name="plan_whatsapp_manual_summary">Find avatars in currently available notifications. Leave the notification unopened until the search finishes.</string>
     <string name="plan_interface_magic" translatable="false">Interface Magic</string>
@@ -35,4 +34,10 @@
     <string name="invitation_confirm">Activate on this phone</string>
     <string name="invitation_unavailable">The invitation could not be activated. Check the link and connection; it may be expired, revoked or used on another phone.</string>
     <string name="invitation_activated">Your invitation is activated.</string>
+    <string name="plan_choose">Choose your plan</string>
+    <string name="plan_period">Billing period</string>
+    <string name="plan_access_options">Already have access?</string>
+    <string name="plan_included">Included in your plan</string>
+    <string name="plan_upgrade_to">Upgrade to %1$s</string>
+    <string name="plan_base">After the trial: %1$s</string>
 </resources>

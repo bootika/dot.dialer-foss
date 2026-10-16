@@ -23,7 +23,7 @@ class RuStoreActivityOwnershipContractTest {
         assertTrue(source.contains("LocalActivity.current as? ComponentActivity"))
         assertTrue(source.contains("DisposableEffect(activity)"))
         assertTrue(source.contains("rememberUpdatedState(loading)"))
-        assertTrue(source.contains("val checkoutActivity=activity"))
+        assertTrue(Regex("""val\s+checkoutActivity\s*=\s*activity\b""").containsMatchIn(source))
         assertTrue(source.contains("activity?.let(helper::onScreenActivityAvailable)"))
         assertTrue(source.contains("removeObserver(listener)"))
     }

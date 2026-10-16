@@ -26,18 +26,19 @@ internal fun VerifiedPremiumTheme(systemDark: Boolean=isSystemInDarkTheme(),cont
     }
 }
 
-internal fun verifiedPlanFixture(audience: String,plan: AppPlan,worker: CoroutineScope): PlanAccessManager {
+internal fun verifiedPlanFixture(audience: String,plan: AppPlan,worker: CoroutineScope, trial: Boolean = false): PlanAccessManager {
+    val clock = if (trial) System.currentTimeMillis() / 1000 else 1000L
     val keys=KeyPairGenerator.getInstance("RSA").apply {initialize(2048)}.generateKeyPair()
     val id="6c43ee4d-1111-4111-8111-010203040506"
     val manager=PlanAccessManager(audience,{id},{null},{},PlanGrantVerifier(Base64.getEncoder().encodeToString(keys.public.encoded)),worker,{request ->
         val body=JSONObject().put("v",1).put("aud",audience).put("installation",id).put("license","b".repeat(32)).put("entitlement","plan_access")
-            .put("tier",plan.name.lowercase(java.util.Locale.ROOT)).put("trial_started",0).put("trial_ends",0)
-            .put("iat",1000).put("exp",87400).put("nonce",request.getString("nonce"))
+            .put("tier",plan.name.lowercase(java.util.Locale.ROOT)).put("trial_started",if (trial) clock else 0).put("trial_ends",if (trial) clock + 30 * 86400 else 0)
+            .put("iat",clock).put("exp",clock + 86400).put("nonce",request.getString("nonce"))
         val encoder=Base64.getUrlEncoder().withoutPadding();val payload=encoder.encodeToString(body.toString().encodeToByteArray())
         val signature=Signature.getInstance("SHA256withRSA").apply {initSign(keys.private);update(payload.encodeToByteArray())}.sign()
         JSONObject().put("grant",payload+"."+encoder.encodeToString(signature))
-    },{1000},{1000})
+    },{clock},{1000})
     runBlocking {withTimeout(5000) {while(manager.state.value.revision<3 || manager.state.value.busy)delay(1)}}
-    check(manager.effective==plan)
+    check(manager.effective==if (trial) AppPlan.PREMIUM else plan)
     return manager
 }

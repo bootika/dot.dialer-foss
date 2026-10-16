@@ -13,7 +13,6 @@
     <string name="plan_connection_required">Kết nối để kiểm tra gói hoặc bắt đầu dùng thử.</string>
     <string name="plan_refresh">Làm mới gói</string>
     <string name="plan_lifetime">Trọn đời</string>
-    <string name="plan_buy">Nâng cấp</string>
     <string name="plan_restore">Khôi phục giao dịch</string>
     <string name="plan_whatsapp_manual_summary">Tìm ảnh đại diện trong thông báo hiện có. Không mở thông báo cho đến khi tìm kiếm xong.</string>
     <string name="plan_photo_sources">Nguồn ảnh</string>
@@ -32,4 +31,10 @@
     <string name="invitation_confirm">Kích hoạt trên điện thoại này</string>
     <string name="invitation_unavailable">Không thể kích hoạt lời mời. Kiểm tra liên kết và kết nối; lời mời có thể đã hết hạn, bị thu hồi hoặc dùng trên điện thoại khác.</string>
     <string name="invitation_activated">Lời mời đã được kích hoạt.</string>
+    <string name="plan_choose">Chọn gói của bạn</string>
+    <string name="plan_period">Chu kỳ thanh toán</string>
+    <string name="plan_access_options">Bạn đã có quyền truy cập?</string>
+    <string name="plan_included">Đã có trong gói của bạn</string>
+    <string name="plan_upgrade_to">Nâng cấp lên %1$s</string>
+    <string name="plan_base">Sau dùng thử: %1$s</string>
 </resources>

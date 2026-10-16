@@ -180,12 +180,16 @@ class SupportContentTest {
             if(method.returnType==Boolean::class.javaPrimitiveType)true else null
         } as DestinationsNavigator
         val worker=kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob()+kotlinx.coroutines.Dispatchers.IO)
-        val manager=dev.goodwy.rphone.controller.license.verifiedPlanFixture(rule.activity.packageName,io.github.bootika.dotdialer.core.license.AppPlan.FREE,worker)
+        var manager by mutableStateOf(dev.goodwy.rphone.controller.license.verifiedPlanFixture(rule.activity.packageName,io.github.bootika.dotdialer.core.license.AppPlan.FREE,worker))
         var locked by mutableStateOf(true)
+        var dark by mutableStateOf(false)
+        var scale by mutableFloatStateOf(1f)
         try {
-            rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
-                DotDialerTheme {if(locked)SettingsOptionScreen(navigator,"C02") else DonateScreen(navigator)}
-            }}
+            rule.setContent {key(manager) {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
+                CompositionLocalProvider(LocalDensity provides Density(1f, scale)) {
+                    DotDialerTheme(systemDark = dark) {if(locked)SettingsOptionScreen(navigator,"C02") else DonateScreen(navigator)}
+                }
+            }}}
             rule.onNodeWithTag("plans-content").assertExists()
             rule.onNodeWithTag("settingsFocus-C02").assertDoesNotExist()
             rule.onNodeWithTag("start-premium-trial").performScrollTo().assertIsEnabled()
@@ -225,11 +229,53 @@ class SupportContentTest {
             rule.onNodeWithText(rule.activity.getString(R.string.operation_failed)).performScrollTo().assertIsDisplayed()
             assertTrue(calls.any {it.first=="checkProStatus"})
             capture("production-plans-free")
-            rule.runOnIdle {store.value=io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM}
-            rule.waitUntil(5000) {backs==1}
+            rule.runOnIdle { error.value = null }
+            rule.onNodeWithTag("plan-period-YEARLY").performScrollTo().performClick()
+            for (theme in listOf(false, true)) for (font in listOf(1f, 1.5f)) {
+                rule.runOnIdle { dark = theme; scale = font }
+                rule.onNodeWithTag("plan-current-card").performScrollTo()
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Free"))
+                capture("plans-free-top-dark$theme-font$font")
+                rule.onNodeWithTag("plan-tier-PLUS").performScrollTo().performClick().assertIsSelected()
+                rule.onNodeWithTag("plan-tier-PREMIUM").performScrollTo().performClick().assertIsSelected()
+                capture("plans-offers-dark$theme-font$font")
+                rule.onNodeWithTag("plan-period-YEARLY").performScrollTo().performClick().assertIsSelected()
+                rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()
+                capture("plans-checkout-dark$theme-font$font")
+            }
+            assertEquals("Changing presentation must not purchase", purchases, calls.count {it.first in listOf("purchaseDonation","purchaseSubscription")})
+            rule.runOnIdle { store.value = io.github.bootika.dotdialer.core.license.AppPlan.PLUS }
+            rule.waitUntil(5000) {backs == 1}
+            rule.onNodeWithTag("plan-current-card").performScrollTo()
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Plus"))
+            capture("plans-plus-current")
+            rule.onNodeWithTag("plan-tier-PLUS").performScrollTo().performClick()
             rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
+            rule.onNodeWithTag("plan-tier-PREMIUM").performScrollTo().performClick()
+            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()
+            rule.runOnIdle {store.value=io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM}
+            rule.waitUntil(5000) {backs==2}
+            rule.onNodeWithTag("plan-current-card").performScrollTo()
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Premium"))
+            capture("plans-premium-current")
+            rule.runOnIdle { error.value = "Restore temporarily unavailable" }
+            rule.onNodeWithText(rule.activity.getString(R.string.operation_failed)).performScrollTo().assertIsDisplayed()
+            rule.onNodeWithTag("plan-restore").performScrollTo().assertIsEnabled()
+            rule.runOnIdle { error.value = null }
+            rule.onNodeWithTag("plan-buy").assertDoesNotExist()
             rule.onNodeWithContentDescription(rule.activity.getString(R.string.back)).performClick()
-            assertEquals(2,backs)
+            assertEquals(3,backs)
+            val trialManager = dev.goodwy.rphone.controller.license.verifiedPlanFixture(rule.activity.packageName,
+                io.github.bootika.dotdialer.core.license.AppPlan.PLUS, worker, trial = true)
+            rule.runOnIdle { store.value = io.github.bootika.dotdialer.core.license.AppPlan.FREE; manager = trialManager }
+            rule.onNodeWithTag("plan-current-card").performScrollTo()
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Premium"))
+            rule.onNodeWithTag("plan-trial-status").assertExists()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_base, "Plus")).assertExists()
+            rule.onNodeWithTag("start-premium-trial").assertDoesNotExist()
+            capture("plans-trial-current")
+            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()
+            assertEquals("Opening plans never starts a trial or buys", purchases, calls.count {it.first in listOf("purchaseDonation","purchaseSubscription")})
         } finally {worker.coroutineContext[kotlinx.coroutines.Job]?.cancel()}
     }
 }

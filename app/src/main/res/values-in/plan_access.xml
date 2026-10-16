@@ -13,7 +13,6 @@
     <string name="plan_connection_required">Hubungkan untuk memeriksa paket atau memulai uji coba.</string>
     <string name="plan_refresh">Perbarui paket</string>
     <string name="plan_lifetime">Seumur hidup</string>
-    <string name="plan_buy">Tingkatkan</string>
     <string name="plan_restore">Pulihkan pembelian</string>
     <string name="plan_whatsapp_manual_summary">Cari avatar dalam notifikasi yang tersedia. Jangan buka notifikasi sampai pencarian selesai.</string>
     <string name="plan_photo_sources">Sumber foto</string>
@@ -32,4 +31,10 @@
     <string name="invitation_confirm">Aktifkan di ponsel ini</string>
     <string name="invitation_unavailable">Undangan tidak dapat diaktifkan. Periksa tautan dan koneksi; undangan mungkin kedaluwarsa, dicabut, atau digunakan di ponsel lain.</string>
     <string name="invitation_activated">Undangan Anda telah diaktifkan.</string>
+    <string name="plan_choose">Pilih paket Anda</string>
+    <string name="plan_period">Periode penagihan</string>
+    <string name="plan_access_options">Sudah punya akses?</string>
+    <string name="plan_included">Termasuk dalam paket Anda</string>
+    <string name="plan_upgrade_to">Tingkatkan ke %1$s</string>
+    <string name="plan_base">Setelah uji coba: %1$s</string>
 </resources>

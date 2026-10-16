@@ -15,7 +15,6 @@
     <string name="plan_connection_required">Connettiti per verificare il piano o iniziare la prova.</string>
     <string name="plan_refresh">Aggiorna piano</string>
     <string name="plan_lifetime">A vita</string>
-    <string name="plan_buy">Passa al piano superiore</string>
     <string name="plan_restore">Ripristina acquisti</string>
     <string name="plan_whatsapp_manual_summary">Cerca avatar nelle notifiche disponibili. Non aprirle fino al termine della ricerca.</string>
     <string name="plan_photo_sources">Fonti delle foto</string>
@@ -36,4 +35,10 @@
     <string name="invitation_confirm">Attiva su questo telefono</string>
     <string name="invitation_unavailable">Impossibile attivare l’invito. Controlla link e connessione; potrebbe essere scaduto, revocato o usato su un altro telefono.</string>
     <string name="invitation_activated">Il tuo invito è attivato.</string>
+    <string name="plan_choose">Scegli il tuo piano</string>
+    <string name="plan_period">Periodo di fatturazione</string>
+    <string name="plan_access_options">Hai già accesso?</string>
+    <string name="plan_included">Incluso nel tuo piano</string>
+    <string name="plan_upgrade_to">Passa a %1$s</string>
+    <string name="plan_base">Dopo la prova: %1$s</string>
 </resources>

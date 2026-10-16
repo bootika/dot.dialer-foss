@@ -15,7 +15,6 @@
     <string name="plan_connection_required">Connectez-vous pour vérifier votre offre ou démarrer l’essai.</string>
     <string name="plan_refresh">Actualiser l’offre</string>
     <string name="plan_lifetime">À vie</string>
-    <string name="plan_buy">Mettre à niveau</string>
     <string name="plan_restore">Restaurer les achats</string>
     <string name="plan_whatsapp_manual_summary">Rechercher des avatars dans les notifications disponibles. Laissez-les fermées jusqu’à la fin de la recherche.</string>
     <string name="plan_photo_sources">Sources des photos</string>
@@ -36,4 +35,10 @@
     <string name="invitation_confirm">Activer sur ce téléphone</string>
     <string name="invitation_unavailable">Impossible d’activer l’invitation. Vérifiez le lien et la connexion ; elle peut être expirée, révoquée ou utilisée sur un autre téléphone.</string>
     <string name="invitation_activated">Votre invitation est activée.</string>
+    <string name="plan_choose">Choisissez votre offre</string>
+    <string name="plan_period">Période de facturation</string>
+    <string name="plan_access_options">Vous avez déjà un accès ?</string>
+    <string name="plan_included">Inclus dans votre offre</string>
+    <string name="plan_upgrade_to">Passer à %1$s</string>
+    <string name="plan_base">Après l’essai : %1$s</string>
 </resources>

@@ -15,7 +15,6 @@
     <string name="plan_connection_required">Conecte-se para verificar o plano ou iniciar o teste.</string>
     <string name="plan_refresh">Atualizar plano</string>
     <string name="plan_lifetime">Vitalício</string>
-    <string name="plan_buy">Fazer upgrade</string>
     <string name="plan_restore">Restaurar compras</string>
     <string name="plan_whatsapp_manual_summary">Busque avatares nas notificações disponíveis. Não abra a notificação até a busca terminar.</string>
     <string name="plan_photo_sources">Fontes de fotos</string>
@@ -36,4 +35,10 @@
     <string name="invitation_confirm">Ativar neste telefone</string>
     <string name="invitation_unavailable">Não foi possível ativar o convite. Verifique o link e a conexão; ele pode ter expirado, sido revogado ou usado em outro telefone.</string>
     <string name="invitation_activated">Seu convite está ativado.</string>
+    <string name="plan_choose">Escolha seu plano</string>
+    <string name="plan_period">Período de cobrança</string>
+    <string name="plan_access_options">Já tem acesso?</string>
+    <string name="plan_included">Incluído no seu plano</string>
+    <string name="plan_upgrade_to">Mudar para %1$s</string>
+    <string name="plan_base">Após o teste: %1$s</string>
 </resources>

@@ -16,7 +16,6 @@
     <string name="plan_connection_required">Połącz się, aby sprawdzić plan lub rozpocząć okres próbny.</string>
     <string name="plan_refresh">Odśwież plan</string>
     <string name="plan_lifetime">Dożywotnio</string>
-    <string name="plan_buy">Zmień plan</string>
     <string name="plan_restore">Przywróć zakupy</string>
     <string name="plan_whatsapp_manual_summary">Szukaj awatarów w dostępnych powiadomieniach. Nie otwieraj ich przed końcem wyszukiwania.</string>
     <string name="plan_photo_sources">Źródła zdjęć</string>
@@ -38,4 +37,10 @@
     <string name="invitation_confirm">Aktywuj na tym telefonie</string>
     <string name="invitation_unavailable">Nie udało się aktywować zaproszenia. Sprawdź link i połączenie; mogło wygasnąć, zostać cofnięte lub użyte na innym telefonie.</string>
     <string name="invitation_activated">Zaproszenie zostało aktywowane.</string>
+    <string name="plan_choose">Wybierz plan</string>
+    <string name="plan_period">Okres rozliczeniowy</string>
+    <string name="plan_access_options">Masz już dostęp?</string>
+    <string name="plan_included">W ramach Twojego planu</string>
+    <string name="plan_upgrade_to">Przejdź na %1$s</string>
+    <string name="plan_base">Po okresie próbnym: %1$s</string>
 </resources>

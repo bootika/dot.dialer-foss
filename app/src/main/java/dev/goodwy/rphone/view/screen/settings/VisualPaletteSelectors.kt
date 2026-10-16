@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -96,7 +97,7 @@ private fun <T> DotSettingsVisualChoiceRow(
     androidx.compose.foundation.layout.Column(
         modifier = Modifier.fillMaxWidth().settingsSearchTarget(title).padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
+        Text(title, style = MaterialTheme.typography.controlLabel)
         Spacer(Modifier.size(9.dp))
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val menuWidth = maxWidth
@@ -119,7 +120,7 @@ private fun <T> DotSettingsVisualChoiceRow(
                         text = selectedChoice.first,
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -174,7 +175,7 @@ internal fun <T> DotVisualChoiceMenuRows(
                         Text(
                             text = label,
                             modifier = Modifier.weight(1f),
-                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                            fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

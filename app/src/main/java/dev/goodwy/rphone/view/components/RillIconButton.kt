@@ -106,7 +106,7 @@ fun RillTextButton(
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Medium,
             color = contentColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

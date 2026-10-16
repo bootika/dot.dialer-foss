@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.components
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import dev.goodwy.rphone.view.screen.settings.settingsSearchTarget
 
 import dev.goodwy.rphone.view.theme.accentText
@@ -291,7 +292,7 @@ fun RillExpressiveCard(
                             text = title,
                             style = MaterialTheme.typography.labelLarge,
                             color = titleColor,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                     if (trailingIcon != null) {
@@ -330,7 +331,7 @@ fun RillSectionHeader(
         text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.accentText,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         modifier = modifier.fillMaxWidth()
             .padding(horizontal = 36.dp, vertical = 8.dp),
     )
@@ -627,7 +628,7 @@ fun CallLogListItem(
             ) {
                 Text(
                     text = headline,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.controlLabel,
 //                    fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -868,7 +869,7 @@ fun RillListItem(
                 if (headline != null) {
                     Text(
                         text = headline,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.controlLabel,
 //                    fontWeight = FontWeight.SemiBold,
                         lineHeight = if (expandText) MaterialTheme.typography.bodyLarge.lineHeight else MaterialTheme.typography.bodySmall.lineHeight,
                         maxLines = if (expandText || LocalRillNeutralSettingsIcons.current) Int.MAX_VALUE else 1,
@@ -977,7 +978,7 @@ fun RillSwitchListItem(
             ) {
                 Text(
                     text = headline,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.controlLabel,
                     lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
                 )
@@ -1072,7 +1073,7 @@ fun RillSelectListItem(
             ) {
                 Text(
                     text = headline,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.controlLabel,
                     lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
                 )
@@ -1158,7 +1159,7 @@ fun RillSliderListItem(
                 Row {
                     Text(
                         text = headline,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.controlLabel,
                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
                         modifier = Modifier.weight(1f)
@@ -1223,7 +1224,7 @@ fun RillFilterChip(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelLarge,
-                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+                fontWeight = FontWeight.Medium
             )
         },
         shape = MaterialTheme.shapes.largeIncreased,

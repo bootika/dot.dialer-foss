@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 internal fun ContactReviewSourceChoice(source: String?,sources: List<String>,enabled: Boolean,choose: (String) -> Unit) {
@@ -25,7 +26,7 @@ internal fun ContactReviewSourceChoice(source: String?,sources: List<String>,ena
             Icon(Icons.Rounded.ArrowDropDown,null,Modifier.size(20.dp))
         }
         DropdownMenu(expanded=open,onDismissRequest={open=false}) { CompositionLocalProvider(LocalDensity provides density) {
-            for(value in sources) DropdownMenuItem(text={Text(reviewSourceLabel(value))},onClick={choose(value);open=false},
+            for(value in sources) DropdownMenuItem(text={Text(reviewSourceLabel(value), fontWeight=FontWeight.Medium)},onClick={choose(value);open=false},
                 modifier=Modifier.testTag("contactReviewSource-$value"))
         } }
     }

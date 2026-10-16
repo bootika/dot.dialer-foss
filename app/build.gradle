@@ -22,7 +22,7 @@ def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificat
 if (!(gplayNotificationAvatars in ['true', 'false'])) {
     throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
 }
-def baseVersionCode = 253
+def baseVersionCode = 254
 def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
 def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
 def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"

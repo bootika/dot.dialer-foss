@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import dev.goodwy.rphone.view.theme.accentText
 
 import androidx.compose.foundation.background
@@ -64,7 +65,7 @@ internal fun DotSettingsTopBar(title: String, onBack: () -> Unit) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
             )
         },
         navigationIcon = {
@@ -121,7 +122,7 @@ internal fun DotSettingsSwitchRow(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(title, style = MaterialTheme.typography.controlLabel)
             if (supporting != null) {
                 Text(
                     supporting,
@@ -167,11 +168,11 @@ private fun <T> DotSettingsSegmentedChoice(
         modifier = Modifier.fillMaxWidth().settingsSearchTarget(title).padding(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
+        Text(title, style = MaterialTheme.typography.controlLabel)
         val shape = RoundedCornerShape(14.dp)
         val measurer = androidx.compose.ui.text.rememberTextMeasurer()
         val density = androidx.compose.ui.platform.LocalDensity.current
-        val labelStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+        val labelStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val dividers = with(density) { 1.dp.roundToPx() } * (choices.size - 1)
             val labelWidth = ((constraints.maxWidth - dividers) / choices.size - with(density) { 16.dp.roundToPx() }).coerceAtLeast(1)
@@ -214,7 +215,7 @@ private fun <T> DotSettingsSegmentedChoice(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Medium,
                         color = if (selected) {
                             MaterialTheme.colorScheme.onPrimary
                         } else {
@@ -250,7 +251,7 @@ private fun <T> DotSettingsInlineSelector(
         modifier = Modifier.fillMaxWidth().settingsSearchTarget(title).padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(9.dp),
     ) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
+        Text(title, style = MaterialTheme.typography.controlLabel)
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val menuWidth = maxWidth
             Surface(
@@ -270,7 +271,7 @@ private fun <T> DotSettingsInlineSelector(
                         text = value,
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Medium,
                         maxLines = Int.MAX_VALUE,
                     )
                     Spacer(Modifier.width(8.dp))
@@ -293,7 +294,7 @@ private fun <T> DotSettingsInlineSelector(
                         text = {
                             Text(
                                 text = label,
-                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                                fontWeight = FontWeight.Medium,
                                 color = if (selected) {
                                     MaterialTheme.colorScheme.accentText
                                 } else {
@@ -368,7 +369,7 @@ internal fun DotSettingsChoiceRow(
                         ) {
                             RadioButton(selected = choiceValue == selectedValue, onClick = null)
                             Spacer(Modifier.width(8.dp))
-                            Text(label, style = MaterialTheme.typography.bodyLarge)
+                            Text(label, style = MaterialTheme.typography.controlLabel)
                         }
                     }
                 }
@@ -461,7 +462,7 @@ internal fun DotSettingsStringChoiceRow(
                             ) {
                                 RadioButton(selected = choiceValue == selectedValue, onClick = null)
                                 Spacer(Modifier.width(8.dp))
-                                Text(label, style = MaterialTheme.typography.bodyLarge)
+                                Text(label, style = MaterialTheme.typography.controlLabel)
                             }
                         }
                     }

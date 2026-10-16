@@ -31,7 +31,7 @@ internal fun BrowseContactsTitle() {
         text = stringResource(R.string.contacts),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onSurface,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         modifier = Modifier.fillMaxWidth().padding(
             start = 20.dp,
             end = 20.dp,
@@ -47,7 +47,7 @@ internal fun HomeAlphabetHeader(letter: String) {
         text = letter,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.accentText,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 6.dp),
     )
 }

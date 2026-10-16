@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen
 
+import androidx.compose.ui.text.font.FontWeight
 import android.telecom.Call
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -237,7 +238,7 @@ internal fun SecondaryCallAction(
             ) {
                 Icon(icon, contentDescription = null, tint = tint,
                     modifier = Modifier.size(22.dp).testTag("$testTag-icon"))
-                Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium,
+                Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                     color = tint, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         } else Column(
@@ -252,7 +253,7 @@ internal fun SecondaryCallAction(
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                 color = tint,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

@@ -163,7 +163,7 @@ internal fun SettingsHomeListItem(
                     Text(
                         text = headline,
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = Int.MAX_VALUE,
                     )

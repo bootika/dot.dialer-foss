@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,7 @@ internal fun DotSettingsNavigationRow(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(title, style = MaterialTheme.typography.controlLabel)
             if (supporting != null) {
                 Text(
                     text = supporting,

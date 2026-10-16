@@ -84,7 +84,7 @@ fun NumberPickerDialog(
                                 text = number,
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.Medium
                             )
                             if (number == selectedNumber) {
                                 Icon(

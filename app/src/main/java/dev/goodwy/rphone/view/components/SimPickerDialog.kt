@@ -56,7 +56,7 @@ fun SimPickerDialog(
                     Text(
                         text = stringResource(R.string.sim_picker_title),
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(bottom = 20.dp, start = 4.dp)
                     )
 
@@ -101,7 +101,7 @@ fun SimPickerDialog(
                                             Text(
                                                 text = info.label,
                                                 style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.SemiBold
+                                                fontWeight = FontWeight.Medium
                                             )
                                             if (info.description != null) {
                                                 Text(

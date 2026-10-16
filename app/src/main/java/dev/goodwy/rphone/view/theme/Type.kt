@@ -45,7 +45,7 @@ val DotDialerTypography = Typography(
     bodyLarge = manropeTextStyle(FontWeight.Normal, 16, 24),
     bodyMedium = manropeTextStyle(FontWeight.Normal, 14, 20),
     bodySmall = manropeTextStyle(FontWeight.Normal, 13, 18),
-    labelLarge = manropeTextStyle(FontWeight.Normal, 14, 20),
+    labelLarge = manropeTextStyle(FontWeight.Medium, 14, 20),
     labelMedium = manropeTextStyle(FontWeight.Normal, 12, 16),
     labelSmall = manropeTextStyle(FontWeight.Normal, 11, 16),
 )
@@ -65,3 +65,7 @@ private fun manropeTextStyle(
 fun buildTypography(fontFamily: FontFamily, scale: Float = 1.0f): Typography = DotDialerTypography
 
 val Typography = DotDialerTypography
+
+/** Actionable row labels keep body sizing while descriptions remain Regular. */
+val Typography.controlLabel: TextStyle
+    get() = bodyLarge.copy(fontWeight = FontWeight.Medium)

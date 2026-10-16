@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.components
 
+import dev.goodwy.rphone.view.theme.controlLabel
 import dev.goodwy.rphone.view.theme.accentText
 
 import androidx.compose.foundation.clickable
@@ -104,7 +105,7 @@ private fun CallingAccountChoiceRow(
         }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.controlLabel)
             description?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

@@ -666,7 +666,7 @@ fun RillDialog(
                                 text = title,
                                 style = MaterialTheme.typography.headlineSmall,
                                 lineHeight = MaterialTheme.typography.titleMedium.lineHeight,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Start,
                                 modifier = Modifier.weight(1f).padding(end = 8.dp)
@@ -786,7 +786,7 @@ fun <T> RillSelectionDialog(
                         Text(
                             itemLabel(item),
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
+                            fontWeight = FontWeight.Medium,
                             color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
                             else MaterialTheme.colorScheme.onSurface
                         )

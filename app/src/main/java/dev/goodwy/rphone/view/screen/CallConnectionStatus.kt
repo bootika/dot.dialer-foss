@@ -173,7 +173,7 @@ internal fun callMetadataTextScale(): Float = effectiveCallFontScale(
 
 /** One typography source for SIM, voice quality and transport, including measurement. */
 @Composable
-internal fun callConnectionMetadataTextStyle(): TextStyle = MaterialTheme.typography.labelLarge
+internal fun callConnectionMetadataTextStyle(): TextStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal)
 
 internal const val CALL_CONNECTION_TOUCH_HEIGHT_DP = 48
 internal const val CALL_CONNECTION_SHIELD_LIGHT_ALPHA = 0.50f

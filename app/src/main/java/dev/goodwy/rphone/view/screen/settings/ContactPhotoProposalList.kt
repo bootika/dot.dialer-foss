@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
@@ -234,7 +235,7 @@ private fun AvatarChoiceRow(file: java.io.File?, source: String, dimensions: Str
         horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         ProposalAvatar(file, source, Modifier.size(48.dp), 48.dp)
         Column(Modifier.weight(1f)) {
-            Text(source, Modifier.fillMaxWidth())
+            Text(source, Modifier.fillMaxWidth(), fontWeight = FontWeight.Medium)
             dimensions?.let { Text(it, Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodySmall) }
             reason?.let { Text(it, Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodySmall) }
         }

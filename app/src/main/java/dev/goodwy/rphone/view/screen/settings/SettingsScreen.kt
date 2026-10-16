@@ -237,7 +237,7 @@ fun SettingsSectionLabel(text: String) {
         style = MaterialTheme.typography.labelMedium,
         modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
     )
 }
 

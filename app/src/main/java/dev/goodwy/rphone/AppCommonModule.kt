@@ -1,6 +1,8 @@
 package dev.goodwy.rphone
 
 import androidx.room.Room
+import dev.goodwy.rphone.controller.license.PlanAccessManager
+import io.github.bootika.dotdialer.core.license.PlanFeature
 import dev.goodwy.rphone.controller.CallLogViewModel
 import dev.goodwy.rphone.controller.CallNotificationManager
 import dev.goodwy.rphone.controller.ContactsViewModel
@@ -50,20 +52,29 @@ internal val commonAppModule = module {
         CallLogRepository(androidContext(), androidContext().contentResolver, get(), get())
     }
     single {
-        PreferenceManager(androidContext())
+        PreferenceManager(androidContext(), featureAllowed = {
+            dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(it)
+        }, onPlanRequired = { dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).requestUpgrade(it) })
     }
     single<GoogleContactsAuthorization> { PlatformGoogleContactsAuthorization(androidContext()) }
     single { GoogleContactAccounts(androidContext()) }
     single<GooglePeoplePhotoSource> { GooglePeoplePhotoClient() }
-    single { CallPhotoHydrationManager(androidContext(), get(), get(), get()) }
-    single { GoogleContactPhotoScan(androidContext(), get(), get(), get()) }
+    single { CallPhotoHydrationManager(androidContext(), get(), get(), get(), isFeatureEnabled = {
+        get<PreferenceManager>().getBoolean(dev.goodwy.rphone.controller.util.GoogleContactPhotoPreferences.ENABLED, false) &&
+            dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER)
+    }) }
+    single { GoogleContactPhotoScan(androidContext(), get(), get(), get(),
+        featureAllowed={PlanAccessManager.get(androidContext()).allows(PlanFeature.MANUAL_OPTIMIZER)}) }
     single { dev.goodwy.rphone.controller.util.WhatsAppAvatarReviewStore(androidContext()) }
     single { dev.goodwy.rphone.controller.util.WhatsAppAvatarContactStore(androidContext(),
         numberRegion = { dev.goodwy.rphone.controller.util.contactNumberRegion(androidContext(), get<PreferenceManager>()) }) }
     single {
         dev.goodwy.rphone.controller.util.WhatsAppAvatarSyncProcessor(
             androidContext(), get(), get(), get(), get(),
-            featureAllowed = { dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed }, onUnknownPhoto = { get<IContactsRepository>().invalidateAndNotify() },
+            featureAllowed = { dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed &&
+                dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER) },
+            automaticAllowed = { dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) },
+            onUnknownPhoto = { get<IContactsRepository>().invalidateAndNotify() },
         )
     }
     // Clean Architecture Wires

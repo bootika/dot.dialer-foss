@@ -27,6 +27,12 @@ import org.koin.compose.koinInject
 @Composable
 fun ContactPhotosScreen(navigator: DestinationsNavigator, requestedAccount: String? = null, openReview: Boolean = false) {
     val context = LocalContext.current
+    val plans=rememberPlanAccessManager()
+    val planState by plans.state.collectAsState()
+    if (!remember(planState) { plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER) }) {
+        PlanAccessContent(navigator::navigateUp)
+        return
+    }
     val processor = koinInject<WhatsAppAvatarSyncProcessor>()
     val reviews=koinInject<WhatsAppAvatarReviewStore>()
     val queued by reviews.items.collectAsState()

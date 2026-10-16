@@ -27,7 +27,7 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
         val info=bytes.toContactPhotoImageInfo() ?: return@synchronized false
         if (bytes.size > 8*1024*1024 || !valid()) return@synchronized false
         val json=read(); val prior=json.optJSONObject(key)
-        val previous=prior?.let(::imageFile)?.takeIf { now()-prior.optLong("at") in 0..RETENTION }?.readBytes()
+        val previous=prior?.let(::imageFile)?.readBytes()
         if (!manual && ((prior?.optBoolean("manual")==true && previous!=null) || !optimizerPhotoChanged(previous,bytes,1024) ||
                 !optimizerAccepts(policy,previous?.toContactPhotoImageInfo(),info,1024))) return@synchronized false
         val name=key+"-"+ContactsOptimizerState.digest(bytes)+".png"
@@ -40,7 +40,7 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
         var total=0L
         entries.forEachIndexed { position,(id,item) ->
             total+=item.optLong("bytes")
-            if (position>=200 || total>32L*1024*1024 || now()-item.optLong("at") !in 0..RETENTION) json.remove(id)
+            if (position>=200 || total>32L*1024*1024) json.remove(id)
         }
         save(json)
         val keep=json.keys().asSequence().mapNotNull { json.optJSONObject(it)?.optString("file") }.toSet()
@@ -50,7 +50,6 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
     fun resolve(phone: String): String? = synchronized(lock) {
         val key=phoneKey(phone) ?: return@synchronized null
         val item=read().optJSONObject(key) ?: return@synchronized null
-        if (now()-item.optLong("at") !in 0..RETENTION) { prune(); return@synchronized null }
         imageFile(item)?.takeIf { it.name.startsWith(key+"-") }?.let { android.net.Uri.fromFile(it).toString() }
     }
     private fun imageFile(item: JSONObject): File? {
@@ -60,7 +59,7 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
     }
     fun prune() = synchronized(lock) {
         val json=read()
-        val expired=json.keys().asSequence().filter { now()-json.getJSONObject(it).optLong("at") !in 0..RETENTION }.toList()
+        val expired=json.keys().asSequence().filter { imageFile(json.getJSONObject(it)) == null }.toList()
         expired.forEach(json::remove)
         if (expired.isNotEmpty()) save(json)
         val keep=json.keys().asSequence().mapNotNull { json.optJSONObject(it)?.optString("file") }.toSet()
@@ -75,9 +74,15 @@ internal class UnsavedNumberAvatars(context: Context, account: String, private v
                 ?.forEach { account ->
                     val folder=File(account,"unsaved-avatars")
                     if (folder.isDirectory) {
-                        val cutoff=System.currentTimeMillis()-RETENTION
-                        // Only this feature's immutable files; no user-selected images or backups.
-                        folder.listFiles()?.filter { imageName.matches(it.name) && it.lastModified()<cutoff }?.forEach { it.delete() }
+                        // Keep assigned avatars after trial expiry. Only unreferenced feature files are garbage.
+                        synchronized(locks.computeIfAbsent(folder.absolutePath) {Any()}) {
+                            val keep=runCatching {
+                                val index=AtomicFile(File(folder,"index.json"))
+                                val json=JSONObject(index.openRead().bufferedReader().use {it.readText()})
+                                json.keys().asSequence().mapNotNull {json.optJSONObject(it)?.optString("file")}.toSet()
+                            }.getOrNull()
+                            if(keep!=null) folder.listFiles()?.filter {imageName.matches(it.name) && it.name !in keep}?.forEach {it.delete()}
+                        }
                     }
                 }
         }

@@ -17,6 +17,7 @@ import dev.goodwy.rphone.controller.util.*
 
 @Composable
 internal fun ContactsOptimizerPolicyControl(settings: ContactOptimizationSettings, choose: (ContactPhotoAutomaticPolicy) -> Unit) {
+    val plans=rememberPlanAccessManager()
     var expanded by remember { mutableStateOf(false) }
     val inheritedDensity = LocalDensity.current
     fun labels(policy: ContactPhotoAutomaticPolicy) = when (policy) {
@@ -26,9 +27,9 @@ internal fun ContactsOptimizerPolicyControl(settings: ContactOptimizationSetting
         ContactPhotoAutomaticPolicy.Optimal -> R.string.optimizer_quality to R.string.optimizer_quality_summary
         ContactPhotoAutomaticPolicy.Newest -> R.string.contact_photos_auto_newest to R.string.contact_photos_auto_newest_summary
     }
-    val current = labels(settings.effectivePhotoPolicy)
+    val current = labels(if(plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER)) settings.effectivePhotoPolicy else ContactPhotoAutomaticPolicy.Manual)
     DotSettingsNavigationRow(stringResource(R.string.contact_photos_auto_policy), value = stringResource(current.first),
-        supporting = stringResource(current.second), onClick = { expanded = true })
+        supporting = stringResource(current.second), onClick = { if(plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER)) expanded = true else plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) })
     if (expanded) AlertDialog(onDismissRequest = { expanded = false },
         title = { CompositionLocalProvider(LocalDensity provides inheritedDensity) { Text(stringResource(R.string.contact_photos_auto_policy)) } },
         text = { CompositionLocalProvider(LocalDensity provides inheritedDensity) { Column(Modifier.verticalScroll(rememberScrollState()).testTag("optimizerPolicies")) {

@@ -9,6 +9,9 @@ import io.github.bootika.dotdialer.diagnostics.AppDiagnostics
 import io.github.bootika.dotdialer.observability.AppTelemetry
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class RillApp : Application() {
     override fun onCreate() {
@@ -30,6 +33,9 @@ class RillApp : Application() {
             modules(appModule)
         }
         val preferences = koinApplication.koin.get<PreferenceManager>()
+        val plans = dev.goodwy.rphone.controller.license.PlanAccessManager.get(this)
+        plans.attach(koinApplication.koin.get<dev.goodwy.rphone.controller.PurchaseHelper>())
+        observePlanChanges(plans, preferences)
         AppTelemetry.initialize(this, preferences)
         dev.goodwy.rphone.controller.util.ContactsOptimizerJob.schedule(this)
         if (AndroidAutoIntegration.isAvailable()) {
@@ -37,6 +43,11 @@ class RillApp : Application() {
                 this,
                 preferences.getBoolean(PreferenceManager.KEY_ANDROID_AUTO_ENABLED, false),
             )
+        }
+    }
+    private fun observePlanChanges(plans: dev.goodwy.rphone.controller.license.PlanAccessManager, prefs: PreferenceManager) {
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Main).launch {
+            plans.state.map { plans.effective }.distinctUntilChanged().collect { prefs.notifyPlanChanged() }
         }
     }
 }

@@ -102,6 +102,9 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             .put("version",BuildConfig.VERSION_NAME).put("android",Build.VERSION.SDK_INT)
             .put("manufacturer",safe(Build.MANUFACTURER,40)).put("model",safe(Build.MODEL,80))
             .put("language",app.resources.configuration.locales[0].toLanguageTag()).put("sim",sims()).put("region",region).put("counts",state.getJSONObject("counts"))
+            .put("appearance",JSONObject()
+                .put("accent",prefs.getString(PreferenceManager.KEY_ACCENT_COLOR,"jade").takeIf {it in setOf("jade","blue","violet","coral")} ?: "jade")
+                .put("plan",dev.goodwy.rphone.controller.license.PlanAccessManager.get(app).effective.name.lowercase(Locale.ROOT)))
         var connection: HttpURLConnection? = null
         try {
             if (!allowed()) return

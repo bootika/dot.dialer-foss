@@ -16,11 +16,15 @@ class RuStoreActivityOwnershipContractTest {
     }
 
     @Test fun `checkout and lifecycle use the current compose activity`() {
-        val source = repoFile("app/src/rustore/java/dev/goodwy/rphone/view/screen/settings/DonateScreen.kt").readText()
+        val wrapper = repoFile("app/src/rustore/java/dev/goodwy/rphone/view/screen/settings/DonateScreen.kt").readText()
+        assertTrue(wrapper.contains("PlanAccessContent"))
+        val source = repoFile("app/src/main/java/dev/goodwy/rphone/view/screen/settings/PlanBillingLifecycle.kt").readText() +
+            repoFile("app/src/main/java/dev/goodwy/rphone/view/screen/settings/PlanAccessContent.kt").readText()
         assertTrue(source.contains("LocalActivity.current as? ComponentActivity"))
         assertTrue(source.contains("DisposableEffect(activity)"))
-        assertTrue(source.contains("rememberUpdatedState(isLoading)"))
-        assertTrue(source.contains("val checkoutActivity = activity"))
+        assertTrue(source.contains("rememberUpdatedState(loading)"))
+        assertTrue(source.contains("val checkoutActivity=activity"))
+        assertTrue(source.contains("activity?.let(helper::onScreenActivityAvailable)"))
         assertTrue(source.contains("removeObserver(listener)"))
     }
 

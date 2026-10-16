@@ -38,7 +38,7 @@ class ProductStatisticsTest {
             val stats=ProductStatistics(app,prefs,worker) { sent.add(JSONObject(it.toString()));true }
             stats.homeVisible();testScheduler.runCurrent()
             assertEquals(1,sent.size);assertEquals("GB",sent.single().getString("region"))
-            assertEquals(setOf("package","day","daily_id","version","android","manufacturer","model","language","sim","region","counts"),sent.single().keys().asSequence().toSet())
+            assertEquals(setOf("package","day","daily_id","version","android","manufacturer","model","language","sim","region","counts","appearance"),sent.single().keys().asSequence().toSet())
             stats.record(ProductStatistics.Event.Favorite);testScheduler.runCurrent()
             ProductStatistics.setReportingGate(ReportingMode.OnDemand)
             // Do not let virtual time jump 60 seconds while awaiting real DataStore IO.

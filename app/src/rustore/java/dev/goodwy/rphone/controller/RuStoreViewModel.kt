@@ -30,6 +30,10 @@ class RuStoreViewModel(
     private val userInteractor by lazy { RuStorePayClient.instance.getUserInteractor() }
 
     private val _isPro = MutableStateFlow(false)
+    private val mutableStorePlan = MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
+    override val storePlan = mutableStorePlan.asStateFlow()
+    override fun productAvailable(product: String, subscription: Boolean): Boolean = productsList.any { it.productId == product }
+
     override val isPro: StateFlow<Boolean> = _isPro.asStateFlow()
 
     private val _proCheckDone = MutableStateFlow(false)
@@ -61,7 +65,7 @@ class RuStoreViewModel(
     private val _iapPurchased = MutableStateFlow<Set<String>>(emptySet())
     private val _subPurchased = MutableStateFlow<Set<String>>(emptySet())
 
-    fun onScreenActivityAvailable(activity: ComponentActivity) {
+    override fun onScreenActivityAvailable(activity: ComponentActivity) {
         handleNewIntent(activity.intent, activity)
         if (!_isBillingReady.value) {
             checkPaymentAvailability()
@@ -176,7 +180,7 @@ class RuStoreViewModel(
                     purchases.mapNotNull { purchase ->
                         when (purchase) {
                             is ProductPurchase -> {
-                                iapSet.add(purchase.productId.value)
+                                if (purchase.status.name in setOf("CONFIRMED","PAID")) iapSet.add(purchase.productId.value)
                                 PurchaseInfo(
                                     purchaseId = purchase.purchaseId.value,
                                     invoiceId = purchase.invoiceId.value,
@@ -190,7 +194,7 @@ class RuStoreViewModel(
                                 )
                             }
                             is SubscriptionPurchase -> {
-                                subSet.add(purchase.productId.value)
+                                if (purchase.status.name == "ACTIVE" && purchase.expirationDate.time > System.currentTimeMillis()) subSet.add(purchase.productId.value)
                                 PurchaseInfo(
                                     purchaseId = purchase.purchaseId.value,
                                     invoiceId = purchase.invoiceId.value,
@@ -223,12 +227,13 @@ class RuStoreViewModel(
     }
 
     private fun updateProStatus() {
+        mutableStorePlan.value = dev.goodwy.rphone.controller.license.PlanProducts.purchased(_iapPurchased.value + _subPurchased.value)
         val iapProPurchased = _iapPurchased.value.any { it == BuildConfig.PRODUCT_ID_X1 }
         val subProPurchased = _subPurchased.value.any {
             it == BuildConfig.SUBSCRIPTION_ID_X1 || it == BuildConfig.SUBSCRIPTION_YEAR_ID_X1
         }
 
-        val isPro = iapProPurchased || subProPurchased
+        val isPro = iapProPurchased || subProPurchased || mutableStorePlan.value == io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM
 
         // If the status has changed from Pro to standard (meaning a refund or the end of the subscription)
         if (_isPro.value && !isPro) {
@@ -246,11 +251,7 @@ class RuStoreViewModel(
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_IAP, false)
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_SUB, false)
 
-        val themeMode = preferenceManager.getString(PreferenceManager.KEY_THEME_MODE, "auto") ?: "auto"
-        if (themeMode == "auto_bw" || themeMode == "white" || themeMode == "black" ) {
-            preferenceManager.setString(PreferenceManager.KEY_THEME_MODE, "auto")
-        }
-        preferenceManager.setBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)
+        // Appearance preferences are retained; effective plan rights control their presentation.
     }
 
     override fun initBilling() {}

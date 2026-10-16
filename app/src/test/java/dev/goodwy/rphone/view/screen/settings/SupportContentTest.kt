@@ -140,105 +140,96 @@ class SupportContentTest {
         assertEquals(1, backs)
     }
 
-    @Test fun `production flavor screen retains donation or checkout restore and back callbacks`() {
-        val prefs = prefs()
-        val calls = mutableListOf<Pair<String, List<Any?>>>()
-        val owned = mutableSetOf<String>()
-        val pro = MutableStateFlow(false)
-        val success = MutableStateFlow(false)
-        val loading = MutableStateFlow(false)
-        val ready = MutableStateFlow(true)
-        val iapLoaded = MutableStateFlow(true)
-        val subLoaded = MutableStateFlow(true)
-        val error = MutableStateFlow<String?>(null)
-        val helper = Proxy.newProxyInstance(PurchaseHelper::class.java.classLoader,
-            arrayOf(PurchaseHelper::class.java)) { _, method, args ->
-            when (method.name) {
-                "getIsPro", "isPro" -> pro
+    @Test fun `production flavor plans preserve free comparison checkout gates restore FOSS and back callbacks`() {
+        val prefs=prefs()
+        val calls=mutableListOf<Pair<String,List<Any?>>>()
+        val pro=MutableStateFlow(false)
+        val store=MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
+        val success=MutableStateFlow(false)
+        val loading=MutableStateFlow(false)
+        val ready=MutableStateFlow(true)
+        val iaps=MutableStateFlow(true)
+        val subs=MutableStateFlow(true)
+        val error=MutableStateFlow<String?>(null)
+        var metadata by mutableStateOf(true)
+        val helper=Proxy.newProxyInstance(PurchaseHelper::class.java.classLoader,arrayOf(PurchaseHelper::class.java)) {proxy,method,args ->
+            when(method.name) {
+                "equals" -> proxy===args?.firstOrNull()
+                "hashCode" -> System.identityHashCode(proxy)
+                "toString" -> "Fixture purchase helper"
+                "getStorePlan" -> store
+                "getIsPro","isPro" -> pro
                 "getProCheckDone" -> MutableStateFlow(true)
                 "getPurchaseSuccess" -> success
-                "getIsLoading", "isLoading" -> loading
+                "getIsLoading","isLoading" -> loading
                 "getErrorMessage" -> error
-                "getIsBillingReady", "isBillingReady" -> ready
-                "getIapSkuDetailsInitialized" -> iapLoaded
-                "getSubSkuDetailsInitialized" -> subLoaded
-                "getPriceSubscription", "getPriceDonation" -> "9,99 RON"
-                "isIapPurchased", "isSubPurchased" -> args!!.first() in owned
-                "clearPurchaseSuccess" -> { success.value = false; null }
-                "clearErrors" -> { calls.add(method.name to emptyList()); error.value = null; null }
-                else -> { calls.add(method.name to args.orEmpty().toList()); null }
+                "getIsBillingReady","isBillingReady" -> ready
+                "getIapSkuDetailsInitialized" -> iaps
+                "getSubSkuDetailsInitialized" -> subs
+                "getPriceSubscription","getPriceDonation" -> "9,99 RON"
+                "productAvailable" -> metadata
+                "isIapPurchased","isSubPurchased" -> false
+                "clearPurchaseSuccess" -> {success.value=false;null}
+                else -> {calls.add(method.name to args.orEmpty().toList());null}
             }
         } as PurchaseHelper
-        org.koin.core.context.loadKoinModules(module { single<PurchaseHelper> { helper } })
-        var backs = 0
-        val navigator = Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,
-            arrayOf(DestinationsNavigator::class.java)) { _, method, _ ->
-            if (method.name == "navigateUp") backs++
-            if (method.returnType == Boolean::class.javaPrimitiveType) true else null
+        org.koin.core.context.loadKoinModules(module {single<PurchaseHelper> {helper}})
+        var backs=0
+        val navigator=Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,arrayOf(DestinationsNavigator::class.java)) {_,method,_ ->
+            if(method.name=="navigateUp")backs++
+            if(method.returnType==Boolean::class.javaPrimitiveType)true else null
         } as DestinationsNavigator
-        rule.setContent { DotDialerTheme { DonateScreen(navigator) } }
-        if (BuildConfig.FLAVOR == "foss") {
-            rule.onNodeWithText(rule.activity.getString(R.string.unlock_all_features)).performScrollTo().performClick()
-            rule.waitUntil(5_000) { prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS, false) }
-            rule.runOnIdle { assertTrue(prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS, false)) }
-            rule.onNodeWithText(rule.activity.getString(R.string.unlock_all_features)).performClick()
-            rule.waitUntil(5_000) { !prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS, true) }
-            rule.runOnIdle { assertFalse(prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS, true)) }
-            rule.onNodeWithText(rule.activity.getString(R.string.support_all_options)).performClick()
-            assertEquals(DONATE_URL, Shadows.shadowOf(rule.activity).nextStartedActivity.data.toString())
-            rule.onAllNodesWithText(rule.activity.getString(R.string.support_development)).onLast().performClick()
-            assertEquals(COFFEE_URL, Shadows.shadowOf(rule.activity).nextStartedActivity.data.toString())
-        } else {
-            if (BuildConfig.PRODUCT_ID_X1.isBlank() && BuildConfig.SUBSCRIPTION_ID_X1.isBlank()
-                && BuildConfig.SUBSCRIPTION_YEAR_ID_X1.isBlank()) {
-                rule.onNodeWithTag("support-continue").assertIsNotEnabled()
-                rule.onNodeWithTag("support-plan-monthly").performScrollTo().assertIsNotSelected().assertIsNotEnabled()
-                rule.onNodeWithTag("support-plan-yearly").performScrollTo().assertIsSelected().assertIsNotEnabled()
-                rule.onNodeWithTag("support-plan-lifetime").performScrollTo().assertIsNotSelected().assertIsNotEnabled()
-                rule.onNodeWithTag("support-restore").performClick()
-                assertTrue(calls.any { it.first == if (BuildConfig.FLAVOR == "gplay") "refreshAllData" else "restorePurchases" })
-                assertFalse(calls.any { it.first == "purchaseDonation" || it.first == "purchaseSubscription" })
-                rule.runOnUiThread { loading.value = true }
-                rule.onNodeWithTag("support-restore").assertIsNotEnabled()
-                rule.runOnUiThread { loading.value = false; success.value = true }
-                rule.waitForIdle()
-                assertTrue(calls.any { it.first == "checkProStatus" })
-                rule.runOnUiThread { error.value = "Payment temporarily unavailable" }
-                rule.waitForIdle()
-                assertTrue(calls.any { it.first == "clearErrors" })
-                capture("production-unconfigured")
-                rule.onNodeWithContentDescription(rule.activity.getString(R.string.back)).performClick()
-                assertEquals(1, backs)
-                return
+        val worker=kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob()+kotlinx.coroutines.Dispatchers.IO)
+        val manager=dev.goodwy.rphone.controller.license.verifiedPlanFixture(rule.activity.packageName,io.github.bootika.dotdialer.core.license.AppPlan.FREE,worker)
+        var locked by mutableStateOf(true)
+        try {
+            rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
+                DotDialerTheme {if(locked)SettingsOptionScreen(navigator,"C02") else DonateScreen(navigator)}
+            }}
+            rule.onNodeWithTag("plans-content").assertExists()
+            rule.onNodeWithTag("settingsFocus-C02").assertDoesNotExist()
+            rule.onNodeWithTag("start-premium-trial").performScrollTo().assertIsEnabled()
+            assertEquals(io.github.bootika.dotdialer.core.license.AppPlan.FREE,manager.effective)
+            rule.runOnIdle {locked=false}
+            if(BuildConfig.FLAVOR=="foss") {
+                rule.onNodeWithText(rule.activity.getString(R.string.unlock_all_features)).performScrollTo().performClick()
+                rule.waitUntil(5000) {prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS,false)}
+                rule.onNodeWithText(rule.activity.getString(R.string.unlock_all_features)).performClick()
+                rule.waitUntil(5000) {!prefs.getBoolean(PreferenceManager.KEY_IS_PRO_FOSS,true)}
+                rule.onNodeWithText(rule.activity.getString(R.string.support_all_options)).performScrollTo().performClick()
+                assertEquals(DONATE_URL,Shadows.shadowOf(rule.activity).nextStartedActivity.data.toString())
+                rule.onNodeWithText(rule.activity.getString(R.string.support_development)).performScrollTo().performClick()
+                assertEquals(COFFEE_URL,Shadows.shadowOf(rule.activity).nextStartedActivity.data.toString())
             }
-            rule.onNodeWithTag("support-continue").performClick()
-            assertEquals(BuildConfig.SUBSCRIPTION_YEAR_ID_X1, calls.last { it.first == "purchaseSubscription" }.second.first())
-            rule.onNodeWithTag("support-plan-lifetime").performScrollTo().performClick()
-            rule.onNodeWithTag("support-continue").performClick()
-            assertEquals(BuildConfig.PRODUCT_ID_X1, calls.last { it.first == "purchaseDonation" }.second.first())
-            rule.onNodeWithTag("support-restore").performClick()
-            assertTrue(calls.any { it.first == if (BuildConfig.FLAVOR == "gplay") "refreshAllData" else "restorePurchases" })
-            rule.runOnUiThread { loading.value = true }
-            rule.onNodeWithTag("support-continue").assertIsNotEnabled()
-            rule.runOnUiThread { loading.value = false; iapLoaded.value = false; subLoaded.value = false }
-            rule.onNodeWithTag("support-continue").assertIsNotEnabled()
-            rule.runOnUiThread { ready.value = false }
-            rule.onNodeWithTag("support-continue").assertIsNotEnabled()
-            rule.runOnUiThread {
-                ready.value = true; iapLoaded.value = true; subLoaded.value = true
-                owned.add(BuildConfig.PRODUCT_ID_X1); pro.value = true
-            }
-            rule.onNodeWithTag("support-continue").assertIsNotEnabled()
-            rule.onNodeWithTag("support-plan-lifetime").performScrollTo().assertIsNotEnabled()
-            rule.runOnUiThread { success.value = true }
-            rule.waitForIdle()
-            assertTrue(calls.any { it.first == "checkProStatus" })
-            rule.runOnUiThread { error.value = "Payment temporarily unavailable" }
-            rule.waitForIdle()
-            assertTrue(calls.any { it.first == "clearErrors" })
-        }
-        capture("production")
-        rule.onNodeWithContentDescription(rule.activity.getString(R.string.back)).performClick()
-        assertEquals(1, backs)
+            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled().performClick()
+            assertEquals("dot_premium_yearly",calls.last {it.first=="purchaseSubscription"}.second.first())
+            rule.onNodeWithTag("plan-period-LIFETIME").performScrollTo().performClick()
+            rule.onNodeWithTag("plan-buy").performScrollTo().performClick()
+            assertEquals("dot_premium_lifetime",calls.last {it.first=="purchaseDonation"}.second.first())
+            rule.onNodeWithTag("plan-restore").performScrollTo().performClick()
+            assertTrue(calls.any {it.first=="restorePurchases"})
+            rule.runOnIdle {loading.value=true}
+            rule.onNodeWithTag("plan-buy").assertIsNotEnabled()
+            rule.onNodeWithTag("plan-restore").assertIsNotEnabled()
+            rule.runOnIdle {loading.value=false;iaps.value=false;subs.value=false}
+            rule.onNodeWithTag("plan-buy").assertIsNotEnabled()
+            rule.runOnIdle {iaps.value=true;subs.value=true;ready.value=false}
+            rule.onNodeWithTag("plan-buy").assertIsNotEnabled()
+            rule.runOnIdle {ready.value=true;metadata=false}
+            rule.onNodeWithTag("plan-buy").assertIsNotEnabled()
+            rule.onNodeWithTag("plan-real-store-price").assertTextEquals(rule.activity.getString(R.string.plan_store_unavailable))
+            val purchases=calls.count {it.first in listOf("purchaseDonation","purchaseSubscription")}
+            assertEquals(2,purchases)
+            rule.runOnIdle {metadata=true;success.value=true;error.value="Payment temporarily unavailable"}
+            rule.waitUntil(5000) {!success.value}
+            rule.onNodeWithText(rule.activity.getString(R.string.operation_failed)).performScrollTo().assertIsDisplayed()
+            assertTrue(calls.any {it.first=="checkProStatus"})
+            capture("production-plans-free")
+            rule.runOnIdle {store.value=io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM}
+            rule.waitUntil(5000) {backs==1}
+            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
+            rule.onNodeWithContentDescription(rule.activity.getString(R.string.back)).performClick()
+            assertEquals(2,backs)
+        } finally {worker.coroutineContext[kotlinx.coroutines.Job]?.cancel()}
     }
 }

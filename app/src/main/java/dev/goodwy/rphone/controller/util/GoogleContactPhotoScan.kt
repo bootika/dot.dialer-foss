@@ -92,6 +92,7 @@ internal class GoogleContactPhotoScan(
     private val authorization: GoogleContactsAuthorization,
     private val hydrationManager: CallPhotoHydrationManager,
     private val candidateLoader: (suspend (String) -> List<PhotoScanCandidate>)? = null,
+    private val featureAllowed: () -> Boolean = { true },
 ) {
     private val appContext = context.applicationContext
     private val checkpoints = PhotoScanCheckpointStore(appContext)
@@ -108,7 +109,7 @@ internal class GoogleContactPhotoScan(
 
     @Synchronized
     private fun requestStart(retryOnly: Boolean) {
-        if (mutableState.value.running) return
+        if (!featureAllowed() || mutableState.value.running) return
         stop.set(false)
         mutableState.value = mutableState.value.copy(status = PhotoScanStatus.Preparing, stopping = false)
         try {
@@ -121,6 +122,7 @@ internal class GoogleContactPhotoScan(
 
     /** Also used by approved one-contact instrumentation tests, without starting a second scan. */
     internal suspend fun executeFromService(retryOnly: Boolean = false) {
+        if(!featureAllowed()) return
         var activeCheckpoint: PhotoScanCheckpoint? = null
         fun publish(next: PhotoScanState) {
             val state = next.copy(stopping = stop.get() && next.running)
@@ -163,8 +165,8 @@ internal class GoogleContactPhotoScan(
                 val source = GooglePeoplePhotoClient(cacheConnections = true)
                 runPhotoScan(
                     candidates = candidates,
-                    shouldStop = stop::get,
-                    canWrite = ::hasPermissions,
+                    shouldStop = {stop.get() || !featureAllowed()},
+                    canWrite = {featureAllowed() && hasPermissions()},
                     initial = initial,
                     retryTransient = true,
                     hydrate = { candidate ->

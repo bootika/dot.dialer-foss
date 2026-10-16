@@ -56,7 +56,7 @@ class UnsavedNumberAvatarsTest {
         val file=File(android.net.Uri.parse(store.resolve("+40720033833")!!).path!!)
         assertArrayEquals(small,file.readBytes())
     }
-    @Test fun lateAccessChangeExpiryAndNonExactKeysNeverExposeAReplacement() {
+    @Test fun lateAccessChangeBlocksReplacementButAssignedAvatarSurvivesTrialDuration() {
         var now=1000L;val ctx=context();val store=UnsavedNumberAvatars(ctx,"first@example.test") { now }
         assertFalse(store.store("0720033833",image(192,Color.RED),ContactPhotoAutomaticPolicy.Newest) { true })
         assertFalse(store.store("*222",image(192,Color.RED),ContactPhotoAutomaticPolicy.Newest) { true })
@@ -64,6 +64,10 @@ class UnsavedNumberAvatarsTest {
         assertFalse(store.store("+40720033833",image(192,Color.RED),ContactPhotoAutomaticPolicy.Newest) { ++checks==1 })
         assertNull(store.resolve("+40720033833"))
         assertTrue(store.store("+40720033833",image(192,Color.RED),ContactPhotoAutomaticPolicy.Newest) { true })
-        now+=UnsavedNumberAvatars.RETENTION+1;assertNull(store.resolve("+40720033833"))
+        now+=UnsavedNumberAvatars.RETENTION+1
+        store.prune()
+        assertNotNull(store.resolve("+40720033833"))
+        UnsavedNumberAvatars.pruneExpired(ctx)
+        assertNotNull(store.resolve("+40720033833"))
     }
 }

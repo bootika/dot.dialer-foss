@@ -104,6 +104,7 @@ private fun rememberBlurElements(): List<BlurElement> {
 @Destination<RootGraph>
 @Composable
 fun BlurEffectsElementsScreen(navigator: DestinationsNavigator) {
+    if(planSettingLocked(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE,navigator::navigateUp)) return
     val prefs = koinInject<PreferenceManager>()
     val blurElements = rememberBlurElements()
 

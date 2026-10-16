@@ -25,7 +25,7 @@ import dev.goodwy.rphone.controller.util.AmbientDropletPreference
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
 import dev.goodwy.rphone.view.screen.settings.components.*
-import dev.goodwy.rphone.view.theme.DotDialerTheme
+import dev.goodwy.rphone.controller.license.VerifiedPremiumTheme as DotDialerTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.*

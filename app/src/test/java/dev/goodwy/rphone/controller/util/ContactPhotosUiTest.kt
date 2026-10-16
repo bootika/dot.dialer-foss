@@ -41,7 +41,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.foundation.background
-import dev.goodwy.rphone.view.theme.DotDialerTheme
+import dev.goodwy.rphone.controller.license.VerifiedPremiumTheme as DotDialerTheme
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.runBlocking
 import org.junit.*

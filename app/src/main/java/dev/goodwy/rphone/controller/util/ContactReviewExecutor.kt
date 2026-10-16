@@ -41,7 +41,7 @@ internal class ContactReviewExecutor(private val context: Context,private val pr
                         contactNumberRegion(context, preferences)))
                     return false
                 if (contacts.normalizeMatchedNumber(target) {
-                    currentAccount() == account && profiles.settings(account).normalize
+                    applyRejection(item)==null && currentAccount() == account && profiles.settings(account).normalize
                 } != item.proposedNumber) return false
                 reviews.remove(id, account); record(account, "normalized", target.contactId); return true
             }

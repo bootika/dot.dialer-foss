@@ -25,6 +25,13 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [36], application = Application::class, qualifiers = "w360dp-h800dp-mdpi")
 class EssentialOnboardingRenderingTest {
+    @org.junit.Before fun dependencies() {
+        org.koin.core.context.stopKoin()
+        org.koin.core.context.startKoin {modules(org.koin.dsl.module {
+            single {dev.goodwy.rphone.controller.util.PreferenceManager(org.robolectric.RuntimeEnvironment.getApplication())}
+        })}
+    }
+    @org.junit.After fun cleanupDependencies() {org.koin.core.context.stopKoin()}
     @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
     @Test fun restrictedSettingsButtonRemainsReachableWithLargeFonts() {
         var dark by mutableStateOf(false)

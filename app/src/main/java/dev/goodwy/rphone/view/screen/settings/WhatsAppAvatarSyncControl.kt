@@ -59,7 +59,7 @@ internal fun WhatsAppAvatarSyncControl(account: String, resumed: Int = 0, initia
     }
     fun scan(source: String) {
         pendingSource = source
-        scanJob = scope.launch { try { processor.scanAccount(source) } finally { pendingSource = null; showReview = true } }
+        scanJob = scope.launch { try { if(source=="whatsapp")processor.scanWhatsApp() else processor.scanAccount(source) } finally { pendingSource = null; showReview = true } }
     }
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         DotSettingsCard {

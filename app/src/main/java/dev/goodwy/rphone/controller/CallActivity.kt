@@ -112,6 +112,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
 
         setContent {
             DotDialerAppTheme {
+                dev.goodwy.rphone.view.screen.settings.PlanUpgradeHost()
                 val session by callViewModel.currentCallSession.collectAsStateWithLifecycle()
                 val audioState by callViewModel.audioState.collectAsStateWithLifecycle()
                 val callerMetadata by callViewModel.callerMetadataMap.collectAsStateWithLifecycle()

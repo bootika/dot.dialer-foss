@@ -56,6 +56,16 @@ class PlayStoreViewModel(
     private val _isBillingReady = MutableStateFlow(false)
     override val isBillingReady: StateFlow<Boolean> = _isBillingReady.asStateFlow()
     private val _isPro = MutableStateFlow(false)
+    private val mutableStorePlan = MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
+    override val storePlan = mutableStorePlan.asStateFlow()
+    override fun productAvailable(product: String, subscription: Boolean): Boolean = if (subscription)
+        _subSkuDetails.value.any { it.productId == product && it.subscriptionOfferDetails?.isNotEmpty() == true }
+        else _iapSkuDetails.value.any { it.productId == product && it.oneTimePurchaseOfferDetails != null }
+    override fun loadProducts(productIds: List<String>) {
+        val catalog = dev.goodwy.rphone.controller.license.PlanProducts.all
+        retrieveDonation(productIds.filter { id -> catalog.any { it.id == id && !it.subscription } },
+            productIds.filter { id -> catalog.any { it.id == id && it.subscription } })
+    }
     override val isPro: StateFlow<Boolean> = giftLicenses?.let { gifts ->
         combine(_isPro, gifts.isPro) { store, gift -> store || gift }
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
@@ -347,11 +357,7 @@ class PlayStoreViewModel(
             _errorMessage.value = "Subscription not found"
             return
         }
-        val offer = if (planId == null) {
-            details.subscriptionOfferDetails?.firstOrNull()
-        } else {
-            details.subscriptionOfferDetails?.firstOrNull { it.basePlanId == planId }
-        }
+        val offer = details.planOffer(planId)
         if (offer == null) {
             _errorMessage.value = "Plan not found"
             return
@@ -402,11 +408,7 @@ class PlayStoreViewModel(
     override fun getPriceSubscription(product: String, planId: String?): String {
         val details = _subSkuDetails.value.firstOrNull { it.productId == product }
             ?: return noConnectionLabel()
-        val offer = if (planId == null) {
-            details.subscriptionOfferDetails?.firstOrNull()
-        } else {
-            details.subscriptionOfferDetails?.firstOrNull { it.basePlanId == planId }
-        }
+        val offer = details.planOffer(planId)
         return offer?.pricingPhases?.pricingPhaseList?.firstOrNull()?.formattedPrice
             ?: noConnectionLabel()
     }
@@ -429,10 +431,11 @@ class PlayStoreViewModel(
     }
 
     private fun updateProStatus() {
+        mutableStorePlan.value = dev.goodwy.rphone.controller.license.PlanProducts.purchased(iapPurchased.value + subPurchased.value)
         val iapPro = BuildConfig.PRODUCT_ID_X1 in iapPurchased.value
         val subscriptionPro = BuildConfig.SUBSCRIPTION_ID_X1 in subPurchased.value ||
             BuildConfig.SUBSCRIPTION_YEAR_ID_X1 in subPurchased.value
-        val pro = iapPro || subscriptionPro
+        val pro = iapPro || subscriptionPro || mutableStorePlan.value == io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM
 
         if (_isPro.value && !pro) clearProPrefsIfNeeded()
         _isPro.value = pro
@@ -445,11 +448,7 @@ class PlayStoreViewModel(
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_SUB, false)
         // An empty store result must not reset personalization belonging to a gift license.
         if (giftLicenses?.let { !it.initialized || it.isPro.value } == true) return
-        val themeMode = preferenceManager.getString(PreferenceManager.KEY_THEME_MODE, "auto") ?: "auto"
-        if (themeMode in setOf("auto_bw", "white", "black")) {
-            preferenceManager.setString(PreferenceManager.KEY_THEME_MODE, "auto")
-        }
-        preferenceManager.setBoolean(PreferenceManager.KEY_DYNAMIC_COLORS, true)
+        // Appearance preferences are retained; effective plan rights control their presentation.
     }
 
     override fun setProStatusImmediate(isPro: Boolean) {

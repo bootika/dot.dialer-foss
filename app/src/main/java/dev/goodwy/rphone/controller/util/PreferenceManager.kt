@@ -10,7 +10,10 @@ import io.github.bootika.dotdialer.core.preferences.LegacyPreferenceDefaults
 import dev.goodwy.rphone.controller.lock.AuthenticationSecrets
 import io.github.bootika.dotdialer.core.preferences.PreferenceBackupPolicy
 
-class PreferenceManager(context: Context, private val authenticationSecrets: AuthenticationSecrets = AuthenticationSecrets(context)) {
+class PreferenceManager(context: Context, private val authenticationSecrets: AuthenticationSecrets = AuthenticationSecrets(context),
+    private val featureAllowed: (io.github.bootika.dotdialer.core.license.PlanFeature) -> Boolean = { true },
+    private val onPlanRequired: (io.github.bootika.dotdialer.core.license.PlanFeature) -> Unit = {},
+) {
     private val appContext = context.applicationContext
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val dataStore = getSharedDataStore(appContext)
@@ -67,29 +70,38 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
     fun getDefaultSimIndexDefault(): Int = if (getActiveSimCount() == 1) 1 else 0
 
     // Synchronous-style API for backward compatibility
+    internal fun notifyPlanChanged() { _settingsChanged.value += 1 }
+    private val planAccess=PlanPreferenceAccess(featureAllowed,onPlanRequired,::notifyPlanChanged)
+    internal fun allowsFeature(feature: io.github.bootika.dotdialer.core.license.PlanFeature) = planAccess.allows(feature)
+    internal fun requireFeature(feature: io.github.bootika.dotdialer.core.license.PlanFeature) = planAccess.require(feature)
+    private fun permitted(key: String) = planAccess.permitted(key)
+    private fun allowWrite(key: String) = planAccess.write(key)
     private val usesOwnerDefaults: Boolean get() =
         (_prefsCache.value.asMap()[intPreferencesKey(DotDialerPreferenceDefaults.INSTALLATION_PROFILE_KEY)] as? Int) ==
             DotDialerPreferenceDefaults.OWNER_PROFILE_REVISION
     fun getBoolean(key: String, defaultValue: Boolean): Boolean =
-        _prefsCache.value[booleanPreferencesKey(key)]
+        if (!permitted(key)) false else _prefsCache.value[booleanPreferencesKey(key)]
             ?: if (usesOwnerDefaults) DotDialerPreferenceDefaults.booleanFor(key) ?: defaultValue
                 else LegacyPreferenceDefaults.booleanFor(key) ?: defaultValue
 
     fun setBoolean(key: String, value: Boolean) {
-        PreferenceWriteBarrier.enqueue { dataStore.edit { it[booleanPreferencesKey(key)] = value } }
+        if (value && !allowWrite(key)) return
+        PreferenceWriteBarrier.enqueue { dataStore.edit { if(!value || permitted(key)) it[booleanPreferencesKey(key)] = value } }
     }
 
     fun getString(key: String, defaultValue: String?): String? =
-        _prefsCache.value[stringPreferencesKey(key)]
+        if (!permitted(key)) (if (key == KEY_ACCENT_COLOR) "jade" else null) else _prefsCache.value[stringPreferencesKey(key)]
             ?: if (usesOwnerDefaults) DotDialerPreferenceDefaults.stringFor(key) ?: defaultValue
                 else LegacyPreferenceDefaults.stringFor(key) ?: defaultValue
 
     fun setString(key: String, value: String?) {
+        if (!value.isNullOrEmpty() && !allowWrite(key)) return
         require(key !in setOf(KEY_BIOMETRICS_PIN, KEY_BIOMETRICS_PASSWORD, KEY_APP_LOCK_PIN) || value.isNullOrEmpty()) {
             "Use secure authentication configuration"
         }
         PreferenceWriteBarrier.enqueue {
             dataStore.edit {
+                if(!value.isNullOrEmpty() && !permitted(key)) return@edit
                 if (value == null) it.remove(stringPreferencesKey(key))
                 else it[stringPreferencesKey(key)] = value
             }
@@ -97,12 +109,13 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
     }
 
     fun getInt(key: String, defaultValue: Int): Int =
-        _prefsCache.value[intPreferencesKey(key)]
+        if (!permitted(key)) when(key) { KEY_SWIPE_RIGHT_ACTION -> DEFAULT_SWIPE_RIGHT_ACTION; KEY_SWIPE_LEFT_ACTION -> DEFAULT_SWIPE_LEFT_ACTION; else -> defaultValue } else _prefsCache.value[intPreferencesKey(key)]
             ?: if (usesOwnerDefaults) DotDialerPreferenceDefaults.intFor(key) ?: defaultValue
                 else LegacyPreferenceDefaults.intFor(key) ?: defaultValue
 
     fun setInt(key: String, value: Int) {
-        PreferenceWriteBarrier.enqueue { dataStore.edit { it[intPreferencesKey(key)] = value } }
+        if (!allowWrite(key)) return
+        PreferenceWriteBarrier.enqueue { dataStore.edit { if(permitted(key)) it[intPreferencesKey(key)] = value } }
     }
 
     fun getFloat(key: String, defaultValue: Float): Float =
@@ -225,7 +238,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
     }
 
     fun getContactBackground(contactId: String): String? {
-        return getString(contactBackgroundIdKey(contactId), null)
+        return _prefsCache.value[stringPreferencesKey(contactBackgroundIdKey(contactId))]
     }
 
     fun setContactBackgroundForNumber(numberKey: String, value: String?) {
@@ -234,7 +247,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
 
     fun getContactBackgroundForNumber(numberKey: String): String? {
         return try {
-            getString(contactBackgroundNumberKey(numberKey), null)
+            _prefsCache.value[stringPreferencesKey(contactBackgroundNumberKey(numberKey))]
         } catch (e: Exception) {
             null
         }
@@ -286,9 +299,11 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         }
     }
 
-    suspend fun updateContactBackgroundEntriesSuspend(updates: Map<String, String?>) {
-        if (updates.isEmpty()) return
+    suspend fun updateContactBackgroundEntriesSuspend(updates: Map<String, String?>, requireAppearance: Boolean=false): Boolean {
+        if (updates.isEmpty()) return true
+        var applied=false
         dataStore.edit { prefs ->
+            if(requireAppearance && !allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)) return@edit
             updates.forEach { (key, value) ->
                 if (key.startsWith(CONTACT_BACKGROUND_PREFIX)) {
                     val dataStoreKey = stringPreferencesKey(key)
@@ -296,7 +311,9 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
                     else prefs[dataStoreKey] = value
                 }
             }
+            applied=true
         }
+        return applied
     }
 
     fun getVisibleAccounts(): Set<String>? {

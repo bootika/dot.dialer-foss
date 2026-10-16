@@ -116,6 +116,7 @@ private fun rememberLgElements(): List<LgElement> {
 @Destination<RootGraph>
 @Composable
 fun LiquidGlassElementsScreen(navigator: DestinationsNavigator) {
+    if(planSettingLocked(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE,navigator::navigateUp)) return
     val prefs = koinInject<PreferenceManager>()
     val lgElements = rememberLgElements()
 

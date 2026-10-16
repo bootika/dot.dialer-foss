@@ -46,6 +46,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -84,7 +85,25 @@ data class MorphingPage(
 )
 
 @Composable
-fun MorphingOnboardingScreen(onFinished: () -> Unit) {
+fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.license.AppPlan) -> Unit = {}, onFinished: () -> Unit) {
+    var essentialFinished by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    val prefs = koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
+    val plans = dev.goodwy.rphone.view.screen.settings.rememberPlanAccessManager()
+    val planState by plans.state.collectAsState()
+    val revision by prefs.settingsChanged.collectAsState()
+    val acknowledged = remember(revision) {io.github.bootika.dotdialer.core.license.AppPlan.entries.getOrElse(prefs.getInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,0)) {io.github.bootika.dotdialer.core.license.AppPlan.FREE}}
+    val pending = remember(planState,acknowledged) {io.github.bootika.dotdialer.core.license.PlanGuidePolicy.pending(plans.effective,acknowledged)}
+    if(essentialFinished && pending.isNotEmpty()) {
+        val tier = pending.first()
+        dev.goodwy.rphone.view.screen.settings.PlanGuideContent(tier,onNext={
+            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,tier.ordinal)
+            if(pending.size==1) onFinished()
+        },onMore={
+            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,tier.ordinal)
+            onPlanSettings(tier); onFinished()
+        })
+        return
+    }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val pages = listOf(MorphingPage(
         icon = Icons.Default.Dialpad,
@@ -166,7 +185,7 @@ fun MorphingOnboardingScreen(onFinished: () -> Unit) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(24.dp))
                 }
-                Button(onClick = onFinished, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+                Button(onClick = {if(pending.isEmpty()) onFinished() else essentialFinished=true}, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
                     shape = RoundedCornerShape(28.dp)) {
                     Text(stringResource(R.string.onboarding_start))
                 }

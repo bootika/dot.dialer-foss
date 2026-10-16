@@ -4,8 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 interface PurchaseHelper {
+    val storePlan: StateFlow<io.github.bootika.dotdialer.core.license.AppPlan> get() = EmptyStorePlan.value
+    fun productAvailable(product: String, subscription: Boolean): Boolean = false
     val giftLicenses: dev.goodwy.rphone.controller.license.GiftLicenseManager? get() = null
     val isPro: StateFlow<Boolean>
     val proCheckDone: StateFlow<Boolean>
@@ -37,4 +40,9 @@ interface PurchaseHelper {
     // RuStoreViewModel will override this method
     fun loadProducts(productIds: List<String>) {}
     fun handleNewIntent(intent: Intent?, activity: ComponentActivity) {}
+    fun onScreenActivityAvailable(activity: ComponentActivity) {}
+}
+
+private object EmptyStorePlan {
+    val value = kotlinx.coroutines.flow.MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE).asStateFlow()
 }

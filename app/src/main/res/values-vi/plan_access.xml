@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_current">Gói hiện tại: %1$s</string>
+    <string name="plan_free_summary">Cuộc gọi, danh bạ, tìm kiếm, yêu thích và sao lưu cơ bản.</string>
+    <string name="plan_plus_summary">Contacts Optimizer đầy đủ theo yêu cầu, mọi nguồn khả dụng và chọn hàng loạt.</string>
+    <string name="plan_premium_summary">Plus, tự động cập nhật danh bạ và tùy chỉnh giao diện nâng cao.</string>
+    <plurals name="plan_trial_remaining">
+        <item quantity="other">Dùng thử Premium: còn %1$d ngày</item>
+    </plurals>
+    <string name="plan_start_trial">Dùng thử Premium miễn phí 30 ngày</string>
+    <string name="plan_trial_terms">Không tự động tính phí. Ảnh hiện có vẫn dùng được sau khi dùng thử.</string>
+    <string name="plan_store_unavailable">Hiện chưa có trong cửa hàng này</string>
+    <string name="plan_connection_required">Kết nối để kiểm tra gói hoặc bắt đầu dùng thử.</string>
+    <string name="plan_refresh">Làm mới gói</string>
+    <string name="plan_lifetime">Trọn đời</string>
+    <string name="plan_buy">Nâng cấp</string>
+    <string name="plan_restore">Khôi phục giao dịch</string>
+    <string name="plan_whatsapp_manual_summary">Tìm ảnh đại diện trong thông báo hiện có. Không mở thông báo cho đến khi tìm kiếm xong.</string>
+    <string name="plan_photo_sources">Nguồn ảnh</string>
+    <string name="plan_choose_account">Chọn tài khoản danh bạ trong cài đặt để cập nhật ảnh và số điện thoại.</string>
+    <string name="plan_more_settings">Cài đặt khác</string>
+    <string name="plan_guide_continue">Tiếp tục</string>
+    <string name="invitation_title">Kích hoạt lời mời</string>
+    <string name="invitation_body">Dán liên kết để xem gói và thời hạn trước khi kích hoạt trên điện thoại này.</string>
+    <string name="invitation_link">Liên kết lời mời</string>
+    <string name="invitation_preview">Xem lời mời</string>
+    <plurals name="invitation_days">
+        <item quantity="other">%1$d ngày từ khi kích hoạt</item>
+    </plurals>
+    <string name="invitation_until">Đến %1$s</string>
+    <string name="invitation_unlimited">Không giới hạn thời gian</string>
+    <string name="invitation_confirm">Kích hoạt trên điện thoại này</string>
+    <string name="invitation_unavailable">Không thể kích hoạt lời mời. Kiểm tra liên kết và kết nối; lời mời có thể đã hết hạn, bị thu hồi hoặc dùng trên điện thoại khác.</string>
+    <string name="invitation_activated">Lời mời đã được kích hoạt.</string>
+</resources>

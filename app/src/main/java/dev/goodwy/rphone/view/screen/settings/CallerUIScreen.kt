@@ -78,7 +78,10 @@ fun CallerUIScreen(navigator: DestinationsNavigator, advanced: Boolean = false) 
     val scope = rememberCoroutineScope()
     val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
     val purchaseHelper: PurchaseHelper = koinInject()
-    val isPro by purchaseHelper.isPro.collectAsStateWithLifecycle()
+    val storePro by purchaseHelper.isPro.collectAsStateWithLifecycle()
+    val plans=rememberPlanAccessManager()
+    val planState by plans.state.collectAsStateWithLifecycle()
+    val isPro=remember(planState,storePro) {storePro || plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)}
     LaunchedEffect(Unit) {
         val savedIsProIap = prefs.getBoolean(PreferenceManager.KEY_IS_PRO_IAP, false)
         val savedIsProSub = prefs.getBoolean(PreferenceManager.KEY_IS_PRO_SUB, false)
@@ -375,12 +378,7 @@ if (!advanced) {
                                         if (isPro) {
                                             defaultCallBgLauncher.launch(arrayOf("image/*"))
                                         } else {
-                                            enabledShake = true
-                                            showSnackbar = true
-                                            scope.launch {
-                                                delay(3000.milliseconds)
-                                                showSnackbar = false
-                                            }
+                                            plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)
                                         }
                                     },
                                     border = borderColor,

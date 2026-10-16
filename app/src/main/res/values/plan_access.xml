@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_current">Current plan: %1$s</string>
+    <string name="plan_free_summary">Calls, contacts, search, favorites and basic backup.</string>
+    <string name="plan_plus_summary">Full Contacts Optimizer on demand, with all available sources and bulk selection.</string>
+    <string name="plan_premium_summary">Plus, automatic contact updates and advanced visual customization.</string>
+    <plurals name="plan_trial_remaining">
+        <item quantity="one">Premium trial: %1$d day remaining</item>
+        <item quantity="other">Premium trial: %1$d days remaining</item>
+    </plurals>
+    <string name="plan_start_trial">Try Premium free for 30 days</string>
+    <string name="plan_trial_terms">No automatic charge. Your existing photos remain usable when the trial ends.</string>
+    <string name="plan_store_unavailable">Currently unavailable in this store</string>
+    <string name="plan_connection_required">Connect to verify your plan or start the trial.</string>
+    <string name="plan_refresh">Refresh plan</string>
+    <string name="plan_lifetime">Lifetime</string>
+    <string name="plan_buy">Upgrade</string>
+    <string name="plan_restore">Restore purchases</string>
+    <string name="plan_whatsapp_manual_summary">Find avatars in currently available notifications. Leave the notification unopened until the search finishes.</string>
+    <string name="plan_interface_magic" translatable="false">Interface Magic</string>
+    <string name="plan_photo_sources">Photo sources</string>
+    <string name="plan_choose_account">Choose a contact account in settings to configure photo and number updates.</string>
+    <string name="plan_more_settings">More settings</string>
+    <string name="plan_guide_continue">Continue</string>
+    <string name="invitation_title">Activate an invitation</string>
+    <string name="invitation_body">Paste your invitation link to see the plan and duration before activating it on this phone.</string>
+    <string name="invitation_link">Invitation link</string>
+    <string name="invitation_preview">Review invitation</string>
+    <plurals name="invitation_days">
+        <item quantity="one">%1$d day from activation</item>
+        <item quantity="other">%1$d days from activation</item>
+    </plurals>
+    <string name="invitation_until">Until %1$s</string>
+    <string name="invitation_unlimited">Unlimited duration</string>
+    <string name="invitation_confirm">Activate on this phone</string>
+    <string name="invitation_unavailable">The invitation could not be activated. Check the link and connection; it may be expired, revoked or used on another phone.</string>
+    <string name="invitation_activated">Your invitation is activated.</string>
+</resources>

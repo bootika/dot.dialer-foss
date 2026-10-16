@@ -33,6 +33,9 @@ internal fun ContactPhotoFindSection(settings: ContactOptimizationSettings, goog
             Text(stringResource(R.string.contact_photos_find_summary), style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        if (settings.enabled) FindCard("whatsapp", Icons.Rounded.AccountCircle,
+            stringResource(R.string.whatsapp_avatar_sync_title), stringResource(R.string.plan_whatsapp_manual_summary),
+            stringResource(R.string.contact_photos_find_action), busy, settings.disclosed, activeSource, progress, results, onFind)
         if (settings.normalize) FindCard("numbers", Icons.Rounded.FormatListNumbered,
             stringResource(R.string.contact_photos_find_numbers), stringResource(R.string.contact_photos_numbers_scan_summary),
             stringResource(R.string.contact_photos_check_action), busy, true, activeSource, progress, results, onFind)

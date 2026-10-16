@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_current">Plan actual: %1$s</string>
+    <string name="plan_free_summary">Llamadas, contactos, búsqueda, favoritos y copia de seguridad básica.</string>
+    <string name="plan_plus_summary">Contacts Optimizer completo a petición, con todas las fuentes disponibles y selección múltiple.</string>
+    <string name="plan_premium_summary">Plus, actualizaciones automáticas de contactos y personalización visual avanzada.</string>
+    <plurals name="plan_trial_remaining">
+        <item quantity="one">Prueba Premium: queda %1$d día</item>
+        <item quantity="many">Prueba Premium: queda %1$d días</item>
+        <item quantity="other">Prueba Premium: queda %1$d días</item>
+    </plurals>
+    <string name="plan_start_trial">Prueba Premium gratis durante 30 días</string>
+    <string name="plan_trial_terms">Sin cobro automático. Las fotos existentes siguen disponibles tras la prueba.</string>
+    <string name="plan_store_unavailable">No disponible actualmente en esta tienda</string>
+    <string name="plan_connection_required">Conéctate para verificar tu plan o iniciar la prueba.</string>
+    <string name="plan_refresh">Actualizar plan</string>
+    <string name="plan_lifetime">De por vida</string>
+    <string name="plan_buy">Mejorar plan</string>
+    <string name="plan_restore">Restaurar compras</string>
+    <string name="plan_whatsapp_manual_summary">Busca avatares en las notificaciones disponibles. Déjalas sin abrir hasta que termine la búsqueda.</string>
+    <string name="plan_photo_sources">Fuentes de fotos</string>
+    <string name="plan_choose_account">Elige una cuenta de contactos en ajustes para actualizar fotos y números.</string>
+    <string name="plan_more_settings">Más ajustes</string>
+    <string name="plan_guide_continue">Continuar</string>
+    <string name="invitation_title">Activar una invitación</string>
+    <string name="invitation_body">Pega el enlace para ver el plan y su duración antes de activarlo en este teléfono.</string>
+    <string name="invitation_link">Enlace de invitación</string>
+    <string name="invitation_preview">Ver invitación</string>
+    <plurals name="invitation_days">
+        <item quantity="one">%1$d día desde la activación</item>
+        <item quantity="many">%1$d días desde la activación</item>
+        <item quantity="other">%1$d días desde la activación</item>
+    </plurals>
+    <string name="invitation_until">Hasta %1$s</string>
+    <string name="invitation_unlimited">Duración ilimitada</string>
+    <string name="invitation_confirm">Activar en este teléfono</string>
+    <string name="invitation_unavailable">No se pudo activar la invitación. Comprueba el enlace y la conexión; puede haber caducado, estar revocada o haberse usado en otro teléfono.</string>
+    <string name="invitation_activated">Tu invitación está activada.</string>
+</resources>

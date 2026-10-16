@@ -22,7 +22,7 @@ def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificat
 if (!(gplayNotificationAvatars in ['true', 'false'])) {
     throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
 }
-def baseVersionCode = 257
+def baseVersionCode = 258
 def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
 def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
 def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"
@@ -87,6 +87,7 @@ android {
 
     buildTypes {
         release {
+            manifestPlaceholders = [invitationPathPrefix: '/invite/app/']
             minifyEnabled = true
             shrinkResources = true
             // CI and clean clones must still be able to exercise the complete R8/resource
@@ -98,6 +99,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            manifestPlaceholders = [invitationPathPrefix: '/invite/test/']
             signingConfig = signingConfigs.debug
             applicationIdSuffix = ".test"
             versionNameSuffix = "-test"

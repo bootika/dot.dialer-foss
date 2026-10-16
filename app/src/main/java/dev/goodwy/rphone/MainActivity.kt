@@ -126,6 +126,7 @@ class MainActivity : FragmentActivity() {
 
     private var defaultDialerRevision by mutableStateOf(0)
     private var intentState by mutableStateOf<Intent?>(null)
+    private var invitationLink by mutableStateOf<String?>(null)
     private var returnToCallOnBack by mutableStateOf(false)
     private lateinit var prefs: PreferenceManager
     private val callViewModel: CallViewModel by viewModel()
@@ -149,6 +150,7 @@ class MainActivity : FragmentActivity() {
 
         setContent {
             DotDialerAppTheme {
+                dev.goodwy.rphone.view.screen.settings.PlanUpgradeHost()
                 val testAccess = remember { dev.goodwy.rphone.controller.license.TestAccessManager.get(this@MainActivity) }
                 val accessState by testAccess.state.collectAsStateWithLifecycle()
                 if (accessState != dev.goodwy.rphone.controller.license.TestAccessState.ACTIVE) {
@@ -175,6 +177,7 @@ class MainActivity : FragmentActivity() {
 //                val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, false) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
+                var planSettingsRoute by remember { mutableStateOf<String?>(null) }
                 val appLockEnabled = remember(settingsVer) { prefs.isAppLockEnabled() }
                 LaunchedEffect(appLockEnabled) {
                     if (appLockEnabled) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
@@ -225,6 +228,8 @@ class MainActivity : FragmentActivity() {
                     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface))
                 } else if (showOnboarding) {
                     MorphingOnboardingScreen(
+                        onPlanSettings = { tier -> planSettingsRoute = if(tier == io.github.bootika.dotdialer.core.license.AppPlan.PLUS)
+                            com.ramcosta.composedestinations.generated.destinations.ContactPhotosScreenDestination().route else InterfaceScreenDestination().route },
                         onFinished = {
                             prefs.setBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, true)
                             prefs.setBoolean(PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, false)
@@ -683,6 +688,14 @@ class MainActivity : FragmentActivity() {
                                 .fillMaxSize()
                                 .background(scrimColor)
                         )
+                        LaunchedEffect(planSettingsRoute) { planSettingsRoute?.let { navController.navigate(it); planSettingsRoute=null } }
+                        invitationLink?.takeUnless {hasOngoingCall}?.let {link -> dev.goodwy.rphone.view.screen.settings.PlanInvitationDialog(link) {invitationLink=null} }
+                        if(!hasOngoingCall && invitationLink==null && planSettingsRoute==null && defaultRoleHeld) {
+                            dev.goodwy.rphone.view.screen.settings.PlanGuideHost { tier ->
+                                navController.navigate(if(tier == io.github.bootika.dotdialer.core.license.AppPlan.PLUS)
+                                    com.ramcosta.composedestinations.generated.destinations.ContactPhotosScreenDestination().route else InterfaceScreenDestination().route)
+                            }
+                        }
                     } // end blurred Column
                 }
             }
@@ -733,6 +746,11 @@ class MainActivity : FragmentActivity() {
 
     private suspend fun handleIntent(intent: Intent?, navController: androidx.navigation.NavController) {
         intent ?: return
+        intent.dataString?.let {link ->
+            if(intent.action==Intent.ACTION_VIEW && dev.goodwy.rphone.controller.license.PlanInvitationLink.token(link,packageName)!=null) {
+                invitationLink=link;intentState=null;return
+            }
+        }
         val target = mainViewModel.resolveNavigationTarget(intent, this)
         if (intent.action == Intent.ACTION_CALL && target == null && isAlreadyDefaultDialer(this)) {
             // MainActivity only proxied this request. Leaving it in the history would make the

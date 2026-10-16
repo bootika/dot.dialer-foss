@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap
 import androidx.core.net.toUri
 import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
+import io.github.bootika.dotdialer.core.license.PlanFeature
+import dev.goodwy.rphone.controller.license.PlanAccessManager
 
 object CallBackgroundStore {
     private const val DIRECTORY = "call_backgrounds"
@@ -66,7 +68,9 @@ object CallBackgroundStore {
         val existing = cachedPrefs
         if (existing != null) return existing
         return synchronized(this) {
-            cachedPrefs ?: PreferenceManager(context.applicationContext).also { cachedPrefs = it }
+            cachedPrefs ?: PreferenceManager(context.applicationContext,
+                featureAllowed={PlanAccessManager.get(context).allows(it)},
+                onPlanRequired={PlanAccessManager.get(context).requestUpgrade(it)}).also { cachedPrefs = it }
         }
     }
 
@@ -93,12 +97,14 @@ object CallBackgroundStore {
 
     fun peek(context: Context, contactId: String?, numbers: List<String>): String? {
         val manager = prefs(context.applicationContext)
+        if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return null
         return storedCandidates(manager, contactId, numberKeys(numbers))
             .firstNotNullOfOrNull { cachedModel(it) }
     }
 
     fun peekStored(context: Context, contactId: String?, numbers: List<String>): String? {
         val manager = prefs(context.applicationContext)
+        if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return null
         return storedCandidates(manager, contactId, numberKeys(numbers))
             .firstOrNull { cachedModel(it) != null }
     }
@@ -106,6 +112,7 @@ object CallBackgroundStore {
     suspend fun peekAsync(context: Context, contactId: String?, numbers: List<String>): String? =
         withContext(Dispatchers.IO) {
             val manager = prefs(context.applicationContext)
+            if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return@withContext null
             storedCandidates(manager, contactId, numberKeys(numbers))
                 .firstNotNullOfOrNull { toModel(it) }
         }
@@ -120,6 +127,7 @@ object CallBackgroundStore {
     ): BackgroundResult = withContext(Dispatchers.IO) {
         val app = context.applicationContext
         val manager = prefs(app)
+        if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return@withContext BackgroundResult(null,false)
         val handleKey = numberKey(phoneNumber)
         var failed = false
 
@@ -193,8 +201,10 @@ object CallBackgroundStore {
             val manager = prefs(app)
             val keys = numberKeys(numbers)
             if (contactId.isNullOrBlank() && keys.isEmpty()) return@withContext false
+            if(!manager.requireFeature(PlanFeature.PREMIUM_APPEARANCE)) return@withContext false
             val imported = importImage(app, source) ?: return@withContext false
-            writePointers(manager, contactId, keys, imported.absolutePath)
+            if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) { imported.delete(); return@withContext false }
+            if(!writeCallBackgroundPointers(manager, contactId, keys, imported.absolutePath, requireAppearance=true)) { imported.delete(); return@withContext false }
             collectGarbage(app, manager)
             true
         }
@@ -203,10 +213,13 @@ object CallBackgroundStore {
         withContext(Dispatchers.IO) {
             val app = context.applicationContext
             val manager = prefs(app)
+            if(!manager.requireFeature(PlanFeature.PREMIUM_APPEARANCE)) return@withContext false
             val imported = importImage(app, source) ?: return@withContext false
-            manager.updateContactBackgroundEntriesSuspend(
-                mapOf(manager.contactBackgroundIdKey(DEFAULT_KEY) to imported.absolutePath)
+            if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) { imported.delete(); return@withContext false }
+            val applied=manager.updateContactBackgroundEntriesSuspend(
+                mapOf(manager.contactBackgroundIdKey(DEFAULT_KEY) to imported.absolutePath), requireAppearance=true
             )
+            if(!applied) {imported.delete();return@withContext false}
             collectGarbage(app, manager)
             true
         }
@@ -217,6 +230,7 @@ object CallBackgroundStore {
 
     fun defaultModel(context: Context): String? {
         val manager = prefs(context.applicationContext)
+        if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return null
         val stored = manager.getContactBackground(DEFAULT_KEY) ?: return null
         return cachedModel(stored)
     }
@@ -224,6 +238,7 @@ object CallBackgroundStore {
     suspend fun defaultModelAsync(context: Context): String? = withContext(Dispatchers.IO) {
         val app = context.applicationContext
         val manager = prefs(app)
+        if(!manager.allowsFeature(PlanFeature.PREMIUM_APPEARANCE)) return@withContext null
         val stored = manager.getContactBackground(DEFAULT_KEY) ?: return@withContext null
         materialize(app, manager, stored)
     }
@@ -266,7 +281,7 @@ object CallBackgroundStore {
         val keys = numberKeys(numbers)
         val stored = storedCandidates(manager, fromContactId, keys).firstOrNull { toModel(it) != null }
         if (stored != null) {
-            writePointers(manager, toContactId, keys, stored)
+            writeCallBackgroundPointers(manager, toContactId, keys, stored)
         }
         if (!fromContactId.isNullOrBlank() && fromContactId != toContactId &&
             manager.getContactBackground(fromContactId) != null
@@ -324,7 +339,7 @@ object CallBackgroundStore {
         keys: List<String>
     ): String? {
         val effective = migrateIfNeeded(context, manager, stored) ?: return null
-        writePointers(manager, contactId, keys.distinct(), effective)
+        writeCallBackgroundPointers(manager, contactId, keys.distinct(), effective)
         return toModel(effective)
     }
 
@@ -363,25 +378,6 @@ object CallBackgroundStore {
 
     private fun isTransientMiss(stored: String): Boolean {
         return missStrikes.containsKey(stored)
-    }
-
-    private suspend fun writePointers(
-        manager: PreferenceManager,
-        contactId: String?,
-        keys: List<String>,
-        value: String
-    ) {
-        val updates = mutableMapOf<String, String?>()
-        if (!contactId.isNullOrBlank() && manager.getContactBackground(contactId) != value) {
-            updates[manager.contactBackgroundIdKey(contactId)] = value
-        }
-        keys.forEach { key ->
-            if (manager.getContactBackgroundForNumber(key) != value) {
-                updates[manager.contactBackgroundNumberKey(key)] = value
-            }
-        }
-        if (updates.isEmpty()) return
-        manager.updateContactBackgroundEntriesSuspend(updates)
     }
 
     private suspend fun dropValue(manager: PreferenceManager, value: String) {

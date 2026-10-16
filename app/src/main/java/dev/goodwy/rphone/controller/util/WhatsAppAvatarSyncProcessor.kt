@@ -36,9 +36,10 @@ internal class WhatsAppAvatarSyncProcessor(
     private val notificationAccess: () -> Boolean = { ContactOptimizationAccess.granted(context) },
     private val onUnknownPhoto: () -> Unit = {},
     private val companyNames: CompanyNameSearch = HttpCompanyNameSearch(context),
+    private val automaticAllowed: () -> Boolean = { true },
 ) {
     private val logos=CompanyLogoDiscovery(context,contacts,companies,companyNames)
-    private val unknownReview=ManualUnsavedAvatarReview(context,preferences,profiles,contacts,reviews,onUnknownPhoto)
+    private val unknownReview=ManualUnsavedAvatarReview(context,preferences,profiles,contacts,reviews,onUnknownPhoto,featureAllowed)
     private val mutableApplying=MutableStateFlow(false)
     val applying=mutableApplying.asStateFlow()
     private val lock = Mutex()
@@ -57,14 +58,15 @@ internal class WhatsAppAvatarSyncProcessor(
             else -> false
         }
     }
-    private fun optimizer() = ContactsOptimizerEngine(context, profiles, contacts, reviews, ::sourceAllowed,
+    private fun optimizer() = ContactsOptimizerEngine(context, profiles, contacts, reviews, { account, source -> automaticAllowed() && sourceAllowed(account,source) },
         googleHydration::previewSource, gravatar, companies,
-        { target, image, smaller, valid -> applyPhoto(target.accountName, target, image, smaller, valid, hydrate = false) },
+        { target, image, smaller, valid -> applyPhoto(target.accountName, target, image, smaller, { automaticAllowed() && valid() }, hydrate = false) },
         { target, image -> queueReview(target, image, image.source) },
         { target -> target.storedNumber?.trim()?.startsWith("+") == true ||
             preferences.getString(PreferenceManager.KEY_OUTGOING_NUMBER_REGION_ISO, null)?.length == 2 },companyNames)
     suspend fun runAutomaticPass() = withContext(Dispatchers.IO) {
         lock.withLock {
+            if (!automaticAllowed() || !featureAllowed()) return@withLock false
             val account = currentAccount() ?: return@withLock false
             try { reconcileAppliedPhotosLocked(account); optimizer().runPass(account) }
             catch (error: CancellationException) { throw error }
@@ -173,10 +175,10 @@ internal class WhatsAppAvatarSyncProcessor(
                 preferences.getBoolean(GoogleContactPhotoPreferences.ENABLED, false)
             else settings.enabled || settings.normalize || settings.gravatar || settings.business
     }
-    fun capture(packageName: String, notification: Notification, tag: String?): PendingContactAvatar? {
+    fun capture(packageName: String, notification: Notification, tag: String?, manual: Boolean = false): PendingContactAvatar? {
         val account = currentAccount()?.takeIf(String::isNotBlank) ?: return null
         val settings = profiles.settings(account)
-        if (!ContactOptimizationAccess.supported(context) || !featureAllowed() || !settings.enabled || !settings.disclosed || !notificationAccess()) return null
+        if ((!manual && !automaticAllowed()) || !ContactOptimizationAccess.supported(context) || !featureAllowed() || !settings.enabled || !settings.disclosed || !notificationAccess()) return null
         val identity = WhatsAppNotificationAvatarExtractor.identity(packageName, notification, tag) ?: return null
         val avatar = WhatsAppNotificationAvatarExtractor.extract(context, packageName, notification, tag)
         return PendingContactAvatar(account, packageName, identity, avatar)
@@ -186,6 +188,7 @@ internal class WhatsAppAvatarSyncProcessor(
     }
     suspend fun processCaptured(event: PendingContactAvatar) = withContext(Dispatchers.IO) {
         lock.withLock {
+            if (!automaticAllowed()) return@withLock
             val account = event.account
             val settings = profiles.settings(account)
             if (!ContactOptimizationAccess.supported(context) || currentAccount() != account || !settings.enabled || !active(account) ||
@@ -202,7 +205,7 @@ internal class WhatsAppAvatarSyncProcessor(
                     val exact=identity.phoneNumber?.let { normalizedContactNumber(it,contactNumberRegion(context,preferences)) }
                     if (captured != null && exact != null && !contacts.hasAnyNumber(exact)) {
                         if (UnsavedNumberAvatars(context,account).store(exact,captured.bytes,settings.effectivePhotoPolicy) {
-                                sourceAllowed(account,captured.source) && !contacts.hasAnyNumber(exact) &&
+                                automaticAllowed() && sourceAllowed(account,captured.source) && !contacts.hasAnyNumber(exact) &&
                                     profiles.settings(account).effectivePhotoPolicy==settings.effectivePhotoPolicy
                             }) { onUnknownPhoto(); record(account,"updated",image=captured); return@withLock }
                     }
@@ -211,15 +214,15 @@ internal class WhatsAppAvatarSyncProcessor(
                     return@withLock
                 }
                 if (target.matchStrength == WhatsAppAvatarMatchStrength.ExactPhone && settings.normalize && active(account)) {
-                    contacts.normalizeMatchedNumber(target) { sourceAllowed(account, "Phone number") }
+                    contacts.normalizeMatchedNumber(target) { automaticAllowed() && sourceAllowed(account, "Phone number") }
                 }
                 val refreshed = contacts.revalidateTarget(target) ?: return@withLock
                 if (captured != null) consider(account, refreshed, captured, packageName)
-                else if (profiles.gravatarAllowed(account) && active(account, photos = true)) {
+                else if (automaticAllowed() && profiles.gravatarAllowed(account) && active(account, photos = true)) {
                     val emails = contacts.emails(refreshed)
                     if (emails.size == 1) {
                         val bytes = gravatar.load(emails.single())
-                        if (!active(account, photos = true) || !profiles.gravatarAllowed(account)) return@withLock
+                        if (!automaticAllowed() || !active(account, photos = true) || !profiles.gravatarAllowed(account)) return@withLock
                         val info = bytes?.toContactPhotoImageInfo()
                         if (info != null) {
                             val candidate = CapturedWhatsAppAvatar(bytes, info.width, info.height,
@@ -237,6 +240,12 @@ internal class WhatsAppAvatarSyncProcessor(
         }
     }
     /** Read-only acquisition scan. Every mutation is deferred to explicit selected Apply. */
+    suspend fun scanWhatsApp() = withContext(Dispatchers.IO) { lock.withLock {
+        val account=currentAccount() ?: return@withLock
+        if(!featureAllowed()) return@withLock
+        ManualNotificationAvatarScan(contacts,reviews,{ featureAllowed() && currentAccount()==account },
+            { p,n,t -> capture(p,n,t,manual=true) },::queueReview,::queueAmbiguous).run(account)
+    } }
     suspend fun scanAccount(source: String) = withContext(Dispatchers.IO) {
         lock.withLock {
             val account = currentAccount() ?: return@withLock

@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
@@ -62,7 +62,9 @@ jobs:
           # R8 and Robolectric. The final unfiltered gate still enforces every check.
           timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
           timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:assembleFossRelease
+          # Finish debug packaging and release compilation before the independent R8/lint budget.
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:compileFossReleaseKotlin :app:compileFossReleaseJavaWithJavac
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossRelease
           timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
 
       - name: Verify store dependency graphs

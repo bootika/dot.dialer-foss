@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
@@ -39,6 +39,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Verify uncached Robolectric runtime
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testFossDebugUnitTest --tests '*AppModuleResolutionTest' --tests '*PlanGuideRenderingTest'
+
       - name: Verify foundation
         shell: bash
         run: |
@@ -57,13 +60,13 @@ jobs:
 
           # Bound each phase to one JVM/worker and release compiler memory before lint,
           # R8 and Robolectric. The final unfiltered gate still enforces every check.
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:assembleFossRelease
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:assembleFossRelease
+          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
 
       - name: Verify store dependency graphs
-        run: ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testGplayDebugUnitTest --tests '*AppModuleResolutionTest' :app:testRustoreDebugUnitTest --tests '*AppModuleResolutionTest'
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testGplayDebugUnitTest --tests '*AppModuleResolutionTest' :app:testRustoreDebugUnitTest --tests '*AppModuleResolutionTest'
 
       - name: Upload test and lint reports
         if: always()

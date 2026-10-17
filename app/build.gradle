@@ -177,6 +177,8 @@ tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {
     maxHeapSize = '1g'
     forkEvery = 40
     maxParallelForks = 1
+    // Use the canonical Central endpoint for uncached Robolectric runtime SDKs.
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
 }
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")

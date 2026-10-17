@@ -46,4 +46,7 @@
     <string name="plan_source_setup">Siapkan</string>
     <string name="plan_source_unavailable">Tidak tersedia</string>
     <string name="plan_guide_begin">Mulai gunakan Dot Dialer</string>
+    <string name="plan_activation_congratulations">Selamat!</string>
+    <string name="plan_activation_active">Paket %1$s Anda kini aktif.</string>
+    <string name="plan_activation_setup">Sesuaikan dengan keinginan Anda. Selanjutnya, pilih pengaturan yang cocok untuk Anda.</string>
 </resources>

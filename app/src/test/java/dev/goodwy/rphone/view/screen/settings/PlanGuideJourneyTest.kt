@@ -72,9 +72,17 @@ class PlanGuideJourneyTest {
             val next=signedManager(tier)
             rule.runOnIdle {manager=next}
             rule.onNodeWithContentDescription(rule.activity.getString(R.string.next)).performClick()
-            rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+            rule.onNodeWithTag("plan-activation-welcome").assertExists()
             rule.onNodeWithTag("plan-guide-back").performClick()
             rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+            rule.onNodeWithTag("plan-guide-back").performClick()
+            rule.onNodeWithTag("plan-activation-welcome").assertExists()
+            rule.onNodeWithTag("plan-guide-back").performClick()
+            rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
             rule.onNodeWithTag("plan-guide-next").performClick()
             if(tier==AppPlan.PREMIUM) {
                 rule.onNodeWithTag("plan-guide-next").performClick()
@@ -95,18 +103,21 @@ class PlanGuideJourneyTest {
         rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
             DotDialerTheme(systemDark=false) {PlanGuideHost {}}
         }}
-        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithTag("plan-activation-welcome").assertExists()
         rule.onNodeWithTag("plan-guide-back").performClick()
         runBlocking {prefs.getPersistedPreferences()}
         rule.onNodeWithTag("plan-guide-PLUS").assertDoesNotExist()
         rule.onNodeWithTag("plan-guide-PREMIUM").assertDoesNotExist()
-        assertEquals(AppPlan.PLUS.ordinal,prefs.getInt(PLAN_GUIDE_ACK,0))
+        assertEquals(AppPlan.FREE.ordinal,prefs.getInt(PLAN_GUIDE_ACK,0))
     }
     @Test fun `automatic upgrade guide can go back and only completion acknowledges premium`() {
         val manager=signedManager(AppPlan.PREMIUM)
         rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
             DotDialerTheme(systemDark=false) {PlanGuideHost {}}
         }}
+        rule.onNodeWithTag("plan-activation-welcome").assertExists()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_activation_active, "Complete")).assertExists()
+        rule.onNodeWithTag("plan-guide-next").performClick()
         rule.onNodeWithTag("plan-guide-PLUS").assertExists()
         rule.onNodeWithTag("plan-guide-next").performClick()
         rule.onNodeWithTag("plan-guide-PREMIUM").assertExists()
@@ -118,5 +129,52 @@ class PlanGuideJourneyTest {
         runBlocking {prefs.getPersistedPreferences()}
         rule.waitUntil(5000) {rule.onAllNodesWithTag("plan-guide-PREMIUM").fetchSemanticsNodes().isEmpty()}
         assertEquals(AppPlan.PREMIUM.ordinal,prefs.getInt(PLAN_GUIDE_ACK,0))
+        rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
     }
+    @Test fun `signed Power Up and later Complete show actual plan once and preserve eligible guides`() {
+        var manager by mutableStateOf(signedManager(AppPlan.FREE))
+        rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
+            DotDialerTheme(systemDark=false) {PlanGuideHost {}}
+        }}
+        rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
+        for (tier in listOf(AppPlan.PLUS, AppPlan.PREMIUM)) {
+            val next=signedManager(tier)
+            rule.runOnIdle {manager=next}
+            rule.onNodeWithTag("plan-activation-welcome").assertExists()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_activation_active, if(tier==AppPlan.PLUS) "Power Up" else "Complete")).assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.onNodeWithTag("plan-guide-${tier.name}").assertExists()
+            rule.onNodeWithTag("plan-guide-back").performClick()
+            rule.onNodeWithTag("plan-activation-welcome").assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).performClick()
+            runBlocking {prefs.getPersistedPreferences()}
+            rule.waitUntil(5000) {rule.onAllNodesWithTag("plan-activation-welcome").fetchSemanticsNodes().isEmpty()}
+            assertEquals(tier.ordinal,prefs.getInt(PLAN_GUIDE_ACK,0))
+            val refreshed=signedManager(tier)
+            rule.runOnIdle {manager=refreshed}
+            rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
+        }
+        val downgraded=signedManager(AppPlan.PLUS)
+        rule.runOnIdle {manager=downgraded}
+        rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
+    }
+
+    @Test fun `dismissed welcome is deferred on refresh but a higher plan can introduce itself`() {
+        var manager by mutableStateOf(signedManager(AppPlan.PLUS))
+        rule.setContent {CompositionLocalProvider(LocalPlanAccessManager provides manager) {
+            DotDialerTheme(systemDark=false) {PlanGuideHost {}}
+        }}
+        rule.onNodeWithTag("plan-activation-welcome").assertExists()
+        rule.onNodeWithTag("plan-guide-back").performClick()
+        rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
+        val refreshed=signedManager(AppPlan.PLUS)
+        rule.runOnIdle {manager=refreshed}
+        rule.onNodeWithTag("plan-activation-welcome").assertDoesNotExist()
+        assertEquals(0,prefs.getInt(PLAN_GUIDE_ACK,0))
+        val upgrade=signedManager(AppPlan.PREMIUM)
+        rule.runOnIdle {manager=upgrade}
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_activation_active,"Complete")).assertExists()
+    }
+
 }

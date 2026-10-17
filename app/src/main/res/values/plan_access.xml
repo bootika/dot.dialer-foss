@@ -50,4 +50,7 @@
     <string name="plan_source_unavailable">Unavailable</string>
     <string name="plan_source_google" translatable="false">Google</string>
     <string name="plan_guide_begin">Start using Dot Dialer</string>
+    <string name="plan_activation_congratulations">Congratulations!</string>
+    <string name="plan_activation_active">Your %1$s plan is now active.</string>
+    <string name="plan_activation_setup">Let’s make it yours. Next, choose the settings that suit you.</string>
 </resources>

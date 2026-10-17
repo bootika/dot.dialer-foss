@@ -52,4 +52,7 @@
     <string name="plan_source_setup">Skonfiguruj</string>
     <string name="plan_source_unavailable">Niedostępne</string>
     <string name="plan_guide_begin">Zacznij używać Dot Dialer</string>
+    <string name="plan_activation_congratulations">Gratulacje!</string>
+    <string name="plan_activation_active">Twój plan %1$s jest już aktywny.</string>
+    <string name="plan_activation_setup">Dostosuj go do siebie. Następnie wybierz odpowiadające Ci ustawienia.</string>
 </resources>

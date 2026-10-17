@@ -167,6 +167,38 @@ class PlanGuideRenderingTest {
         rule.onNodeWithTag("plan-guide-next").performClick()
         rule.runOnIdle {assertEquals(1,completed)}
     }
+
+    @Test fun `activation welcome is readable across plans themes fonts and has no settings side effects`() {
+        var plan by mutableStateOf(AppPlan.PLUS)
+        var dark by mutableStateOf(false)
+        var scale by mutableFloatStateOf(1f)
+        var next=0;var back=0
+        rule.setContent {CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
+            DotDialerTheme(systemDark=dark) {PlanActivationWelcomeContent(plan,{next++},{back++})}
+        }}
+        for(tier in listOf(AppPlan.PLUS,AppPlan.PREMIUM)) for(mode in listOf(false,true)) for(font in listOf(1f,2f)) {
+            rule.runOnIdle {plan=tier;dark=mode;scale=font}
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_activation_active, if(tier==AppPlan.PLUS) "Power Up" else "Complete")).assertExists()
+            rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-more").assertDoesNotExist()
+            captureNavigation("welcome-${tier.name}-${mode}-${font}")
+        }
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.onNodeWithTag("plan-guide-back").performClick()
+        rule.runOnIdle {assertEquals(1,next);assertEquals(1,back);assertEquals(0,prefs.getInt(PLAN_GUIDE_ACK,0))}
+    }
+    @Test
+    @Config(qualifiers="w800dp-h360dp-land-mdpi")
+    fun `activation welcome scrolls at landscape large font with fixed navigation`() {
+        rule.setContent {CompositionLocalProvider(LocalDensity provides Density(1f,2f)) {
+            DotDialerTheme(systemDark=false) {PlanActivationWelcomeContent(AppPlan.PREMIUM,{},{})}
+        }}
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_activation_setup)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
+        rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
+        captureNavigation("welcome-landscape-200")
+    }
     private fun captureNavigation(name: String) {
         rule.mainClock.advanceTimeBy(300)
         rule.waitForIdle()

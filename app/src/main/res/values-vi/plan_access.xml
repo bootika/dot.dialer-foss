@@ -46,4 +46,7 @@
     <string name="plan_source_setup">Thiết lập</string>
     <string name="plan_source_unavailable">Không khả dụng</string>
     <string name="plan_guide_begin">Bắt đầu dùng Dot Dialer</string>
+    <string name="plan_activation_congratulations">Xin chúc mừng!</string>
+    <string name="plan_activation_active">Gói %1$s của bạn đã được kích hoạt.</string>
+    <string name="plan_activation_setup">Hãy cá nhân hóa trải nghiệm. Tiếp theo, chọn các cài đặt phù hợp với bạn.</string>
 </resources>

@@ -34,15 +34,21 @@ internal fun PlanGuideReplayContent(effective: AppPlan, onClose: () -> Unit, onM
 
 @Composable
 internal fun PlanGuideSequenceContent(pages: List<AppPlan>, onFinished: () -> Unit,
-    onMore: (AppPlan) -> Unit, onBackAtStart: () -> Unit) {
-    var index by rememberSaveable(pages) { mutableIntStateOf(0) }
+    onMore: (AppPlan) -> Unit, onBackAtStart: () -> Unit, welcomePlan: AppPlan? = null) {
+    val hasWelcome = welcomePlan != null && welcomePlan != AppPlan.FREE
+    val first = if (hasWelcome) -1 else 0
+    var index by rememberSaveable(pages, welcomePlan) { mutableIntStateOf(first) }
     if (pages.isEmpty()) {
         LaunchedEffect(Unit) { onFinished() }
         return
     }
-    val current = index.coerceAtMost(pages.lastIndex)
-    val back = { if (current > 0) index = current - 1 else onBackAtStart() }
+    val current = index.coerceIn(first, pages.lastIndex)
+    val back = { if (current > first) index = current - 1 else onBackAtStart() }
     BackHandler(onBack = back)
+    if (current == -1) {
+        PlanActivationWelcomeContent(requireNotNull(welcomePlan), onNext = { index = 0 }, onBack = back)
+        return
+    }
     key(pages[current]) {
         PlanGuideContent(pages[current], onNext = {
             if (current < pages.lastIndex) index = current + 1 else onFinished()

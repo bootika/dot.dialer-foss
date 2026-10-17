@@ -101,7 +101,7 @@ fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.l
         },onMore={ tier ->
             prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,maxOf(acknowledged,tier).ordinal)
             onPlanSettings(tier); onFinished()
-        },onBackAtStart={essentialFinished=false})
+        },onBackAtStart={essentialFinished=false}, welcomePlan=plans.effective)
         return
     }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE

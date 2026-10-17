@@ -83,19 +83,19 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
 /** Render only inside the unlocked main surface, never over an ongoing call. */
 @Composable
 internal fun PlanGuideHost(onMore: (AppPlan) -> Unit) {
-    var deferred by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     val manager=rememberPlanAccessManager()
     val state by manager.state.collectAsState()
+    var deferred by androidx.compose.runtime.saveable.rememberSaveable(manager.effective) { mutableStateOf(false) }
     val prefs=koinInject<PreferenceManager>()
     val revision by prefs.settingsChanged.collectAsState()
     val acknowledged=remember(revision) { AppPlan.entries.getOrElse(prefs.getInt(PLAN_GUIDE_ACK,0)) {AppPlan.FREE} }
     val pending=remember(state,acknowledged) {PlanGuidePolicy.pending(manager.effective,acknowledged)}
-    val tier=pending.firstOrNull()?.takeUnless {deferred} ?: return
+    if (pending.isEmpty() || deferred) return
     fun acknowledge(value: AppPlan) {prefs.setInt(PLAN_GUIDE_ACK,maxOf(acknowledged,value).ordinal)}
-    androidx.compose.ui.window.Dialog(onDismissRequest={acknowledge(tier); deferred=true},
+    androidx.compose.ui.window.Dialog(onDismissRequest={deferred=true},
         properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false,decorFitsSystemWindows=false)) {
         PlanGuideSequenceContent(pending, onFinished = { acknowledge(pending.last()) },
             onMore = { current -> acknowledge(current); deferred=true; onMore(current) },
-            onBackAtStart = { acknowledge(tier); deferred=true })
+            onBackAtStart = { deferred=true }, welcomePlan = manager.effective)
     }
 }

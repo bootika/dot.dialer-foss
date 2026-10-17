@@ -48,4 +48,7 @@
     <string name="plan_source_setup">Yapılandır</string>
     <string name="plan_source_unavailable">Kullanılamıyor</string>
     <string name="plan_guide_begin">Dot Dialer kullanmaya başla</string>
+    <string name="plan_activation_congratulations">Tebrikler!</string>
+    <string name="plan_activation_active">%1$s planınız artık etkin.</string>
+    <string name="plan_activation_setup">Kendinize göre özelleştirin. Şimdi size uygun ayarları seçin.</string>
 </resources>

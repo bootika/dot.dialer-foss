@@ -50,4 +50,7 @@
     <string name="plan_source_setup">Configurează</string>
     <string name="plan_source_unavailable">Indisponibilă</string>
     <string name="plan_guide_begin">Începe să folosești Dot Dialer</string>
+    <string name="plan_activation_congratulations">Felicitări!</string>
+    <string name="plan_activation_active">Planul tău %1$s este acum activ.</string>
+    <string name="plan_activation_setup">Hai să-l configurăm pe gustul tău. În continuare, alegi setările care ți se potrivesc.</string>
 </resources>

@@ -715,7 +715,7 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="contact_photos_photo_changed">Ảnh đã thay đổi từ lúc tìm kiếm. Kiểm tra và chọn lại.</string>
     <string name="contact_photos_apply_failed">Không thể áp dụng một số thay đổi đã chọn. Kiểm tra kết quả và thử lại.</string>
     <string name="contact_photos_lower_resolution">Độ phân giải thấp hơn</string>
-    <string name="contact_photos_auto_policy">Quy tắc cập nhật ảnh</string>
+    <string name="contact_photos_auto_policy">Quy tắc tự động cập nhật ảnh liên hệ</string>
     <string name="contact_photos_auto_newest">Mới không giảm chất lượng</string>
     <string name="contact_photos_auto_newest_summary">Dùng ảnh đại diện đã thay đổi mà không giảm chiều nào.</string>
     <string name="contact_photos_auto_fill">Các nguồn được cho phép được kiểm tra định kỳ qua Wi-Fi khi pin đủ. Ảnh đại diện WhatsApp được nhận qua thông báo.</string>

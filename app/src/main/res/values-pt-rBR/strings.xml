@@ -727,7 +727,7 @@
     <string name="contact_photos_photo_changed">A foto mudou desde a busca. Confira e selecione novamente.</string>
     <string name="contact_photos_apply_failed">Não foi possível aplicar algumas alterações selecionadas. Confira os resultados e tente novamente.</string>
     <string name="contact_photos_lower_resolution">Resolução menor</string>
-    <string name="contact_photos_auto_policy">Política de atualização das fotos</string>
+    <string name="contact_photos_auto_policy">Política de atualização automática das fotos dos contatos</string>
     <string name="contact_photos_auto_newest">Novo sem perda</string>
     <string name="contact_photos_auto_newest_summary">Usa avatares alterados sem reduzir nenhuma dimensão.</string>
     <string name="contact_photos_auto_fill">Fontes autorizadas são verificadas periodicamente por Wi-Fi quando a bateria permite. Avatares do WhatsApp chegam por notificações.</string>

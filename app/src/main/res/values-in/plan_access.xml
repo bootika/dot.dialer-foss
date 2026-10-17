@@ -15,7 +15,7 @@
     <string name="plan_lifetime">Seumur hidup</string>
     <string name="plan_restore">Pulihkan pembelian</string>
     <string name="plan_whatsapp_manual_summary">Cari avatar dalam notifikasi yang tersedia. Jangan buka notifikasi sampai pencarian selesai.</string>
-    <string name="plan_photo_sources">Sumber foto</string>
+    <string name="plan_photo_sources">Kelola sumber foto</string>
     <string name="plan_choose_account">Pilih akun kontak di setelan untuk memperbarui foto dan nomor.</string>
     <string name="plan_more_settings">Setelan lainnya</string>
     <string name="plan_guide_continue">Lanjutkan</string>
@@ -39,4 +39,10 @@
     <string name="plan_base">Setelah uji coba: %1$s</string>
     <string name="plan_guide_title">Panduan paket</string>
     <string name="plan_guide_replay">Lihat kembali panduan paket</string>
+    <string name="plan_optimizer_guide_summary">Temukan foto kontak yang lebih baik dan seragamkan nomor telepon. Tinjau perubahan sebelum menerapkan.</string>
+    <string name="plan_guide_phone_numbers">Nomor telepon</string>
+    <string name="plan_guide_phone_format">Gunakan format internasional yang konsisten.</string>
+    <string name="plan_source_configured">Dikonfigurasi</string>
+    <string name="plan_source_setup">Siapkan</string>
+    <string name="plan_source_unavailable">Tidak tersedia</string>
 </resources>

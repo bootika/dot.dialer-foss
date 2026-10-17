@@ -723,7 +723,7 @@
     <string name="contact_photos_photo_changed">Fotoğraf aramadan sonra değişti. Kontrol edip yeniden seçin.</string>
     <string name="contact_photos_apply_failed">Seçilen bazı değişiklikler uygulanamadı. Sonuçları kontrol edip yeniden deneyin.</string>
     <string name="contact_photos_lower_resolution">Daha düşük çözünürlük</string>
-    <string name="contact_photos_auto_policy">Fotoğraf güncelleme kuralı</string>
+    <string name="contact_photos_auto_policy">Kişi fotoğraflarını otomatik güncelleme kuralı</string>
     <string name="contact_photos_auto_newest">Kayıpsız yeni</string>
     <string name="contact_photos_auto_newest_summary">Değişen avatarları hiçbir boyutu küçültmeden kullanır.</string>
     <string name="contact_photos_auto_fill">İzin verilen kaynaklar pil uygunken Wi-Fi üzerinden düzenli kontrol edilir. WhatsApp avatarları bildirimlerle gelir.</string>

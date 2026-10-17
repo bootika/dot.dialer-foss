@@ -731,7 +731,7 @@
     <string name="contact_photos_photo_changed">Zdjęcie zmieniło się od wyszukiwania. Sprawdź je i wybierz ponownie.</string>
     <string name="contact_photos_apply_failed">Nie udało się zastosować części wybranych zmian. Sprawdź wyniki i spróbuj ponownie.</string>
     <string name="contact_photos_lower_resolution">Niższa rozdzielczość</string>
-    <string name="contact_photos_auto_policy">Zasada aktualizacji zdjęć</string>
+    <string name="contact_photos_auto_policy">Zasada automatycznej aktualizacji zdjęć kontaktów</string>
     <string name="contact_photos_auto_newest">Nowe bez strat</string>
     <string name="contact_photos_auto_newest_summary">Używa zmienionych awatarów bez zmniejszania żadnego wymiaru.</string>
     <string name="contact_photos_auto_fill">Dozwolone źródła są sprawdzane okresowo przez Wi-Fi, gdy pozwala na to bateria. Awatary WhatsApp pochodzą z powiadomień.</string>

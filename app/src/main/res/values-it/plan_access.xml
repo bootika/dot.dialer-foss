@@ -17,7 +17,7 @@
     <string name="plan_lifetime">A vita</string>
     <string name="plan_restore">Ripristina acquisti</string>
     <string name="plan_whatsapp_manual_summary">Cerca avatar nelle notifiche disponibili. Non aprirle fino al termine della ricerca.</string>
-    <string name="plan_photo_sources">Fonti delle foto</string>
+    <string name="plan_photo_sources">Gestisci le fonti delle foto</string>
     <string name="plan_choose_account">Scegli un account contatti nelle impostazioni per aggiornare foto e numeri.</string>
     <string name="plan_more_settings">Altre impostazioni</string>
     <string name="plan_guide_continue">Continua</string>
@@ -43,4 +43,10 @@
     <string name="plan_base">Dopo la prova: %1$s</string>
     <string name="plan_guide_title">Guida del piano</string>
     <string name="plan_guide_replay">Rivedi la guida del piano</string>
+    <string name="plan_optimizer_guide_summary">Trova foto migliori e uniforma i numeri. Controlla le modifiche prima di applicarle.</string>
+    <string name="plan_guide_phone_numbers">Numeri di telefono</string>
+    <string name="plan_guide_phone_format">Usa un formato internazionale uniforme.</string>
+    <string name="plan_source_configured">Configurata</string>
+    <string name="plan_source_setup">Configura</string>
+    <string name="plan_source_unavailable">Non disponibile</string>
 </resources>

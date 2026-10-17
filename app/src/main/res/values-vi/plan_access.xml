@@ -15,7 +15,7 @@
     <string name="plan_lifetime">Trọn đời</string>
     <string name="plan_restore">Khôi phục giao dịch</string>
     <string name="plan_whatsapp_manual_summary">Tìm ảnh đại diện trong thông báo hiện có. Không mở thông báo cho đến khi tìm kiếm xong.</string>
-    <string name="plan_photo_sources">Nguồn ảnh</string>
+    <string name="plan_photo_sources">Quản lý nguồn ảnh</string>
     <string name="plan_choose_account">Chọn tài khoản danh bạ trong cài đặt để cập nhật ảnh và số điện thoại.</string>
     <string name="plan_more_settings">Cài đặt khác</string>
     <string name="plan_guide_continue">Tiếp tục</string>
@@ -39,4 +39,10 @@
     <string name="plan_base">Sau dùng thử: %1$s</string>
     <string name="plan_guide_title">Hướng dẫn gói</string>
     <string name="plan_guide_replay">Xem lại hướng dẫn gói</string>
+    <string name="plan_optimizer_guide_summary">Tìm ảnh liên hệ tốt hơn và chuẩn hóa số điện thoại. Xem lại thay đổi trước khi áp dụng.</string>
+    <string name="plan_guide_phone_numbers">Số điện thoại</string>
+    <string name="plan_guide_phone_format">Dùng định dạng quốc tế nhất quán.</string>
+    <string name="plan_source_configured">Đã cấu hình</string>
+    <string name="plan_source_setup">Thiết lập</string>
+    <string name="plan_source_unavailable">Không khả dụng</string>
 </resources>

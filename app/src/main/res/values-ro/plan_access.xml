@@ -17,7 +17,7 @@
     <string name="plan_lifetime">Pe viață</string>
     <string name="plan_restore">Restaurează achizițiile</string>
     <string name="plan_whatsapp_manual_summary">Caută avataruri în notificările disponibile acum. Lasă notificarea nedeschisă până se termină căutarea.</string>
-    <string name="plan_photo_sources">Surse pentru fotografii</string>
+    <string name="plan_photo_sources">Gestionează sursele fotografiilor</string>
     <string name="plan_choose_account">Alege un cont de contacte din setări pentru actualizarea fotografiilor și numerelor.</string>
     <string name="plan_more_settings">Mai multe setări</string>
     <string name="plan_guide_continue">Continuă</string>
@@ -43,4 +43,10 @@
     <string name="plan_base">După trial: %1$s</string>
     <string name="plan_guide_title">Ghidul planului</string>
     <string name="plan_guide_replay">Revezi ghidul planului</string>
+    <string name="plan_optimizer_guide_summary">Găsește fotografii mai bune pentru contacte și standardizează numerele. Verifică modificările înainte de aplicare.</string>
+    <string name="plan_guide_phone_numbers">Numere de telefon</string>
+    <string name="plan_guide_phone_format">Folosește un format internațional consecvent.</string>
+    <string name="plan_source_configured">Configurată</string>
+    <string name="plan_source_setup">Configurează</string>
+    <string name="plan_source_unavailable">Indisponibilă</string>
 </resources>

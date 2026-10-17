@@ -35,7 +35,15 @@ class PlanGuideRenderingTest {
         runBlocking {prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_LIQUID_GLASS to false,GoogleContactPhotoPreferences.ENABLED to false))}
         prefs.setString(GoogleContactPhotoPreferences.ACCOUNT,null)
         runBlocking {PreferenceWriteBarrier.awaitPending()}
-        startKoin {modules(module {single {prefs}})}
+        startKoin {modules(module {
+            single {prefs}
+            single<GoogleContactsAuthorization> { object : GoogleContactsAuthorization {
+                override val isAvailable = true
+                override suspend fun authorize(accountName: String?): GoogleContactsAuthorizationResult = error("Guide must not authorize")
+                override fun completeAuthorization(data: android.content.Intent?, requestedAccountName: String?): GoogleContactsAuthorizationResult = error("Guide must not authorize")
+                override suspend fun revoke(accountName: String): Boolean = error("Guide must not revoke")
+            } }
+        })}
     }
     @After fun cleanup() {stopKoin()}
     @Test fun `both guides readable and actions reachable light dark and large font`() {
@@ -102,6 +110,70 @@ class PlanGuideRenderingTest {
         rule.onNodeWithTag("plan-guide-PREMIUM").assertDoesNotExist()
         rule.onNodeWithTag("plan-guide-next").performClick()
         rule.runOnIdle { assertEquals(1, closed) }
+    }
+
+    @Test fun `source configuration requires consent actual access and Google enablement`() {
+        val ready = ContactOptimizationSettings(disclosed=true,googleAuthorized=true,gravatarDisclosed=true,businessDisclosed=true)
+        fun states(settings: ContactOptimizationSettings=ready, account: Boolean=true, contacts: Boolean=true,
+            notification: Boolean=true, supported: Boolean=true, googleAvailable: Boolean=true, googleEnabled: Boolean=true) =
+            guideSourceStates(settings, account, contacts, supported, notification, googleAvailable, googleEnabled)
+        assertEquals(List(4) { GuideSourceState.Configured }, states())
+        assertEquals(List(4) { GuideSourceState.Setup }, states(account=false))
+        assertEquals(List(4) { GuideSourceState.Setup }, states(contacts=false))
+        assertEquals(GuideSourceState.Setup, states(notification=false)[0])
+        assertEquals(GuideSourceState.Unavailable, states(supported=false)[0])
+        assertEquals(GuideSourceState.Unavailable, states(googleAvailable=false)[1])
+        assertEquals(GuideSourceState.Setup, states(googleEnabled=false)[1])
+        assertEquals(GuideSourceState.Setup, states(ready.copy(googleAuthorized=false))[1])
+        assertEquals(List(4) { GuideSourceState.Setup }, states(ready.copy(disclosed=false,googleAuthorized=false,gravatarDisclosed=false,businessDisclosed=false)))
+        assertEquals(List(4) { GuideSourceState.Off }, states(ready.copy(enabled=false,google=false,gravatar=false,business=false)))
+    }
+    @Test fun `account source editor normalization and resume preserve other profile and grants`() {
+        val account = "test.alexandru.butica@example.test"
+        val other = "second@example.test"
+        val profiles = ContactOptimizationProfiles(rule.activity)
+        profiles.update(account) { ContactOptimizationSettings(normalize=true,googleAuthorized=true,gravatarDisclosed=true,business=false) }
+        profiles.update(other) { ContactOptimizationSettings() }
+        val otherBefore = profiles.settings(other)
+        Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.WRITE_CONTACTS)
+        prefs.setString(GoogleContactPhotoPreferences.ACCOUNT,account)
+        runBlocking { PreferenceWriteBarrier.awaitPending() }
+        var opened = 0
+        var dark by mutableStateOf(false)
+        var scale by mutableFloatStateOf(1f)
+        rule.setContent { CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
+            DotDialerTheme(systemDark=dark) { PlanGuideContent(AppPlan.PLUS,{}, {opened++}) }
+        } }
+        rule.onNodeWithTag("plan-guide-account").assertTextEquals(account)
+        rule.onNodeWithTag("plan-source-google",useUnmergedTree=true).assertTextEquals(rule.activity.getString(R.string.plan_source_setup))
+        rule.onNodeWithTag("plan-source-gravatar",useUnmergedTree=true).assertTextEquals(rule.activity.getString(R.string.plan_source_configured))
+        rule.onNodeWithTag("plan-guide-sources").performScrollTo().performClick()
+        rule.runOnIdle { assertEquals(1,opened) }
+        assertFalse(prefs.getBoolean(GoogleContactPhotoPreferences.ENABLED,false))
+        rule.onNodeWithText(rule.activity.getString(R.string.standardize_phone_numbers)).performScrollTo().performClick()
+        rule.runOnIdle { assertFalse(profiles.settings(account).normalize); assertEquals(otherBefore,profiles.settings(other)) }
+        for (theme in listOf(false,true)) for (font in listOf(1f,2f)) {
+            rule.runOnIdle { dark=theme; scale=font }
+            rule.onNodeWithTag("plan-guide-sources").performScrollTo().assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-more").assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
+            rule.runOnIdle {
+                val view=rule.activity.window.decorView
+                val bitmap=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888)
+                view.draw(Canvas(bitmap))
+                val dir=File("build/reports/visual/plan-guides").apply {mkdirs()}
+                File(dir,"PLUS-account-${if(theme) "dark" else "light"}-${(font*100).toInt()}.png").outputStream().use {bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
+                bitmap.recycle()
+            }
+        }
+        profiles.update(account) {it.copy(gravatar=false)}
+        rule.activityRule.scenario.moveToState(androidx.lifecycle.Lifecycle.State.CREATED)
+        rule.activityRule.scenario.moveToState(androidx.lifecycle.Lifecycle.State.RESUMED)
+        rule.onNodeWithTag("plan-source-gravatar",useUnmergedTree=true).assertTextEquals(rule.activity.getString(R.string.off))
+        prefs.setString(GoogleContactPhotoPreferences.ACCOUNT,other)
+        runBlocking { PreferenceWriteBarrier.awaitPending() }
+        rule.waitUntil(5000) {rule.onAllNodesWithText(other).fetchSemanticsNodes().isNotEmpty()}
+        assertEquals(otherBefore,profiles.settings(other))
     }
 
 }

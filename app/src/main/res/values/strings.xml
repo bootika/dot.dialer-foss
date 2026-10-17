@@ -804,7 +804,7 @@
     <string name="contact_photos_photo_changed">The photo changed since the search. Review it and select again.</string>
     <string name="contact_photos_apply_failed">Some selected changes could not be applied. Review the results and try again.</string>
     <string name="contact_photos_lower_resolution">Lower resolution</string>
-    <string name="contact_photos_auto_policy">Photo update policy</string>
+    <string name="contact_photos_auto_policy">Contact photos auto-update policy</string>
     <string name="contact_photos_auto_newest">New without loss</string>
     <string name="contact_photos_auto_newest_summary">Use changed avatars without reducing either image dimension.</string>
     <string name="contact_photos_auto_fill">Authorized sources are checked periodically on Wi-Fi when battery permits. WhatsApp avatars arrive through notifications.</string>

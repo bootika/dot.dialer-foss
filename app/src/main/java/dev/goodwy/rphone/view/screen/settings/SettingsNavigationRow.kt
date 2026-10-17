@@ -27,6 +27,7 @@ internal fun DotSettingsNavigationRow(
     title: String,
     value: String? = null,
     supporting: String? = null,
+    valueBelowTitle: Boolean = false,
     onClick: () -> Unit,
 ) {
     Row(
@@ -42,6 +43,10 @@ internal fun DotSettingsNavigationRow(
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(title, style = MaterialTheme.typography.controlLabel)
+            if (valueBelowTitle && value != null) {
+                Text(value, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
             if (supporting != null) {
                 Text(
                     text = supporting,
@@ -50,7 +55,7 @@ internal fun DotSettingsNavigationRow(
                 )
             }
         }
-        if (value != null) {
+        if (value != null && !valueBelowTitle) {
             Spacer(Modifier.width(12.dp))
             Text(
                 text = value,

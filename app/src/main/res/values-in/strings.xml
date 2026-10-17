@@ -713,7 +713,7 @@
     <string name="contact_photos_photo_changed">Foto berubah sejak pencarian. Periksa dan pilih lagi.</string>
     <string name="contact_photos_apply_failed">Sebagian perubahan yang dipilih tidak dapat diterapkan. Periksa hasil dan coba lagi.</string>
     <string name="contact_photos_lower_resolution">Resolusi lebih rendah</string>
-    <string name="contact_photos_auto_policy">Aturan pembaruan foto</string>
+    <string name="contact_photos_auto_policy">Aturan pembaruan otomatis foto kontak</string>
     <string name="contact_photos_auto_newest">Baru tanpa penurunan</string>
     <string name="contact_photos_auto_newest_summary">Gunakan avatar yang berubah tanpa memperkecil salah satu dimensi.</string>
     <string name="contact_photos_auto_fill">Sumber yang diizinkan diperiksa berkala melalui Wi-Fi jika baterai mencukupi. Avatar WhatsApp diterima melalui notifikasi.</string>

@@ -16,7 +16,7 @@
     <string name="plan_lifetime">Ömür boyu</string>
     <string name="plan_restore">Satın almaları geri yükle</string>
     <string name="plan_whatsapp_manual_summary">Mevcut bildirimlerde avatar ara. Arama bitene kadar bildirimi açmayın.</string>
-    <string name="plan_photo_sources">Fotoğraf kaynakları</string>
+    <string name="plan_photo_sources">Fotoğraf kaynaklarını yönet</string>
     <string name="plan_choose_account">Fotoğraf ve numara güncellemeleri için ayarlardan bir kişi hesabı seçin.</string>
     <string name="plan_more_settings">Diğer ayarlar</string>
     <string name="plan_guide_continue">Devam</string>
@@ -41,4 +41,10 @@
     <string name="plan_base">Denemeden sonra: %1$s</string>
     <string name="plan_guide_title">Plan rehberi</string>
     <string name="plan_guide_replay">Plan rehberini yeniden görüntüle</string>
+    <string name="plan_optimizer_guide_summary">Daha iyi kişi fotoğrafları bulun ve numaraları standartlaştırın. Uygulamadan önce değişiklikleri inceleyin.</string>
+    <string name="plan_guide_phone_numbers">Telefon numaraları</string>
+    <string name="plan_guide_phone_format">Tutarlı uluslararası biçim kullanın.</string>
+    <string name="plan_source_configured">Yapılandırıldı</string>
+    <string name="plan_source_setup">Yapılandır</string>
+    <string name="plan_source_unavailable">Kullanılamıyor</string>
 </resources>

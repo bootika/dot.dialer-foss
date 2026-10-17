@@ -12,7 +12,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
-import dev.goodwy.rphone.controller.license.PlanAccessManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import dev.goodwy.rphone.controller.util.*
 import io.github.bootika.dotdialer.core.license.*
 import org.koin.compose.koinInject
@@ -23,18 +25,25 @@ internal const val PLAN_GUIDE_ACK = "plan_guide_acknowledged_tier"
 internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> Unit) {
     val prefs = koinInject<PreferenceManager>()
     val revision by prefs.settingsChanged.collectAsState()
+    var resumed by remember { mutableIntStateOf(0) }
+    val owner = LocalLifecycleOwner.current
+    DisposableEffect(owner) {
+        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) resumed++ }
+        owner.lifecycle.addObserver(observer)
+        onDispose { owner.lifecycle.removeObserver(observer) }
+    }
     val context = LocalContext.current
     val profiles = remember { ContactOptimizationProfiles(context) }
     val profileRevision by profiles.changes.collectAsState()
-    val account = remember(revision) { prefs.getString(GoogleContactPhotoPreferences.ACCOUNT, null) }
-    val settings = remember(account, profileRevision) { profiles.settings(account) }
+    val account = remember(revision) { prefs.getString(GoogleContactPhotoPreferences.ACCOUNT, null)?.takeIf { it.isNotBlank() } }
+    val settings = remember(account, profileRevision, resumed) { profiles.settings(account) }
     val premium = tier == AppPlan.PREMIUM
     Surface(Modifier.fillMaxSize().testTag("plan-guide-${tier.name}")) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(24.dp)) {
             Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 Text(if(premium) "Premium" else "Plus", style=MaterialTheme.typography.labelLarge, color=MaterialTheme.colorScheme.primary)
                 Text(if(premium) stringResource(R.string.plan_interface_magic) else "Contacts Optimizer", style=MaterialTheme.typography.headlineMedium)
-                Text(stringResource(if(premium) R.string.plan_premium_summary else R.string.plan_plus_summary), style=MaterialTheme.typography.bodyLarge)
+                Text(stringResource(if(premium) R.string.plan_premium_summary else R.string.plan_optimizer_guide_summary), style=MaterialTheme.typography.bodyLarge)
                 if(premium) {
                     DotSettingsCard {
                         val colors=listOf(R.string.accent_jade to "jade",R.string.accent_blue to "blue",R.string.accent_violet to "violet",R.string.accent_coral to "coral")
@@ -48,12 +57,10 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
                             onCheckedChange={prefs.setBoolean("ambient_droplets_enabled",it)})
                     }
                 } else {
-                    DotSettingsCard {
-                        if(account != null) DotSettingsSwitchRow(stringResource(R.string.standardize_phone_numbers),checked=settings.normalize,
-                            onCheckedChange={enabled -> profiles.update(account) {it.copy(normalize=enabled)}})
-                        DotSettingsNavigationRow(stringResource(R.string.plan_photo_sources),onClick=onMore)
-                    }
-                    if(account == null) Text(stringResource(R.string.plan_choose_account),style=MaterialTheme.typography.bodyMedium)
+                    PlanGuideOptimizerContent(account, settings, resumed,
+                        googleEnabled = prefs.getBoolean(GoogleContactPhotoPreferences.ENABLED, false),
+                        onNormalize = { enabled -> account?.let { profiles.update(it) { current -> current.copy(normalize = enabled) } } },
+                        onMore = onMore)
                 }
                 if(premium && account != null) DotSettingsCard {
                     ContactsOptimizerPolicyControl(settings) {policy -> profiles.update(account) {it.copy(automaticPhotoPolicy=policy,autoUpdateExisting=policy!=ContactPhotoAutomaticPolicy.FillMissing)}}

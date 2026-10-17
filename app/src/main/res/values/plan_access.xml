@@ -17,7 +17,7 @@
     <string name="plan_restore">Restore purchases</string>
     <string name="plan_whatsapp_manual_summary">Find avatars in currently available notifications. Leave the notification unopened until the search finishes.</string>
     <string name="plan_interface_magic" translatable="false">Interface Magic</string>
-    <string name="plan_photo_sources">Photo sources</string>
+    <string name="plan_photo_sources">Manage photo sources</string>
     <string name="plan_choose_account">Choose a contact account in settings to configure photo and number updates.</string>
     <string name="plan_more_settings">More settings</string>
     <string name="plan_guide_continue">Continue</string>
@@ -42,4 +42,11 @@
     <string name="plan_base">After the trial: %1$s</string>
     <string name="plan_guide_title">Plan guide</string>
     <string name="plan_guide_replay">Review your plan guide</string>
+    <string name="plan_optimizer_guide_summary">Find better contact photos and standardize phone numbers. Review changes before applying.</string>
+    <string name="plan_guide_phone_numbers">Phone numbers</string>
+    <string name="plan_guide_phone_format">Use consistent international formatting.</string>
+    <string name="plan_source_configured">Configured</string>
+    <string name="plan_source_setup">Set up</string>
+    <string name="plan_source_unavailable">Unavailable</string>
+    <string name="plan_source_google" translatable="false">Google</string>
 </resources>

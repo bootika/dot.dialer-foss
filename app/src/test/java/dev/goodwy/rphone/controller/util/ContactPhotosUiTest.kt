@@ -302,7 +302,12 @@ class ContactPhotosUiTest {
         show { WhatsAppAvatarSyncControl(account) }
         assertEquals(ContactPhotoAutomaticPolicy.Newest, processor.profiles.settings(account).effectivePhotoPolicy)
         rule.onNodeWithText(rule.activity.getString(R.string.contact_photos_auto_policy)).performClick()
-        rule.onNodeWithTag("optimizerPolicy-manual").performClick()
+        rule.onNodeWithTag("optimizerPolicy-newest").performScrollTo().assertIsSelected()
+        rule.onNodeWithTag("optimizerPolicy-manual").performScrollTo().assertIsNotSelected().performClick()
+        rule.onNodeWithText(rule.activity.getString(R.string.contact_photos_auto_policy)).performClick()
+        rule.onNodeWithTag("optimizerPolicy-manual").assertIsSelected()
+        rule.onNodeWithTag("optimizerPolicy-newest").performScrollTo().assertIsNotSelected()
+        rule.onNodeWithText(rule.activity.getString(R.string.cancel)).performClick()
         assertEquals(ContactPhotoAutomaticPolicy.Manual, processor.profiles.settings(account).effectivePhotoPolicy)
         assertEquals(ContactPhotoAutomaticPolicy.Newest, processor.profiles.settings("second@example.test").effectivePhotoPolicy)
         assertFalse(processor.profiles.settings(account).enabled)
@@ -982,14 +987,17 @@ class ContactPhotosUiTest {
             rule.runOnIdle { dark=theme; scale=font }; rule.waitForIdle()
             rule.onNodeWithText(rule.activity.getString(R.string.contact_photos_auto_policy)).performScrollTo().performClick()
             for (key in listOf("manual","missing","latest","optimal","newest")) {
-                rule.onNodeWithTag("optimizerPolicy-$key").performScrollTo().assertIsDisplayed()
+                val choice = rule.onNodeWithTag("optimizerPolicy-$key").performScrollTo().assertIsDisplayed().assertHasClickAction()
+                if (key == "newest") choice.assertIsSelected() else choice.assertIsNotSelected()
                 if (key=="manual") {
+                    capture("policy-dialog-${if(theme) "dark" else "light"}-$font-top")
                     val bounds=rule.onNodeWithText(rule.activity.getString(R.string.optimizer_manual),useUnmergedTree=true).getUnclippedBoundsInRoot()
                     val height=bounds.bottom.value-bounds.top.value
                     if (font==1f) normalTitleHeight=height else assertTrue(height>=normalTitleHeight*1.5f)
                 }
                 if (key=="manual" || key=="newest") capture("optimizer-policies-$theme-$font-$key")
             }
+            capture("policy-dialog-${if(theme) "dark" else "light"}-$font-bottom")
             rule.onNodeWithText(rule.activity.getString(R.string.cancel)).performClick()
             assertEquals(ContactPhotoAutomaticPolicy.Newest,processor.profiles.settings(account).effectivePhotoPolicy)
             assertEquals(0,provider.writes)

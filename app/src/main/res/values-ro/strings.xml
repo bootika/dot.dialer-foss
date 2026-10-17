@@ -721,7 +721,7 @@
     <string name="contact_photos_photo_changed">Poza s-a schimbat după căutare. Verifică și selectează din nou.</string>
     <string name="contact_photos_apply_failed">Unele modificări selectate nu au putut fi aplicate. Verifică rezultatele și încearcă din nou.</string>
     <string name="contact_photos_lower_resolution">Rezoluție mai mică</string>
-    <string name="contact_photos_auto_policy">Politica de actualizare a pozelor</string>
+    <string name="contact_photos_auto_policy">Politica de actualizare automată a fotografiilor contactelor</string>
     <string name="contact_photos_auto_newest">Nou, fără pierdere</string>
     <string name="contact_photos_auto_newest_summary">Folosește avataruri schimbate fără să reducă vreuna dintre dimensiuni.</string>
     <string name="contact_photos_auto_fill">Sursele autorizate sunt verificate periodic pe Wi-Fi, când bateria permite. Avatarurile WhatsApp vin prin notificări.</string>

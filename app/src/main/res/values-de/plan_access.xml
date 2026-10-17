@@ -16,7 +16,7 @@
     <string name="plan_lifetime">Dauerlizenz</string>
     <string name="plan_restore">Käufe wiederherstellen</string>
     <string name="plan_whatsapp_manual_summary">Avatare in vorhandenen Benachrichtigungen suchen. Bis zum Ende der Suche ungeöffnet lassen.</string>
-    <string name="plan_photo_sources">Fotoquellen</string>
+    <string name="plan_photo_sources">Fotoquellen verwalten</string>
     <string name="plan_choose_account">Wähle in den Einstellungen ein Kontaktkonto für Foto- und Nummernaktualisierungen.</string>
     <string name="plan_more_settings">Weitere Einstellungen</string>
     <string name="plan_guide_continue">Weiter</string>
@@ -41,4 +41,10 @@
     <string name="plan_base">Nach dem Test: %1$s</string>
     <string name="plan_guide_title">Tarif-Anleitung</string>
     <string name="plan_guide_replay">Tarif-Anleitung erneut ansehen</string>
+    <string name="plan_optimizer_guide_summary">Finde bessere Kontaktfotos und vereinheitliche Telefonnummern. Prüfe Änderungen vor dem Anwenden.</string>
+    <string name="plan_guide_phone_numbers">Telefonnummern</string>
+    <string name="plan_guide_phone_format">Einheitliches internationales Format verwenden.</string>
+    <string name="plan_source_configured">Eingerichtet</string>
+    <string name="plan_source_setup">Einrichten</string>
+    <string name="plan_source_unavailable">Nicht verfügbar</string>
 </resources>

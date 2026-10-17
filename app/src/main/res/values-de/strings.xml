@@ -723,7 +723,7 @@
     <string name="contact_photos_photo_changed">Das Foto wurde seit der Suche geändert. Prüfe es und wähle erneut.</string>
     <string name="contact_photos_apply_failed">Einige ausgewählte Änderungen konnten nicht angewendet werden. Prüfe die Ergebnisse und versuche es erneut.</string>
     <string name="contact_photos_lower_resolution">Geringere Auflösung</string>
-    <string name="contact_photos_auto_policy">Regel für Fotoaktualisierungen</string>
+    <string name="contact_photos_auto_policy">Regel für automatische Kontaktfoto-Aktualisierungen</string>
     <string name="contact_photos_auto_newest">Neu ohne Verlust</string>
     <string name="contact_photos_auto_newest_summary">Verwendet geänderte Profilbilder, ohne eine Bilddimension zu verkleinern.</string>
     <string name="contact_photos_auto_fill">Freigegebene Quellen werden regelmäßig über WLAN geprüft, wenn der Akku es erlaubt. WhatsApp-Profilbilder kommen über Benachrichtigungen.</string>

@@ -4,6 +4,11 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class PlanEntitlementsTest {
+    @Test fun `display names change without renaming persisted tiers or ordinals`() {
+        assertEquals(listOf("Free","Power","Complete"),AppPlan.entries.map {it.displayName})
+        assertEquals(listOf("FREE","PLUS","PREMIUM"),AppPlan.entries.map {it.name})
+        assertEquals(listOf(0,1,2),AppPlan.entries.map {it.ordinal})
+    }
     @Test fun `free keeps no paid work plus manual premium all`() {
         for(plan in AppPlan.entries) for(feature in PlanFeature.entries) {
             val expected=if(feature==PlanFeature.MANUAL_OPTIMIZER) plan>=AppPlan.PLUS else plan==AppPlan.PREMIUM

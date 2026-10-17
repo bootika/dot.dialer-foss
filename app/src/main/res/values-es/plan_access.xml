@@ -3,13 +3,13 @@
     <string name="plan_current">Plan actual: %1$s</string>
     <string name="plan_free_summary">Llamadas, contactos, búsqueda, favoritos y copia de seguridad básica.</string>
     <string name="plan_plus_summary">Contacts Optimizer completo a petición, con todas las fuentes disponibles y selección múltiple.</string>
-    <string name="plan_premium_summary">Plus, actualizaciones automáticas de contactos y personalización visual avanzada.</string>
+    <string name="plan_premium_summary">Power, actualizaciones automáticas de contactos y personalización visual avanzada.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Prueba Premium: queda %1$d día</item>
-        <item quantity="many">Prueba Premium: queda %1$d días</item>
-        <item quantity="other">Prueba Premium: queda %1$d días</item>
+        <item quantity="one">Prueba Complete: queda %1$d día</item>
+        <item quantity="many">Prueba Complete: queda %1$d días</item>
+        <item quantity="other">Prueba Complete: queda %1$d días</item>
     </plurals>
-    <string name="plan_start_trial">Prueba Premium gratis durante 30 días</string>
+    <string name="plan_start_trial">Prueba Complete gratis durante 30 días</string>
     <string name="plan_trial_terms">Sin cobro automático. Las fotos existentes siguen disponibles tras la prueba.</string>
     <string name="plan_store_unavailable">No disponible actualmente en esta tienda</string>
     <string name="plan_connection_required">Conéctate para verificar tu plan o iniciar la prueba.</string>
@@ -49,4 +49,5 @@
     <string name="plan_source_configured">Configurada</string>
     <string name="plan_source_setup">Configurar</string>
     <string name="plan_source_unavailable">No disponible</string>
+    <string name="plan_guide_begin">Empezar a usar Dot Dialer</string>
 </resources>

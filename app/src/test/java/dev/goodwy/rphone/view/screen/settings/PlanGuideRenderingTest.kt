@@ -34,7 +34,8 @@ class PlanGuideRenderingTest {
         prefs=PreferenceManager(RuntimeEnvironment.getApplication())
         runBlocking {prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_LIQUID_GLASS to false,GoogleContactPhotoPreferences.ENABLED to false))}
         prefs.setString(GoogleContactPhotoPreferences.ACCOUNT,null)
-        runBlocking {PreferenceWriteBarrier.awaitPending()}
+        prefs.setInt(PLAN_GUIDE_ACK,0)
+        runBlocking {prefs.getPersistedPreferences()}
         startKoin {modules(module {
             single {prefs}
             single<GoogleContactsAuthorization> { object : GoogleContactsAuthorization {
@@ -55,6 +56,7 @@ class PlanGuideRenderingTest {
         for(value in listOf(AppPlan.PLUS,AppPlan.PREMIUM)) for(mode in listOf(false,true)) for(font in listOf(1f,1.5f,2f)) {
             rule.runOnIdle {tier=value;dark=mode;scale=font}
             rule.onNodeWithTag("plan-guide-${value.name}").assertExists()
+            rule.onNodeWithText(value.displayName).assertExists()
             rule.onNodeWithTag("plan-guide-more").assertIsDisplayed().performClick()
             rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
             rule.runOnIdle {
@@ -87,10 +89,16 @@ class PlanGuideRenderingTest {
             PlanGuideReplayContent(AppPlan.PREMIUM, { closed++ }, { editors.add(it) })
         } }
         rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithContentDescription(rule.activity.getString(R.string.next)).assertIsDisplayed()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertDoesNotExist()
         rule.onNodeWithTag("plan-guide-more").performClick()
         rule.onNodeWithTag("plan-guide-PLUS").assertExists()
         rule.onNodeWithTag("plan-guide-next").performClick()
         rule.onNodeWithTag("plan-guide-PREMIUM").assertExists()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed()
+        rule.onNodeWithTag("plan-guide-back").performClick()
+        rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+        rule.onNodeWithTag("plan-guide-next").performClick()
         rule.onNodeWithTag("plan-guide-more").performClick()
         rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }
         rule.onNodeWithTag("plan-guide-PLUS").assertExists()
@@ -108,10 +116,69 @@ class PlanGuideRenderingTest {
         } }
         rule.onNodeWithTag("plan-guide-PLUS").assertExists()
         rule.onNodeWithTag("plan-guide-PREMIUM").assertDoesNotExist()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed()
         rule.onNodeWithTag("plan-guide-next").performClick()
         rule.runOnIdle { assertEquals(1, closed) }
     }
 
+    @Test fun `sequence arrows and finish follow eligible pages at large font without acknowledging on next`() {
+        var pages by mutableStateOf(listOf(AppPlan.PLUS, AppPlan.PREMIUM))
+        var dark by mutableStateOf(false)
+        var scale by mutableFloatStateOf(1f)
+        var completed = 0
+        var backAtStart = 0
+        rule.setContent { CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
+            DotDialerTheme(systemDark=dark) {
+                PlanGuideSequenceContent(pages, {completed++}, {}, {backAtStart++})
+            }
+        } }
+        for (mode in listOf(false,true)) for (font in listOf(1f,1.5f,2f)) {
+            rule.runOnIdle { dark=mode; scale=font }
+            rule.onNodeWithTag("plan-guide-PLUS").assertExists()
+            rule.onNodeWithContentDescription(rule.activity.getString(R.string.next)).assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
+            captureNavigation("arrows-${mode}-${font}")
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.runOnIdle {assertEquals(0,completed); assertEquals(0,prefs.getInt(PLAN_GUIDE_ACK,0))}
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed()
+            captureNavigation("finish-${mode}-${font}")
+            rule.onNodeWithTag("plan-guide-back").performClick()
+        }
+        rule.onNodeWithTag("plan-guide-back").performClick()
+        rule.runOnIdle {assertEquals(1,backAtStart); pages=listOf(AppPlan.PREMIUM)}
+        rule.onNodeWithTag("plan-guide-PREMIUM").assertExists()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
+        rule.runOnIdle {assertEquals(1,completed);pages=listOf(AppPlan.PLUS)}
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed()
+    }
+    @Test
+    @Config(qualifiers="w800dp-h360dp-land-mdpi")
+    fun `landscape large font keeps both arrows and final action reachable`() {
+        var completed=0
+        rule.setContent {CompositionLocalProvider(LocalDensity provides Density(1f,2f)) {
+            DotDialerTheme(systemDark=false) {PlanGuideSequenceContent(listOf(AppPlan.PLUS,AppPlan.PREMIUM), {completed++}, {}, {})}
+        }}
+        rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
+        rule.onNodeWithTag("plan-guide-more").assertIsDisplayed()
+        rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
+        rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed()
+        captureNavigation("finish-landscape-200")
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.runOnIdle {assertEquals(1,completed)}
+    }
+    private fun captureNavigation(name: String) {
+        rule.mainClock.advanceTimeBy(300)
+        rule.waitForIdle()
+        rule.runOnIdle {
+            val view=rule.activity.window.decorView
+            val image=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(image))
+            val directory=File("build/reports/visual/plan-guide-navigation").apply {mkdirs()}
+            File(directory,"$name.png").outputStream().use {image.compress(Bitmap.CompressFormat.PNG,100,it)}
+            image.recycle()
+        }
+    }
     @Test fun `source configuration requires consent actual access and Google enablement`() {
         val ready = ContactOptimizationSettings(disclosed=true,googleAuthorized=true,gravatarDisclosed=true,businessDisclosed=true)
         fun states(settings: ContactOptimizationSettings=ready, account: Boolean=true, contacts: Boolean=true,

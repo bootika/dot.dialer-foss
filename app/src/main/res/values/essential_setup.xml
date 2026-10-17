@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Calls and contacts</string>
     <string name="onboarding_essential_body">Your contacts and call history stay on your phone, not on our servers. Android will ask for the default phone app and the permissions needed for calls.\n\nTechnical error reports are automatic by default. You can choose on-demand reporting in %1$s → %2$s.</string>
-    <string name="onboarding_start">Get started</string>
     <string name="diagnostic_reporting_mode">Error reporting</string>
     <string name="diagnostic_automatic">Automatic</string>
     <string name="diagnostic_on_demand">On demand only</string>

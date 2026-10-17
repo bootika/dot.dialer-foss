@@ -3,11 +3,11 @@
     <string name="plan_current">Gói hiện tại: %1$s</string>
     <string name="plan_free_summary">Cuộc gọi, danh bạ, tìm kiếm, yêu thích và sao lưu cơ bản.</string>
     <string name="plan_plus_summary">Contacts Optimizer đầy đủ theo yêu cầu, mọi nguồn khả dụng và chọn hàng loạt.</string>
-    <string name="plan_premium_summary">Plus, tự động cập nhật danh bạ và tùy chỉnh giao diện nâng cao.</string>
+    <string name="plan_premium_summary">Power, tự động cập nhật danh bạ và tùy chỉnh giao diện nâng cao.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="other">Dùng thử Premium: còn %1$d ngày</item>
+        <item quantity="other">Dùng thử Complete: còn %1$d ngày</item>
     </plurals>
-    <string name="plan_start_trial">Dùng thử Premium miễn phí 30 ngày</string>
+    <string name="plan_start_trial">Dùng thử Complete miễn phí 30 ngày</string>
     <string name="plan_trial_terms">Không tự động tính phí. Ảnh hiện có vẫn dùng được sau khi dùng thử.</string>
     <string name="plan_store_unavailable">Hiện chưa có trong cửa hàng này</string>
     <string name="plan_connection_required">Kết nối để kiểm tra gói hoặc bắt đầu dùng thử.</string>
@@ -45,4 +45,5 @@
     <string name="plan_source_configured">Đã cấu hình</string>
     <string name="plan_source_setup">Thiết lập</string>
     <string name="plan_source_unavailable">Không khả dụng</string>
+    <string name="plan_guide_begin">Bắt đầu dùng Dot Dialer</string>
 </resources>

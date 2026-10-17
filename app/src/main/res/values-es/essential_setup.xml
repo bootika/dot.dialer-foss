@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Llamadas y contactos</string>
     <string name="onboarding_essential_body">Tus contactos y el historial de llamadas permanecen en tu teléfono, no en nuestros servidores. Android solicitará la aplicación de teléfono predeterminada y los permisos necesarios.\n\nLos informes técnicos de errores son automáticos por defecto. Puedes elegir enviarlos solo a petición en %1$s → %2$s.</string>
-    <string name="onboarding_start">Comenzar</string>
     <string name="diagnostic_reporting_mode">Informes de errores</string>
     <string name="diagnostic_automatic">Automáticos</string>
     <string name="diagnostic_on_demand">Solo a petición</string>

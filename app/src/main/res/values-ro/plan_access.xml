@@ -3,13 +3,13 @@
     <string name="plan_current">Plan curent: %1$s</string>
     <string name="plan_free_summary">Apeluri, contacte, căutare, favorite și backup de bază.</string>
     <string name="plan_plus_summary">Contacts Optimizer complet la cerere, cu toate sursele disponibile și selecție în masă.</string>
-    <string name="plan_premium_summary">Plus, actualizări automate ale contactelor și personalizare vizuală avansată.</string>
+    <string name="plan_premium_summary">Power, actualizări automate ale contactelor și personalizare vizuală avansată.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Trial Premium: %1$d zi rămasă</item>
-        <item quantity="few">Trial Premium: %1$d zile rămase</item>
-        <item quantity="other">Trial Premium: %1$d de zile rămase</item>
+        <item quantity="one">Trial Complete: %1$d zi rămasă</item>
+        <item quantity="few">Trial Complete: %1$d zile rămase</item>
+        <item quantity="other">Trial Complete: %1$d de zile rămase</item>
     </plurals>
-    <string name="plan_start_trial">Încearcă Premium gratuit 30 de zile</string>
+    <string name="plan_start_trial">Încearcă Complete gratuit 30 de zile</string>
     <string name="plan_trial_terms">Fără taxare automată. Fotografiile existente rămân utilizabile după trial.</string>
     <string name="plan_store_unavailable">Momentan indisponibil în acest store</string>
     <string name="plan_connection_required">Conectează-te pentru verificarea planului sau pornirea trial-ului.</string>
@@ -49,4 +49,5 @@
     <string name="plan_source_configured">Configurată</string>
     <string name="plan_source_setup">Configurează</string>
     <string name="plan_source_unavailable">Indisponibilă</string>
+    <string name="plan_guide_begin">Începe să folosești Dot Dialer</string>
 </resources>

@@ -3,12 +3,12 @@
     <string name="plan_current">Aktueller Plan: %1$s</string>
     <string name="plan_free_summary">Anrufe, Kontakte, Suche, Favoriten und grundlegende Sicherung.</string>
     <string name="plan_plus_summary">Vollständiger Contacts Optimizer auf Abruf, mit allen verfügbaren Quellen und Mehrfachauswahl.</string>
-    <string name="plan_premium_summary">Plus, automatische Kontaktupdates und erweiterte visuelle Anpassung.</string>
+    <string name="plan_premium_summary">Power, automatische Kontaktupdates und erweiterte visuelle Anpassung.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Premium-Test: noch %1$d Tag</item>
-        <item quantity="other">Premium-Test: noch %1$d Tage</item>
+        <item quantity="one">Complete-Test: noch %1$d Tag</item>
+        <item quantity="other">Complete-Test: noch %1$d Tage</item>
     </plurals>
-    <string name="plan_start_trial">Premium 30 Tage kostenlos testen</string>
+    <string name="plan_start_trial">Complete 30 Tage kostenlos testen</string>
     <string name="plan_trial_terms">Keine automatische Abbuchung. Vorhandene Fotos bleiben nach dem Test nutzbar.</string>
     <string name="plan_store_unavailable">In diesem Store derzeit nicht verfügbar</string>
     <string name="plan_connection_required">Verbinde dich, um deinen Plan zu prüfen oder den Test zu starten.</string>
@@ -47,4 +47,5 @@
     <string name="plan_source_configured">Eingerichtet</string>
     <string name="plan_source_setup">Einrichten</string>
     <string name="plan_source_unavailable">Nicht verfügbar</string>
+    <string name="plan_guide_begin">Dot Dialer jetzt nutzen</string>
 </resources>

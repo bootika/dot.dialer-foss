@@ -1,6 +1,7 @@
 package io.github.bootika.dotdialer.core.license
 
-enum class AppPlan { FREE, PLUS, PREMIUM }
+/** Display branding is independent of persisted/signed/store identifiers. */
+enum class AppPlan(val displayName: String) { FREE("Free"), PLUS("Power"), PREMIUM("Complete") }
 enum class PlanFeature { MANUAL_OPTIMIZER, AUTOMATIC_OPTIMIZER, PREMIUM_APPEARANCE }
 
 data class PlanEntitlements(

@@ -81,7 +81,7 @@ class EssentialOnboardingRenderingTest {
         for (mode in listOf(false, true)) for (font in listOf(1f, 1.5f)) {
             rule.runOnIdle { dark = mode; scale = font }
             rule.mainClock.advanceTimeBy(1000)
-            rule.onNodeWithText(rule.activity.getString(R.string.onboarding_start)).assertIsDisplayed().performClick()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
             rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
             capture("intro-${if (mode) "dark" else "light"}-${(font * 100).toInt()}")
         }
@@ -97,7 +97,7 @@ class EssentialOnboardingRenderingTest {
             }
         }
         rule.mainClock.advanceTimeBy(1000)
-        rule.onNodeWithText(rule.activity.getString(R.string.onboarding_start)).assertIsDisplayed().performClick()
+        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
         assertTrue(completed)
         capture("intro-landscape-150")
     }

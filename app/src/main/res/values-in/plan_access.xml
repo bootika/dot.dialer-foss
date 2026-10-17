@@ -3,11 +3,11 @@
     <string name="plan_current">Paket saat ini: %1$s</string>
     <string name="plan_free_summary">Panggilan, kontak, pencarian, favorit, dan cadangan dasar.</string>
     <string name="plan_plus_summary">Contacts Optimizer lengkap sesuai permintaan, dengan semua sumber yang tersedia dan pilihan massal.</string>
-    <string name="plan_premium_summary">Plus, pembaruan kontak otomatis dan penyesuaian visual lanjutan.</string>
+    <string name="plan_premium_summary">Power, pembaruan kontak otomatis dan penyesuaian visual lanjutan.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="other">Uji coba Premium: tersisa %1$d hari</item>
+        <item quantity="other">Uji coba Complete: tersisa %1$d hari</item>
     </plurals>
-    <string name="plan_start_trial">Coba Premium gratis selama 30 hari</string>
+    <string name="plan_start_trial">Coba Complete gratis selama 30 hari</string>
     <string name="plan_trial_terms">Tanpa tagihan otomatis. Foto yang ada tetap dapat digunakan setelah uji coba.</string>
     <string name="plan_store_unavailable">Saat ini tidak tersedia di toko ini</string>
     <string name="plan_connection_required">Hubungkan untuk memeriksa paket atau memulai uji coba.</string>
@@ -45,4 +45,5 @@
     <string name="plan_source_configured">Dikonfigurasi</string>
     <string name="plan_source_setup">Siapkan</string>
     <string name="plan_source_unavailable">Tidak tersedia</string>
+    <string name="plan_guide_begin">Mulai gunakan Dot Dialer</string>
 </resources>

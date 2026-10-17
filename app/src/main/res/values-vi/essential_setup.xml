@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Cuộc gọi và danh bạ</string>
     <string name="onboarding_essential_body">Danh bạ và lịch sử cuộc gọi ở trên điện thoại, không nằm trên máy chủ của chúng tôi. Android sẽ yêu cầu chọn ứng dụng điện thoại mặc định và cấp quyền cần thiết.\n\nBáo cáo lỗi kỹ thuật được gửi tự động theo mặc định. Bạn có thể chọn chỉ gửi khi yêu cầu trong %1$s → %2$s.</string>
-    <string name="onboarding_start">Bắt đầu</string>
     <string name="diagnostic_reporting_mode">Báo cáo lỗi</string>
     <string name="diagnostic_automatic">Tự động</string>
     <string name="diagnostic_on_demand">Chỉ khi yêu cầu</string>

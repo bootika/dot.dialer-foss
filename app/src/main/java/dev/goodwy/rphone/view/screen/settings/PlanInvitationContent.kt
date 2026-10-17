@@ -56,7 +56,7 @@ internal fun PlanInvitationContent(initialLink: String="",onClose: () -> Unit,
                 if(details==null) Button(onClick=::preview,enabled=token!=null && !busy) {Text(stringResource(R.string.invitation_preview))}
                 details?.let {info ->
                     DotSettingsCard {Column(Modifier.padding(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-                        Text(if(info.tier=="premium") "Premium" else "Plus",style=MaterialTheme.typography.headlineSmall)
+                        Text(if(info.tier=="premium") io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM.displayName else io.github.bootika.dotdialer.core.license.AppPlan.PLUS.displayName,style=MaterialTheme.typography.headlineSmall)
                         Text(info.label,style=MaterialTheme.typography.titleMedium)
                         if(info.company.isNotEmpty())Text(info.company)
                         Text(when {

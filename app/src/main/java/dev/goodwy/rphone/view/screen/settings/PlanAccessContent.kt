@@ -157,9 +157,9 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
 
 
 private fun planName(plan: AppPlan): String = when (plan) {
-    AppPlan.FREE -> "Free"
-    AppPlan.PLUS -> "Plus"
-    AppPlan.PREMIUM -> "Premium"
+    AppPlan.FREE -> AppPlan.FREE.displayName
+    AppPlan.PLUS -> AppPlan.PLUS.displayName
+    AppPlan.PREMIUM -> AppPlan.PREMIUM.displayName
 }
 
 private fun planSummary(plan: AppPlan): Int = when (plan) {

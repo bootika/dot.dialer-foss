@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Apeluri și contacte</string>
     <string name="onboarding_essential_body">Contactele și istoricul apelurilor rămân pe telefon, nu pe serverele noastre. Android îți va cere să alegi aplicația de telefon implicită și să acorzi permisiunile pentru apeluri.\n\nRapoartele tehnice de eroare sunt automate implicit. Poți alege raportarea la cerere din %1$s → %2$s.</string>
-    <string name="onboarding_start">Începe</string>
     <string name="diagnostic_reporting_mode">Raportarea erorilor</string>
     <string name="diagnostic_automatic">Automată</string>
     <string name="diagnostic_on_demand">Doar la cerere</string>

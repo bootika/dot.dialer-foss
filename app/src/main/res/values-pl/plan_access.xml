@@ -3,14 +3,14 @@
     <string name="plan_current">Obecny plan: %1$s</string>
     <string name="plan_free_summary">Połączenia, kontakty, wyszukiwanie, ulubione i podstawowa kopia zapasowa.</string>
     <string name="plan_plus_summary">Pełny Contacts Optimizer na żądanie, wszystkie dostępne źródła i wybór zbiorczy.</string>
-    <string name="plan_premium_summary">Plus, automatyczne aktualizacje kontaktów i zaawansowane dostosowanie wyglądu.</string>
+    <string name="plan_premium_summary">Power, automatyczne aktualizacje kontaktów i zaawansowane dostosowanie wyglądu.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Okres próbny Premium: pozostał %1$d dzień</item>
-        <item quantity="few">Okres próbny Premium: pozostały %1$d dni</item>
-        <item quantity="many">Okres próbny Premium: pozostało %1$d dni</item>
-        <item quantity="other">Okres próbny Premium: pozostało %1$d dni</item>
+        <item quantity="one">Okres próbny Complete: pozostał %1$d dzień</item>
+        <item quantity="few">Okres próbny Complete: pozostały %1$d dni</item>
+        <item quantity="many">Okres próbny Complete: pozostało %1$d dni</item>
+        <item quantity="other">Okres próbny Complete: pozostało %1$d dni</item>
     </plurals>
-    <string name="plan_start_trial">Wypróbuj Premium bezpłatnie przez 30 dni</string>
+    <string name="plan_start_trial">Wypróbuj Complete bezpłatnie przez 30 dni</string>
     <string name="plan_trial_terms">Bez automatycznej opłaty. Istniejące zdjęcia pozostają dostępne po okresie próbnym.</string>
     <string name="plan_store_unavailable">Obecnie niedostępne w tym sklepie</string>
     <string name="plan_connection_required">Połącz się, aby sprawdzić plan lub rozpocząć okres próbny.</string>
@@ -51,4 +51,5 @@
     <string name="plan_source_configured">Skonfigurowano</string>
     <string name="plan_source_setup">Skonfiguruj</string>
     <string name="plan_source_unavailable">Niedostępne</string>
+    <string name="plan_guide_begin">Zacznij używać Dot Dialer</string>
 </resources>

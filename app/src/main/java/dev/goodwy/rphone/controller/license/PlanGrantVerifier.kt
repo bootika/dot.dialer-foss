@@ -11,6 +11,7 @@ import org.json.JSONObject
 internal data class PlanGrant(val entitlements: PlanEntitlements, val expires: Long)
 
 internal class PlanGrantVerifier(publicKey: String = GiftGrantVerifier.PUBLIC_KEY) {
+    companion object { const val MAX_OFFLINE_SECONDS = 10 * 86400L }
     private val key = KeyFactory.getInstance("RSA").generatePublic(X509EncodedKeySpec(Base64.getDecoder().decode(publicKey)))
     fun verify(grant: String, audience: String, installation: String, now: Long, nonce: String? = null): PlanGrant {
         require(grant.length in 400..4096)
@@ -25,7 +26,7 @@ internal class PlanGrantVerifier(publicKey: String = GiftGrantVerifier.PUBLIC_KE
         require(nonce == null || body.getString("nonce") == nonce)
         for (field in listOf("iat", "exp", "trial_started", "trial_ends")) require(body.get(field) is Int || body.get(field) is Long)
         val issued = body.getLong("iat"); val expires = body.getLong("exp")
-        require(issued > 0 && issued <= now + 300 && expires > now && expires > issued && expires - issued <= 86400)
+        require(issued > 0 && issued <= now + 300 && expires > now && expires > issued && expires - issued <= MAX_OFFLINE_SECONDS)
         val trial = body.getLong("trial_started"); val end = body.getLong("trial_ends")
         require((trial == 0L && end == 0L) || (trial > 0 && trial <= issued && end - trial == 30 * 86400L))
         val tier = when (body.getString("tier")) { "free" -> AppPlan.FREE; "plus" -> AppPlan.PLUS; "premium" -> AppPlan.PREMIUM; else -> error("Invalid tier") }

@@ -59,6 +59,7 @@ class PlanInvitationRenderingTest {
         rule.waitUntil(5000) {manager.state.value.revision>=2 && !manager.state.value.busy}
         rule.waitUntil(5000) {rule.onAllNodesWithText("Example Company").fetchSemanticsNodes().isNotEmpty()}
         rule.onNodeWithText("Example Company").assertExists()
+        rule.onNodeWithText("Complete").assertExists()
         assertEquals(AppPlan.FREE,manager.effective);assertEquals(1,requests)
         for(mode in listOf(false,true))for(font in listOf(1f,1.5f)) {
             rule.runOnIdle {dark=mode;scale=font}

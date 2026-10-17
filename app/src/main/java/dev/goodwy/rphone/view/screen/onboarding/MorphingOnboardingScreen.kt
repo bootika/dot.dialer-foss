@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.components.GuideNavigationControls
 import org.koin.compose.koinInject
 import kotlin.math.cos
 import kotlin.math.sin
@@ -94,14 +95,13 @@ fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.l
     val acknowledged = remember(revision) {io.github.bootika.dotdialer.core.license.AppPlan.entries.getOrElse(prefs.getInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,0)) {io.github.bootika.dotdialer.core.license.AppPlan.FREE}}
     val pending = remember(planState,acknowledged) {io.github.bootika.dotdialer.core.license.PlanGuidePolicy.pending(plans.effective,acknowledged)}
     if(essentialFinished && pending.isNotEmpty()) {
-        val tier = pending.first()
-        dev.goodwy.rphone.view.screen.settings.PlanGuideContent(tier,onNext={
-            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,tier.ordinal)
-            if(pending.size==1) onFinished()
-        },onMore={
-            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,tier.ordinal)
+        dev.goodwy.rphone.view.screen.settings.PlanGuideSequenceContent(pending, onFinished={
+            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,maxOf(acknowledged,pending.last()).ordinal)
+            onFinished()
+        },onMore={ tier ->
+            prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,maxOf(acknowledged,tier).ordinal)
             onPlanSettings(tier); onFinished()
-        })
+        },onBackAtStart={essentialFinished=false})
         return
     }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -185,10 +185,8 @@ fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.l
                         color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(24.dp))
                 }
-                Button(onClick = {if(pending.isEmpty()) onFinished() else essentialFinished=true}, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
-                    shape = RoundedCornerShape(28.dp)) {
-                    Text(stringResource(R.string.onboarding_start))
-                }
+                GuideNavigationControls(isLast = pending.isEmpty(),
+                    onNext = {if(pending.isEmpty()) onFinished() else essentialFinished=true})
             }
         }
     }

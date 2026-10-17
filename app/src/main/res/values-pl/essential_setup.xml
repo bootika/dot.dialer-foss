@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Połączenia i kontakty</string>
     <string name="onboarding_essential_body">Kontakty i historia połączeń pozostają na telefonie, nie na naszych serwerach. Android poprosi o wybór domyślnej aplikacji telefonu i wymagane uprawnienia.\n\nTechniczne raporty błędów są domyślnie automatyczne. Możesz wybrać wysyłanie na żądanie w %1$s → %2$s.</string>
-    <string name="onboarding_start">Rozpocznij</string>
     <string name="diagnostic_reporting_mode">Raportowanie błędów</string>
     <string name="diagnostic_automatic">Automatycznie</string>
     <string name="diagnostic_on_demand">Tylko na żądanie</string>

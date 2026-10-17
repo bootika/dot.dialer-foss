@@ -247,7 +247,7 @@ class SupportContentTest {
             rule.runOnIdle { store.value = io.github.bootika.dotdialer.core.license.AppPlan.PLUS }
             rule.waitUntil(5000) {backs == 1}
             rule.onNodeWithTag("plan-current-card").performScrollTo()
-            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Plus"))
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Power"))
             capture("plans-plus-current")
             rule.onNodeWithTag("plan-tier-PLUS").performScrollTo().performClick()
             rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
@@ -256,7 +256,7 @@ class SupportContentTest {
             rule.runOnIdle {store.value=io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM}
             rule.waitUntil(5000) {backs==2}
             rule.onNodeWithTag("plan-current-card").performScrollTo()
-            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Premium"))
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Complete"))
             capture("plans-premium-current")
             rule.runOnIdle { error.value = "Restore temporarily unavailable" }
             rule.onNodeWithText(rule.activity.getString(R.string.operation_failed)).performScrollTo().assertIsDisplayed()
@@ -269,9 +269,9 @@ class SupportContentTest {
                 io.github.bootika.dotdialer.core.license.AppPlan.PLUS, worker, trial = true)
             rule.runOnIdle { store.value = io.github.bootika.dotdialer.core.license.AppPlan.FREE; manager = trialManager }
             rule.onNodeWithTag("plan-current-card").performScrollTo()
-            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Premium"))
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Complete"))
             rule.onNodeWithTag("plan-trial-status").assertExists()
-            rule.onNodeWithText(rule.activity.getString(R.string.plan_base, "Plus")).assertExists()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_base, "Power")).assertExists()
             rule.onNodeWithTag("start-premium-trial").assertDoesNotExist()
             capture("plans-trial-current")
             rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()

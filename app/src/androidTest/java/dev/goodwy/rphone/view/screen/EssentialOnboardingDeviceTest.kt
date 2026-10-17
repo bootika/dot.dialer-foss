@@ -53,7 +53,7 @@ class EssentialOnboardingDeviceTest {
             rule.runOnIdle { dark = mode; font = scale }
             rule.mainClock.advanceTimeBy(1200)
             rule.onNodeWithText(context.getString(R.string.onboarding_essential_title)).performScrollTo()
-            rule.onNodeWithText(context.getString(R.string.onboarding_start))
+            rule.onNodeWithText(context.getString(R.string.plan_guide_begin))
                 .assertIsDisplayed().performClick()
             rule.onNodeWithText(context.getString(R.string.onboarding_essential_title)).assertIsDisplayed()
             rule.waitForIdle()
@@ -68,7 +68,7 @@ class EssentialOnboardingDeviceTest {
                 scroller.performTouchInput { swipeUp() }
                 rule.waitForIdle()
                 assertTrue("Gesture must move the body", range.value() > 0f)
-                rule.onNodeWithText(context.getString(R.string.onboarding_start)).assertIsDisplayed()
+                rule.onNodeWithText(context.getString(R.string.plan_guide_begin)).assertIsDisplayed()
                 val scrolled = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
                 File(directory, "intro-${if (mode) "dark" else "light"}-150-scrolled.png")
                     .outputStream().use { scrolled.compress(Bitmap.CompressFormat.PNG, 100, it) }

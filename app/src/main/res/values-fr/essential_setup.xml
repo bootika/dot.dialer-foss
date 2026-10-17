@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Appels et contacts</string>
     <string name="onboarding_essential_body">Tes contacts et ton historique restent sur ton téléphone, pas sur nos serveurs. Android demandera de choisir l’application de téléphone par défaut et les autorisations nécessaires.\n\nLes rapports techniques d’erreurs sont automatiques par défaut. Tu peux choisir les rapports sur demande dans %1$s → %2$s.</string>
-    <string name="onboarding_start">Commencer</string>
     <string name="diagnostic_reporting_mode">Rapports d’erreurs</string>
     <string name="diagnostic_automatic">Automatiques</string>
     <string name="diagnostic_on_demand">Sur demande</string>

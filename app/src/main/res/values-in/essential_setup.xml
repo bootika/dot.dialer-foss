@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Panggilan dan kontak</string>
     <string name="onboarding_essential_body">Kontak dan riwayat panggilan tetap di ponsel, bukan di server kami. Android akan meminta aplikasi telepon default dan izin yang diperlukan.\n\nLaporan kesalahan teknis dikirim otomatis secara default. Kamu dapat memilih pengiriman sesuai permintaan di %1$s → %2$s.</string>
-    <string name="onboarding_start">Mulai</string>
     <string name="diagnostic_reporting_mode">Pelaporan kesalahan</string>
     <string name="diagnostic_automatic">Otomatis</string>
     <string name="diagnostic_on_demand">Sesuai permintaan</string>

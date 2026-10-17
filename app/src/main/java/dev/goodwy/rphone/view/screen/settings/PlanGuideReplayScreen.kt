@@ -29,19 +29,23 @@ fun PlanGuideReplayScreen(navigator: DestinationsNavigator) {
 
 @Composable
 internal fun PlanGuideReplayContent(effective: AppPlan, onClose: () -> Unit, onMore: (AppPlan) -> Unit) {
-    val pages = PlanGuidePolicy.pending(effective, AppPlan.FREE)
-    var index by rememberSaveable { mutableIntStateOf(0) }
+    PlanGuideSequenceContent(PlanGuidePolicy.pending(effective, AppPlan.FREE), onClose, onMore, onClose)
+}
+
+@Composable
+internal fun PlanGuideSequenceContent(pages: List<AppPlan>, onFinished: () -> Unit,
+    onMore: (AppPlan) -> Unit, onBackAtStart: () -> Unit) {
+    var index by rememberSaveable(pages) { mutableIntStateOf(0) }
     if (pages.isEmpty()) {
-        LaunchedEffect(Unit) { onClose() }
+        LaunchedEffect(Unit) { onFinished() }
         return
     }
     val current = index.coerceAtMost(pages.lastIndex)
-    BackHandler {
-        if (current > 0) index = current - 1 else onClose()
-    }
+    val back = { if (current > 0) index = current - 1 else onBackAtStart() }
+    BackHandler(onBack = back)
     key(pages[current]) {
         PlanGuideContent(pages[current], onNext = {
-            if (current < pages.lastIndex) index = current + 1 else onClose()
-        }, onMore = { onMore(pages[current]) })
+            if (current < pages.lastIndex) index = current + 1 else onFinished()
+        }, onMore = { onMore(pages[current]) }, isLast = current == pages.lastIndex, onBack = back)
     }
 }

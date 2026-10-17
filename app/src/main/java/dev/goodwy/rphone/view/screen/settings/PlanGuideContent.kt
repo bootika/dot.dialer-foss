@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.components.GuideNavigationControls
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -22,7 +23,8 @@ import org.koin.compose.koinInject
 internal const val PLAN_GUIDE_ACK = "plan_guide_acknowledged_tier"
 
 @Composable
-internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> Unit) {
+internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> Unit,
+    isLast: Boolean = true, onBack: (() -> Unit)? = null) {
     val prefs = koinInject<PreferenceManager>()
     val revision by prefs.settingsChanged.collectAsState()
     var resumed by remember { mutableIntStateOf(0) }
@@ -41,7 +43,7 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
     Surface(Modifier.fillMaxSize().testTag("plan-guide-${tier.name}")) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(24.dp)) {
             Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                Text(if(premium) "Premium" else "Plus", style=MaterialTheme.typography.labelLarge, color=MaterialTheme.colorScheme.primary)
+                Text(tier.displayName, style=MaterialTheme.typography.labelLarge, color=MaterialTheme.colorScheme.primary)
                 Text(if(premium) stringResource(R.string.plan_interface_magic) else "Contacts Optimizer", style=MaterialTheme.typography.headlineMedium)
                 Text(stringResource(if(premium) R.string.plan_premium_summary else R.string.plan_optimizer_guide_summary), style=MaterialTheme.typography.bodyLarge)
                 if(premium) {
@@ -73,9 +75,7 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
                 Text(stringResource(R.string.plan_more_settings))
             }
             Spacer(Modifier.height(8.dp))
-            Button(onClick=onNext,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("plan-guide-next")) {
-                Text(stringResource(R.string.plan_guide_continue))
-            }
+            GuideNavigationControls(isLast, onNext, onBack)
         }
     }
 }
@@ -91,9 +91,11 @@ internal fun PlanGuideHost(onMore: (AppPlan) -> Unit) {
     val acknowledged=remember(revision) { AppPlan.entries.getOrElse(prefs.getInt(PLAN_GUIDE_ACK,0)) {AppPlan.FREE} }
     val pending=remember(state,acknowledged) {PlanGuidePolicy.pending(manager.effective,acknowledged)}
     val tier=pending.firstOrNull()?.takeUnless {deferred} ?: return
-    fun acknowledge() {prefs.setInt(PLAN_GUIDE_ACK,maxOf(acknowledged,tier).ordinal)}
-    androidx.compose.ui.window.Dialog(onDismissRequest=::acknowledge,
+    fun acknowledge(value: AppPlan) {prefs.setInt(PLAN_GUIDE_ACK,maxOf(acknowledged,value).ordinal)}
+    androidx.compose.ui.window.Dialog(onDismissRequest={acknowledge(tier); deferred=true},
         properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false,decorFitsSystemWindows=false)) {
-        key(tier) { PlanGuideContent(tier,onNext=::acknowledge,onMore={acknowledge();deferred=true;onMore(tier)}) }
+        PlanGuideSequenceContent(pending, onFinished = { acknowledge(pending.last()) },
+            onMore = { current -> acknowledge(current); deferred=true; onMore(current) },
+            onBackAtStart = { acknowledge(tier); deferred=true })
     }
 }

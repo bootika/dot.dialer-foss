@@ -3,13 +3,13 @@
     <string name="plan_current">Offre actuelle : %1$s</string>
     <string name="plan_free_summary">Appels, contacts, recherche, favoris et sauvegarde de base.</string>
     <string name="plan_plus_summary">Contacts Optimizer complet à la demande, avec toutes les sources disponibles et la sélection multiple.</string>
-    <string name="plan_premium_summary">Plus, mises à jour automatiques des contacts et personnalisation visuelle avancée.</string>
+    <string name="plan_premium_summary">Power, mises à jour automatiques des contacts et personnalisation visuelle avancée.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Essai Premium : %1$d jour restant</item>
-        <item quantity="many">Essai Premium : %1$d jours restants</item>
-        <item quantity="other">Essai Premium : %1$d jours restants</item>
+        <item quantity="one">Essai Complete : %1$d jour restant</item>
+        <item quantity="many">Essai Complete : %1$d jours restants</item>
+        <item quantity="other">Essai Complete : %1$d jours restants</item>
     </plurals>
-    <string name="plan_start_trial">Essayer Premium gratuitement pendant 30 jours</string>
+    <string name="plan_start_trial">Essayer Complete gratuitement pendant 30 jours</string>
     <string name="plan_trial_terms">Aucun débit automatique. Les photos existantes restent utilisables après l’essai.</string>
     <string name="plan_store_unavailable">Actuellement indisponible dans cette boutique</string>
     <string name="plan_connection_required">Connectez-vous pour vérifier votre offre ou démarrer l’essai.</string>
@@ -49,4 +49,5 @@
     <string name="plan_source_configured">Configurée</string>
     <string name="plan_source_setup">Configurer</string>
     <string name="plan_source_unavailable">Indisponible</string>
+    <string name="plan_guide_begin">Commencer avec Dot Dialer</string>
 </resources>

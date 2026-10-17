@@ -90,6 +90,7 @@ internal class PlanAccessManager internal constructor(
             val nonce = UUID.randomUUID().toString().replace("-", "")
             val body = JSONObject().put("package", audience).put("installation", installation).put("nonce", nonce)
                 .put("model", android.os.Build.MODEL.take(80)).put("version", BuildConfig.VERSION_NAME.take(40))
+                .put("offline_days", "10")
                 .put("start_trial", if (startTrial) "1" else "0")
             if(invitation!=null) {require(invitation.matches(Regex("[a-f0-9]{64}")));body.put("invitation",invitation)}
             val signed = transport(body).getString("grant")

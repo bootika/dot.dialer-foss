@@ -2,7 +2,6 @@
 <resources>
     <string name="onboarding_essential_title">Chamadas e contatos</string>
     <string name="onboarding_essential_body">Seus contatos e histórico ficam no telefone, não nos nossos servidores. O Android pedirá o app de telefone padrão e as permissões necessárias.\n\nOs relatórios técnicos de erros são automáticos por padrão. Você pode escolher o envio sob demanda em %1$s → %2$s.</string>
-    <string name="onboarding_start">Começar</string>
     <string name="diagnostic_reporting_mode">Relatórios de erros</string>
     <string name="diagnostic_automatic">Automáticos</string>
     <string name="diagnostic_on_demand">Só sob demanda</string>

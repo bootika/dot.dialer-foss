@@ -3,12 +3,12 @@
     <string name="plan_current">Geçerli plan: %1$s</string>
     <string name="plan_free_summary">Aramalar, kişiler, arama, favoriler ve temel yedekleme.</string>
     <string name="plan_plus_summary">Tüm kullanılabilir kaynaklar ve toplu seçim ile isteğe bağlı tam Contacts Optimizer.</string>
-    <string name="plan_premium_summary">Plus, otomatik kişi güncellemeleri ve gelişmiş görsel kişiselleştirme.</string>
+    <string name="plan_premium_summary">Power, otomatik kişi güncellemeleri ve gelişmiş görsel kişiselleştirme.</string>
     <plurals name="plan_trial_remaining">
-        <item quantity="one">Premium denemesi: %1$d gün kaldı</item>
-        <item quantity="other">Premium denemesi: %1$d gün kaldı</item>
+        <item quantity="one">Complete denemesi: %1$d gün kaldı</item>
+        <item quantity="other">Complete denemesi: %1$d gün kaldı</item>
     </plurals>
-    <string name="plan_start_trial">Premium’u 30 gün ücretsiz dene</string>
+    <string name="plan_start_trial">Complete’u 30 gün ücretsiz dene</string>
     <string name="plan_trial_terms">Otomatik ücret alınmaz. Mevcut fotoğraflar deneme sonrasında kullanılabilir.</string>
     <string name="plan_store_unavailable">Şu anda bu mağazada kullanılamıyor</string>
     <string name="plan_connection_required">Planı doğrulamak veya denemeyi başlatmak için bağlanın.</string>
@@ -47,4 +47,5 @@
     <string name="plan_source_configured">Yapılandırıldı</string>
     <string name="plan_source_setup">Yapılandır</string>
     <string name="plan_source_unavailable">Kullanılamıyor</string>
+    <string name="plan_guide_begin">Dot Dialer kullanmaya başla</string>
 </resources>

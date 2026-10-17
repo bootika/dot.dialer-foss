@@ -199,6 +199,50 @@ class PlanGuideRenderingTest {
         rule.onNodeWithTag("plan-guide-back").assertIsDisplayed()
         captureNavigation("welcome-landscape-200")
     }
+
+    @Test fun `Complete guide exposes shared call message choices and preserves them across guide pages`() {
+        var tier by mutableStateOf(AppPlan.PLUS)
+        var dark by mutableStateOf(false)
+        var scale by mutableFloatStateOf(1f)
+        rule.setContent {CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
+            DotDialerTheme(systemDark=dark) {PlanGuideContent(tier,{},{})}
+        }}
+        val title=rule.activity.getString(R.string.call_message_channel)
+        rule.onNodeWithText(title).assertDoesNotExist()
+        assertEquals(0,prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0))
+        rule.runOnIdle {tier=AppPlan.PREMIUM}
+        rule.onNodeWithText(title).performScrollTo().assertIsDisplayed()
+        assertEquals(0,prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0))
+        for(mode in listOf(false,true)) for(font in listOf(1f,2f)) {
+            rule.runOnIdle {dark=mode;scale=font}
+            rule.onNodeWithText(rule.activity.getString(R.string.call_message_channel_supporting)).performScrollTo().assertIsDisplayed()
+            rule.onNodeWithText("WhatsApp",useUnmergedTree=true).performScrollTo().performClick()
+            runBlocking {PreferenceWriteBarrier.awaitPending()}
+            rule.waitUntil(5000) {prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0)==1}
+            rule.onNodeWithText(rule.activity.getString(R.string.call_message_ask_each_time),useUnmergedTree=true).performScrollTo().performClick()
+            runBlocking {PreferenceWriteBarrier.awaitPending()}
+            rule.waitUntil(5000) {prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0)==2}
+            captureNavigation("complete-messages-${mode}-${font}")
+            rule.onNodeWithTag("plan-guide-more").assertIsDisplayed()
+            rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
+        }
+        rule.runOnIdle {tier=AppPlan.PLUS}
+        rule.onNodeWithText(title).assertDoesNotExist()
+        rule.runOnIdle {tier=AppPlan.PREMIUM}
+        rule.onNodeWithText(title).performScrollTo().assertIsDisplayed()
+        assertEquals(2,prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0))
+        assertEquals(2,PreferenceManager(rule.activity).getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0))
+    }
+    @Test fun `Complete guide retains the shared plan guard for call messages`() {
+        val requested=mutableListOf<io.github.bootika.dotdialer.core.license.PlanFeature>()
+        val locked=PreferenceManager(rule.activity, featureAllowed={false}, onPlanRequired={requested+=it})
+        stopKoin();startKoin {modules(module {single {locked}})}
+        rule.setContent {DotDialerTheme(systemDark=false) {PlanGuideContent(AppPlan.PREMIUM,{},{})}}
+        rule.onNodeWithText(rule.activity.getString(R.string.call_message_channel)).performScrollTo().performClick()
+        rule.runOnIdle {assertEquals(listOf(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL),requested)}
+        assertEquals(0,locked.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL,0))
+        rule.onNodeWithText("WhatsApp",useUnmergedTree=true).assertDoesNotExist()
+    }
     private fun captureNavigation(name: String) {
         rule.mainClock.advanceTimeBy(300)
         rule.waitForIdle()

@@ -58,6 +58,7 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
                         DotSettingsSwitchRow(stringResource(R.string.ambient_droplets),checked=prefs.getBoolean("ambient_droplets_enabled",false),
                             onCheckedChange={prefs.setBoolean("ambient_droplets_enabled",it)})
                     }
+                    DotSettingsCard { CallMessageSettings(prefs) }
                 } else {
                     PlanGuideOptimizerContent(account, settings, resumed,
                         googleEnabled = prefs.getBoolean(GoogleContactPhotoPreferences.ENABLED, false),

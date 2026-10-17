@@ -108,7 +108,10 @@ class VoiceSearchRenderingTest {
         assertEquals(RecognizerIntent.ACTION_RECOGNIZE_SPEECH,launches.last().second.action)
         rule.runOnIdle { registry.dispatchResult(launches.last().first,Activity.RESULT_OK,
             Intent().putStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS,arrayListOf("  Test Alexandru Butica  "))) }
+        // Waiting for persisted writes does not await the recognition callback's coroutine.
+        rule.waitUntil(10_000) { query == "Test Alexandru Butica" }
         flush();assertEquals("Test Alexandru Butica",query)
+        rule.onNode(hasSetTextAction()).assertTextEquals("Test Alexandru Butica")
         mic.performClick()
         rule.runOnIdle { registry.dispatchResult(launches.last().first,Activity.RESULT_CANCELED,null) }
         flush();assertEquals("Test Alexandru Butica",query)

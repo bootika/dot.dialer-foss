@@ -77,6 +77,7 @@ jobs:
           path: |
             ci-diagnostics/
             app/build/reports/tests/
+            app/build/reports/visual/
             app/build/test-results/
             app/build/reports/lint-results-*.html
             app/build/reports/lint-results-*.xml

@@ -35,7 +35,8 @@ class CallConferenceMistRenderingTest {
 
     @Test fun `adding removing changing and failing participant photos updates the rendered field`() {
         val blue = fixture("blue", AndroidColor.rgb(40, 90, 170))
-        val green = fixture("green", AndroidColor.rgb(60, 155, 75))
+        // The old muted green settled exactly at G-B=12, passing >12 only during fallback.
+        val green = fixture("green", AndroidColor.rgb(120, 210, 40))
         rule.setContent {
             MaterialTheme(colorScheme = if (dark.value) darkColorScheme() else lightColorScheme()) {
                 Box(Modifier.fillMaxSize().background(callMistSurface(MaterialTheme.colorScheme.surface))) {
@@ -43,26 +44,37 @@ class CallConferenceMistRenderingTest {
                 }
             }
         }
-        waitFor(.50f, .41f) { AndroidColor.red(it) > AndroidColor.blue(it) + 15 }
+        waitFor("01-one-circle", .50f, .41f) { AndroidColor.red(it) > AndroidColor.blue(it) + 15 }
         capture("01-one-circle")
         rule.runOnIdle { sources.value = listOf(CallMistSource(1, null, Color.Red), CallMistSource(2, blue, Color.Green)) }
-        waitFor(.80f, .41f) { AndroidColor.blue(it) > AndroidColor.red(it) + 12 }
+        waitFor("02-photo-added", .80f, .41f) { AndroidColor.blue(it) > AndroidColor.red(it) + 12 }
         capture("02-photo-added")
-        rule.runOnIdle { sources.value = listOf(CallMistSource(2, green, Color.Green)) }
-        waitFor(.50f, .41f) { AndroidColor.green(it) > AndroidColor.blue(it) + 12 }
+        // A blue fallback cannot satisfy the green predicate: the photo must actually load.
+        rule.runOnIdle { sources.value = listOf(CallMistSource(2, green, Color.Blue)) }
+        waitFor("03-removed-and-photo-changed", .50f, .41f) { AndroidColor.green(it) > AndroidColor.blue(it) + 12 }
         capture("03-removed-and-photo-changed")
         rule.runOnIdle { sources.value = listOf(CallMistSource(2, "file:///missing-participant-photo.jpg", Color.Magenta)) }
-        waitFor(.50f, .41f) { AndroidColor.red(it) > AndroidColor.green(it) + 12 }
+        waitFor("04-failed-photo-circle", .50f, .41f) { AndroidColor.red(it) > AndroidColor.green(it) + 12 }
         capture("04-failed-photo-circle")
         rule.runOnIdle { dark.value = true }
-        waitFor(.50f, .41f) { AndroidColor.red(it) > AndroidColor.green(it) + 12 && AndroidColor.red(it) < 180 }
+        waitFor("05-dark", .50f, .41f) { AndroidColor.red(it) > AndroidColor.green(it) + 12 && AndroidColor.red(it) < 180 }
         capture("05-dark")
         rule.runOnIdle { sources.value = emptyList() }
-        waitFor(.50f, .41f) { kotlin.math.abs(AndroidColor.red(it) - 20) <= 1 && kotlin.math.abs(AndroidColor.green(it) - 24) <= 1 }
+        waitFor("06-empty", .50f, .41f) { kotlin.math.abs(AndroidColor.red(it) - 20) <= 1 && kotlin.math.abs(AndroidColor.green(it) - 24) <= 1 }
         capture("06-empty")
     }
 
-    private fun waitFor(x: Float, y: Float, predicate: (Int) -> Boolean) {
+    private fun waitFor(stage: String, x: Float, y: Float, predicate: (Int) -> Boolean) {
+        try {
+            awaitColour(x, y, predicate)
+        } catch (failure: Throwable) {
+            runCatching { capture("$stage-failed") }.exceptionOrNull()?.let(failure::addSuppressed)
+            failure.addSuppressed(AssertionError("Conference transition: $stage at ($x, $y)"))
+            throw failure
+        }
+    }
+
+    private fun awaitColour(x: Float, y: Float, predicate: (Int) -> Boolean) {
         rule.waitUntil(5_000) {
             rule.mainClock.advanceTimeBy(200)
             var matches = false
@@ -77,6 +89,9 @@ class CallConferenceMistRenderingTest {
         rule.waitForIdle()
         rule.runOnIdle {
             val bitmap = screenshot()
+            val settled = bitmap.getPixel((bitmap.width * x).toInt(), (bitmap.height * y).toInt())
+            assertTrue("Settled colour must satisfy the same predicate: RGB=" +
+                "${AndroidColor.red(settled)},${AndroidColor.green(settled)},${AndroidColor.blue(settled)}", predicate(settled))
             val a = bitmap.getPixel(bitmap.width - 1, 0)
             val b = bitmap.getPixel(bitmap.width / 2, (bitmap.height * .96f).toInt())
             for (channel in listOf(AndroidColor::red, AndroidColor::green, AndroidColor::blue)) {

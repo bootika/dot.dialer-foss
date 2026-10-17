@@ -5,7 +5,7 @@ import org.junit.Test
 
 class PlanEntitlementsTest {
     @Test fun `display names change without renaming persisted tiers or ordinals`() {
-        assertEquals(listOf("Free","Power","Complete"),AppPlan.entries.map {it.displayName})
+        assertEquals(listOf("Free","Power Up","Complete"),AppPlan.entries.map {it.displayName})
         assertEquals(listOf("FREE","PLUS","PREMIUM"),AppPlan.entries.map {it.name})
         assertEquals(listOf(0,1,2),AppPlan.entries.map {it.ordinal})
     }

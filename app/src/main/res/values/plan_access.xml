@@ -3,7 +3,7 @@
     <string name="plan_current">Current plan: %1$s</string>
     <string name="plan_free_summary">Calls, contacts, search, favorites and basic backup.</string>
     <string name="plan_plus_summary">Full Contacts Optimizer on demand, with all available sources and bulk selection.</string>
-    <string name="plan_premium_summary">Power, automatic contact updates and advanced visual customization.</string>
+    <string name="plan_premium_summary">Power Up, automatic contact updates and advanced visual customization.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="one">Complete trial: %1$d day remaining</item>
         <item quantity="other">Complete trial: %1$d days remaining</item>

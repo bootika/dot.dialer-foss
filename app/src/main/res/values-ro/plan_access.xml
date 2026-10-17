@@ -3,7 +3,7 @@
     <string name="plan_current">Plan curent: %1$s</string>
     <string name="plan_free_summary">Apeluri, contacte, căutare, favorite și backup de bază.</string>
     <string name="plan_plus_summary">Contacts Optimizer complet la cerere, cu toate sursele disponibile și selecție în masă.</string>
-    <string name="plan_premium_summary">Power, actualizări automate ale contactelor și personalizare vizuală avansată.</string>
+    <string name="plan_premium_summary">Power Up, actualizări automate ale contactelor și personalizare vizuală avansată.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="one">Trial Complete: %1$d zi rămasă</item>
         <item quantity="few">Trial Complete: %1$d zile rămase</item>

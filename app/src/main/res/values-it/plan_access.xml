@@ -3,7 +3,7 @@
     <string name="plan_current">Piano attuale: %1$s</string>
     <string name="plan_free_summary">Chiamate, contatti, ricerca, preferiti e backup di base.</string>
     <string name="plan_plus_summary">Contacts Optimizer completo su richiesta, con tutte le fonti disponibili e selezione multipla.</string>
-    <string name="plan_premium_summary">Power, aggiornamenti automatici dei contatti e personalizzazione visiva avanzata.</string>
+    <string name="plan_premium_summary">Power Up, aggiornamenti automatici dei contatti e personalizzazione visiva avanzata.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="one">Prova Complete: %1$d giorno rimanente</item>
         <item quantity="many">Prova Complete: %1$d giorni rimanenti</item>

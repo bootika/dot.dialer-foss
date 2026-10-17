@@ -3,7 +3,7 @@
     <string name="plan_current">Geçerli plan: %1$s</string>
     <string name="plan_free_summary">Aramalar, kişiler, arama, favoriler ve temel yedekleme.</string>
     <string name="plan_plus_summary">Tüm kullanılabilir kaynaklar ve toplu seçim ile isteğe bağlı tam Contacts Optimizer.</string>
-    <string name="plan_premium_summary">Power, otomatik kişi güncellemeleri ve gelişmiş görsel kişiselleştirme.</string>
+    <string name="plan_premium_summary">Power Up, otomatik kişi güncellemeleri ve gelişmiş görsel kişiselleştirme.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="one">Complete denemesi: %1$d gün kaldı</item>
         <item quantity="other">Complete denemesi: %1$d gün kaldı</item>

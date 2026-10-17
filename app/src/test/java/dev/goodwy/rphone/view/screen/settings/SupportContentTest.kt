@@ -247,7 +247,7 @@ class SupportContentTest {
             rule.runOnIdle { store.value = io.github.bootika.dotdialer.core.license.AppPlan.PLUS }
             rule.waitUntil(5000) {backs == 1}
             rule.onNodeWithTag("plan-current-card").performScrollTo()
-            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Power"))
+            rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Power Up"))
             capture("plans-plus-current")
             rule.onNodeWithTag("plan-tier-PLUS").performScrollTo().performClick()
             rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
@@ -271,7 +271,7 @@ class SupportContentTest {
             rule.onNodeWithTag("plan-current-card").performScrollTo()
             rule.onNodeWithTag("plan-current").assertTextEquals(rule.activity.getString(R.string.plan_current, "Complete"))
             rule.onNodeWithTag("plan-trial-status").assertExists()
-            rule.onNodeWithText(rule.activity.getString(R.string.plan_base, "Power")).assertExists()
+            rule.onNodeWithText(rule.activity.getString(R.string.plan_base, "Power Up")).assertExists()
             rule.onNodeWithTag("start-premium-trial").assertDoesNotExist()
             capture("plans-trial-current")
             rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()

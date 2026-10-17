@@ -3,7 +3,7 @@
     <string name="plan_current">Paket saat ini: %1$s</string>
     <string name="plan_free_summary">Panggilan, kontak, pencarian, favorit, dan cadangan dasar.</string>
     <string name="plan_plus_summary">Contacts Optimizer lengkap sesuai permintaan, dengan semua sumber yang tersedia dan pilihan massal.</string>
-    <string name="plan_premium_summary">Power, pembaruan kontak otomatis dan penyesuaian visual lanjutan.</string>
+    <string name="plan_premium_summary">Power Up, pembaruan kontak otomatis dan penyesuaian visual lanjutan.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="other">Uji coba Complete: tersisa %1$d hari</item>
     </plurals>

@@ -3,7 +3,7 @@
     <string name="plan_current">Gói hiện tại: %1$s</string>
     <string name="plan_free_summary">Cuộc gọi, danh bạ, tìm kiếm, yêu thích và sao lưu cơ bản.</string>
     <string name="plan_plus_summary">Contacts Optimizer đầy đủ theo yêu cầu, mọi nguồn khả dụng và chọn hàng loạt.</string>
-    <string name="plan_premium_summary">Power, tự động cập nhật danh bạ và tùy chỉnh giao diện nâng cao.</string>
+    <string name="plan_premium_summary">Power Up, tự động cập nhật danh bạ và tùy chỉnh giao diện nâng cao.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="other">Dùng thử Complete: còn %1$d ngày</item>
     </plurals>

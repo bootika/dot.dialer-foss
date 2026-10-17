@@ -105,7 +105,7 @@ class CallMessageRoutingUiTest {
         rule.onNodeWithText("Choose SMS or WhatsApp for call-screen messages and quick replies. In WhatsApp, tap Send to send the message.").assertIsDisplayed()
         capture("settings-light")
     }
-    @Test fun `Free and Power use SMS despite a retained WhatsApp preference`() {
+    @Test fun `Free and Power Up use SMS despite a retained WhatsApp preference`() {
         val (sms, intents, declines) = scene(1, installed = true, allowed = { false })
         rule.onNodeWithText("Reply").performClick()
         rule.runOnIdle { assertEquals(listOf("Revin mai târziu"), sms); assertTrue(intents.isEmpty()); assertTrue(declines.isEmpty()) }

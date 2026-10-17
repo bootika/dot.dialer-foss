@@ -47,6 +47,7 @@ jobs:
             while true; do
               date -u
               free -m
+              free -m | awk '/^Mem:/ {print "Runner memory MiB: total=" $2 ", used=" $3 ", available=" $7 > "/dev/stderr"}'
               ps -eo pid,ppid,comm,rss --sort=-rss | sed -n '1,12p'
               sleep 15
             done
@@ -54,10 +55,12 @@ jobs:
           memory_monitor=$!
           trap 'kill "$memory_monitor" 2>/dev/null || true' EXIT
 
-          # One compiler JVM and one worker bound peak memory on private runners.
-          # Finish compilation before starting Robolectric so compiler memory is released.
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate -x :app:testFossDebugUnitTest :app:compileFossDebugUnitTestKotlin
-          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testFossDebugUnitTest
+          # Bound each phase to one JVM/worker and release compiler memory before lint,
+          # R8 and Robolectric. The final unfiltered gate still enforces every check.
+          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
+          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
+          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:assembleFossRelease
+          ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
 
       - name: Verify store dependency graphs
         run: ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testGplayDebugUnitTest --tests '*AppModuleResolutionTest' :app:testRustoreDebugUnitTest --tests '*AppModuleResolutionTest'

@@ -14,8 +14,10 @@ internal fun SettingsPreferenceSwitch(
 ) {
     val version by prefs.settingsChanged.collectAsStateWithLifecycle()
     val checked = remember(version) { prefs.getBoolean(key, default) }
+    val feature = dev.goodwy.rphone.controller.util.PlanPreferencePolicy.feature(key)
+    val allowed = remember(version) { feature == null || prefs.allowsFeature(feature) }
     DotSettingsSwitchRow(stringResource(label), supporting, checked,
-        { prefs.setBoolean(key, it) }, enabled = enabled)
+        { prefs.setBoolean(key, it) }, enabled = enabled || !allowed, contentActive = allowed)
 }
 
 @Composable

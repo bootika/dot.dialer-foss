@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -130,6 +131,7 @@ private fun SettingsSearchResults(
             results.forEach { entry ->
                 SettingsHomeListItem(
                     headline = entry.headline,
+                    modifier = Modifier.alpha(if (entry.contentActive) 1f else .45f),
                     supporting = entry.supporting,
                     leadingIcon = entry.leadingIcon,
                     iconContainerColor = entry.iconContainerColor,

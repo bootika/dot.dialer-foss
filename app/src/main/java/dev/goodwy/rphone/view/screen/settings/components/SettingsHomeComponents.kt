@@ -41,6 +41,7 @@ internal data class SettingsSearchEntry(
     val iconContainerColor: Color? = null,
     val iconBgContainerColor: Color? = null,
     val options: List<String> = emptyList(),
+    val contentActive: Boolean = true,
     val onClick: () -> Unit,
 )
 

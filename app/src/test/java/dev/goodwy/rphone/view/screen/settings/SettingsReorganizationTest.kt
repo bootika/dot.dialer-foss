@@ -179,7 +179,8 @@ class SettingsReorganizationTest {
             R.string.incoming_call_ui, R.string.liquid_glass_call_screen))
             rule.onAllNodesWithText(rule.activity.getString(label)).assertCountEquals(0)
         rule.onNodeWithText(rule.activity.getString(R.string.add_country_code_automatically)).performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText(rule.activity.getString(R.string.proximity_sensor)).performScrollTo().assertIsDisplayed()
+        rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(rule.activity.getString(R.string.proximity_sensor)))
+        rule.onNodeWithText(rule.activity.getString(R.string.proximity_sensor)).assertIsDisplayed()
         assertEquals(before, runBlocking { prefs.getPersistedPreferences() })
     }
 

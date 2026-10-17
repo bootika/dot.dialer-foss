@@ -57,6 +57,8 @@ fun CallSettingScreen(navigator: DestinationsNavigator, section: String = "norma
             }
             item {
                 DotSettingsCard {
+                    CallMessageSettings(prefs)
+                    DotSettingsDivider()
                     DotSettingsNavigationRow(stringResource(R.string.quick_responses),
                         supporting = stringResource(R.string.quick_responses_subtitle),
                         onClick = { navigator.navigate(QuickResponsesScreenDestination) })

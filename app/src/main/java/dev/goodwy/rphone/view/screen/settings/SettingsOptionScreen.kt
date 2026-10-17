@@ -16,10 +16,10 @@ import org.koin.compose.koinInject
 @Destination<RootGraph>
 @Composable
 fun SettingsOptionScreen(navigator: DestinationsNavigator, optionId: String) {
-    if(optionId in setOf("I03","C07","C02","A05","A07","C03","C04","C08") &&
-        planSettingLocked(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE,navigator::navigateUp)) return
-    if (optionId == "T17") { SettingsOptionScreen(navigator, "T19"); return }
     val option = settingsOptions.firstOrNull { it.id == optionId }
+    val requiredFeature = option?.planFeature
+    if (requiredFeature != null && planSettingLocked(requiredFeature, navigator::navigateUp)) return
+    if (optionId == "T17") { SettingsOptionScreen(navigator, "T19"); return }
     if (option == null || !option.isAvailable(dev.goodwy.rphone.BuildConfig.FLAVOR,
             dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable())) {
         AdvancedSettingsScreen(navigator)

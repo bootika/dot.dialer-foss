@@ -38,4 +38,20 @@ class PlanPreferenceTest {
         allowed=true
         assertEquals("/private/retained.jpg",prefs.getContactBackground("123"))
     }
+    @Test fun `Complete message preference survives downgrade and blocked writes then returns on upgrade`() = runBlocking {
+        var allowed = true
+        val requests = mutableListOf<PlanFeature>()
+        val prefs = PreferenceManager(RuntimeEnvironment.getApplication(), featureAllowed = { allowed }, onPlanRequired = { requests += it })
+        prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL to 1), replacePortable = true)
+        assertEquals(1, prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL, 0))
+        allowed = false
+        assertEquals(0, prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL, 0))
+        assertEquals(0, prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL, 2))
+        prefs.setInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL, 2)
+        PreferenceWriteBarrier.awaitPending()
+        assertEquals(listOf(PlanFeature.CALL_MESSAGE_CHANNEL), requests)
+        allowed = true
+        assertEquals(1, prefs.getInt(PreferenceManager.KEY_CALL_MESSAGE_CHANNEL, 0))
+    }
+
 }

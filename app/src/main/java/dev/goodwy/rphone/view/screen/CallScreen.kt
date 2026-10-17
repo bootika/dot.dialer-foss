@@ -462,7 +462,7 @@ private fun ExpressiveCallScreenContent(
     val onSendQuickResponse: (String) -> Unit = { message ->
         val canRespondViaText =
             (call.details?.callCapabilities ?: 0) and Call.Details.CAPABILITY_RESPOND_VIA_TEXT != 0
-        if (canRespondViaText) {
+        if (canRespondViaText && call.currentTelecomState() == Call.STATE_RINGING) {
             try {
                 @Suppress("DEPRECATION")
                 call.reject(true, message)
@@ -472,10 +472,14 @@ private fun ExpressiveCallScreenContent(
                 openQuickResponseComposer(context, phoneNumber, message)
             }
         } else {
-            rejectIncomingCall()
+            if (call.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
             openQuickResponseComposer(context, phoneNumber, message)
         }
         showQuickResponsesSheet = false
+    }
+
+    val sendCallMessage = rememberCallMessageAction(preferenceManager, phoneNumber, onSendQuickResponse) {
+        if (call.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
     }
 
     fun scheduleCallBackReminder(triggerAtMillis: Long) {
@@ -825,10 +829,7 @@ private fun ExpressiveCallScreenContent(
                                                     headline = stringResource(R.string.message),
                                                     leadingIcon = ImageVector.vectorResource(id = R.drawable.ic_message_outline),
                                                     onClick = {
-                                                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                                            data = "smsto:$phoneNumber".toUri()
-                                                        }
-                                                        context.startActivity(intent)
+                                                        sendCallMessage(null, false)
                                                     }
                                                 )
                                                 if (otherCall == null) {
@@ -1229,7 +1230,10 @@ private fun ExpressiveCallScreenContent(
                 phoneNumber = phoneNumber,
                 contactName = contactName,
                 onDismiss = { showQuickResponsesSheet = false },
-                onSend = onSendQuickResponse,
+                onSend = { message ->
+                    showQuickResponsesSheet = false
+                    sendCallMessage(message, true)
+                },
                 onOpenSmsApp = {
                     try {
                         if (call.currentTelecomState() == Call.STATE_RINGING) {

@@ -37,14 +37,18 @@ internal fun AmbientDropletSettingsControls(
         )
     }
 
+    val feature = io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
+    val allowed = remember(settingsVersion) { prefs.allowsFeature(feature) }
     DotSettingsDivider()
     DotSettingsSwitchRow(
         title = stringResource(R.string.ambient_droplets),
         supporting = stringResource(R.string.ambient_droplets_supporting),
-        checked = enabled,
+        checked = enabled, contentActive = allowed,
         onCheckedChange = {
-            enabled = it
-            prefs.setBoolean(AmbientDropletPreference.ENABLED_KEY, it)
+            if (prefs.requireFeature(feature)) {
+                enabled = it
+                prefs.setBoolean(AmbientDropletPreference.ENABLED_KEY, it)
+            }
         },
     )
     DotSettingsDivider()

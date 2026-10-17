@@ -31,4 +31,14 @@ class PlanEntitlementsTest {
         assertTrue(PlanGuidePolicy.pending(AppPlan.PLUS,AppPlan.PREMIUM).isEmpty())
         assertTrue(PlanGuidePolicy.pending(AppPlan.PREMIUM,AppPlan.PREMIUM).isEmpty())
     }
+    @Test fun `WhatsApp channel is Complete only with the same trial cutoff`() {
+        for (plan in AppPlan.entries) {
+            val rights = PlanEntitlements(plan, 100, 200)
+            assertEquals(plan == AppPlan.PREMIUM, rights.allows(PlanFeature.CALL_MESSAGE_CHANNEL, 99))
+            assertTrue(rights.allows(PlanFeature.CALL_MESSAGE_CHANNEL, 100))
+            assertTrue(rights.allows(PlanFeature.CALL_MESSAGE_CHANNEL, 199))
+            assertEquals(plan == AppPlan.PREMIUM, rights.allows(PlanFeature.CALL_MESSAGE_CHANNEL, 200))
+        }
+    }
+
 }

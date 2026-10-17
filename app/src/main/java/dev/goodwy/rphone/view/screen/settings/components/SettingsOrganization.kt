@@ -18,6 +18,13 @@ internal data class SettingsOption(
     val advanced: Boolean,
     val category: Int,
 ) {
+    val planFeature: io.github.bootika.dotdialer.core.license.PlanFeature? get() = when (id) {
+        "K11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL
+        "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A02", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
+        "T19", "T17" -> io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER
+        "T09", "T10", "T11", "T12", "T14", "T15", "T16" -> io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER
+        else -> null
+    }
     val function: SettingsFunction get() = when (editor) {
         SettingsEditor.INTERFACE, SettingsEditor.AVATARS, SettingsEditor.FONT, SettingsEditor.KEYPAD,
         SettingsEditor.FRAME, SettingsEditor.ACCESSIBILITY, SettingsEditor.HOME, SettingsEditor.HISTORY,
@@ -83,6 +90,7 @@ internal val settingsOptions = listOf(
     SettingsOption("K06", R.string.proximity_sensor, SettingsEditor.CALLS, true, R.string.compatibility),
     SettingsOption("K07", R.string.pocket_mode_prevention, SettingsEditor.CALLS, false, R.string.call_behavior),
     SettingsOption("K04", R.string.android_auto_integration, SettingsEditor.CALLS, false, R.string.call_behavior),
+    SettingsOption("K11", R.string.call_message_channel, SettingsEditor.CALLS, false, R.string.call_behavior),
     SettingsOption("K05", R.string.quick_responses, SettingsEditor.QUICK, false, R.string.quick_responses),
     SettingsOption("K09", R.string.fullscreen_calls, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("H10", R.string.show_all_recent_calls, SettingsEditor.HOME, false, R.string.home_and_gestures),

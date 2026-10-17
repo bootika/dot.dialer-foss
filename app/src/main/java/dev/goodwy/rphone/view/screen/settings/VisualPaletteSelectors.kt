@@ -72,7 +72,14 @@ internal fun DotAccentColorChoiceRow(
     choices: List<Pair<String, String>>,
     selectedValue: String,
     onValueChange: (String) -> Unit,
+    contentActive: Boolean = true,
+    onInactiveClick: () -> Unit = {},
 ) {
+    if (!contentActive) {
+        DotSettingsNavigationRow(title, value = choices.firstOrNull { it.second == selectedValue }?.first,
+            contentActive = false, onClick = onInactiveClick)
+        return
+    }
     DotSettingsVisualChoiceRow(
         title = title,
         testTag = "accent-color-selector",

@@ -29,6 +29,7 @@ import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -285,6 +286,7 @@ if (!advanced) {
                         Column(
                             modifier = Modifier
                                 .settingsSearchTarget(stringResource(R.string.settings_call_default_background))
+                                .alpha(if (isPro) 1f else .45f)
                                 .background(color = cardColor)
                                 .padding(16.dp)
                         ) {

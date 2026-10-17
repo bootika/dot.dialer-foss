@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="call_message_channel">Messaggi dalla schermata di chiamata</string>
+    <string name="call_message_ask_each_time">Chiedi ogni volta</string>
+    <string name="call_message_channel_supporting">Scegli SMS o WhatsApp per messaggi e risposte rapide dalla schermata di chiamata. In WhatsApp devi toccare Invia.</string>
+    <string name="call_message_whatsapp_send_hint">Tocca Invia in WhatsApp per inviare il messaggio.</string>
+    <string name="call_message_whatsapp_unavailable">WhatsApp non è disponibile. Puoi usare gli SMS.</string>
+</resources>

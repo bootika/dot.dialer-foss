@@ -29,6 +29,7 @@ class BackupCompletenessTest {
     private data class Field(val id: String, val key: String, val values: List<Any>)
     private fun field(id: String, key: String, vararg values: Any) = Field(id, key, values.toList())
     private val fields = listOf(
+        field("K11", P.KEY_CALL_MESSAGE_CHANNEL, 0, 1, 2),
         field("T11", WhatsAppAvatarSyncPreferences.ENABLED, false, true),
         field("T12", WhatsAppAvatarSyncPreferences.NORMALIZE_NUMBERS, false, true),
         field("T13", WhatsAppAvatarSyncPreferences.EXISTING_PHOTO_POLICY, "ask", "always", "never"),

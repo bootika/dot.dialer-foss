@@ -5,6 +5,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import dev.goodwy.rphone.view.screen.settings.rememberPlanAccessManager
 import androidx.compose.ui.res.stringResource
 import com.ramcosta.composedestinations.generated.destinations.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -27,6 +31,8 @@ internal fun createSettingsSearchEntries(
     onRestoreBackup: () -> Unit,
     onStartUiTour: () -> Unit,
 ): List<SettingsSearchEntry> {
+    val plans = rememberPlanAccessManager()
+    val planState by plans.state.collectAsState()
     val normal = stringResource(R.string.settings)
     val advanced = stringResource(R.string.advanced_settings)
     val language = LocalConfiguration.current.locales[0].language
@@ -38,6 +44,7 @@ internal fun createSettingsSearchEntries(
             supporting = settingsBreadcrumb(option),
             leadingIcon = Icons.Rounded.Tune,
             options = terms + category,
+            contentActive = remember(planState, option.id) { option.planFeature?.let(plans::allows) ?: true },
         ) { navigator.navigate(SettingsOptionScreenDestination(option.id)) }
     }
     fun action(label: Int, category: Int, action: () -> Unit): SettingsSearchEntry = SettingsSearchEntry(

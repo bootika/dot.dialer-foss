@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="call_message_channel">Nachrichten im Anrufbildschirm</string>
+    <string name="call_message_ask_each_time">Jedes Mal fragen</string>
+    <string name="call_message_channel_supporting">SMS oder WhatsApp für Nachrichten und Schnellantworten im Anrufbildschirm wählen. In WhatsApp auf Senden tippen.</string>
+    <string name="call_message_whatsapp_send_hint">Zum Versenden in WhatsApp auf Senden tippen.</string>
+    <string name="call_message_whatsapp_unavailable">WhatsApp ist nicht verfügbar. Stattdessen ist SMS möglich.</string>
+</resources>

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -113,13 +114,14 @@ fun AvatarsPreferenceScreen(navigator: DestinationsNavigator, advanced: Boolean 
                             run {
                                 RillSwitchListItem(
                                 headline = stringResource(R.string.avatar_frame),
+                                modifier = Modifier.alpha(if (prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)) 1f else .45f),
                                 supporting = stringResource(R.string.avatar_frame_subtitle),
                                 leadingIcon = if (avatarFrame) ImageVector.vectorResource(id = R.drawable.ic_person_border)
                                                 else ImageVector.vectorResource(id = R.drawable.ic_person_no_border),
                                 iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
                                 iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
                                 checked = avatarFrame,
-                                onCheckedChange = { avatarFrame = it; prefs.setBoolean(PreferenceManager.KEY_AVATAR_FRAME, it) }
+                                onCheckedChange = { if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)) { avatarFrame = it; prefs.setBoolean(PreferenceManager.KEY_AVATAR_FRAME, it) } }
                             )
                             }
                         }

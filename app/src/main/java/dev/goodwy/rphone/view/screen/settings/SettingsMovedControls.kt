@@ -5,6 +5,8 @@ import androidx.compose.material.icons.rounded.RememberMe
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Dialpad
 import dev.goodwy.rphone.view.components.DotDialerHangupIcon
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
@@ -44,11 +46,14 @@ internal fun AvatarListSizeControl(prefs: PreferenceManager) {
 internal fun EffectPreferenceRow(prefs: PreferenceManager, key: String, default: Boolean, label: Int) {
     val version by prefs.settingsChanged.collectAsStateWithLifecycle()
     var checked by remember(version) { mutableStateOf(prefs.getBoolean(key, default)) }
+    val feature = dev.goodwy.rphone.controller.util.PlanPreferencePolicy.feature(key)
+    val allowed = remember(version) { feature == null || prefs.allowsFeature(feature) }
     RillSwitchListItem(
+        modifier = Modifier.alpha(if (allowed) 1f else .45f),
         headline = stringResource(label), checked = checked,
         leadingIcon = if (key == PreferenceManager.KEY_LG_DIALPAD || key == PreferenceManager.KEY_BLUR_DIALPAD) Icons.Rounded.Dialpad else DotDialerHangupIcon,
         iconContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,
         iconBgContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        onCheckedChange = { checked = it; prefs.setBoolean(key, it) },
+        onCheckedChange = { if (feature == null || prefs.requireFeature(feature)) { checked = it; prefs.setBoolean(key, it) } },
     )
 }

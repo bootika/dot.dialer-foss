@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="call_message_channel">Mensagens na tela de chamada</string>
+    <string name="call_message_ask_each_time">Perguntar sempre</string>
+    <string name="call_message_channel_supporting">Escolha SMS ou WhatsApp para mensagens e respostas rápidas na tela de chamada. No WhatsApp, toque em Enviar.</string>
+    <string name="call_message_whatsapp_send_hint">Toque em Enviar no WhatsApp para enviar a mensagem.</string>
+    <string name="call_message_whatsapp_unavailable">O WhatsApp está indisponível. Você pode usar SMS.</string>
+</resources>

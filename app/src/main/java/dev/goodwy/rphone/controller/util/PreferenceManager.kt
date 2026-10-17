@@ -109,7 +109,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
     }
 
     fun getInt(key: String, defaultValue: Int): Int =
-        if (!permitted(key)) when(key) { KEY_SWIPE_RIGHT_ACTION -> DEFAULT_SWIPE_RIGHT_ACTION; KEY_SWIPE_LEFT_ACTION -> DEFAULT_SWIPE_LEFT_ACTION; else -> defaultValue } else _prefsCache.value[intPreferencesKey(key)]
+        if (!permitted(key)) when(key) { KEY_SWIPE_RIGHT_ACTION -> DEFAULT_SWIPE_RIGHT_ACTION; KEY_SWIPE_LEFT_ACTION -> DEFAULT_SWIPE_LEFT_ACTION; KEY_CALL_MESSAGE_CHANNEL -> 0; else -> defaultValue } else _prefsCache.value[intPreferencesKey(key)]
             ?: if (usesOwnerDefaults) DotDialerPreferenceDefaults.intFor(key) ?: defaultValue
                 else LegacyPreferenceDefaults.intFor(key) ?: defaultValue
 
@@ -431,6 +431,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
 
         const val KEY_POCKET_MODE = "pocket_mode"
         const val KEY_VOLUME_SQUEEZE_DND = "volume_squeeze_dnd"
+        const val KEY_CALL_MESSAGE_CHANNEL = "call_message_channel"
         const val KEY_QUICK_RESPONSES = "custom_quick_responses"
         val DEFAULT_QUICK_RESPONSES = listOf(
             "Can't talk now. What's up?",

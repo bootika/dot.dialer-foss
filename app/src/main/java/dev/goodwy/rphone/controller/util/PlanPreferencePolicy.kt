@@ -7,6 +7,7 @@ internal object PlanPreferencePolicy {
     private val effects = setOf("liquid_glass_ui", "ui_blur", "floating_bar_blur", "blur_effects_ui",
         "frosted_call_background", "ambient_droplets_enabled", "avatar_frame")
     fun feature(key: String): PlanFeature? = when {
+        key == "call_message_channel" -> PlanFeature.CALL_MESSAGE_CHANNEL
         key in effects || key.startsWith("lg_") || key.startsWith("blur_") || key == "BLUR_dialpad" ||
             key in setOf("accent_color", "custom_font_path", "call_background_default") ||
             key.startsWith("contact_background_") -> PlanFeature.PREMIUM_APPEARANCE

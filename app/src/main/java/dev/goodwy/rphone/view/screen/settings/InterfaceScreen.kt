@@ -131,6 +131,8 @@ fun InterfaceScreen(navigator: DestinationsNavigator, advanced: Boolean = false,
                         DotSettingsDivider()
                         DotAccentColorChoiceRow(
                         title = stringResource(R.string.accent_color),
+                        contentActive = prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE),
+                        onInactiveClick = { prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE) },
                         choices = accentChoices,
                         selectedValue = accentColor,
                         onValueChange = {

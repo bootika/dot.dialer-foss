@@ -24,6 +24,8 @@ import dev.goodwy.rphone.controller.util.*
 @Composable
 internal fun ContactsOptimizerPolicyControl(settings: ContactOptimizationSettings, choose: (ContactPhotoAutomaticPolicy) -> Unit) {
     val plans=rememberPlanAccessManager()
+    val planState by plans.state.collectAsState()
+    val allowed = remember(planState) { plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) }
     var expanded by remember { mutableStateOf(false) }
     val inheritedDensity = LocalDensity.current
     fun labels(policy: ContactPhotoAutomaticPolicy) = when (policy) {
@@ -35,7 +37,7 @@ internal fun ContactsOptimizerPolicyControl(settings: ContactOptimizationSetting
     }
     val current = labels(if(plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER)) settings.effectivePhotoPolicy else ContactPhotoAutomaticPolicy.Manual)
     DotSettingsNavigationRow(stringResource(R.string.contact_photos_auto_policy), value = stringResource(current.first),
-        supporting = stringResource(current.second), valueBelowTitle = true, onClick = { if(plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER)) expanded = true else plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) })
+        supporting = stringResource(current.second), valueBelowTitle = true, contentActive = allowed, onClick = { if(plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER)) expanded = true else plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) })
     if (expanded) AlertDialog(onDismissRequest = { expanded = false },
         title = { CompositionLocalProvider(LocalDensity provides inheritedDensity) { Text(stringResource(R.string.contact_photos_auto_policy)) } },
         text = { CompositionLocalProvider(LocalDensity provides inheritedDensity) { Column(Modifier.verticalScroll(rememberScrollState()).selectableGroup().testTag("optimizerPolicies"), verticalArrangement = Arrangement.spacedBy(8.dp)) {

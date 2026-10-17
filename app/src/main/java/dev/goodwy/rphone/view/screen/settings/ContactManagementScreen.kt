@@ -75,6 +75,9 @@ fun ContactManagementScreen(
     navigator: DestinationsNavigator,
     toolsOnly: Boolean = false,
 ) {
+    val prefs = org.koin.compose.koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
+    val planRevision by prefs.settingsChanged.collectAsStateWithLifecycle()
+    val optimizerAllowed = remember(planRevision) { prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER) }
     val context = LocalContext.current
     val viewModel: ContactsViewModel = koinActivityViewModel()
     var duplicateGroups by remember { mutableStateOf<List<List<Contact>>>(emptyList()) }
@@ -255,6 +258,7 @@ if (!toolsOnly) {
                     SettingsImmediateSection {
                         DotSettingsCard {
                             DotSettingsNavigationRow(stringResource(R.string.contact_photos_title),
+                                contentActive = optimizerAllowed,
                                 onClick = { navigator.navigate(com.ramcosta.composedestinations.generated.destinations.ContactPhotosScreenDestination()) })
                         }
                     }

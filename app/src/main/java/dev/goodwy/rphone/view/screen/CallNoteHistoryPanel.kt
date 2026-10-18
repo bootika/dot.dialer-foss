@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -92,14 +93,16 @@ private fun CallNoteHistoryRows(number: String, region: String?) {
         loadedRows == null -> LinearProgressIndicator(Modifier.fillMaxWidth())
         failed -> Text(stringResource(R.string.call_history_unavailable), style = MaterialTheme.typography.bodyMedium)
         loadedRows.isEmpty() -> Text(stringResource(R.string.no_call_history_found), style = MaterialTheme.typography.bodyMedium)
-        else -> loadedRows.forEach { row ->
-            ListItem(headlineContent = { Text(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(row.date))) },
-                supportingContent = { Text(stringResource(when (row.type) {
-                    CallLog.Calls.OUTGOING_TYPE -> R.string.outgoing
-                    CallLog.Calls.MISSED_TYPE -> R.string.missed
-                    CallLog.Calls.REJECTED_TYPE -> R.string.rejected
-                    else -> R.string.incoming
-                })) }, trailingContent = { Text("${row.duration / 60}:${(row.duration % 60).toString().padStart(2, '0')}") })
+        else -> Column(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))) {
+            loadedRows.forEach { row ->
+                ListItem(headlineContent = { Text(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(row.date))) },
+                    supportingContent = { Text(stringResource(when (row.type) {
+                        CallLog.Calls.OUTGOING_TYPE -> R.string.outgoing
+                        CallLog.Calls.MISSED_TYPE -> R.string.missed
+                        CallLog.Calls.REJECTED_TYPE -> R.string.rejected
+                        else -> R.string.incoming
+                    })) }, trailingContent = { Text("${row.duration / 60}:${(row.duration % 60).toString().padStart(2, '0')}") })
+            }
         }
     }
 }

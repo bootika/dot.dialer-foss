@@ -919,6 +919,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
         } else {
             CompositionLocalProvider(LocalRillAvatarAppearance provides avatarAppearance) {
                 ScrollHapticsEffect(listState)
+                dev.goodwy.rphone.view.components.HideKeyboardOnListDrag(listState)
                 PullToRefreshBox(
                     isRefreshing = isRefreshing,
                     onRefresh = ::refreshHome,
@@ -1001,7 +1002,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             avatarColorSeed = row.contact?.displayName ?: row.title,
                             callVisual = row.visual,
                             callTime = row.formattedTime,
-                            swipeEnabled = swipeEnabled,
+                            swipeEnabled = swipeEnabled && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
                             swipeRightAction = swipeRightAction,
                             swipeLeftAction = swipeLeftAction,
                             haptics = haptics,
@@ -1013,6 +1014,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                     action = action,
                                     context = context,
                                     number = callEntry.number,
+                                    onDeleteEntry = { callLogViewModel.deleteCallLogsByIds(listOf(callEntry.id)) },
                                     onCall = ::call,
                                     onContact = {
                                         navigator.navigate(ContactDetailsScreenDestination(
@@ -1103,15 +1105,16 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             phoneNumber = phoneNumber,
                             avatarColorIndex = avatarColorPlan.contactIndices[index],
                             avatarColorSeed = contact.displayName,
-                            swipeEnabled = swipeEnabled && phoneNumber != null,
-                            swipeRightAction = swipeRightAction,
-                            swipeLeftAction = swipeLeftAction,
+                            swipeEnabled = swipeEnabled && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
+                            swipeRightAction = dev.goodwy.rphone.controller.util.contactSwipeAction(swipeRightAction, phoneNumber != null),
+                            swipeLeftAction = dev.goodwy.rphone.controller.util.contactSwipeAction(swipeLeftAction, phoneNumber != null),
                             haptics = haptics,
                             hapticsStrength = hapticsStrength,
                             hapticsIntensity = hapticsIntensity,
                             onAction = { action ->
-                                phoneNumber?.let { number ->
-                                    statistics.record(io.github.bootika.dotdialer.observability.ProductStatistics.Event.Swipe)
+                                statistics.record(io.github.bootika.dotdialer.observability.ProductStatistics.Event.Swipe)
+                                if (action == PreferenceManager.SWIPE_ACTION_DELETE_ENTRY) deleteContactTarget = contact
+                                else phoneNumber?.let { number ->
                                     performHomeAction(
                                         action = action,
                                         context = context,

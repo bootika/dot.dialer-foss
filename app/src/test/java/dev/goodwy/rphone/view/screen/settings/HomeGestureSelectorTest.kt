@@ -36,14 +36,14 @@ class HomeGestureSelectorTest {
     }
 
     @Test fun `right swipe selector allows Call and no action is first`() {
-        render("Swipe right")
+        render("Swipe right", includeDelete = true)
         openAndVerifyChoices()
         rule.onAllNodesWithText("Call")[1].performClick()
         rule.runOnIdle { assertEquals(1, selected) }
     }
 
     @Test fun `left swipe selector allows Copy and no action selection`() {
-        render("Swipe left")
+        render("Swipe left", includeDelete = true)
         openAndVerifyChoices()
         rule.onNodeWithText("Copy").performClick()
         rule.runOnIdle { assertEquals(5, selected) }
@@ -52,10 +52,21 @@ class HomeGestureSelectorTest {
         rule.runOnIdle { assertEquals(0, selected) }
     }
 
-    private fun render(title: String) {
+    @Test fun `delete call appears only in swipe choices and can be selected`() {
+        render("Swipe left", includeDelete = true)
+        openAndVerifyChoices()
+        capture("home-gesture-delete-selector.png")
+        rule.onNodeWithText("Delete").performClick()
+        rule.runOnIdle { assertEquals(8, selected) }
+    }
+
+    private var includesDelete = false
+
+    private fun render(title: String, includeDelete: Boolean = false) {
+        includesDelete = includeDelete
         rule.setContent {
             DotDialerTheme(systemDark = false) {
-                val choices = homeRowActionChoices()
+                val choices = homeRowActionChoices(includeDelete)
                 observedChoices = choices
                 DotSettingsCard {
                     DotSettingsChoiceRow(title, "Call", choices, 1, { selected = it })
@@ -67,7 +78,7 @@ class HomeGestureSelectorTest {
     private fun openAndVerifyChoices() {
         rule.onNodeWithText("Call").performClick()
         rule.waitForIdle()
-        val expected = listOf("No action", "Call", "SMS", "WhatsApp", "Contact", "Copy")
+        val expected = listOf("No action", "Call", "SMS", "WhatsApp", "Contact", "Copy") + if (includesDelete) listOf("Delete") else emptyList()
         rule.runOnIdle { assertEquals(expected, observedChoices.map { it.first }) }
         val tops = expected.map { text ->
             rule.onAllNodesWithText(text).fetchSemanticsNodes().last().boundsInRoot.top
@@ -83,7 +94,13 @@ class HomeGestureSelectorTest {
         rule.runOnIdle {
             val view = rule.activity.window.decorView
             val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-            view.draw(Canvas(bitmap))
+            val canvas = Canvas(bitmap)
+            val manager = org.robolectric.util.ReflectionHelpers.callStaticMethod<Any>(Class.forName("android.view.WindowManagerGlobal"), "getInstance")
+            val windows = org.robolectric.util.ReflectionHelpers.getField<List<android.view.View>>(manager, "mViews")
+            windows.forEach { window ->
+                val location = IntArray(2); window.getLocationOnScreen(location)
+                canvas.save(); canvas.translate(location[0].toFloat(), location[1].toFloat()); window.draw(canvas); canvas.restore()
+            }
             output.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }
         }
     }

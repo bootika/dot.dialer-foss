@@ -47,6 +47,7 @@ internal fun performHomeAction(
     number: String,
     onCall: (String) -> Unit,
     onContact: () -> Unit,
+    onDeleteEntry: (() -> Unit)? = null,
 ) {
     when (dev.goodwy.rphone.controller.util.supportedHomeSwipeAction(action)) {
         PreferenceManager.SWIPE_ACTION_CALL -> onCall(number)
@@ -54,6 +55,7 @@ internal fun performHomeAction(
             Intent(Intent.ACTION_VIEW, "sms:$number".toUri()),
         )
         PreferenceManager.SWIPE_ACTION_CONTACT -> onContact()
+        PreferenceManager.SWIPE_ACTION_DELETE_ENTRY -> onDeleteEntry?.invoke()
         PreferenceManager.SWIPE_ACTION_WHATSAPP -> SocialUtils.openWhatsApp(context, number)
         PreferenceManager.SWIPE_ACTION_COPY_NUMBER -> {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

@@ -118,6 +118,7 @@ fun AZListContent(
     grouped: Map<Char, List<Contact>>? = null,
     headerContent: (@Composable () -> Unit)? = null,
 ) {
+    HideKeyboardOnListDrag(listState)
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
     val showFavorites = false //!prefs.getBoolean(PreferenceManager.KEY_TAB_SHOW_FAVORITES, true)
@@ -431,13 +432,14 @@ internal fun ContactListItem(
             subtitle = contactInfo,
             photoUri = contact.photoUri,
             phoneNumber = phoneNumber,
-            swipeEnabled = resolvedRowPreferences.swipeEnabled && phoneNumber != null && !selectionMode,
-            swipeRightAction = resolvedRowPreferences.swipeRightAction,
-            swipeLeftAction = resolvedRowPreferences.swipeLeftAction,
+            swipeEnabled = resolvedRowPreferences.swipeEnabled && !selectionMode,
+            swipeRightAction = dev.goodwy.rphone.controller.util.contactSwipeAction(resolvedRowPreferences.swipeRightAction, phoneNumber != null),
+            swipeLeftAction = dev.goodwy.rphone.controller.util.contactSwipeAction(resolvedRowPreferences.swipeLeftAction, phoneNumber != null),
             haptics = resolvedRowPreferences.haptics,
             hapticsStrength = resolvedRowPreferences.hapticsStrength,
             hapticsIntensity = resolvedRowPreferences.hapticsIntensity,
             onAction = { action ->
+                if (action == PreferenceManager.SWIPE_ACTION_DELETE_ENTRY) { showDeleteConfirm = true; return@HomeResultRow }
                 val number = phoneNumber ?: return@HomeResultRow
                 when (dev.goodwy.rphone.controller.util.supportedHomeSwipeAction(action)) {
                     PreferenceManager.SWIPE_ACTION_CALL -> makeCall(context, number)

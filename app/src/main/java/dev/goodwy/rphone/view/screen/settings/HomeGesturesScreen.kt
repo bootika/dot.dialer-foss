@@ -69,7 +69,7 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
     var maximum by remember(settingsVersion) { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_RECENT_HISTORY_MAX_ENTRIES, RecentHistoryPolicy.DEFAULT_MAX_ENTRIES)) }
     val noActionLabel = stringResource(R.string.no_action)
     val tapChoices = homeRowActionChoices()
-    val swipeChoices = tapChoices
+    val swipeChoices = homeRowActionChoices(includeDelete = true)
     fun swipeLabel(value: Int): String = swipeChoices.firstOrNull { it.second == value }?.first
         ?: noActionLabel
     val periodChoices = listOf(
@@ -213,7 +213,8 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
 }
 
 @Composable
-internal fun homeRowActionChoices(): List<Pair<String, Int>> = HOME_ROW_ACTIONS.map { action ->
+internal fun homeRowActionChoices(includeDelete: Boolean = false): List<Pair<String, Int>> =
+    (if (includeDelete) dev.goodwy.rphone.controller.util.HOME_SWIPE_ACTIONS else HOME_ROW_ACTIONS).map { action ->
     val label = when (action) {
         PreferenceManager.SWIPE_ACTION_NONE -> stringResource(R.string.no_action)
         PreferenceManager.SWIPE_ACTION_CALL -> stringResource(R.string.call)
@@ -221,6 +222,7 @@ internal fun homeRowActionChoices(): List<Pair<String, Int>> = HOME_ROW_ACTIONS.
         PreferenceManager.SWIPE_ACTION_WHATSAPP -> "WhatsApp"
         PreferenceManager.SWIPE_ACTION_CONTACT -> stringResource(R.string.contact_action)
         PreferenceManager.SWIPE_ACTION_COPY_NUMBER -> stringResource(R.string.copy_action)
+        PreferenceManager.SWIPE_ACTION_DELETE_ENTRY -> stringResource(R.string.delete)
         else -> error("Unsupported home action")
     }
     label to action

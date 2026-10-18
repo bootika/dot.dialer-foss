@@ -21,4 +21,14 @@ class HomeGestureActionsTest {
             assertEquals(action, resolvedRecentTapAction(action, false))
         }
     }
+    @Test fun `new delete ID is swipe only and never reactivates legacy delete`() {
+        assertEquals(listOf(0, 1, 2, 4, 7, 5, 8), HOME_SWIPE_ACTIONS)
+        assertEquals(8, supportedHomeSwipeAction(8))
+        assertEquals(0, supportedHomeSwipeAction(6))
+        assertEquals(7, resolvedRecentTapAction(8, false))
+        assertEquals(1, resolvedRecentTapAction(8, true))
+        assertEquals(8, contactSwipeAction(8, true))
+        assertEquals(8, contactSwipeAction(8, false))
+        HOME_ROW_ACTIONS.forEach { assertEquals(it, contactSwipeAction(it, true)); assertEquals(0, contactSwipeAction(it, false)) }
+    }
 }

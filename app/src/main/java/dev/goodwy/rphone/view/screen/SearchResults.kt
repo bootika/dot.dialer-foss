@@ -67,6 +67,7 @@ internal fun SearchResultsList(
         }
     }
 
+    dev.goodwy.rphone.view.components.HideKeyboardOnListDrag(listState)
     ScrollHapticsEffect(listState = listState)
     LazyColumn(
         state = listState,

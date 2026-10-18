@@ -18,8 +18,15 @@ internal val HOME_ROW_ACTIONS = listOf(
     PreferenceManager.SWIPE_ACTION_COPY_NUMBER,
 )
 
+internal val HOME_SWIPE_ACTIONS = HOME_ROW_ACTIONS + PreferenceManager.SWIPE_ACTION_DELETE_ENTRY
+
 internal fun supportedHomeSwipeAction(action: Int): Int =
-    action.takeIf { it in HOME_ROW_ACTIONS } ?: PreferenceManager.SWIPE_ACTION_NONE
+    action.takeIf { it in HOME_SWIPE_ACTIONS } ?: PreferenceManager.SWIPE_ACTION_NONE
+
+/** Deletion targets the contact itself; number-based directions stay disabled without a number. */
+internal fun contactSwipeAction(action: Int, hasNumber: Boolean): Int =
+    if (hasNumber || action == PreferenceManager.SWIPE_ACTION_DELETE_ENTRY) supportedHomeSwipeAction(action)
+    else PreferenceManager.SWIPE_ACTION_NONE
 
 internal fun resolvedRecentTapAction(savedAction: Int, legacyDirectCall: Boolean): Int =
     savedAction.takeIf { it in HOME_ROW_ACTIONS }

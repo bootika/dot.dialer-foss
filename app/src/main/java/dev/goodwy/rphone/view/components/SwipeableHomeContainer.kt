@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Message
 import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -212,6 +213,12 @@ private fun homeSwipeVisual(action: Int): HomeSwipeVisual? = when (supportedHome
         stringResource(R.string.copy_action),
         MaterialTheme.colorScheme.tertiaryContainer,
         MaterialTheme.colorScheme.onTertiaryContainer,
+    )
+    PreferenceManager.SWIPE_ACTION_DELETE_ENTRY -> HomeSwipeVisual(
+        Icons.Rounded.Delete,
+        stringResource(R.string.delete),
+        MaterialTheme.colorScheme.error,
+        MaterialTheme.colorScheme.onError,
     )
     else -> null
 }

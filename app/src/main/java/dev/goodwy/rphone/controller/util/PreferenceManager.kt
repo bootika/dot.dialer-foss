@@ -498,6 +498,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         const val SWIPE_ACTION_COPY_NUMBER = 5
         const val SWIPE_ACTION_DELETE = 6
         const val SWIPE_ACTION_CONTACT = 7
+        const val SWIPE_ACTION_DELETE_ENTRY = 8
         const val KEY_RECENT_TAP_ACTION = "recent_tap_action"
 
         const val DEFAULT_DIRECT_CALL_ON_TAP = true

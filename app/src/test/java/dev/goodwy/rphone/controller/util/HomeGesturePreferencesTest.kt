@@ -57,4 +57,17 @@ class HomeGesturePreferencesTest {
         assertEquals(0, restored.getSwipeRightAction())
         assertEquals(0, restored.getSwipeLeftAction())
     }
+    @Test fun `explicit delete swipe survives cold reads while delete cannot become a tap action`() = runBlocking {
+        val context = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(context)
+        prefs.setSwipeRightAction(8); prefs.setSwipeLeftAction(8); prefs.setRecentTapAction(8)
+        withTimeout(5_000) { prefs.settingsChanged.first {
+            prefs.getInt(PreferenceManager.KEY_SWIPE_RIGHT_ACTION, -1) == 8 &&
+                prefs.getInt(PreferenceManager.KEY_SWIPE_LEFT_ACTION, -1) == 8 &&
+                prefs.getInt(PreferenceManager.KEY_RECENT_TAP_ACTION, -1) == 7
+        } }
+        val restored = PreferenceManager(context)
+        assertEquals(8, restored.getSwipeRightAction()); assertEquals(8, restored.getSwipeLeftAction())
+        assertEquals(7, restored.getRecentTapAction())
+    }
 }

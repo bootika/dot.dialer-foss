@@ -42,7 +42,7 @@ class FavoritesSpacingScreenshotTest {
             Contact("second", givenName = "Laura", familyName = "Pop"),
             Contact("third", givenName = "Mihai", familyName = "Ionescu"),
         )
-        val appearance = RillAvatarAppearance(false, true, false, true, false, false, false)
+        val appearance = RillAvatarAppearance(false, true, false, true, false, false)
         var clicked: String? = null
         rule.setContent {
             CompositionLocalProvider(

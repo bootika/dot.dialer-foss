@@ -158,8 +158,6 @@
     <string name="avatar_colors">Avatar-Farben</string>
     <string name="show_first_letter_in_avatar">Ersten Buchstaben im Avatar anzeigen</string>
     <string name="show_first_letter_in_avatar_subtitle">Zeigt einen Buchstaben an, wenn kein Bild vorhanden ist</string>
-    <string name="avatar_frame">Avatar-Rahmen</string>
-    <string name="avatar_frame_subtitle">Einen Rahmen um den Avatar anzeigen</string>
     <string name="show_picture_in_avatar">Bild im Avatar anzeigen</string>
     <string name="show_picture_in_avatar_subtitle">Zeigt das Kontaktbild an, falls verfügbar</string>
     <string name="call_settings">Anrufe</string>
@@ -729,4 +727,20 @@
     <string name="contact_photos_auto_fill">Freigegebene Quellen werden regelmäßig über WLAN geprüft, wenn der Akku es erlaubt. WhatsApp-Profilbilder kommen über Benachrichtigungen.</string>
     <string name="review_source_title">Ergebnisse: %1$s</string>
     <string name="review_selected_count">Ausgewählt: %1$d</string>
+    <string name="open_in_dot">In Dot öffnen</string>
+    <string name="copy_name_number">Name und Nummer kopieren</string>
+    <string name="open_in_dot_summary">Dot bei Auswahl einer Telefonnummer in einer anderen App anbieten</string>
+    <string name="sim_in_use">Aktuelle SIM</string>
+    <string name="end_and_redial">Beenden und erneut anrufen</string>
+    <string name="end_and_redial_summary">Beendet diesen Anruf und ruft dieselbe Nummer mit der gewählten SIM an.</string>
+    <string name="sim_redial_unavailable">Ein erneuter Anruf mit einer anderen SIM ist hier nicht verfügbar.</string>
+    <string name="call_reminder_title">Erinnern in…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d Minute</item>
+        <item quantity="other">%1$d Minuten</item>
+    </plurals>
+    <string name="cancel_call_reminder">Erinnerung abbrechen</string>
+    <string name="call_reminder_due">Erinnerung zur Anrufdauer</string>
+    <string name="company_colleagues">Kollegen</string>
+    <string name="call_history_unavailable">Anrufverlauf nicht verfügbar.</string>
 </resources>

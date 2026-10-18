@@ -136,7 +136,7 @@ class SettingsReorganizationTest {
         var id by mutableStateOf("H09")
         show { key(id) { SettingsOptionScreen(navigator, id) } }
         for ((requested, target) in listOf("H09" to "H09", "I12" to "I12", "A09" to "A06",
-            "C04" to "C03", "K03" to "K03", "V08" to "V07", "I11" to "I11", "A02" to "A02")) {
+            "C04" to "C03", "K03" to "K03", "V08" to "V07", "I11" to "I11")) {
             rule.runOnIdle { id = requested }
             settled()
             if (requested == "K03") {

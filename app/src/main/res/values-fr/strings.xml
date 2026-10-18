@@ -158,8 +158,6 @@
     <string name="avatar_colors">Couleurs des avatars</string>
     <string name="show_first_letter_in_avatar">Afficher la première lettre dans l\'avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Affiche la lettre lorsque l\'image est manquante</string>
-    <string name="avatar_frame">Cadre d\'avatar</string>
-    <string name="avatar_frame_subtitle">Afficher une bordure autour de l\'avatar</string>
     <string name="show_picture_in_avatar">Afficher l\'image dans l\'avatar</string>
     <string name="show_picture_in_avatar_subtitle">Affiche la photo du contact si disponible</string>
     <string name="call_settings">Appels</string>
@@ -733,4 +731,21 @@
     <string name="contact_photos_auto_fill">Les sources autorisées sont vérifiées périodiquement en Wi-Fi si la batterie le permet. Les avatars WhatsApp arrivent par notification.</string>
     <string name="review_source_title">Résultats : %1$s</string>
     <string name="review_selected_count">Sélectionnés : %1$d</string>
+    <string name="open_in_dot">Ouvrir dans Dot</string>
+    <string name="copy_name_number">Copier le nom et le numéro</string>
+    <string name="open_in_dot_summary">Proposer Dot lors de la sélection d’un numéro dans une autre application</string>
+    <string name="sim_in_use">SIM utilisée</string>
+    <string name="end_and_redial">Raccrocher et rappeler</string>
+    <string name="end_and_redial_summary">Termine cet appel, puis rappelle le même numéro avec la SIM choisie.</string>
+    <string name="sim_redial_unavailable">Le rappel avec une autre SIM est indisponible pour cet appel.</string>
+    <string name="call_reminder_title">Me rappeler dans…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">Dans %1$d minute</item>
+        <item quantity="other">Dans %1$d minutes</item>
+        <item quantity="many">Dans %1$d minutes</item>
+    </plurals>
+    <string name="cancel_call_reminder">Annuler le rappel</string>
+    <string name="call_reminder_due">Rappel de durée d’appel</string>
+    <string name="company_colleagues">Collègues</string>
+    <string name="call_history_unavailable">Historique des appels indisponible.</string>
 </resources>

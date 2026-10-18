@@ -158,8 +158,6 @@
     <string name="avatar_colors">Kolory awatarów</string>
     <string name="show_first_letter_in_avatar">Pokaż pierwszą literę w awatarze</string>
     <string name="show_first_letter_in_avatar_subtitle">Wyświetla literę, gdy brakuje obrazka</string>
-    <string name="avatar_frame">Ramka awatara</string>
-    <string name="avatar_frame_subtitle">Pokaż ramkę wokół awatara</string>
     <string name="show_picture_in_avatar">Pokaż zdjęcie w awatarze</string>
     <string name="show_picture_in_avatar_subtitle">Wyświetla zdjęcie kontaktu, jeśli jest dostępne</string>
     <string name="call_settings">Połączenia</string>
@@ -737,4 +735,22 @@
     <string name="contact_photos_auto_fill">Dozwolone źródła są sprawdzane okresowo przez Wi-Fi, gdy pozwala na to bateria. Awatary WhatsApp pochodzą z powiadomień.</string>
     <string name="review_source_title">Wyniki: %1$s</string>
     <string name="review_selected_count">Wybrane: %1$d</string>
+    <string name="open_in_dot">Otwórz w Dot</string>
+    <string name="copy_name_number">Kopiuj nazwę i numer</string>
+    <string name="open_in_dot_summary">Proponuj Dot po zaznaczeniu numeru telefonu w innej aplikacji</string>
+    <string name="sim_in_use">Używana karta SIM</string>
+    <string name="end_and_redial">Zakończ i zadzwoń ponownie</string>
+    <string name="end_and_redial_summary">Kończy to połączenie i wybiera ten sam numer z wybranej karty SIM.</string>
+    <string name="sim_redial_unavailable">Ponowne połączenie z innej karty SIM jest niedostępne.</string>
+    <string name="call_reminder_title">Przypomnij za…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d min</item>
+        <item quantity="few">%1$d min</item>
+        <item quantity="many">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+    <string name="cancel_call_reminder">Anuluj przypomnienie</string>
+    <string name="call_reminder_due">Przypomnienie o czasie rozmowy</string>
+    <string name="company_colleagues">Współpracownicy</string>
+    <string name="call_history_unavailable">Historia połączeń jest niedostępna.</string>
 </resources>

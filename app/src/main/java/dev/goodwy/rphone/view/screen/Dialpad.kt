@@ -438,6 +438,7 @@ fun DialPadContent(
             }
         }
 
+        val fillLastOutgoing = rememberLastOutgoingFill(number, ::replaceNumber)
         fun initiateCall(num: String) {
             val cleanNum = num.trim()
             if (cleanNum.isEmpty() || cleanNum == "Unknown") return
@@ -1764,6 +1765,8 @@ fun DialPadContent(
                                                     onClick = {
                                                         if (number.isNotEmpty()) {
                                                             initiateCall(number)
+                                                        } else {
+                                                            fillLastOutgoing()
                                                         }
                                                     },
                                                     onLongClick = {
@@ -2320,4 +2323,3 @@ private fun FadeScaleBox(modifier: Modifier, visible: Boolean, content: @Composa
         }
     }
 }
-

@@ -15,7 +15,7 @@ class DotDialerPreferenceDefaultsTest {
         assertEquals(true, DotDialerPreferenceDefaults.booleanFor("scroll_animation_enabled"))
         assertEquals(true, DotDialerPreferenceDefaults.booleanFor("search_diacritic_normalization"))
         assertEquals(false, DotDialerPreferenceDefaults.booleanFor("repeat_contacts_in_search_results"))
-        assertEquals(false, DotDialerPreferenceDefaults.booleanFor("avatar_frame"))
+        assertNull(DotDialerPreferenceDefaults.booleanFor("avatar_frame"))
         assertEquals(true, DotDialerPreferenceDefaults.booleanFor("ignore_system_font_scale"))
         assertEquals(false, DotDialerPreferenceDefaults.booleanFor("expanded_list_details"))
         assertEquals("light", DotDialerPreferenceDefaults.stringFor("theme_mode"))

@@ -17,7 +17,6 @@ object DotDialerPreferenceDefaults {
     const val DEFAULT_IGNORE_SYSTEM_FONT_SCALE = true
     const val DEFAULT_QUICK_RESPONSES = "Nu pot vorbi, scrie-mi pe WhatsApp|||Nu pot vorbi, te sun eu mai tarziu|||Nu pot vorbi, suna-ma mai tarziu"
     private val booleanDefaults = mapOf(
-        "avatar_frame" to false,
         "ignore_system_font_scale" to DEFAULT_IGNORE_SYSTEM_FONT_SCALE,
         "expanded_list_details" to false,
         "ambient_droplets_enabled" to true,

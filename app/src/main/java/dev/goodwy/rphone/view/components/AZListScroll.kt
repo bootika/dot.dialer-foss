@@ -355,6 +355,7 @@ internal fun ContactListItem(
             ContactMenuNumberAction.EditBeforeCall ->
                 navigator.navigate(DialPadScreenDestination(initialNumber = number))
             ContactMenuNumberAction.Copy -> context.copyToClipboard(number)
+            ContactMenuNumberAction.CopyIdentity -> context.copyToClipboard(dev.goodwy.rphone.controller.util.contactIdentityText(contact.displayName, number))
         }
     }
 
@@ -520,6 +521,13 @@ internal fun ContactListItem(
                 )
                 DropdownMenuItem(
                     contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
+                    text = { Text(stringResource(R.string.copy_name_number)) },
+                    leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
+                    enabled = contact.phoneNumbers.isNotEmpty(),
+                    onClick = { showMenu = false; chooseNumber(ContactMenuNumberAction.CopyIdentity) }
+                )
+                DropdownMenuItem(
+                    contentPadding = PaddingValues(start = 20.dp, end = 26.dp),
                     text = { Text(stringResource(R.string.copy_number)) },
                     leadingIcon = { Icon(Icons.Rounded.ContentCopy, null) },
                     enabled = contact.phoneNumbers.isNotEmpty(),
@@ -591,5 +599,5 @@ private enum class ContactMenuNumberAction {
     Message,
     EditBeforeCall,
     Copy,
+    CopyIdentity,
 }
-

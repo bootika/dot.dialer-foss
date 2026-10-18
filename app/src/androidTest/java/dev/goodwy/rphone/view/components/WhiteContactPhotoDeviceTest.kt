@@ -80,7 +80,9 @@ class WhiteContactPhotoDeviceTest {
         ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
             scenario.onActivity { activity -> activity.setContent {
                 CompositionLocalProvider(
-                    LocalRillAvatarAppearance provides RillAvatarAppearance(visible.value, true, false, true, false, false, false),
+                    LocalRillAvatarAppearance provides RillAvatarAppearance(showPicture = visible.value, showFirstLetter = true,
+                        colorfulAvatars = false, modernPastelAvatars = true,
+                        secondaryColorAvatars = false, googleContactColorAvatars = false),
                     LocalCallPhotoRevision provides 7,
                 ) {
                     DotDialerTheme(systemDark = dark.value) {

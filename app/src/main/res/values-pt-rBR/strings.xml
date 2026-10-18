@@ -158,8 +158,6 @@
     <string name="avatar_colors">Cores de avatar</string>
     <string name="show_first_letter_in_avatar">Mostrar primeira letra no avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Mostra a letra quando a imagem está faltando</string>
-    <string name="avatar_frame">Moldura do avatar</string>
-    <string name="avatar_frame_subtitle">Mostrar uma borda ao redor do avatar</string>
     <string name="show_picture_in_avatar">Mostrar imagem no avatar</string>
     <string name="show_picture_in_avatar_subtitle">Mostra a foto do contato se disponível</string>
     <string name="call_settings">Chamadas</string>
@@ -733,4 +731,21 @@
     <string name="contact_photos_auto_fill">Fontes autorizadas são verificadas periodicamente por Wi-Fi quando a bateria permite. Avatares do WhatsApp chegam por notificações.</string>
     <string name="review_source_title">Resultados: %1$s</string>
     <string name="review_selected_count">Selecionados: %1$d</string>
+    <string name="open_in_dot">Abrir no Dot</string>
+    <string name="copy_name_number">Copiar nome e número</string>
+    <string name="open_in_dot_summary">Oferecer o Dot ao selecionar um número em outro app</string>
+    <string name="sim_in_use">SIM em uso</string>
+    <string name="end_and_redial">Encerrar e ligar novamente</string>
+    <string name="end_and_redial_summary">Encerra esta chamada e liga para o mesmo número com o SIM escolhido.</string>
+    <string name="sim_redial_unavailable">Não é possível ligar novamente com outro SIM nesta chamada.</string>
+    <string name="call_reminder_title">Lembrar em…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="other">%1$d minutos</item>
+        <item quantity="many">%1$d minutos</item>
+    </plurals>
+    <string name="cancel_call_reminder">Cancelar lembrete</string>
+    <string name="call_reminder_due">Lembrete de duração da chamada</string>
+    <string name="company_colleagues">Colegas</string>
+    <string name="call_history_unavailable">O histórico de chamadas está indisponível.</string>
 </resources>

@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
@@ -49,7 +48,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -1130,23 +1128,9 @@ fun HeroAvatar(photoUri: String?, avatarSize: Dp = 160.dp, wavy: Boolean = false
             }
         }
     }
-    val avatarFrame = prefs.getBoolean(PreferenceManager.KEY_AVATAR_FRAME, false)
-    val borderColor =  MaterialTheme.colorScheme.onSurface
 
     Box(
         modifier = Modifier
-            .then(
-                if (avatarFrame) Modifier
-                    .drawBehind {
-                        val borderWidth = size.width * 0.08f // 8% of the width
-                        drawOutline(
-                            outline = avatarShape.createOutline(size, layoutDirection, this),
-                            color = borderColor,
-                            style = Stroke(width = borderWidth)
-                        )
-                    }
-                else Modifier
-            )
             .size(avatarSize)
             .clip(avatarShape)
             .background(MaterialTheme.colorScheme.secondaryContainer),

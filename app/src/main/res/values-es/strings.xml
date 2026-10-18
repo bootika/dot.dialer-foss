@@ -158,8 +158,6 @@
     <string name="avatar_colors">Colores de avatar</string>
     <string name="show_first_letter_in_avatar">Mostrar primera letra en el avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Muestra la letra cuando falta la imagen</string>
-    <string name="avatar_frame">Marco de avatar</string>
-    <string name="avatar_frame_subtitle">Mostrar un borde alrededor del avatar</string>
     <string name="show_picture_in_avatar">Mostrar imagen en el avatar</string>
     <string name="show_picture_in_avatar_subtitle">Muestra la foto del contacto si está disponible</string>
     <string name="call_settings">Llamadas</string>
@@ -733,4 +731,21 @@
     <string name="contact_photos_auto_fill">Las fuentes autorizadas se revisan periódicamente por Wi-Fi si la batería lo permite. Los avatares de WhatsApp llegan en notificaciones.</string>
     <string name="review_source_title">Resultados: %1$s</string>
     <string name="review_selected_count">Seleccionados: %1$d</string>
+    <string name="open_in_dot">Abrir en Dot</string>
+    <string name="copy_name_number">Copiar nombre y número</string>
+    <string name="open_in_dot_summary">Ofrecer Dot al seleccionar un número en otra app</string>
+    <string name="sim_in_use">SIM en uso</string>
+    <string name="end_and_redial">Finalizar y volver a llamar</string>
+    <string name="end_and_redial_summary">Finaliza esta llamada y marca el mismo número con la SIM elegida.</string>
+    <string name="sim_redial_unavailable">No se puede volver a llamar con otra SIM en esta llamada.</string>
+    <string name="call_reminder_title">Recordarme en…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="other">%1$d minutos</item>
+        <item quantity="many">%1$d minutos</item>
+    </plurals>
+    <string name="cancel_call_reminder">Cancelar recordatorio</string>
+    <string name="call_reminder_due">Recordatorio de duración de llamada</string>
+    <string name="company_colleagues">Compañeros</string>
+    <string name="call_history_unavailable">El historial de llamadas no está disponible.</string>
 </resources>

@@ -20,7 +20,7 @@ internal data class SettingsOption(
 ) {
     val planFeature: io.github.bootika.dotdialer.core.license.PlanFeature? get() = when (id) {
         "K11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL
-        "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A02", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
+        "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
         "T19", "T17" -> io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER
         "T09", "T10", "T11", "T12", "T14", "T15", "T16" -> io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER
         else -> null
@@ -90,6 +90,7 @@ internal val settingsOptions = listOf(
     SettingsOption("K06", R.string.proximity_sensor, SettingsEditor.CALLS, true, R.string.compatibility),
     SettingsOption("K07", R.string.pocket_mode_prevention, SettingsEditor.CALLS, false, R.string.call_behavior),
     SettingsOption("K04", R.string.android_auto_integration, SettingsEditor.CALLS, false, R.string.call_behavior),
+    SettingsOption("K12", R.string.open_in_dot, SettingsEditor.CALLS, false, R.string.call_behavior),
     SettingsOption("K11", R.string.call_message_channel, SettingsEditor.CALLS, false, R.string.call_behavior),
     SettingsOption("K05", R.string.quick_responses, SettingsEditor.QUICK, false, R.string.quick_responses),
     SettingsOption("K09", R.string.fullscreen_calls, SettingsEditor.CALL_UI, false, R.string.call_screen),
@@ -104,7 +105,6 @@ internal val settingsOptions = listOf(
     SettingsOption("V07", R.string.scroll_haptics, SettingsEditor.SOUND, false, R.string.sound_and_vibration),
     SettingsOption("V08", R.string.haptic_interval, SettingsEditor.SCROLL, true, R.string.settings_fine_tuning),
     SettingsOption("V09", R.string.haptic_strength, SettingsEditor.SCROLL, true, R.string.settings_fine_tuning),
-    SettingsOption("A02", R.string.avatar_frame, SettingsEditor.AVATARS, false, R.string.avatars_settings),
     SettingsOption("A06", R.string.liquid_glass_dialpad, SettingsEditor.INTERFACE, false, R.string.interface_settings),
     SettingsOption("A08", R.string.blur_effect_dialpad, SettingsEditor.LEGACY, true, R.string.keypad),
     SettingsOption("A09", R.string.keypad_effect_strength, SettingsEditor.INTERFACE, false, R.string.interface_settings),

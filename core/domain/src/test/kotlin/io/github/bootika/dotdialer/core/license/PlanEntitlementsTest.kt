@@ -11,7 +11,7 @@ class PlanEntitlementsTest {
     }
     @Test fun `free keeps no paid work plus manual premium all`() {
         for(plan in AppPlan.entries) for(feature in PlanFeature.entries) {
-            val expected=if(feature==PlanFeature.MANUAL_OPTIMIZER) plan>=AppPlan.PLUS else plan==AppPlan.PREMIUM
+            val expected=if(feature in setOf(PlanFeature.MANUAL_OPTIMIZER, PlanFeature.CALL_PRODUCTIVITY)) plan>=AppPlan.PLUS else plan==AppPlan.PREMIUM
             assertEquals("$plan $feature",expected,PlanEntitlements(plan).allows(feature,1000))
         }
     }

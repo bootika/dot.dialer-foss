@@ -47,7 +47,7 @@ class HomeTourRenderingTest {
 
     @Composable private fun Fixture(targets: MutableMap<HomeTourTarget, Rect>) {
         var header by remember { mutableStateOf<Rect?>(null) }
-        val appearance = RillAvatarAppearance(false, true, false, true, false, false, false)
+        val appearance = RillAvatarAppearance(false, true, false, true, false, false)
         CompositionLocalProvider(LocalRillAvatarAppearance provides appearance) {
             Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
                 LazyColumn(Modifier.fillMaxSize().testTag("fixture-column"),

@@ -48,7 +48,7 @@ V07
 V08
 V09
 A01
-A02
+# A02 retired: Avatar frame removed on 18 October 2026.
 A03
 A04
 A05
@@ -90,3 +90,4 @@ T18
 T19
 
 K11
+K12

@@ -152,8 +152,6 @@
     <string name="avatar_colors">Culori Avatar</string>
     <string name="show_first_letter_in_avatar">Arată inițiala în avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Afișează inițiala atunci când lipsește fotografia</string>
-    <string name="avatar_frame">Cadru Avatar</string>
-    <string name="avatar_frame_subtitle">Arată o frontieră în jurul avatarului</string>
     <string name="show_picture_in_avatar">Arată imaginea în Avatar</string>
     <string name="show_picture_in_avatar_subtitle">Arată imaginea de contact dacă este disponibilă</string>
     <string name="call_settings">Apeluri</string>
@@ -727,4 +725,21 @@
     <string name="contact_photos_auto_fill">Sursele autorizate sunt verificate periodic pe Wi-Fi, când bateria permite. Avatarurile WhatsApp vin prin notificări.</string>
     <string name="review_source_title">Rezultate: %1$s</string>
     <string name="review_selected_count">Selectate: %1$d</string>
+    <string name="open_in_dot">Deschide în Dot</string>
+    <string name="copy_name_number">Copiază numele și numărul</string>
+    <string name="open_in_dot_summary">Oferă Dot când selectezi un număr în altă aplicație</string>
+    <string name="sim_in_use">SIM folosit acum</string>
+    <string name="end_and_redial">Închide și reapelază</string>
+    <string name="end_and_redial_summary">Închide apelul, apoi sună același număr de pe SIM-ul ales.</string>
+    <string name="sim_redial_unavailable">Reapelarea pe alt SIM nu este disponibilă pentru acest apel.</string>
+    <string name="call_reminder_title">Amintește-mi peste…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d minut</item>
+        <item quantity="few">%1$d minute</item>
+        <item quantity="other">%1$d de minute</item>
+    </plurals>
+    <string name="cancel_call_reminder">Anulează reminder-ul</string>
+    <string name="call_reminder_due">Reminder pentru durata apelului</string>
+    <string name="company_colleagues">Colegi</string>
+    <string name="call_history_unavailable">Istoricul apelurilor nu este disponibil.</string>
 </resources>

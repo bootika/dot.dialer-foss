@@ -158,8 +158,6 @@
     <string name="avatar_colors">Avatar Renkleri</string>
     <string name="show_first_letter_in_avatar">Avatarda İlk Harfi Göster</string>
     <string name="show_first_letter_in_avatar_subtitle">Resim eksik olduğunda harfi gösterir</string>
-    <string name="avatar_frame">Avatar Çerçevesi</string>
-    <string name="avatar_frame_subtitle">Avatarın etrafında bir kenarlık göster</string>
     <string name="show_picture_in_avatar">Avatarda Resmi Göster</string>
     <string name="show_picture_in_avatar_subtitle">Mevcutsa kişi fotoğrafını gösterir</string>
     <string name="call_settings">Aramalar</string>
@@ -729,4 +727,20 @@
     <string name="contact_photos_auto_fill">İzin verilen kaynaklar pil uygunken Wi-Fi üzerinden düzenli kontrol edilir. WhatsApp avatarları bildirimlerle gelir.</string>
     <string name="review_source_title">Sonuçlar: %1$s</string>
     <string name="review_selected_count">Seçilen: %1$d</string>
+    <string name="open_in_dot">Dot’ta aç</string>
+    <string name="copy_name_number">Adı ve numarayı kopyala</string>
+    <string name="open_in_dot_summary">Başka bir uygulamada telefon numarası seçildiğinde Dot’u öner</string>
+    <string name="sim_in_use">Kullanılan SIM</string>
+    <string name="end_and_redial">Bitir ve yeniden ara</string>
+    <string name="end_and_redial_summary">Bu aramayı bitirir, ardından seçilen SIM ile aynı numarayı arar.</string>
+    <string name="sim_redial_unavailable">Bu arama için başka SIM ile yeniden arama kullanılamıyor.</string>
+    <string name="call_reminder_title">Şu süre sonra hatırlat…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d dakika</item>
+        <item quantity="other">%1$d dakika</item>
+    </plurals>
+    <string name="cancel_call_reminder">Hatırlatıcıyı iptal et</string>
+    <string name="call_reminder_due">Arama süresi hatırlatıcısı</string>
+    <string name="company_colleagues">İş arkadaşları</string>
+    <string name="call_history_unavailable">Arama geçmişi kullanılamıyor.</string>
 </resources>

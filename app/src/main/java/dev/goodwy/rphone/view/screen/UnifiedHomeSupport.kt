@@ -133,7 +133,7 @@ internal sealed interface HomeContextTarget {
     data class Favorite(val contact: Contact) : HomeContextTarget
 }
 
-internal enum class ContactNumberMenuAction { Call, Message, EditBeforeCall, Copy }
+internal enum class ContactNumberMenuAction { Call, Message, EditBeforeCall, Copy, CopyIdentity }
 
 internal data class PendingContactNumberAction(
     val contact: Contact,

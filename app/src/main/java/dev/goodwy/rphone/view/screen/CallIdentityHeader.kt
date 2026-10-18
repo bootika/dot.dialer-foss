@@ -10,6 +10,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.alpha
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -53,6 +58,9 @@ internal fun CallIdentityHeader(
     spacing: CallScreenSpacing,
     identityVerticalCompensationDp: Int,
     onConnectionDetailsClick: () -> Unit,
+    onTimerClick: (() -> Unit)? = null,
+    onCompanyClick: (() -> Unit)? = null,
+    companyActionActive: Boolean = true,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,6 +79,8 @@ internal fun CallIdentityHeader(
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = company,
+                modifier = Modifier.alpha(if (companyActionActive) 1f else .45f).then(
+                    if (onCompanyClick != null) Modifier.clickable(onClickLabel = stringResource(R.string.company_colleagues), onClick = onCompanyClick) else Modifier),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -87,6 +97,7 @@ internal fun CallIdentityHeader(
             connectionInfo = connectionInfo,
             spacing = spacing,
             onConnectionDetailsClick = onConnectionDetailsClick,
+            onTimerClick = onTimerClick,
         )
     }
 }
@@ -109,6 +120,7 @@ private fun CallMetadataRegion(
     connectionInfo: CallConnectionInfo?,
     spacing: CallScreenSpacing,
     onConnectionDetailsClick: () -> Unit,
+    onTimerClick: (() -> Unit)? = null,
 ) {
     var lastNonEndingState by remember { mutableStateOf(Call.STATE_DISCONNECTED) }
     var lastNonEndingDuration by remember { mutableStateOf(duration) }
@@ -157,16 +169,18 @@ private fun CallMetadataRegion(
                         account = phoneAccount,
                         timerGapDp = spacing.connectionToTimerGapDp,
                         geometryOverride = geometry,
+                        onTimerClick = onTimerClick,
                     )
                 } else {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Box(
-                            modifier = Modifier.height(shieldHeightDp.dp),
+                            modifier = Modifier.height(shieldHeightDp.dp).clickable(onClick = onConnectionDetailsClick),
                             contentAlignment = Alignment.Center,
                         ) {
                             if (displayState == Call.STATE_ACTIVE) {
                                 phoneAccount?.let { CallingAccountIdentityBadge(it) }
                             } else {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
                                     text = callStatusText(displayState),
                                     style = MaterialTheme.typography.bodyLarge,
@@ -178,7 +192,12 @@ private fun CallMetadataRegion(
                                     },
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false),
                                 )
+                                if (displayState in setOf(Call.STATE_DIALING, Call.STATE_CONNECTING)) phoneAccount?.let {
+                                    Box(Modifier.widthIn(max = 140.dp)) { CallingAccountIdentityBadge(it) }
+                                }
+                                }
                             }
                         }
                         Spacer(modifier = Modifier.height(spacing.connectionToTimerGapDp.dp))
@@ -189,7 +208,8 @@ private fun CallMetadataRegion(
                             if (displayState == Call.STATE_ACTIVE || displayState == Call.STATE_HOLDING) {
                                 Text(
                                     text = displayDuration,
-                                    modifier = Modifier.width(callDurationSlotWidthDp(displayDuration, fontScale).dp).testTag("callPrimaryTimer"),
+                                    modifier = Modifier.width(callDurationSlotWidthDp(displayDuration, fontScale).dp).testTag("callPrimaryTimer")
+                                        .then(if (onTimerClick != null && displayState in setOf(Call.STATE_ACTIVE, Call.STATE_HOLDING)) Modifier.clickable(onClickLabel = stringResource(R.string.call_reminder_title), onClick = onTimerClick) else Modifier),
                                     style = MaterialTheme.typography.headlineSmall.copy(
                                         fontFeatureSettings = "tnum",
                                     ),

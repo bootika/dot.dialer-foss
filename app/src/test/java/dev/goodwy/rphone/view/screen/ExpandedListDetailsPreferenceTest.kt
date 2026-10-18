@@ -69,7 +69,7 @@ class ExpandedListDetailsPreferenceTest {
         rule.setContent {
             CompositionLocalProvider(
                 LocalDensity provides Density(1f, 1.5f),
-                LocalRillAvatarAppearance provides RillAvatarAppearance(false, true, false, true, false, false, false),
+                LocalRillAvatarAppearance provides RillAvatarAppearance(false, true, false, true, false, false),
             ) {
                 DotDialerTheme(systemDark = false) {
                     expanded = rememberExpandedListDetails(prefs)

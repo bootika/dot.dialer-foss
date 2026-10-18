@@ -158,8 +158,6 @@
     <string name="avatar_colors">Colori avatar</string>
     <string name="show_first_letter_in_avatar">Mostra prima lettera nell\'avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Mostra la lettera quando manca l\'immagine</string>
-    <string name="avatar_frame">Cornice avatar</string>
-    <string name="avatar_frame_subtitle">Mostra un bordo attorno all\'avatar</string>
     <string name="show_picture_in_avatar">Mostra immagine nell\'avatar</string>
     <string name="show_picture_in_avatar_subtitle">Mostra la foto del contatto se disponibile</string>
     <string name="call_settings">Chiamate</string>
@@ -733,4 +731,21 @@
     <string name="contact_photos_auto_fill">Le fonti autorizzate vengono controllate periodicamente tramite Wi-Fi quando la batteria lo consente. Gli avatar WhatsApp arrivano nelle notifiche.</string>
     <string name="review_source_title">Risultati: %1$s</string>
     <string name="review_selected_count">Selezionati: %1$d</string>
+    <string name="open_in_dot">Apri in Dot</string>
+    <string name="copy_name_number">Copia nome e numero</string>
+    <string name="open_in_dot_summary">Proponi Dot quando selezioni un numero in un’altra app</string>
+    <string name="sim_in_use">SIM in uso</string>
+    <string name="end_and_redial">Termina e richiama</string>
+    <string name="end_and_redial_summary">Termina questa chiamata e richiama lo stesso numero con la SIM scelta.</string>
+    <string name="sim_redial_unavailable">Non è possibile richiamare con un’altra SIM per questa chiamata.</string>
+    <string name="call_reminder_title">Ricordamelo tra…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="other">%1$d minuti</item>
+        <item quantity="many">%1$d minuti</item>
+    </plurals>
+    <string name="cancel_call_reminder">Annulla promemoria</string>
+    <string name="call_reminder_due">Promemoria durata chiamata</string>
+    <string name="company_colleagues">Colleghi</string>
+    <string name="call_history_unavailable">La cronologia delle chiamate non è disponibile.</string>
 </resources>

@@ -57,7 +57,7 @@ class WhiteContactPhotoRenderingTest {
         requireNotNull(rule.activity.imageLoader.memoryCache)[requireNotNull(raw.memoryCacheKey)] = MemoryCache.Value(cached)
         rule.setContent {
             CompositionLocalProvider(
-                LocalRillAvatarAppearance provides RillAvatarAppearance(visible, true, false, true, false, false, false),
+                LocalRillAvatarAppearance provides RillAvatarAppearance(visible, true, false, true, false, false),
                 LocalCallPhotoRevision provides 7,
             ) {
                 DotDialerTheme(systemDark = dark) {

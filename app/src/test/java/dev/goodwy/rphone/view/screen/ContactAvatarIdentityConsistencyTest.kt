@@ -35,7 +35,7 @@ class ContactAvatarIdentityConsistencyTest {
         var order by mutableIntStateOf(0)
         var dark by mutableStateOf(false)
         rule.setContent {
-            CompositionLocalProvider(LocalRillAvatarAppearance provides RillAvatarAppearance(true, true, false, true, false, false, false)) {
+            CompositionLocalProvider(LocalRillAvatarAppearance provides RillAvatarAppearance(true, true, false, true, false, false)) {
                 DotDialerTheme(systemDark = dark) {
                     val label = getDisplayName(contact, order)
                     val plan = buildHomeAvatarColorPlan(listOf(contact.displayName to contact.phoneNumbers[0]), listOf(contact.displayName))

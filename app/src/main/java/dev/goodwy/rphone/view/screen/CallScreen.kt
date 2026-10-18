@@ -491,6 +491,8 @@ private fun ExpressiveCallScreenContent(
 
     var showNoteWindow by remember { mutableStateOf(false) }
     var noteText by remember { mutableStateOf("") }
+    var showTimerReminder by remember(call) { mutableStateOf(false) }
+    val companyPeers = rememberCompanyColleagues(displayedCallCompanyName(companyName, displayContactName), contactId) { openColleague(context, it.id) }
 
     val callLockEnabled = remember(call, phoneNumber, settingsState) {
         preferenceManager.shouldGateCallWithBiometric(phoneNumber)
@@ -656,6 +658,9 @@ private fun ExpressiveCallScreenContent(
                         spacing = screenSpacing,
                         identityVerticalCompensationDp = identityVerticalCompensationDp,
                         onConnectionDetailsClick = { showCallConnectionDetails = true },
+                        onTimerClick = { if (preferenceManager.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) showTimerReminder = true },
+                        onCompanyClick = companyPeers.open.takeIf { companyPeers.available },
+                        companyActionActive = companyPeers.active,
                     )
                 }
 
@@ -853,41 +858,9 @@ private fun ExpressiveCallScreenContent(
                                             }
                                         }
 
-                                        if (showNoteWindow) {
-                                            RillExpressiveCard {
-                                                MoreItem(
-                                                    headline = contactName,
-                                                    leadingIcon = Icons.AutoMirrored.Outlined.StickyNote2,
-                                                    trailingIcon = Icons.Default.Check,
-                                                    enabled = callState != Call.STATE_DIALING,
-                                                    onClick = {
-                                                        if (phoneNumber.isNotEmpty()) NoteManager.writeNote(context, contactName, phoneNumber, noteText)
-                                                        showNoteWindow = false
-                                                        showKeypad = false
-                                                        showMore = true
-                                                    }
-                                                )
-                                                Surface(
-                                                    color = cardColor,
-                                                    shape = RoundedCornerShape(cardCornerExtraSmall),
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    shadowElevation = 0.dp
-                                                ) {
-                                                    OutlinedTextField(
-                                                        value = noteText,
-                                                        onValueChange = { noteText = it },
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .heightIn(min = 184.dp, max = 184.dp),
-                                                        placeholder = { Text(stringResource(R.string.type_your_note)) },
-                                                        shape = RoundedCornerShape(12.dp),
-                                                        minLines = 3,
-                                                        colors = OutlinedTextFieldDefaults.colors(
-                                                            focusedBorderColor = Color.Transparent,
-                                                            unfocusedBorderColor = Color.Transparent)
-                                                    )
-                                                }
-                                            }
+                                        if (showNoteWindow) CallNoteHistoryPanel(contactName, phoneNumber, noteText, { noteText = it }, callState != Call.STATE_DIALING, dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle)) {
+                                            if (phoneNumber.isNotEmpty()) NoteManager.writeNote(context, contactName, phoneNumber, noteText)
+                                            showNoteWindow = false; showKeypad = false; showMore = true
                                         }
 
                                         if (showKeypad) {
@@ -1277,10 +1250,12 @@ private fun ExpressiveCallScreenContent(
         )
     }
 
-    if (showCallConnectionDetails && callConnectionInfo != null) {
+    if (showTimerReminder) CallTimerReminderSheet(call) { showTimerReminder = false }
+    if (showCallConnectionDetails) {
         CallConnectionDetailsSheet(
             info = callConnectionInfo,
             onDismiss = { showCallConnectionDetails = false },
+            extraContent = { SimRedialActions(call) { showCallConnectionDetails = false } },
         )
     }
 
@@ -1335,4 +1310,3 @@ private fun ExpressiveCallScreenContent(
         }
     }
 }
-

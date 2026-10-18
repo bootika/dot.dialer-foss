@@ -735,11 +735,9 @@ fun ContactDetailsScreen(
                                     }
                                     if (companyAndJob != "") {
                                         Spacer(modifier = Modifier.height(12.dp))
-                                        Text(
-                                            text = companyAndJob,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            textAlign = TextAlign.Center
-                                        )
+                                        ContactCompanyColleagues(contact?.company, contact?.id, companyAndJob) {
+                                            navigator.navigate(com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination(contactId = it.id))
+                                        }
                                     }
                                 }
                             }
@@ -2285,7 +2283,3 @@ fun ContactDetailsScreen(
         }
     }
 }
-
-
-
-

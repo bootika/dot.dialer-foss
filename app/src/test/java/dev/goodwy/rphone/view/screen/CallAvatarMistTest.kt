@@ -98,7 +98,7 @@ class CallAvatarMistTest {
     }
 
     @Test fun `background and circle use the same resolver for every avatar scheme`() {
-        val base = RillAvatarAppearance(true, true, false, true, false, false, false)
+        val base = RillAvatarAppearance(true, true, false, true, false, false)
         for (scheme in listOf(lightColorScheme(), darkColorScheme())) {
             assertEquals(modernPastelAvatarColor("Mara Ionescu"), rillAvatarColors("Mara Ionescu", base, scheme))
             assertEquals(modernPastelAvatarColor("unknown_caller"), rillAvatarColors("", base, scheme))

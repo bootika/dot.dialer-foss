@@ -2,7 +2,7 @@ package io.github.bootika.dotdialer.core.preferences
 
 /** Frozen V215 fallback: an upgrade must not replace unset user choices with a new preset. */
 object LegacyPreferenceDefaults {
-    private val booleans = mapOf("avatar_frame" to false, "ignore_system_font_scale" to false,
+    private val booleans = mapOf("ignore_system_font_scale" to false,
         "expanded_list_details" to false, "ambient_droplets_enabled" to true,
         "direct_call_on_tap" to true, "dynamic_colors" to true, "liquid_glass_ui" to true,
         "outgoing_number_normalization" to true, "search_diacritic_normalization" to true,

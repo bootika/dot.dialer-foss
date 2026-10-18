@@ -77,9 +77,6 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
                             SettingsCategoryLink(R.string.call_effects, Icons.Rounded.Person) {
                                 navigator.navigate(CallerUIScreenDestination(advanced = true))
                             }
-                            SettingsCategoryLink(R.string.avatar_frame, Icons.Rounded.AccountCircle) {
-                                navigator.navigate(AvatarsPreferenceScreenDestination(advanced = true))
-                            }
                         }
                         "compatibility" -> {
                             SettingsCategoryLink(R.string.ignore_system_font_scale, Icons.Rounded.TextFields) {

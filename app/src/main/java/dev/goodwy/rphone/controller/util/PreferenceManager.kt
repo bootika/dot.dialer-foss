@@ -32,6 +32,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         scope.launch {
             dataStore.data.collect { newPrefs ->
                 _prefsCache.value = newPrefs
+                SelectedTextDialerIntegration.setEnabled(appContext, newPrefs[booleanPreferencesKey(KEY_SELECTED_TEXT_DIALER)] ?: false)
                 _settingsChanged.value += 1
             }
         }
@@ -145,6 +146,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
     suspend fun restoreAllPreferences(preferences: Map<String, Any>, replacePortable: Boolean = false) {
         PreferenceWriteBarrier.awaitPending()
         _prefsCache.value = dataStore.edit { it.applyRestoredPreferences(preferences, replacePortable) }
+        SelectedTextDialerIntegration.setEnabled(appContext, getBoolean(KEY_SELECTED_TEXT_DIALER, false))
         _settingsChanged.value += 1
     }
 
@@ -523,6 +525,7 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         const val KEY_BLOCK_UNKNOWN         = "block_unknown_callers"
         const val KEY_BLOCK_HIDDEN          = "block_hidden_callers"
         const val KEY_OPEN_DIALPAD_DEFAULT  = "open_dialpad_default"
+        const val KEY_SELECTED_TEXT_DIALER = "selected_text_dialer_enabled"
         const val KEY_APP_HAPTICS              = "app_haptics_enabled"
         const val KEY_APP_HAPTICS_STRENGTH     = "app_haptics_strength"
         const val KEY_HAPTICS_CUSTOM_INTENSITY = "haptics_custom_intensity"
@@ -643,7 +646,6 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         const val KEY_IS_PRO_IAP               = "is_pro_iap"
         const val KEY_IS_PRO_SUB               = "is_pro_sub"
         const val KEY_IS_PRO_FOSS              = "is_pro_foss"
-        const val KEY_AVATAR_FRAME             = "avatar_frame"
         const val KEY_HIGH_SCORE               = "horse_game_high_score"
         const val KEY_ALWAYS_FULLSCREEN_CALLS  = "always_fullscreen_calls"
         const val KEY_DIALPAD_ANIMATION        = "dialpad_animation_enabled"

@@ -83,6 +83,8 @@ internal val commonAppModule = module {
     single { CallStateManager(get(), resolvePhoto = dev.goodwy.rphone.controller.util.ReadableCallPhotoResolver(androidContext())::resolve, unknownPhoto = { dev.goodwy.rphone.controller.util.UnsavedNumberAvatars.resolve(androidContext(),it,get()) }) }
     single { CallNotificationManager(androidContext(), get()) }
     single<ICallRepository> { CallRepositoryImpl() }
+    single { dev.goodwy.rphone.controller.util.SimRedialCoordinator(androidContext(), get()) }
+    single { dev.goodwy.rphone.controller.util.CallSessionReminders(androidContext(), get(), get()) }
 
     viewModel { ContactsViewModel(androidApplication(), get(), get()) }
     viewModel { CallLogViewModel(androidApplication(), get(), androidContext().contentResolver, get(), get(), get()) }

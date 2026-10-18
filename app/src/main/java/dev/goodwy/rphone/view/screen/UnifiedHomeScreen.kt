@@ -436,7 +436,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    fun runContactNumberAction(action: ContactNumberMenuAction, number: String) {
+    fun runContactNumberAction(action: ContactNumberMenuAction, number: String, name: String? = null) {
         when (action) {
             ContactNumberMenuAction.Call -> call(number)
             ContactNumberMenuAction.Message -> context.startActivity(
@@ -445,6 +445,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
             ContactNumberMenuAction.EditBeforeCall ->
                 navigator.navigate(DialPadScreenDestination(initialNumber = number))
             ContactNumberMenuAction.Copy -> context.copyToClipboard(number)
+            ContactNumberMenuAction.CopyIdentity -> context.copyToClipboard(dev.goodwy.rphone.controller.util.contactIdentityText(name, number))
         }
     }
 
@@ -452,7 +453,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
         val numbers = contact.phoneNumbers.distinct()
         when (numbers.size) {
             0 -> Unit
-            1 -> runContactNumberAction(action, numbers.first())
+            1 -> runContactNumberAction(action, numbers.first(), contact.displayName)
             else -> pendingContactNumberAction = PendingContactNumberAction(contact, action)
         }
     }
@@ -463,7 +464,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
             onDismissRequest = { pendingContactNumberAction = null },
             onNumberSelected = { number ->
                 pendingContactNumberAction = null
-                runContactNumberAction(pending.action, number)
+                runContactNumberAction(pending.action, number, pending.contact.displayName)
             },
         )
     }
@@ -641,6 +642,10 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             contextTarget = null
                             navigator.navigate(DialPadScreenDestination(initialNumber = log.number))
                         } }
+                        item { HomeMenuAction(stringResource(R.string.copy_name_number), Icons.Default.ContentCopy, enabled = log.number.isNotBlank()) {
+                            contextTarget = null
+                            context.copyToClipboard(dev.goodwy.rphone.controller.util.contactIdentityText(target.contact?.displayName ?: log.name, log.number))
+                        } }
                         item { HomeMenuAction(stringResource(R.string.copy_number), Icons.Default.ContentCopy, enabled = log.number.isNotBlank()) {
                             contextTarget = null
                             context.copyToClipboard(log.number)
@@ -702,6 +707,10 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                         item { HomeMenuAction(stringResource(R.string.edit_number_before_call), Icons.Default.Dialpad, enabled = contact.phoneNumbers.isNotEmpty()) {
                             contextTarget = null
                             chooseContactNumber(contact, ContactNumberMenuAction.EditBeforeCall)
+                        } }
+                        item { HomeMenuAction(stringResource(R.string.copy_name_number), Icons.Default.ContentCopy, enabled = contact.phoneNumbers.isNotEmpty()) {
+                            contextTarget = null
+                            chooseContactNumber(contact, ContactNumberMenuAction.CopyIdentity)
                         } }
                         item { HomeMenuAction(stringResource(R.string.copy_number), Icons.Default.ContentCopy, enabled = contact.phoneNumbers.isNotEmpty()) {
                             contextTarget = null
@@ -1440,6 +1449,3 @@ internal fun HomeResultRow(
         }
     }
 }
-
-
-

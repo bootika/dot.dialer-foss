@@ -178,8 +178,6 @@
     <string name="avatar_colors">Avatar Colors</string>
     <string name="show_first_letter_in_avatar">Show First Letter in Avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Displays letter when picture is missing</string>
-    <string name="avatar_frame">Avatar Frame</string>
-    <string name="avatar_frame_subtitle">Show a border around the avatar</string>
     <string name="show_picture_in_avatar">Show Picture in Avatar</string>
     <string name="show_picture_in_avatar_subtitle">Shows the contact picture if available</string>
 
@@ -810,4 +808,20 @@
     <string name="contact_photos_auto_fill">Authorized sources are checked periodically on Wi-Fi when battery permits. WhatsApp avatars arrive through notifications.</string>
     <string name="review_source_title">Results: %1$s</string>
     <string name="review_selected_count">Selected: %1$d</string>
+    <string name="open_in_dot">Open in Dot</string>
+    <string name="copy_name_number">Copy name and number</string>
+    <string name="open_in_dot_summary">Offer Dot when selecting a phone number in another app</string>
+    <string name="sim_in_use">SIM in use</string>
+    <string name="end_and_redial">End and redial</string>
+    <string name="end_and_redial_summary">Ends this call, then calls the same number using the selected SIM.</string>
+    <string name="sim_redial_unavailable">SIM redial is unavailable for this call.</string>
+    <string name="call_reminder_title">Remind me in…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <string name="cancel_call_reminder">Cancel reminder</string>
+    <string name="call_reminder_due">Call time reminder</string>
+    <string name="company_colleagues">Colleagues</string>
+    <string name="call_history_unavailable">Call history is unavailable.</string>
 </resources>

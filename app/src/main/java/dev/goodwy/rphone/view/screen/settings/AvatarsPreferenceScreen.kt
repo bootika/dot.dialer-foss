@@ -14,13 +14,10 @@ import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,7 +42,6 @@ fun AvatarsPreferenceScreen(navigator: DestinationsNavigator, advanced: Boolean 
     val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
 
     var showFirstLetter           by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, true)) }
-    var avatarFrame               by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_AVATAR_FRAME, false)) }
     var showPicture               by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true)) }
     var hideAvatarWithBg          by remember(settingsState) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_HIDE_AVATAR_WITH_BACKGROUND, false)) }
 
@@ -109,19 +105,6 @@ fun AvatarsPreferenceScreen(navigator: DestinationsNavigator, advanced: Boolean 
                                 iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
                                 checked = showFirstLetter,
                                 onCheckedChange = { showFirstLetter = it; prefs.setBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, it) }
-                            )
-                            }
-                            run {
-                                RillSwitchListItem(
-                                headline = stringResource(R.string.avatar_frame),
-                                modifier = Modifier.alpha(if (prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)) 1f else .45f),
-                                supporting = stringResource(R.string.avatar_frame_subtitle),
-                                leadingIcon = if (avatarFrame) ImageVector.vectorResource(id = R.drawable.ic_person_border)
-                                                else ImageVector.vectorResource(id = R.drawable.ic_person_no_border),
-                                iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
-                                iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
-                                checked = avatarFrame,
-                                onCheckedChange = { if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE)) { avatarFrame = it; prefs.setBoolean(PreferenceManager.KEY_AVATAR_FRAME, it) } }
                             )
                             }
                         }

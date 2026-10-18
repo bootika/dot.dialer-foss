@@ -152,8 +152,6 @@
     <string name="avatar_colors">Warna Avatar</string>
     <string name="show_first_letter_in_avatar">Tampilkan Huruf Pertama dalam Avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Tampilkan surat ketika gambar hilang</string>
-    <string name="avatar_frame">Bingkai Avatar</string>
-    <string name="avatar_frame_subtitle">Tampilkan batas di sekitar avatar</string>
     <string name="show_picture_in_avatar">Tampilkan Gambar dalam Avatar</string>
     <string name="show_picture_in_avatar_subtitle">Tampilkan gambar kontak bila tersedia</string>
     <string name="call_settings">Panggilan</string>
@@ -719,4 +717,19 @@
     <string name="contact_photos_auto_fill">Sumber yang diizinkan diperiksa berkala melalui Wi-Fi jika baterai mencukupi. Avatar WhatsApp diterima melalui notifikasi.</string>
     <string name="review_source_title">Hasil: %1$s</string>
     <string name="review_selected_count">Dipilih: %1$d</string>
+    <string name="open_in_dot">Buka di Dot</string>
+    <string name="copy_name_number">Salin nama dan nomor</string>
+    <string name="open_in_dot_summary">Tawarkan Dot saat memilih nomor telepon di aplikasi lain</string>
+    <string name="sim_in_use">SIM digunakan</string>
+    <string name="end_and_redial">Akhiri dan telepon lagi</string>
+    <string name="end_and_redial_summary">Mengakhiri panggilan ini, lalu menelepon nomor yang sama dengan SIM pilihan.</string>
+    <string name="sim_redial_unavailable">Panggilan ulang dengan SIM lain tidak tersedia untuk panggilan ini.</string>
+    <string name="call_reminder_title">Ingatkan dalam…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="other">%1$d menit</item>
+    </plurals>
+    <string name="cancel_call_reminder">Batalkan pengingat</string>
+    <string name="call_reminder_due">Pengingat durasi panggilan</string>
+    <string name="company_colleagues">Rekan kerja</string>
+    <string name="call_history_unavailable">Riwayat panggilan tidak tersedia.</string>
 </resources>

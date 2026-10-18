@@ -227,6 +227,11 @@ class CallScreenFlowScreenshotTest {
         val viewModel = CallViewModel(context, repository, stateManager)
         startKoin { modules(module {
             single { prefs }; single<IContactsRepository> { contacts }; single { viewModel }
+            single<dev.goodwy.rphone.modal.`interface`.ICallLogRepository> {
+                Proxy.newProxyInstance(dev.goodwy.rphone.modal.`interface`.ICallLogRepository::class.java.classLoader, arrayOf(dev.goodwy.rphone.modal.`interface`.ICallLogRepository::class.java)) { _, method, _ ->
+                    when(method.name) { "getCallLogs", "getCompleteCallLogs" -> emptyList<dev.goodwy.rphone.modal.data.CallLogEntry>(); else -> error("Unexpected history mutation") }
+                } as dev.goodwy.rphone.modal.`interface`.ICallLogRepository
+            }
         }) }
         (context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager).registerPhoneAccount(
             PhoneAccount.builder(accountHandle, "Vodafone").setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER).build(),
@@ -1382,4 +1387,3 @@ class CallScreenFlowScreenshotTest {
 
     private companion object { const val NUMBER = "0700000000" }
 }
-

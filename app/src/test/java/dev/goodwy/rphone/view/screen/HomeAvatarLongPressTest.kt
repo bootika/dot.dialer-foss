@@ -138,7 +138,6 @@ class HomeAvatarLongPressTest {
             modernPastelAvatars = true,
             secondaryColorAvatars = false,
             googleContactColorAvatars = false,
-            avatarFrame = false,
         )
     }
 }

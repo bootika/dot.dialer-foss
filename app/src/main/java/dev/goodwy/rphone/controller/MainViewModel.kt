@@ -41,6 +41,13 @@ class MainViewModel(private val prefs: PreferenceManager) : ViewModel() {
         val action = intent.action ?: return null
 
         return when (action) {
+            Intent.ACTION_PROCESS_TEXT -> {
+                if (!prefs.getBoolean(PreferenceManager.KEY_SELECTED_TEXT_DIALER, false) ||
+                    !dev.goodwy.rphone.controller.util.SelectedTextDialerIntegration.isEnabled(context)) return null
+                val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString().orEmpty().take(500)
+                dev.goodwy.rphone.controller.util.selectedPhoneNumber(text)?.let(NavigationTarget::Dialpad)
+                    ?: NavigationTarget.Search(text)
+            }
             WhatsAppAvatarSyncProcessor.ACTION_REVIEW_WHATSAPP_AVATARS -> NavigationTarget.ContactPhotos(
                 intent.getStringExtra(dev.goodwy.rphone.controller.util.ContactOptimizationNotifications.ACCOUNT_EXTRA))
             "dev.goodwy.rphone.ACTION_VIEW_RECENTS" -> NavigationTarget.Recents

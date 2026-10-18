@@ -19,12 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.layout.ContentScale
@@ -173,7 +170,6 @@ data class RillAvatarAppearance(
     val modernPastelAvatars: Boolean,
     val secondaryColorAvatars: Boolean,
     val googleContactColorAvatars: Boolean,
-    val avatarFrame: Boolean,
 )
 
 val LocalRillAvatarAppearance = staticCompositionLocalOf<RillAvatarAppearance?> { null }
@@ -185,7 +181,6 @@ fun PreferenceManager.rillAvatarAppearance(): RillAvatarAppearance = RillAvatarA
     modernPastelAvatars = true,
     secondaryColorAvatars = false,
     googleContactColorAvatars = false,
-    avatarFrame = getBoolean(PreferenceManager.KEY_AVATAR_FRAME, false),
 )
 
 internal fun usesMulticolorAvatarPalette(
@@ -251,18 +246,6 @@ fun RillAvatar(
 //    )
 
     val containerModifier = modifier
-        .then(
-            if (appearance.avatarFrame) Modifier
-                .drawBehind {
-                    val borderWidth = size.width * 0.09f // 9% of the width
-                    drawOutline(
-                        outline = shape.createOutline(size, layoutDirection, this),
-                        color = contentColor,
-                        style = Stroke(width = borderWidth)
-                    )
-                }
-            else Modifier
-        )
         .background(backgroundColor, shape)
 //            .scale(iconScale)
 //            .alpha(iconAlpha)

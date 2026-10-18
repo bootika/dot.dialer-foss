@@ -149,7 +149,7 @@ class HomeRecentAdaptiveLayoutTest {
             CompositionLocalProvider(
                 LocalDensity provides Density(1f, scenario.fontScale),
                 LocalLayoutDirection provides scenario.direction,
-                LocalRillAvatarAppearance provides RillAvatarAppearance(false, true, false, true, false, false, false),
+                LocalRillAvatarAppearance provides RillAvatarAppearance(false, true, false, true, false, false),
             ) {
                 DotDialerTheme(systemDark = false, interfaceScale = scenario.interfaceScale) {
                     Box(Modifier.width(scenario.width.dp)) {

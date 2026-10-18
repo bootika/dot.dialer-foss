@@ -18,7 +18,6 @@ import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.view.components.contactAvatarSizeDp
-import dev.goodwy.rphone.view.components.rillAvatarAppearance
 import dev.goodwy.rphone.view.theme.DotDialerTheme
 import java.io.File
 import java.lang.reflect.Proxy
@@ -60,14 +59,14 @@ class AvatarSettingsPreviewRenderingTest {
             runBlocking { prefs.restoreAllPreferences(mapOf(
                 PreferenceManager.KEY_SHOW_PICTURE to true,
                 PreferenceManager.KEY_SHOW_FIRST_LETTER to true,
-                PreferenceManager.KEY_AVATAR_FRAME to false,
+                "avatar_frame" to true,
                 PreferenceManager.KEY_CONTACT_AVATAR_SIZE to PreferenceManager.CONTACT_AVATAR_SIZE_MEDIUM,
                 PreferenceManager.KEY_CONTACT_NAME_SIZE_SP to 18,
                 PreferenceManager.KEY_EXPANDED_LIST_DETAILS to false,
             )) }
             rule.waitUntil(5000) { prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, false) &&
                 prefs.getBoolean(PreferenceManager.KEY_SHOW_FIRST_LETTER, false) && prefs.contactAvatarSizeDp() == 46 &&
-                !prefs.getBoolean(PreferenceManager.KEY_AVATAR_FRAME, true) }
+                prefs.getBoolean("avatar_frame", false) }
         }
         defaults()
         startKoin { modules(module { single { prefs } }) }
@@ -128,13 +127,13 @@ class AvatarSettingsPreviewRenderingTest {
             assertFalse("Shared typography must react without remount", before.sameAs(capture("$prefix-expanded-name22")))
             defaults()
             rule.runOnIdle { advanced = true }
-            val noFrame = capture("$prefix-frame-off")
+            val legacyFrameOn = capture("$prefix-legacy-frame-on")
             rule.onNodeWithText(context.getString(R.string.show_picture_in_avatar)).assertExists()
-            rule.onNodeWithText(context.getString(R.string.avatar_frame)).performScrollTo().performClick()
-            rule.waitUntil(5000) { prefs.getBoolean(PreferenceManager.KEY_AVATAR_FRAME, false) }
-            capture("$prefix-frame-on")
-            assertTrue(prefs.rillAvatarAppearance().avatarFrame)
-            // The upstream frame is white and can blend into a light white card; preserve its real appearance.
+            rule.onNodeWithText("Avatar Frame").assertDoesNotExist()
+            assertTrue(dev.goodwy.rphone.view.screen.settings.components.settingsOptions.none { it.id == "A02" })
+            runBlocking { prefs.restoreAllPreferences(mapOf("avatar_frame" to false)) }
+            rule.waitUntil(5000) { !prefs.getBoolean("avatar_frame", true) }
+            assertTrue("Retired true must render exactly like false", legacyFrameOn.sameAs(capture("$prefix-legacy-frame-off")))
         }
     }
 

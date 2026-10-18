@@ -154,8 +154,6 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="avatar_colors">Màu Avatar</string>
     <string name="show_first_letter_in_avatar">Hiện chữ đầu trong ảnh Avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Hiển thị thư khi còn thiếu ảnh</string>
-    <string name="avatar_frame">Khung Avatar</string>
-    <string name="avatar_frame_subtitle">Hiển thị viền quanh Avatar</string>
     <string name="show_picture_in_avatar">Hiện ảnh trong ảnh</string>
     <string name="show_picture_in_avatar_subtitle">Hiện ảnh liên lạc nếu có</string>
     <string name="call_settings">Cuộc gọi</string>
@@ -721,4 +719,19 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="contact_photos_auto_fill">Các nguồn được cho phép được kiểm tra định kỳ qua Wi-Fi khi pin đủ. Ảnh đại diện WhatsApp được nhận qua thông báo.</string>
     <string name="review_source_title">Kết quả: %1$s</string>
     <string name="review_selected_count">Đã chọn: %1$d</string>
+    <string name="open_in_dot">Mở trong Dot</string>
+    <string name="copy_name_number">Sao chép tên và số</string>
+    <string name="open_in_dot_summary">Đề xuất Dot khi chọn số điện thoại trong ứng dụng khác</string>
+    <string name="sim_in_use">SIM đang dùng</string>
+    <string name="end_and_redial">Kết thúc và gọi lại</string>
+    <string name="end_and_redial_summary">Kết thúc cuộc gọi này rồi gọi lại cùng số bằng SIM đã chọn.</string>
+    <string name="sim_redial_unavailable">Không thể gọi lại bằng SIM khác cho cuộc gọi này.</string>
+    <string name="call_reminder_title">Nhắc tôi sau…</string>
+    <plurals name="call_reminder_minutes">
+        <item quantity="other">%1$d phút</item>
+    </plurals>
+    <string name="cancel_call_reminder">Hủy lời nhắc</string>
+    <string name="call_reminder_due">Nhắc thời lượng cuộc gọi</string>
+    <string name="company_colleagues">Đồng nghiệp</string>
+    <string name="call_history_unavailable">Không có lịch sử cuộc gọi.</string>
 </resources>

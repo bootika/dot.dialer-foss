@@ -8,12 +8,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import dev.goodwy.rphone.view.components.rememberCallTapFeedback
 import dev.goodwy.rphone.view.components.rememberCallTapHaptic
-import dev.goodwy.rphone.view.components.rememberCallPressColor
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+import dev.goodwy.rphone.view.theme.CallControlFeedback
 import dev.goodwy.rphone.view.components.rememberEnabledCallAction
 
 internal data class CallConnectionStatusFeedback(
     val interaction: MutableInteractionSource,
-    val pressed: Boolean,
     val fill: Color,
     val onClick: () -> Unit,
 )
@@ -23,7 +25,12 @@ internal fun rememberCallConnectionStatusFeedback(onClick: () -> Unit): CallConn
     val interaction = remember { MutableInteractionSource() }
     val feedback = rememberCallTapFeedback(interaction)
     val haptic = rememberCallTapHaptic()
-    val fill = rememberCallPressColor(callConnectionShieldColor(MaterialTheme.colorScheme.surface.luminance() < .5f), feedback.pressed)
+    val base = callConnectionShieldColor(MaterialTheme.colorScheme.surface.luminance() < .5f)
+    val alpha by animateFloatAsState(
+        if (feedback.pressed) (base.alpha + .10f).coerceAtMost(1f) else base.alpha,
+        tween(CallControlFeedback.DurationMillis), label = "connectionShieldOpacity",
+    )
+    val fill = base.copy(alpha = alpha)
     val click = rememberEnabledCallAction(true) { feedback.acknowledge(); haptic(); onClick() }
-    return CallConnectionStatusFeedback(interaction, feedback.pressed, fill, click)
+    return CallConnectionStatusFeedback(interaction, fill, click)
 }

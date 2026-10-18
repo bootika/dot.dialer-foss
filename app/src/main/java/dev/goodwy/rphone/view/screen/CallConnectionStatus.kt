@@ -9,8 +9,6 @@ import android.telecom.PhoneAccount
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.ripple
-import dev.goodwy.rphone.view.components.callPressFeedback
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -236,9 +234,8 @@ internal fun CallConnectionStatusRow(
                 modifier = Modifier
                     .width(geometry.widthDp.dp)
                     .height(geometry.touchHeightDp.dp)
-                    .clip(CircleShape)
-                    .callPressFeedback(tap.pressed, fillAlpha = tap.fill.alpha)
-                    .clickable(interactionSource = tap.interaction, indication = ripple(), onClick = tap.onClick),
+                    .testTag("callConnectionTouchTarget")
+                    .clickable(interactionSource = tap.interaction, indication = null, onClick = tap.onClick),
                 contentAlignment = Alignment.Center,
             ) {
                 Surface(

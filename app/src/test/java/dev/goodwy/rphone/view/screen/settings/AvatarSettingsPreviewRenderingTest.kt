@@ -22,6 +22,8 @@ import dev.goodwy.rphone.view.theme.DotDialerTheme
 import java.io.File
 import java.lang.reflect.Proxy
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
+import java.util.concurrent.atomic.AtomicInteger
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Rule
@@ -41,11 +43,28 @@ import org.robolectric.annotation.GraphicsMode
 @Config(sdk = [36], application = Application::class, qualifiers = "w360dp-h800dp-mdpi")
 class AvatarSettingsPreviewRenderingTest {
     @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
-    @After fun clear() { stopKoin() }
+    private lateinit var prefs: PreferenceManager
+    private val pendingPhotos = AtomicInteger()
+    private val loadedPhotos = AtomicInteger()
+    @Before fun observePhotoLoading() {
+        coil.Coil.setImageLoader(coil.ImageLoader.Builder(RuntimeEnvironment.getApplication())
+            .eventListener(object : coil.EventListener {
+                override fun onStart(request: coil.request.ImageRequest) { pendingPhotos.incrementAndGet() }
+                override fun onSuccess(request: coil.request.ImageRequest, result: coil.request.SuccessResult) {
+                    loadedPhotos.incrementAndGet(); pendingPhotos.decrementAndGet()
+                }
+                override fun onCancel(request: coil.request.ImageRequest) { pendingPhotos.decrementAndGet() }
+                override fun onError(request: coil.request.ImageRequest, result: coil.request.ErrorResult) { pendingPhotos.decrementAndGet() }
+            }).build())
+    }
+    @After fun clear() {
+        stopKoin()
+        coil.Coil.setImageLoader(coil.ImageLoader.Builder(RuntimeEnvironment.getApplication()).build())
+    }
 
     @Test fun `production avatar page preview reacts to saved controls and keeps example actions inert`() {
         val context = RuntimeEnvironment.getApplication()
-        val prefs = PreferenceManager(context)
+        prefs = PreferenceManager(context)
         var dark by mutableStateOf(false)
         var font by mutableFloatStateOf(1f)
         var advanced by mutableStateOf(false)
@@ -140,6 +159,14 @@ class AvatarSettingsPreviewRenderingTest {
     private fun capture(name: String): Bitmap {
         rule.onNodeWithTag("avatar-recents-preview").performScrollTo()
         rule.mainClock.advanceTimeBy(1200)
+        rule.waitForIdle()
+        // Compose idleness does not await Coil decoding. Never compare a placeholder
+        // against a loaded photo when checking that a retired setting is inert.
+        rule.waitUntil(10_000) {
+            pendingPhotos.get() == 0 &&
+                (!prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true) || loadedPhotos.get() > 0)
+        }
+        rule.mainClock.advanceTimeByFrame()
         rule.waitForIdle()
         var preview: Bitmap? = null
         val bounds = rule.onNodeWithTag("avatar-recents-preview").fetchSemanticsNode().boundsInRoot

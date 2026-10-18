@@ -27,6 +27,7 @@ internal fun CallConnectionDetailsSheet(
     val maximumHeight = with(LocalDensity.current) { (windowHeightPx * .8f).toDp() }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column(

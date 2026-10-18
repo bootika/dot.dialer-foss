@@ -106,7 +106,6 @@ internal fun CallBackgroundBottomSheet(
                     .padding(top = 12.dp, bottom = 24.dp)
                     .fillMaxWidth()
                     .heightIn(
-                        min = 300.dp,
                         max = (screenWidth * aspectRatio * 0.75f)
                     )
                     .weight(1f)

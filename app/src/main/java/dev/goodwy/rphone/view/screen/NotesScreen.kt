@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import android.content.Intent
 import dev.goodwy.rphone.view.theme.*
 import androidx.activity.compose.BackHandler
@@ -611,6 +613,7 @@ fun NoteEditorDialog(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 24.dp)
         ) {

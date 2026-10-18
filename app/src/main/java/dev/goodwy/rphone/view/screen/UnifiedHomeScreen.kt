@@ -4,6 +4,8 @@ import dev.goodwy.rphone.view.theme.accentText
 
 import android.Manifest
 import android.content.Context
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import android.content.Intent
 import android.content.res.Configuration
 import android.util.Log
@@ -577,7 +579,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(

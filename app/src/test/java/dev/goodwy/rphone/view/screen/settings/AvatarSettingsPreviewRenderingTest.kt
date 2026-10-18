@@ -46,15 +46,24 @@ class AvatarSettingsPreviewRenderingTest {
     private lateinit var prefs: PreferenceManager
     private val pendingPhotos = AtomicInteger()
     private val loadedPhotos = AtomicInteger()
+    private val photoEvents = java.util.concurrent.ConcurrentLinkedQueue<String>()
     @Before fun observePhotoLoading() {
         coil.Coil.setImageLoader(coil.ImageLoader.Builder(RuntimeEnvironment.getApplication())
+            // Keep real resource decoding on the native UI test's controlled dispatcher.
+            // Background worker scheduling is not part of this appearance/persistence test.
+            .dispatcher(kotlinx.coroutines.Dispatchers.Main.immediate)
             .eventListener(object : coil.EventListener {
-                override fun onStart(request: coil.request.ImageRequest) { pendingPhotos.incrementAndGet() }
+                override fun resolveSizeStart(request: coil.request.ImageRequest) { photoEvents.add("resolve-size") }
+                override fun resolveSizeEnd(request: coil.request.ImageRequest, size: coil.size.Size) { photoEvents.add("size:$size") }
+                override fun fetchStart(request: coil.request.ImageRequest, fetcher: coil.fetch.Fetcher, options: coil.request.Options) { photoEvents.add("fetch:${fetcher.javaClass.simpleName}") }
+                override fun decodeStart(request: coil.request.ImageRequest, decoder: coil.decode.Decoder, options: coil.request.Options) { photoEvents.add("decode:${decoder.javaClass.simpleName}") }
+                override fun transformStart(request: coil.request.ImageRequest, input: Bitmap) { photoEvents.add("transform") }
+                override fun onStart(request: coil.request.ImageRequest) { photoEvents.add("start:${request.data}"); pendingPhotos.incrementAndGet() }
                 override fun onSuccess(request: coil.request.ImageRequest, result: coil.request.SuccessResult) {
-                    loadedPhotos.incrementAndGet(); pendingPhotos.decrementAndGet()
+                    photoEvents.add("success:${request.data}"); loadedPhotos.incrementAndGet(); pendingPhotos.decrementAndGet()
                 }
-                override fun onCancel(request: coil.request.ImageRequest) { pendingPhotos.decrementAndGet() }
-                override fun onError(request: coil.request.ImageRequest, result: coil.request.ErrorResult) { pendingPhotos.decrementAndGet() }
+                override fun onCancel(request: coil.request.ImageRequest) { photoEvents.add("cancel:${request.data}"); pendingPhotos.decrementAndGet() }
+                override fun onError(request: coil.request.ImageRequest, result: coil.request.ErrorResult) { photoEvents.add("error:${request.data}:${result.throwable}"); pendingPhotos.decrementAndGet() }
             }).build())
     }
     @After fun clear() {
@@ -162,9 +171,13 @@ class AvatarSettingsPreviewRenderingTest {
         rule.waitForIdle()
         // Compose idleness does not await Coil decoding. Never compare a placeholder
         // against a loaded photo when checking that a retired setting is inert.
-        rule.waitUntil(10_000) {
-            pendingPhotos.get() == 0 &&
-                (!prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true) || loadedPhotos.get() > 0)
+        try {
+            rule.waitUntil(10_000) {
+                pendingPhotos.get() == 0 &&
+                    (!prefs.getBoolean(PreferenceManager.KEY_SHOW_PICTURE, true) || loadedPhotos.get() > 0)
+            }
+        } catch (failure: androidx.compose.ui.test.ComposeTimeoutException) {
+            throw AssertionError("Photo readiness for $name: pending=${pendingPhotos.get()} loaded=${loadedPhotos.get()} events=$photoEvents", failure)
         }
         rule.mainClock.advanceTimeByFrame()
         rule.waitForIdle()

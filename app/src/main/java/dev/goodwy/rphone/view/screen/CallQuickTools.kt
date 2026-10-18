@@ -61,8 +61,10 @@ internal fun CallTimerReminderSheet(call: Call, onDismiss: () -> Unit) {
     val allowed = remember(version) { prefs.allowsFeature(PlanFeature.CALL_PRODUCTIVITY) }
     val reminders = koinInject<CallSessionReminders>()
     val entries by reminders.state.collectAsStateWithLifecycle()
-    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    ModalBottomSheet(onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(stringResource(R.string.call_reminder_title), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
             listOf(2, 5, 10, 15).forEach { minutes ->
                 TextButton(modifier = Modifier.fillMaxWidth().alpha(if (allowed) 1f else .45f), onClick = {

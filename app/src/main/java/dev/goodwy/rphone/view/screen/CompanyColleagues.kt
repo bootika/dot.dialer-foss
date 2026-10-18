@@ -74,6 +74,7 @@ internal fun rememberCompanyColleagues(company: String?, excludeId: String?, onS
         }
     }
     if (expanded && allowed) ModalBottomSheet(onDismissRequest = { expanded = false },
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
         Text(company.orEmpty(), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))

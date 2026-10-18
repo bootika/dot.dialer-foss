@@ -243,6 +243,7 @@ fun QuickResponsesBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         dragHandle = null,
     ) {
@@ -484,6 +485,7 @@ fun CallBackReminderBottomSheet(
     }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         dragHandle = null,
     ) {
@@ -491,6 +493,7 @@ fun CallBackReminderBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 10.dp),
         ) {
             Text(
@@ -556,6 +559,7 @@ fun UnknownCallerActionsBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         dragHandle = null,
     ) {
@@ -563,6 +567,7 @@ fun UnknownCallerActionsBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 10.dp),
         ) {
             Text(

@@ -42,7 +42,8 @@ internal fun ContactPhotoReviewSheet(item: WhatsAppAvatarReviewItem, reviews: Wh
             if (reviews.items.value.isEmpty()) onEmpty()
         }
     }
-    ModalBottomSheet(onDismissRequest = { if (!busy) onDismiss() }) {
+    ModalBottomSheet(onDismissRequest = { if (!busy) onDismiss() },
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Text(item.displayName, style = MaterialTheme.typography.headlineSmall)

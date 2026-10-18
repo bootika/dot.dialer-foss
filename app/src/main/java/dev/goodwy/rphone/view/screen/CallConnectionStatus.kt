@@ -223,6 +223,7 @@ internal fun CallConnectionStatusRow(
     timerGapDp: Int = 10,
     geometryOverride: CallConnectionStatusGeometry? = null,
     onTimerClick: (() -> Unit)? = null,
+    connecting: Boolean = false,
 ) {
     val fontScale = callMetadataTextScale()
     val tap = rememberCallConnectionStatusFeedback(onClick)
@@ -250,7 +251,7 @@ internal fun CallConnectionStatusRow(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
                     if (geometry.rows > 1) {
-                        AccessibleConnectionStatusContent(info, account, geometry)
+                        AccessibleConnectionStatusContent(info, account, geometry, connecting)
                     } else {
                         Row(
                             modifier = Modifier
@@ -273,10 +274,10 @@ internal fun CallConnectionStatusRow(
                             ConnectionStatusCell(
                                 widthDp = geometry.qualityWidthDp,
                                 heightDp = geometry.cellHeightDp,
-                                highlightColor = callVoiceQualityHighlightColor(info.quality),
+                                highlightColor = if (connecting) null else callVoiceQualityHighlightColor(info.quality),
                                 testTag = CALL_CONNECTION_QUALITY_TEST_TAG,
                             ) {
-                                VoiceQualityBadge(info.quality)
+                                VoiceQualityBadge(info.quality, connecting)
                             }
 
                             ConnectionStatusCell(widthDp = geometry.edgeWidthDp, heightDp = geometry.cellHeightDp, testTag = "callTransportCell") {
@@ -288,7 +289,7 @@ internal fun CallConnectionStatusRow(
             }
 
             Spacer(Modifier.height(timerGapDp.dp))
-            Text(
+            if (!connecting) Text(
                 text = duration,
                 modifier = Modifier.width(callDurationSlotWidthDp(duration, fontScale).dp).testTag("callPrimaryTimer")
                     .then(if (onTimerClick != null) Modifier.clickable(onClickLabel = stringResource(R.string.call_reminder_title), onClick = onTimerClick) else Modifier),
@@ -354,7 +355,24 @@ internal fun ConnectionStatusCell(
 }
 
 @Composable
-internal fun VoiceQualityBadge(quality: VoiceQualityTier?) {
+internal fun callConnectingLabel(): String = stringResource(R.string.call_status_connecting).trimEnd('…', '.')
+
+@Composable
+internal fun VoiceQualityBadge(quality: VoiceQualityTier?, connecting: Boolean = false) {
+    if (connecting) {
+        val label = callConnectingLabel()
+        val style = callConnectionMetadataTextStyle()
+        val measured = rememberTextMeasurer().measure(AnnotatedString(label), style, softWrap = false)
+        val width = ceil(with(LocalDensity.current) { measured.size.width.toDp().value }).toInt() + 2
+        Text(
+            text = label,
+            modifier = Modifier.width(width.dp).testTag("callConnectingLabel"),
+            style = style,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+        )
+        return
+    }
     // Cream is a light surface in either theme; its foreground must stay dark.
     val foreground = if (quality == VoiceQualityTier.Hd) DotInk else MaterialTheme.colorScheme.onSurface
     val label = stringResource(

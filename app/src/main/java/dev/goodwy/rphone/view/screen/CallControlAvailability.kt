@@ -8,6 +8,7 @@ internal data class CallControlAvailability(
     val audioRoute: Boolean,
     val keypad: Boolean,
     val more: Boolean,
+    val notes: Boolean,
 )
 
 /**
@@ -35,6 +36,7 @@ internal fun callControlAvailability(
         mute = (canMute || isConference) && (isDialingOrConnecting || isActive),
         audioRoute = hasCallAudio && supportedAudioRouteCount > 1,
         keypad = isActive,
-        more = isActive || isHolding,
+        more = hasCallAudio,
+        notes = isDialingOrConnecting || isActive || isHolding,
     )
 }

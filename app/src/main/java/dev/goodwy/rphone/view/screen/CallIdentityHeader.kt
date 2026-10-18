@@ -133,6 +133,7 @@ private fun CallMetadataRegion(
     val displayState = callMetadataDisplayState(callState, lastNonEndingState)
     val displayDuration = if (callState == Call.STATE_DISCONNECTING) lastNonEndingDuration else duration
     val ending = callState == Call.STATE_DISCONNECTING || callState == Call.STATE_DISCONNECTED
+    val connecting = displayState == Call.STATE_DIALING || displayState == Call.STATE_CONNECTING
     val fontScale = callMetadataTextScale()
     val timerSlotHeightDp = callTimerSlotHeightDp(spacing.timerSlotHeightDp, fontScale)
     BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
@@ -151,7 +152,7 @@ private fun CallMetadataRegion(
             contentAlignment = Alignment.TopCenter,
         ) {
             AnimatedContent(
-                targetState = displayState == Call.STATE_ACTIVE && connectionInfo != null,
+                targetState = connecting || (displayState == Call.STATE_ACTIVE && connectionInfo != null),
                 transitionSpec = {
                     if (ending) EnterTransition.None.togetherWith(ExitTransition.None).using(null)
                     else (fadeIn(tween(220, delayMillis = 90)) +
@@ -160,16 +161,17 @@ private fun CallMetadataRegion(
                 },
                 label = "callMetadataState",
             ) { showConnectionQuality ->
-                if (showConnectionQuality && connectionInfo != null) {
+                if (showConnectionQuality) {
                     CallConnectionStatusRow(
-                        info = connectionInfo,
+                        info = connectionInfo ?: CallConnectionInfo(CallTransportKind.Cellular, null, null, null, null),
                         duration = displayDuration,
                         onClick = onConnectionDetailsClick,
                         modifier = Modifier.fillMaxWidth(),
                         account = phoneAccount,
                         timerGapDp = spacing.connectionToTimerGapDp,
                         geometryOverride = geometry,
-                        onTimerClick = onTimerClick,
+                        onTimerClick = if (connecting) null else onTimerClick,
+                        connecting = connecting,
                     )
                 } else {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {

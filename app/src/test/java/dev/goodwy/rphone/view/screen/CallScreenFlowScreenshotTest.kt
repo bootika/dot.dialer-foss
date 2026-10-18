@@ -35,8 +35,12 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.test.assertHasNoClickAction
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsOff
@@ -383,7 +387,8 @@ class CallScreenFlowScreenshotTest {
             if (current.state == Call.STATE_CONNECTING || current.state == Call.STATE_DIALING) {
                 rule.onNodeWithContentDescription("Add call").assertIsNotEnabled()
                 rule.onNodeWithContentDescription("Keypad").assertIsNotEnabled()
-                rule.onNodeWithContentDescription("More").assertIsNotEnabled()
+                rule.onNodeWithContentDescription("More").assertIsEnabled()
+                rule.onNodeWithContentDescription("Add note").assertIsEnabled()
             }
             val establishedPair = current.state in listOf(Call.STATE_ACTIVE, Call.STATE_HOLDING) &&
                 current.otherState in listOf(Call.STATE_ACTIVE, Call.STATE_HOLDING)
@@ -559,6 +564,7 @@ class CallScreenFlowScreenshotTest {
         runBlocking { dev.goodwy.rphone.controller.util.PhoneExtensions.replace(prefs, listOf(NUMBER), emptyMap()) }
         rule.waitUntil(5000) { rule.onAllNodesWithText("Send 204 · Sales").fetchSemanticsNodes().isEmpty() }
 
+        verifyOutgoingNotesAndMore()
         showActivePanel("25-note", "Add note")
         showActivePanel("26-more", "More")
         showIncomingPanel("27-quick-response", "Message")
@@ -680,6 +686,33 @@ class CallScreenFlowScreenshotTest {
         rule.waitForIdle()
         rule.onNodeWithTag("secondaryCallTimer").assertTextEquals("1:00:05")
         capture("71-live-secondary-timer")
+    }
+
+    private fun verifyOutgoingNotesAndMore() {
+        for (state in listOf(Call.STATE_DIALING, Call.STATE_CONNECTING)) {
+            val id = "outgoing-$state"
+            present(Scenario(id, state, fullPhoto = true, withPhoto = true))
+            rule.onNodeWithContentDescription("Add note").assertIsEnabled().performClick()
+            rule.mainClock.advanceTimeBy(650)
+            rule.onNode(hasSetTextAction()).performTextReplacement("Pregătim oferta")
+            rule.mainClock.advanceTimeBy(1400)
+            rule.waitUntil(5000) {
+                dev.goodwy.rphone.controller.util.NoteManager.readNoteByPhone(RuntimeEnvironment.getApplication(), NUMBER) == "Pregătim oferta"
+            }
+            capture("$id-note")
+            present(Scenario("$id-reopen", state))
+            rule.onNodeWithContentDescription("Add note").performClick()
+            rule.mainClock.advanceTimeBy(650)
+            rule.onNode(hasSetTextAction()).assertTextEquals("Pregătim oferta")
+            present(Scenario("$id-more", state))
+            rule.onNodeWithContentDescription("More").assertIsEnabled().performClick()
+            rule.mainClock.advanceTimeBy(650)
+            rule.onNodeWithText("View contact").assertIsDisplayed()
+            rule.onNodeWithText("Message").assertIsDisplayed()
+            rule.onNodeWithText("Hold").assertHasNoClickAction().performTouchInput { click() }
+            org.junit.Assert.assertTrue("Connecting Hold never sends a Telecom command", telecomCommands.none { it.startsWith("holdCall:") })
+            capture("$id-more")
+        }
     }
 
     private fun showActivePanel(id: String, label: String) {

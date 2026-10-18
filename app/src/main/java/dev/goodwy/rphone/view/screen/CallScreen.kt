@@ -849,7 +849,7 @@ private fun ExpressiveCallScreenContent(
                                                         } else {
                                                             Icons.Default.Pause
                                                         },
-                                                        enabled = callState != Call.STATE_DIALING,
+                                                        enabled = controls.primaryAction,
                                                         onClick = {
                                                             if (callState == Call.STATE_HOLDING) call.unhold() else call.hold()
                                                         }
@@ -858,7 +858,7 @@ private fun ExpressiveCallScreenContent(
                                             }
                                         }
 
-                                        if (showNoteWindow) CallNoteHistoryPanel(contactName, phoneNumber, noteText, { noteText = it }, callState != Call.STATE_DIALING, dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle)) {
+                                        if (showNoteWindow) CallNoteHistoryPanel(contactName, phoneNumber, noteText, { noteText = it }, controls.notes, dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle)) {
                                             if (phoneNumber.isNotEmpty()) NoteManager.writeNote(context, contactName, phoneNumber, noteText)
                                             showNoteWindow = false; showKeypad = false; showMore = true
                                         }
@@ -954,7 +954,7 @@ private fun ExpressiveCallScreenContent(
                                         CallScreenActionButton(
                                             icon = CallControlIcons.Note,
                                             label = stringResource(R.string.add_note),
-                                            enabled = controls.more,
+                                            enabled = controls.notes,
                                             useLiquidGlass = useLgCallScreen,
                                             useBlur = useBlurCallScreen,
                                             blurIntensity = blurIntensity,

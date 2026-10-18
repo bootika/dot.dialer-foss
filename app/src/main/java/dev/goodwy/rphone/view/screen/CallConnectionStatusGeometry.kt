@@ -63,6 +63,9 @@ internal fun measuredCallConnectionStatusGeometry(
         stringResource(R.string.call_voice_quality_unreported_short),
     )
     val qualitySizes = qualityLabels.map { measurer.measure(AnnotatedString(it), style, softWrap = false).size }
+    val connectingSize = measurer.measure(
+        AnnotatedString(callConnectingLabel()), style, softWrap = false,
+    ).size
     val transportSize = measurer.measure(
         AnnotatedString(stringResource(if (transport == CallTransportKind.Cellular) R.string.call_transport_cellular else R.string.call_transport_wifi)),
         style, softWrap = false,
@@ -75,9 +78,11 @@ internal fun measuredCallConnectionStatusGeometry(
         availableWidthDp = availableWidth.value.toInt(),
         accountContentWidthDp = accountSize?.let { dpCeil(it.width) + 26 },
         transportContentWidthDp = dpCeil(transportSize.width) + 26,
-        qualityContentWidthDp = dpCeil(qualitySizes.maxOf { it.width }) +
-            CALL_CONNECTION_QUALITY_ICON_DP + CALL_CONNECTION_QUALITY_ICON_GAP_DP +
-            2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP + 2, // rounding safety
-        textHeightDp = dpCeil(maxOf(qualitySizes.maxOf { it.height }, transportSize.height, accountSize?.height ?: 0)),
+        qualityContentWidthDp = maxOf(
+            dpCeil(qualitySizes.maxOf { it.width }) + CALL_CONNECTION_QUALITY_ICON_DP +
+                CALL_CONNECTION_QUALITY_ICON_GAP_DP + 2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP + 2,
+            dpCeil(connectingSize.width) + 2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP + 2,
+        ), // Both phases reserve the same measured width, including localized Connecting text.
+        textHeightDp = dpCeil(maxOf(qualitySizes.maxOf { it.height }, connectingSize.height, transportSize.height, accountSize?.height ?: 0)),
     )
 }

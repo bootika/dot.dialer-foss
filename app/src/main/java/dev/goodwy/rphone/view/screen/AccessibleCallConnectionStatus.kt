@@ -18,6 +18,7 @@ internal fun AccessibleConnectionStatusContent(
     info: CallConnectionInfo,
     account: PhoneAccount?,
     geometry: CallConnectionStatusGeometry,
+    connecting: Boolean = false,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(4.dp),
@@ -31,8 +32,8 @@ internal fun AccessibleConnectionStatusContent(
         }
         val quality: @Composable () -> Unit = {
             ConnectionStatusCell(geometry.qualityWidthDp, geometry.cellHeightDp,
-                highlightColor = callVoiceQualityHighlightColor(info.quality), testTag = CALL_CONNECTION_QUALITY_TEST_TAG) {
-            VoiceQualityBadge(info.quality)
+                highlightColor = if (connecting) null else callVoiceQualityHighlightColor(info.quality), testTag = CALL_CONNECTION_QUALITY_TEST_TAG) {
+            VoiceQualityBadge(info.quality, connecting)
             }
         }
         val transport: @Composable () -> Unit = {

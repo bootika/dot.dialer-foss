@@ -7,7 +7,7 @@ import org.junit.Test
 
 class CallControlAvailabilityTest {
     @Test
-    fun `connecting exposes only supported audio controls`() {
+    fun `connecting exposes notes and more without enabling unavailable telecom controls`() {
         val controls = callControlAvailability(
             callState = Call.STATE_CONNECTING,
             canHold = true,
@@ -20,7 +20,8 @@ class CallControlAvailabilityTest {
         assertTrue(controls.mute)
         assertTrue(controls.audioRoute)
         assertFalse(controls.keypad)
-        assertFalse(controls.more)
+        assertTrue(controls.more)
+        assertTrue(controls.notes)
     }
 
     @Test
@@ -79,5 +80,21 @@ class CallControlAvailabilityTest {
         )
 
         assertTrue(controls.mute)
+    }
+    @Test fun `note and more availability follows live conversation states`() {
+        for (state in listOf(Call.STATE_DIALING, Call.STATE_CONNECTING, Call.STATE_ACTIVE, Call.STATE_HOLDING)) {
+            val controls = callControlAvailability(state, true, true, supportedAudioRouteCount = 2, hasOtherCall = false)
+            assertTrue(controls.notes)
+            assertTrue(controls.more)
+            if (state == Call.STATE_DIALING || state == Call.STATE_CONNECTING) {
+                assertFalse(controls.primaryAction)
+                assertFalse(controls.keypad)
+            }
+        }
+        for (state in listOf(Call.STATE_DISCONNECTING, Call.STATE_DISCONNECTED, Call.STATE_RINGING)) {
+            val controls = callControlAvailability(state, true, true, supportedAudioRouteCount = 2, hasOtherCall = false)
+            assertFalse(controls.notes)
+            assertFalse(controls.more)
+        }
     }
 }

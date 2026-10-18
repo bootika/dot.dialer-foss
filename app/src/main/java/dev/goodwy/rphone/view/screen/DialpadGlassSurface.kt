@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +47,10 @@ internal fun dialpadBackdropVisibility(state: DialpadEffectState): Float = if (D
     LocalLiquidGlassBackdrop.current != null,
 ).mode == DialpadGlassPolicy.Mode.GLASS) 1f else 0f
 
+/** Dim only the reflective rim on dark panels; preserve the light optical preset. */
+internal fun dialpadPanelHighlight(alpha: Float, dark: Boolean): Highlight =
+    Highlight.Default.copy(alpha = alpha * if (dark) .35f else 1f)
+
 /** Same renderer for portrait and compact; the optical preset is independent of tint alpha. */
 @Composable
 internal fun DialpadGlassSurface(
@@ -58,6 +63,7 @@ internal fun DialpadGlassSurface(
     val effect = DialpadGlassPolicy.effect(state.glass, state.strength,
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && LocalView.current.isHardwareAccelerated, backdrop != null)
     val optics = effect.optics
+    val dark = MaterialTheme.colorScheme.surface.luminance() < .5f
     val normal = dialpadColor
     val target = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.35f)
     val decorated = when {
@@ -68,7 +74,7 @@ internal fun DialpadGlassSurface(
                 blur(state.blurRadius * density * optics.blurScale)
                 lens(refractionHeight = optics.refractionHeightDp * density, refractionAmount = optics.refractionAmountDp * density)
             },
-            highlight = { Highlight.Default.copy(alpha = optics.highlightAlpha) },
+            highlight = { dialpadPanelHighlight(optics.highlightAlpha, dark) },
             shadow = { Shadow.Default.copy(alpha = optics.shadowAlpha) },
         )
         else -> modifier

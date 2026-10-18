@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Ostatnie i wyszukiwanie</string>
     <string name="actions">Działania</string>
     <string name="home_content">Treść domu</string>
-    <string name="tap_a_recent">Dotknij ostatnio</string>
+    <string name="tap_a_recent">Dotknięcie kontaktu lub ostatniego połączenia</string>
     <string name="clear_search_after_call">Wyczyść wyszukiwanie przy rozpoczęciu połączenia</string>
     <string name="no_results">Brak wyników</string>
     <string name="no_contacts_found">Nie znaleziono kontaktów</string>
@@ -762,4 +762,5 @@
     <string name="quick_action_gesture_description">Wybierz działanie kontaktu lub ostatniego połączenia bez odrywania palca.</string>
     <string name="reminder_future_time">Wybierz przyszłą datę i godzinę.</string>
     <string name="reminder_update_failed">Nie udało się zaktualizować przypomnienia. Spróbuj ponownie.</string>
+    <string name="quick_actions">Szybkie działania</string>
 </resources>

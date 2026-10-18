@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Recente și căutare</string>
     <string name="actions">Acțiuni</string>
     <string name="home_content">Conținutul paginii principale</string>
-    <string name="tap_a_recent">La atingerea unui apel recent</string>
+    <string name="tap_a_recent">Tap pe un contact sau apel recent</string>
     <string name="clear_search_after_call">Golește căutarea la inițierea apelului</string>
     <string name="no_results">Niciun rezultat</string>
     <string name="no_contacts_found">Nu s-a găsit niciun contact</string>
@@ -751,4 +751,5 @@
     <string name="quick_action_gesture_description" tools:ignore="MissingTranslation">Alege o acțiune pe un contact sau apel recent fără să ridici degetul.</string>
     <string name="reminder_future_time" tools:ignore="MissingTranslation">Alege o dată și o oră în viitor.</string>
     <string name="reminder_update_failed">Nu am putut actualiza reminderul. Încearcă din nou.</string>
+    <string name="quick_actions">Acțiuni rapide</string>
 </resources>

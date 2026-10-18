@@ -68,12 +68,30 @@ class ContactSwipeDeletionTest {
     @Test fun quickGestureUsesTheExistingNumberChooserBeforeCopyingIdentity() {
         render(hasNumber = true, quickGesture = true, multiple = true)
         rule.onNodeWithText("Test Alexandru Butica").performTouchInput { longClick() }
-        rule.onNodeWithText("Copy").performClick()
+        rule.onNodeWithText("Copy").assertDoesNotExist()
+        val start=rule.onNodeWithText("Test Alexandru Butica").fetchSemanticsNode().boundsInRoot.center
+        rule.onRoot().performTouchInput {down(start)}
+        rule.mainClock.advanceTimeBy(700);rule.waitForIdle()
+        val copy=rule.onNodeWithText("Copy").fetchSemanticsNode().boundsInRoot.center
+        rule.onRoot().performTouchInput {moveTo(copy);up()}
+        rule.onNodeWithText("Copy").assertDoesNotExist()
         rule.onNodeWithText("+40722000001").performClick()
         val clipboard = RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
         val text = clipboard.primaryClip!!.getItemAt(0).text.toString()
         assertTrue(text.contains("Test Alexandru Butica")); assertTrue(text.contains("+40722000001"))
         assertEquals(emptyList<String>(), deleted)
+    }
+
+    @Test fun quickTapOpensAndClosesThenUsesTheSameNumberChooser() {
+        render(hasNumber=true,multiple=true,quickTap=true)
+        val row=rule.onNodeWithText("Test Alexandru Butica")
+        row.performClick();rule.onNodeWithText("Copy").assertIsDisplayed()
+        row.performClick();rule.onNodeWithText("Copy").assertDoesNotExist()
+        row.performClick();rule.onNodeWithText("Copy").performClick()
+        rule.onNodeWithText("+40722000001").performClick()
+        val clip=RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
+        assertTrue(clip.primaryClip!!.getItemAt(0).text.toString().contains("+40722000001"))
+        assertEquals(emptyList<String>(),deleted)
     }
 
     private fun captureConfirmation() = rule.runOnIdle {
@@ -90,7 +108,7 @@ class ContactSwipeDeletionTest {
         file.parentFile!!.mkdirs(); file.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
         bitmap.recycle()
     }
-    private fun render(hasNumber: Boolean, selectionMode: Boolean = false, quickGesture: Boolean = false, multiple: Boolean = false) {
+    private fun render(hasNumber: Boolean, selectionMode: Boolean = false, quickGesture: Boolean = false, multiple: Boolean = false, quickTap: Boolean = false) {
         val context = RuntimeEnvironment.getApplication()
         val prefs = PreferenceManager(context)
         val contact = Contact("contact-42", givenName = "Test Alexandru Butica",
@@ -112,7 +130,7 @@ class ContactSwipeDeletionTest {
             DotDialerTheme(systemDark = false) {
                 Box(Modifier.fillMaxWidth().testTag("contact-row")) {
                     ContactListItem(contact, navigator, selectionMode = selectionMode, displayOrder = 0,
-                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48, quickActionsEnabled = quickGesture))
+                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48, quickActionsEnabled = quickGesture, quickActionsOnTap = quickTap))
                 }
             }
         }

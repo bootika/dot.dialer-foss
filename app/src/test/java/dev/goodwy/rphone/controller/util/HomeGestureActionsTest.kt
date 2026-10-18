@@ -4,6 +4,13 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HomeGestureActionsTest {
+    @Test fun `quick menu has a new tap-only ID and leaves old swipe IDs unchanged`() {
+        assertEquals(HOME_ROW_ACTIONS+9,HOME_TAP_ACTIONS)
+        assertEquals(9,resolvedRecentTapAction(9,false))
+        assertEquals(9,resolvedRecentTapAction(9,true))
+        assertEquals(0,supportedHomeSwipeAction(9))
+    }
+
     @Test fun `all selectors share the approved stable ordered action IDs`() {
         assertEquals(listOf(0, 1, 2, 4, 7, 5), HOME_ROW_ACTIONS)
         HOME_ROW_ACTIONS.forEach { assertEquals(it, supportedHomeSwipeAction(it)) }

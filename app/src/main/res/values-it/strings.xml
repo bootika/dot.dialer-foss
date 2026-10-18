@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Recenti e ricerca</string>
     <string name="actions">Azioni</string>
     <string name="home_content">Contenuto della casa</string>
-    <string name="tap_a_recent">Toccare un recente</string>
+    <string name="tap_a_recent">Tocca un contatto o una chiamata recente</string>
     <string name="clear_search_after_call">Cancella ricerca all’avvio della chiamata</string>
     <string name="no_results">Nessun risultato</string>
     <string name="no_contacts_found">Nessun contatto trovato</string>
@@ -757,4 +757,5 @@
     <string name="quick_action_gesture_description">Scegli un’azione su un contatto o una chiamata recente senza sollevare il dito.</string>
     <string name="reminder_future_time">Scegli una data e un’ora future.</string>
     <string name="reminder_update_failed">Impossibile aggiornare il promemoria. Riprova.</string>
+    <string name="quick_actions">Azioni rapide</string>
 </resources>

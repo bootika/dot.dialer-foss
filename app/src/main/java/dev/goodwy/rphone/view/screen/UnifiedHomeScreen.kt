@@ -1020,6 +1020,8 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             } else selectedRecentIds + callEntry.id
                         }
                         HomeResultRow(
+                            quickActionsOnTap = recentTapAction == dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && callEntry.number.isNotBlank(),
+                            onQuickActionsOpen = { prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY) },
                             quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
                             onQuickAction = { action ->
                                 if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) {
@@ -1132,6 +1134,8 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                         val contact = (document.payload as DotDialerSearchPayload.ContactResult).contact
                         val phoneNumber = primaryNumber(contact)
                         HomeResultRow(
+                            quickActionsOnTap = recentTapAction == dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && phoneNumber != null,
+                            onQuickActionsOpen = { prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY) },
                             quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && phoneNumber != null,
                             onQuickAction = { action ->
                                 if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY))
@@ -1396,12 +1400,14 @@ internal fun HomeResultRow(
     expandedListDetails: Boolean = PreferenceManager.DEFAULT_EXPANDED_LIST_DETAILS,
     onRowBoundsChanged: ((Rect) -> Unit)? = null,
     onAvatarBoundsChanged: ((Rect) -> Unit)? = null,
+    quickActionsOnTap: Boolean = false,
+    onQuickActionsOpen: () -> Boolean = { true },
     quickActionsEnabled: Boolean = false,
     onQuickAction: (Int) -> Unit = {},
 ) {
     val context = LocalContext.current
     val quickGesture = remember(phoneNumber, title) { HomeQuickGestureState() }
-    LaunchedEffect(quickActionsEnabled) { if (!quickActionsEnabled) quickGesture.expanded = false }
+    LaunchedEffect(quickActionsEnabled, quickActionsOnTap) { if (!quickActionsEnabled && !quickActionsOnTap) quickGesture.expanded = false }
     val quickAction by rememberUpdatedState(onQuickAction)
     val rowTextColor = if (callVisual?.accentMetadata == true) {
         callStatusColor(callVisual.status)
@@ -1437,7 +1443,7 @@ internal fun HomeResultRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .homeCombinedClickable(
-                            context, haptics, hapticsStrength, hapticsIntensity, onClick, if (quickActionsEnabled) null else onLongClick,
+                            context, haptics, hapticsStrength, hapticsIntensity, if (quickActionsOnTap) ({ quickGesture.toggleForTap(onQuickActionsOpen) }) else onClick, if (quickActionsEnabled) null else onLongClick,
                         )
                         .then(if (quickActionsEnabled) Modifier.quickActionGesture(quickGesture) { quickAction(it) } else Modifier)
                         .padding(

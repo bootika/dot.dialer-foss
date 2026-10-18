@@ -16,6 +16,7 @@ internal data class ContactListRowPreferences(
     val avatarSize: Int,
     val expandedListDetails: Boolean = PreferenceManager.DEFAULT_EXPANDED_LIST_DETAILS,
     val quickActionsEnabled: Boolean = false,
+    val quickActionsOnTap: Boolean = false,
 )
 
 internal const val CONTACTS_LIST_NAME_SIZE_SP = 16
@@ -33,5 +34,6 @@ internal fun PreferenceManager.contactListRowPreferences() = ContactListRowPrefe
     contactNameSize = getInt(PreferenceManager.KEY_CONTACT_NAME_SIZE_SP, 18).coerceIn(16, 22),
     avatarSize = contactAvatarSizeDp(),
     expandedListDetails = expandedListDetails(),
+    quickActionsOnTap = dev.goodwy.rphone.controller.util.resolvedRecentTapAction(getInt(PreferenceManager.KEY_RECENT_TAP_ACTION, -1), false) == dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS,
     quickActionsEnabled = getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false),
 )

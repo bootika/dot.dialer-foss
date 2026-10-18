@@ -29,6 +29,7 @@ import dev.goodwy.rphone.controller.util.setSwipeRightAction
 import dev.goodwy.rphone.controller.util.getSwipeLeftAction
 import dev.goodwy.rphone.controller.util.setSwipeLeftAction
 import dev.goodwy.rphone.controller.util.HOME_ROW_ACTIONS
+import dev.goodwy.rphone.controller.util.trySetRecentTapAction
 import io.github.bootika.dotdialer.core.preferences.RecentHistoryPolicy
 import org.koin.compose.koinInject
 
@@ -68,7 +69,7 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
     var allCalls by remember(settingsVersion) { mutableStateOf(prefs.getBoolean(PreferenceManager.KEY_SHOW_ALL_RECENT_CALLS, false)) }
     var maximum by remember(settingsVersion) { mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_RECENT_HISTORY_MAX_ENTRIES, RecentHistoryPolicy.DEFAULT_MAX_ENTRIES)) }
     val noActionLabel = stringResource(R.string.no_action)
-    val tapChoices = homeRowActionChoices()
+    val tapChoices = homeRowActionChoices(includeQuickActions = true)
     val swipeChoices = homeRowActionChoices(includeDelete = true)
     fun swipeLabel(value: Int): String = swipeChoices.firstOrNull { it.second == value }?.first
         ?: noActionLabel
@@ -134,12 +135,12 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
                     DotSettingsDivider()
                     DotSettingsChoiceRow(
                         title = stringResource(R.string.tap_a_recent),
-                        value = swipeLabel(tapAction),
+                        value = tapChoices.firstOrNull { it.second == tapAction }?.first ?: noActionLabel,
                         choices = tapChoices,
+                        mutedValues = if (prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) emptySet() else setOf(dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS),
                         selectedValue = tapAction,
                         onValueChange = {
-                            tapAction = it
-                            prefs.setRecentTapAction(it)
+                            if (prefs.trySetRecentTapAction(it)) tapAction = it
                         },
                     )
                     DotSettingsDivider()
@@ -215,8 +216,8 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
 }
 
 @Composable
-internal fun homeRowActionChoices(includeDelete: Boolean = false): List<Pair<String, Int>> =
-    (if (includeDelete) dev.goodwy.rphone.controller.util.HOME_SWIPE_ACTIONS else HOME_ROW_ACTIONS).map { action ->
+internal fun homeRowActionChoices(includeDelete: Boolean = false, includeQuickActions: Boolean = false): List<Pair<String, Int>> =
+    (if (includeDelete) dev.goodwy.rphone.controller.util.HOME_SWIPE_ACTIONS else if (includeQuickActions) dev.goodwy.rphone.controller.util.HOME_TAP_ACTIONS else HOME_ROW_ACTIONS).map { action ->
     val label = when (action) {
         PreferenceManager.SWIPE_ACTION_NONE -> stringResource(R.string.no_action)
         PreferenceManager.SWIPE_ACTION_CALL -> stringResource(R.string.call)
@@ -225,6 +226,7 @@ internal fun homeRowActionChoices(includeDelete: Boolean = false): List<Pair<Str
         PreferenceManager.SWIPE_ACTION_CONTACT -> stringResource(R.string.contact_action)
         PreferenceManager.SWIPE_ACTION_COPY_NUMBER -> stringResource(R.string.copy_action)
         PreferenceManager.SWIPE_ACTION_DELETE_ENTRY -> stringResource(R.string.delete)
+        dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS -> stringResource(R.string.quick_actions)
         else -> error("Unsupported home action")
     }
     label to action

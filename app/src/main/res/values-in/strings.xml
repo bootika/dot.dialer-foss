@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Terbaru dan pencarian</string>
     <string name="actions">Aksi</string>
     <string name="home_content">Isi rumah</string>
-    <string name="tap_a_recent">Tekan baru-baru ini</string>
+    <string name="tap_a_recent">Ketuk kontak atau panggilan terbaru</string>
     <string name="clear_search_after_call">Hapus pencarian saat memulai panggilan</string>
     <string name="no_results">Tidak ada hasil</string>
     <string name="no_contacts_found">Kontak tak ditemukan</string>
@@ -741,4 +741,5 @@
     <string name="quick_action_gesture_description">Pilih tindakan kontak atau panggilan terbaru tanpa mengangkat jari.</string>
     <string name="reminder_future_time">Pilih tanggal dan waktu mendatang.</string>
     <string name="reminder_update_failed">Pengingat tidak dapat diperbarui. Coba lagi.</string>
+    <string name="quick_actions">Tindakan cepat</string>
 </resources>

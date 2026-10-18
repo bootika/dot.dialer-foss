@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Appels récents et recherche</string>
     <string name="actions">Actions</string>
     <string name="home_content">Sommaire</string>
-    <string name="tap_a_recent">Appuyez sur un récent</string>
+    <string name="tap_a_recent">Toucher un contact ou un appel récent</string>
     <string name="clear_search_after_call">Effacer la recherche au début de l’appel</string>
     <string name="no_results">Aucun résultat</string>
     <string name="no_contacts_found">Aucun contact trouvé</string>
@@ -757,4 +757,5 @@
     <string name="quick_action_gesture_description">Choisissez une action sur un contact ou un appel récent sans lever le doigt.</string>
     <string name="reminder_future_time">Choisissez une date et une heure futures.</string>
     <string name="reminder_update_failed">Impossible de modifier le rappel. Réessayez.</string>
+    <string name="quick_actions">Actions rapides</string>
 </resources>

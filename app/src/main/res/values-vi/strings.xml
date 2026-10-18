@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Gần đây và tìm kiếm</string>
     <string name="actions">Hành động</string>
     <string name="home_content">Nội dung nhà</string>
-    <string name="tap_a_recent">Lần đầu gặp</string>
+    <string name="tap_a_recent">Chạm vào liên hệ hoặc cuộc gọi gần đây</string>
     <string name="clear_search_after_call">Xóa tìm kiếm khi bắt đầu cuộc gọi</string>
     <string name="no_results">Không có kết quả</string>
     <string name="no_contacts_found">Không tìm thấy liên lạc</string>
@@ -743,4 +743,5 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="quick_action_gesture_description">Chọn thao tác cho liên hệ hoặc cuộc gọi gần đây mà không nhấc ngón tay.</string>
     <string name="reminder_future_time">Chọn ngày và giờ trong tương lai.</string>
     <string name="reminder_update_failed">Không thể cập nhật lời nhắc. Hãy thử lại.</string>
+    <string name="quick_actions">Thao tác nhanh</string>
 </resources>

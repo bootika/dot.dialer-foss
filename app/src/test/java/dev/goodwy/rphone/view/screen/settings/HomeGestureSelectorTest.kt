@@ -27,6 +27,13 @@ class HomeGestureSelectorTest {
     private var selected = -1
     private var observedChoices = emptyList<Pair<String, Int>>()
 
+    @Test fun `quick actions can be selected only in the tap selector`() {
+        render("Tap a contact or recent",includeQuickActions=true)
+        openAndVerifyChoices()
+        rule.onNodeWithText("Quick actions").performClick()
+        rule.runOnIdle{assertEquals(9,selected)}
+    }
+
     @Test fun `tap selector shows approved choices in order and Contact selects details action`() {
         render("Tap a recent")
         openAndVerifyChoices()
@@ -61,12 +68,14 @@ class HomeGestureSelectorTest {
     }
 
     private var includesDelete = false
+    private var includesQuickActions = false
 
-    private fun render(title: String, includeDelete: Boolean = false) {
+    private fun render(title: String, includeDelete: Boolean = false, includeQuickActions: Boolean = false) {
         includesDelete = includeDelete
+        includesQuickActions = includeQuickActions
         rule.setContent {
             DotDialerTheme(systemDark = false) {
-                val choices = homeRowActionChoices(includeDelete)
+                val choices = homeRowActionChoices(includeDelete, includeQuickActions)
                 observedChoices = choices
                 DotSettingsCard {
                     DotSettingsChoiceRow(title, "Call", choices, 1, { selected = it })
@@ -78,7 +87,7 @@ class HomeGestureSelectorTest {
     private fun openAndVerifyChoices() {
         rule.onNodeWithText("Call").performClick()
         rule.waitForIdle()
-        val expected = listOf("No action", "Call", "SMS", "WhatsApp", "Contact", "Copy") + if (includesDelete) listOf("Delete") else emptyList()
+        val expected = listOf("No action", "Call", "SMS", "WhatsApp", "Contact", "Copy") + if (includesDelete) listOf("Delete") else if(includesQuickActions) listOf("Quick actions") else emptyList()
         rule.runOnIdle { assertEquals(expected, observedChoices.map { it.first }) }
         val tops = expected.map { text ->
             rule.onAllNodesWithText(text).fetchSemanticsNodes().last().boundsInRoot.top

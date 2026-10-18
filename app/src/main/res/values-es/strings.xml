@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Recientes y búsqueda</string>
     <string name="actions">Acciones</string>
     <string name="home_content">Inicio del contenido</string>
-    <string name="tap_a_recent">Toca un poco</string>
+    <string name="tap_a_recent">Tocar un contacto o una llamada reciente</string>
     <string name="clear_search_after_call">Borrar búsqueda al iniciar una llamada</string>
     <string name="no_results">Sin resultados</string>
     <string name="no_contacts_found">No se encontraron contactos</string>
@@ -757,4 +757,5 @@
     <string name="quick_action_gesture_description">Elige una acción de contacto o llamada reciente sin levantar el dedo.</string>
     <string name="reminder_future_time">Elige una fecha y hora futuras.</string>
     <string name="reminder_update_failed">No se pudo actualizar el recordatorio. Inténtalo de nuevo.</string>
+    <string name="quick_actions">Acciones rápidas</string>
 </resources>

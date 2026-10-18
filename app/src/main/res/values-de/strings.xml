@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Letzte Anrufe und Suche</string>
     <string name="actions">Aktionen</string>
     <string name="home_content">Heimische Inhalte</string>
-    <string name="tap_a_recent">Auf letzten Anruf tippen</string>
+    <string name="tap_a_recent">Kontakt oder letzten Anruf antippen</string>
     <string name="clear_search_after_call">Suche beim Start eines Anrufs leeren</string>
     <string name="no_results">Keine Ergebnisse</string>
     <string name="no_contacts_found">Keine Kontakte gefunden</string>
@@ -752,4 +752,5 @@
     <string name="quick_action_gesture_description">Wähle eine Kontakt- oder Anrufaktion, ohne den Finger anzuheben.</string>
     <string name="reminder_future_time">Wähle ein Datum und eine Uhrzeit in der Zukunft.</string>
     <string name="reminder_update_failed">Die Erinnerung konnte nicht aktualisiert werden. Versuche es erneut.</string>
+    <string name="quick_actions">Schnellaktionen</string>
 </resources>

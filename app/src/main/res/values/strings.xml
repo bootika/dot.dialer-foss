@@ -65,7 +65,7 @@
     <string name="home_and_gestures" tools:ignore="MissingTranslation">Recents and search</string>
     <string name="actions" tools:ignore="MissingTranslation">Actions</string>
     <string name="home_content" tools:ignore="MissingTranslation">Home content</string>
-    <string name="tap_a_recent" tools:ignore="MissingTranslation">Tap a recent</string>
+    <string name="tap_a_recent" tools:ignore="MissingTranslation">Tap a contact or recent</string>
     <string name="clear_search_after_call" tools:ignore="MissingTranslation">Clear search when starting a call</string>
     <string name="no_results">No results</string>
     <string name="no_contacts_found">No contacts found</string>
@@ -833,4 +833,5 @@
     <string name="quick_action_gesture_description" tools:ignore="MissingTranslation">Choose a contact or recent-call action without lifting your finger.</string>
     <string name="reminder_future_time" tools:ignore="MissingTranslation">Choose a future date and time.</string>
     <string name="reminder_update_failed">Could not update the reminder. Try again.</string>
+    <string name="quick_actions">Quick actions</string>
 </resources>

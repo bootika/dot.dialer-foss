@@ -62,7 +62,7 @@
     <string name="home_and_gestures">Son aramalar ve arama</string>
     <string name="actions">Eylemler</string>
     <string name="home_content">Ana ekran içeriği</string>
-    <string name="tap_a_recent">Son aramaya dokunma</string>
+    <string name="tap_a_recent">Bir kişiye veya son aramaya dokunma</string>
     <string name="clear_search_after_call">Arama başlatıldığında aramayı temizle</string>
     <string name="no_results">Sonuç yok</string>
     <string name="no_contacts_found">Kişi bulunamadı</string>
@@ -752,4 +752,5 @@
     <string name="quick_action_gesture_description">Parmağınızı kaldırmadan kişi veya son arama eylemini seçin.</string>
     <string name="reminder_future_time">Gelecekteki bir tarih ve saat seçin.</string>
     <string name="reminder_update_failed">Hatırlatıcı güncellenemedi. Tekrar deneyin.</string>
+    <string name="quick_actions">Hızlı işlemler</string>
 </resources>

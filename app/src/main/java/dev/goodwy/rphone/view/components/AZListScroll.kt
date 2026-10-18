@@ -429,6 +429,8 @@ internal fun ContactListItem(
     }
     Box {
         HomeResultRow(
+            quickActionsOnTap = resolvedRowPreferences.quickActionsOnTap && !selectionMode && phoneNumber != null,
+            onQuickActionsOpen = { prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY) },
             quickActionsEnabled = resolvedRowPreferences.quickActionsEnabled && !selectionMode && phoneNumber != null,
             onQuickAction = { action ->
                 if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY))

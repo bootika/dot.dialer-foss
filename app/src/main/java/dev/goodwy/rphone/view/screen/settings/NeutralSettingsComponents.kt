@@ -248,6 +248,7 @@ private fun <T> DotSettingsInlineSelector(
     choices: List<Pair<String, T>>,
     selectedValue: T,
     onValueChange: (T) -> Unit,
+    mutedValues: Set<T> = emptySet(),
 ) {
     var expanded by remember { mutableStateOf(false) }
     Column(
@@ -294,6 +295,7 @@ private fun <T> DotSettingsInlineSelector(
                 choices.forEach { (label, choiceValue) ->
                     val selected = choiceValue == selectedValue
                     DropdownMenuItem(
+                        modifier = Modifier.alpha(if (choiceValue in mutedValues) .45f else 1f),
                         text = {
                             Text(
                                 text = label,
@@ -323,6 +325,7 @@ internal fun DotSettingsChoiceRow(
     choices: List<Pair<String, Int>>,
     selectedValue: Int,
     onValueChange: (Int) -> Unit,
+    mutedValues: Set<Int> = emptySet(),
 ) {
     when (dotSettingsChoicePresentation(choices.size)) {
         DotSettingsChoicePresentation.Segmented -> {
@@ -330,7 +333,7 @@ internal fun DotSettingsChoiceRow(
             return
         }
         DotSettingsChoicePresentation.InlineSelect -> {
-            DotSettingsInlineSelector(title, value, choices, selectedValue, onValueChange)
+            DotSettingsInlineSelector(title, value, choices, selectedValue, onValueChange, mutedValues)
             return
         }
         DotSettingsChoicePresentation.Dialog -> Unit

@@ -1,5 +1,9 @@
 package dev.goodwy.rphone.view.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -22,6 +26,12 @@ internal class HomeQuickGestureState {
     var pointer = Offset.Zero
     var distance = 0f
     val bounds = mutableMapOf<Int, Rect>()
+    fun toggleForTap(allowOpen: () -> Boolean) {
+        if (expanded || allowOpen()) {
+            hovered = -1
+            expanded = !expanded
+        }
+    }
 }
 
 internal fun Modifier.quickActionGesture(state: HomeQuickGestureState, onAction: (Int) -> Unit): Modifier =
@@ -35,11 +45,9 @@ internal fun Modifier.quickActionGesture(state: HomeQuickGestureState, onAction:
                 state.hovered = state.bounds.entries.firstOrNull { it.value.contains(state.pointer) }?.key ?: -1
             }, onDragEnd = {
                 val chosen = state.hovered
-                if (state.distance > viewConfiguration.touchSlop) {
-                    state.expanded = false
-                    if (chosen >= 0) onAction(chosen)
-                }
+                state.expanded = false
                 state.hovered = -1
+                if (state.distance > viewConfiguration.touchSlop && chosen >= 0) onAction(chosen)
             }, onDragCancel = { state.expanded = false; state.hovered = -1 })
         }
 
@@ -56,12 +64,16 @@ internal fun HomeQuickActionTray(state: HomeQuickGestureState, onAction: (Int) -
     Row(Modifier.fillMaxWidth()) {
         actions.forEachIndexed { index, action ->
             val visual = requireNotNull(dev.goodwy.rphone.view.components.homeSwipeVisual(action))
+            val background by animateColorAsState(
+                targetValue = if (state.hovered == index) Color.Black.copy(alpha = .15f).compositeOver(visual.background) else visual.background,
+                animationSpec = tween(100),
+                label = "quickActionBackground",
+            )
             Surface(
                 onClick = { state.expanded = false; onAction(index) },
                 shape = androidx.compose.ui.graphics.RectangleShape,
-                color = visual.background,
+                color = background,
                 contentColor = visual.foreground,
-                border = if (state.hovered == index) androidx.compose.foundation.BorderStroke(2.dp, visual.foreground) else null,
                 modifier = Modifier.weight(1f).aspectRatio(1f)
                     .onGloballyPositioned { state.bounds[index] = it.boundsInRoot() },
             ) {

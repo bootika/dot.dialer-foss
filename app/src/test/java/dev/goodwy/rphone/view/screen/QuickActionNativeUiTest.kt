@@ -56,7 +56,7 @@ class QuickActionNativeUiTest {
         allowed=true;prefs.notifyPlanChanged();rule.onNode(isToggleable()).assertIsOn()
     }
 
-    @Test fun holdWithoutDragKeepsFourTappableActionsWithoutMore() {
+    @Test fun holdReleaseWithoutSelectionClosesWithoutAction() {
         var action=-1;var more=0;var taps=0
         startKoin {modules(module {single {PreferenceManager(context)}})}
         rule.setContent {DotDialerTheme {Surface {
@@ -65,12 +65,15 @@ class QuickActionNativeUiTest {
                 swipeRightAction=0,swipeLeftAction=0,haptics=false,hapticsStrength="light",hapticsIntensity=.5f,
                 onAction={},onAvatarClick={},onClick={taps++},onLongClick={more++},isLastInSection=true,contactNameSize=18,avatarSize=46)
         }}}
-        rule.onNodeWithText("Test Alexandru Butica").performTouchInput {longClick()}
-        rule.onNodeWithText(context.getString(R.string.copy_action)).assertIsDisplayed().performClick()
-        assertEquals(3,action);assertEquals("Long press never executes the default tap action",0,taps)
-        rule.onNodeWithText("Test Alexandru Butica").performTouchInput {longClick()}
-        capture("quick-gesture-light")
-        rule.onNodeWithText(context.getString(R.string.more)).assertDoesNotExist();assertEquals(0,more);assertEquals(0,taps)
+        for (move in listOf(0f,1f)) {
+            val start=rule.onNodeWithText("Test Alexandru Butica").fetchSemanticsNode().boundsInRoot.center
+            rule.onRoot().performTouchInput {down(start)}
+            rule.mainClock.advanceTimeBy(700);rule.waitForIdle()
+            rule.onNodeWithText(context.getString(R.string.copy_action)).assertIsDisplayed()
+            rule.onRoot().performTouchInput {if(move>0)moveTo(start+Offset(move,0f));up()}
+            rule.onNodeWithText(context.getString(R.string.copy_action)).assertDoesNotExist()
+            assertEquals(-1,action);assertEquals(0,more);assertEquals(0,taps)
+        }
     }
 
     @Test fun continuousHoldSlideReleaseChoosesActionAndOutsideReleaseCancels() {
@@ -88,7 +91,18 @@ class QuickActionNativeUiTest {
         rule.onRoot().performTouchInput {down(start)}
         rule.mainClock.advanceTimeBy(700);rule.waitForIdle()
         val target=rule.onNodeWithText(context.getString(R.string.copy_action)).fetchSemanticsNode().boundsInRoot.center
-        rule.onRoot().performTouchInput {moveTo(target);up()}
+        rule.onRoot().performTouchInput {moveTo(target)}
+        rule.mainClock.advanceTimeBy(150);rule.waitForIdle()
+        capture("quick-gesture-hover")
+        val tile=rule.onNodeWithText(context.getString(R.string.copy_action)).fetchSemanticsNode().boundsInRoot
+        val image=android.graphics.BitmapFactory.decodeFile("../evidence/local-verification/quick-tray-tap-20261018/quick-gesture-hover.png")
+        val pixel=image.getPixel(tile.left.toInt()+1,tile.top.toInt()+1)
+        assertEquals(75.0,android.graphics.Color.red(pixel).toDouble(),1.0)
+        assertEquals(86.0,android.graphics.Color.green(pixel).toDouble(),1.0)
+        assertEquals(81.0,android.graphics.Color.blue(pixel).toDouble(),1.0)
+        image.recycle()
+        rule.onRoot().performTouchInput {up()}
+        rule.onNodeWithText(context.getString(R.string.copy_action)).assertDoesNotExist()
         assertEquals(3,action);assertEquals(0,swipes);assertEquals(0,taps)
         action=-1
         rule.onRoot().performTouchInput {down(start)}
@@ -96,6 +110,40 @@ class QuickActionNativeUiTest {
         rule.onRoot().performTouchInput {moveTo(Offset(1f,500f));up()}
         assertEquals(-1,action);assertEquals(0,swipes);assertEquals(0,taps)
         rule.onNodeWithText(context.getString(R.string.more)).assertDoesNotExist()
+        rule.onNodeWithText(context.getString(R.string.copy_action)).assertDoesNotExist()
+        rule.onRoot().performTouchInput {down(start)}
+        rule.mainClock.advanceTimeBy(700);rule.waitForIdle()
+        rule.onNodeWithText(context.getString(R.string.copy_action)).assertIsDisplayed()
+        rule.onRoot().performTouchInput {cancel()}
+        rule.onNodeWithText(context.getString(R.string.copy_action)).assertDoesNotExist()
+        assertEquals(-1,action)
+    }
+
+    @Test fun tapsToggleTrayAndTileTapsExecuteWithoutLongPress() {
+        var calls=0;var action=-1;var allowed=true;var upgrades=0
+        var tapMode by mutableStateOf(true)
+        var holdMode by mutableStateOf(false)
+        startKoin {modules(module {single {PreferenceManager(context)}})}
+        rule.setContent {DotDialerTheme {Surface {
+            HomeResultRow("Test Alexandru Butica","0700000101",null,"0700000101",
+                quickActionsEnabled=holdMode,quickActionsOnTap=tapMode,onQuickActionsOpen={if(!allowed)upgrades++;allowed},
+                onQuickAction={action=it},swipeEnabled=false,swipeRightAction=0,swipeLeftAction=0,
+                haptics=false,hapticsStrength="light",hapticsIntensity=.5f,onAction={},onAvatarClick={},
+                onClick={calls++},isLastInSection=true,contactNameSize=18,avatarSize=46)
+        }}}
+        val row=rule.onNodeWithText("Test Alexandru Butica")
+        for (hold in listOf(false,true)) {
+            holdMode=hold
+        row.performClick();rule.onNodeWithText("Copy").assertIsDisplayed();capture("quick-tap-open")
+        row.performClick();rule.onNodeWithText("Copy").assertDoesNotExist();assertEquals(0,calls)
+        listOf(context.getString(R.string.call),context.getString(R.string.sms),"WhatsApp","Copy").forEachIndexed {i,label->
+            row.performClick();rule.onNodeWithText(label).performTouchInput{click()}
+            assertEquals(i,action);rule.onNodeWithText("Copy").assertDoesNotExist()
+        }
+        }
+        allowed=false;row.performClick();assertEquals(1,upgrades)
+        rule.onNodeWithText("Copy").assertDoesNotExist();assertEquals(0,calls)
+        tapMode=false;row.performClick();assertEquals(1,calls)
     }
 
     @Test fun extensionKeypadFollowsLiveStateRightsAndMetadataWithoutReplacingDigits() {
@@ -176,7 +224,7 @@ class QuickActionNativeUiTest {
         val decor=rule.activity.window.decorView
         val bitmap=Bitmap.createBitmap(decor.width,decor.height,Bitmap.Config.ARGB_8888)
         rule.runOnIdle {decor.draw(Canvas(bitmap))}
-        val directory=File("../evidence/local-verification/quick-tray-squares-20261018").apply{mkdirs()}
+        val directory=File("../evidence/local-verification/quick-tray-tap-20261018").apply{mkdirs()}
         File(directory,"$name.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
         bitmap.recycle()
     }

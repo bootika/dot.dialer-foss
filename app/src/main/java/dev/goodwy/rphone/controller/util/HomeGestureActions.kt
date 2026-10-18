@@ -20,6 +20,9 @@ internal val HOME_ROW_ACTIONS = listOf(
     PreferenceManager.SWIPE_ACTION_COPY_NUMBER,
 )
 
+internal const val HOME_TAP_QUICK_ACTIONS = 9
+internal val HOME_TAP_ACTIONS = HOME_ROW_ACTIONS + HOME_TAP_QUICK_ACTIONS
+
 internal val HOME_SWIPE_ACTIONS = HOME_ROW_ACTIONS + PreferenceManager.SWIPE_ACTION_DELETE_ENTRY
 
 internal fun supportedHomeSwipeAction(action: Int): Int =
@@ -31,7 +34,7 @@ internal fun contactSwipeAction(action: Int, hasNumber: Boolean): Int =
     else PreferenceManager.SWIPE_ACTION_NONE
 
 internal fun resolvedRecentTapAction(savedAction: Int, legacyDirectCall: Boolean): Int =
-    savedAction.takeIf { it in HOME_ROW_ACTIONS }
+    savedAction.takeIf { it in HOME_TAP_ACTIONS }
         ?: if (legacyDirectCall) PreferenceManager.SWIPE_ACTION_CALL else PreferenceManager.SWIPE_ACTION_CONTACT
 
 fun PreferenceManager.getRecentTapAction(): Int = resolvedRecentTapAction(
@@ -44,3 +47,9 @@ fun PreferenceManager.getSwipeRightAction(): Int = supportedHomeSwipeAction(getI
 fun PreferenceManager.setSwipeRightAction(action: Int) = setInt(KEY_SWIPE_RIGHT_ACTION, supportedHomeSwipeAction(action))
 fun PreferenceManager.getSwipeLeftAction(): Int = supportedHomeSwipeAction(getInt(KEY_SWIPE_LEFT_ACTION, DEFAULT_SWIPE_LEFT_ACTION))
 fun PreferenceManager.setSwipeLeftAction(action: Int) = setInt(KEY_SWIPE_LEFT_ACTION, supportedHomeSwipeAction(action))
+
+internal fun PreferenceManager.trySetRecentTapAction(action: Int): Boolean {
+    if (action == HOME_TAP_QUICK_ACTIONS && !requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) return false
+    setRecentTapAction(action)
+    return true
+}

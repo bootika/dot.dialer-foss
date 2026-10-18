@@ -348,6 +348,7 @@ internal fun ContactListItem(
 
     fun runNumberAction(action: ContactMenuNumberAction, number: String) {
         when (action) {
+            ContactMenuNumberAction.WhatsApp -> SocialUtils.openWhatsApp(context, number)
             ContactMenuNumberAction.Call -> makeCall(context, number)
             ContactMenuNumberAction.Message -> context.startActivity(
                 Intent(Intent.ACTION_VIEW, "sms:$number".toUri())
@@ -428,6 +429,12 @@ internal fun ContactListItem(
     }
     Box {
         HomeResultRow(
+            quickActionsEnabled = resolvedRowPreferences.quickActionsEnabled && !selectionMode && phoneNumber != null,
+            onQuickAction = { action ->
+                if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY))
+                    chooseNumber(listOf(ContactMenuNumberAction.Call, ContactMenuNumberAction.Message,
+                        ContactMenuNumberAction.WhatsApp, ContactMenuNumberAction.CopyIdentity)[action])
+            },
             title = headline,
             avatarColorSeed = contact.displayName,
             subtitle = contactInfo,
@@ -595,6 +602,7 @@ internal fun ContactListItem(
 } // end AZListContent
 
 private enum class ContactMenuNumberAction {
+    WhatsApp,
     Call,
     Message,
     EditBeforeCall,

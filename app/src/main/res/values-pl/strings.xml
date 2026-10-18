@@ -753,4 +753,13 @@
     <string name="call_reminder_due">Przypomnienie o czasie rozmowy</string>
     <string name="company_colleagues">Współpracownicy</string>
     <string name="call_history_unavailable">Historia połączeń jest niedostępna.</string>
+    <string name="phone_extension">Numer wewnętrzny</string>
+    <string name="extension_label">Etykieta numeru (opcjonalna)</string>
+    <string name="send_phone_extension">Wyślij %1$s</string>
+    <string name="remind_to_call">Przypomnij mi o oddzwonieniu</string>
+    <string name="cancel_reminder">Anuluj przypomnienie</string>
+    <string name="quick_action_gesture">Przytrzymaj i przesuń do działania</string>
+    <string name="quick_action_gesture_description">Wybierz działanie kontaktu lub ostatniego połączenia bez odrywania palca.</string>
+    <string name="reminder_future_time">Wybierz przyszłą datę i godzinę.</string>
+    <string name="reminder_update_failed">Nie udało się zaktualizować przypomnienia. Spróbuj ponownie.</string>
 </resources>

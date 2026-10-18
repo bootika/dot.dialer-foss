@@ -56,6 +56,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToString
 import dev.goodwy.rphone.controller.CallViewModel
@@ -227,6 +228,7 @@ class CallScreenFlowScreenshotTest {
         val viewModel = CallViewModel(context, repository, stateManager)
         startKoin { modules(module {
             single { prefs }; single<IContactsRepository> { contacts }; single { viewModel }
+            single<dev.goodwy.rphone.modal.`interface`.ICallRepository> { repository }
             single<dev.goodwy.rphone.modal.`interface`.ICallLogRepository> {
                 Proxy.newProxyInstance(dev.goodwy.rphone.modal.`interface`.ICallLogRepository::class.java.classLoader, arrayOf(dev.goodwy.rphone.modal.`interface`.ICallLogRepository::class.java)) { _, method, _ ->
                     when(method.name) { "getCallLogs", "getCompleteCallLogs" -> emptyList<dev.goodwy.rphone.modal.data.CallLogEntry>(); else -> error("Unexpected history mutation") }
@@ -547,6 +549,16 @@ class CallScreenFlowScreenshotTest {
         verifyShiftedPhotoAppearanceMenu()
         showActivePanel("24-keypad", "Keypad")
         verifyCompactGlassKeypad()
+        runBlocking { dev.goodwy.rphone.controller.util.PhoneExtensions.replace(prefs, emptyList(),
+            mapOf(NUMBER to dev.goodwy.rphone.controller.util.PhoneExtension("204", "Sales"))) }
+        rule.waitUntil(5000) { rule.onAllNodesWithText("Send 204 · Sales").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithText("Send 204 · Sales").assertIsDisplayed()
+        val extensionBounds = rule.onNodeWithText("Send 204 · Sales").fetchSemanticsNode().boundsInRoot
+        org.junit.Assert.assertTrue("Extension action stays in the real call window", extensionBounds.bottom < 800f)
+        capture("extension-production-call")
+        runBlocking { dev.goodwy.rphone.controller.util.PhoneExtensions.replace(prefs, listOf(NUMBER), emptyMap()) }
+        rule.waitUntil(5000) { rule.onAllNodesWithText("Send 204 · Sales").fetchSemanticsNodes().isEmpty() }
+
         showActivePanel("25-note", "Add note")
         showActivePanel("26-more", "More")
         showIncomingPanel("27-quick-response", "Message")

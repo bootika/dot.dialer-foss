@@ -824,4 +824,13 @@
     <string name="call_reminder_due">Call time reminder</string>
     <string name="company_colleagues">Colleagues</string>
     <string name="call_history_unavailable">Call history is unavailable.</string>
+    <string name="phone_extension" tools:ignore="MissingTranslation">Extension</string>
+    <string name="extension_label" tools:ignore="MissingTranslation">Extension label (optional)</string>
+    <string name="send_phone_extension" tools:ignore="MissingTranslation">Send %1$s</string>
+    <string name="remind_to_call" tools:ignore="MissingTranslation">Remind me to call</string>
+    <string name="cancel_reminder" tools:ignore="MissingTranslation">Cancel reminder</string>
+    <string name="quick_action_gesture" tools:ignore="MissingTranslation">Hold and slide to an action</string>
+    <string name="quick_action_gesture_description" tools:ignore="MissingTranslation">Choose a contact or recent-call action without lifting your finger.</string>
+    <string name="reminder_future_time" tools:ignore="MissingTranslation">Choose a future date and time.</string>
+    <string name="reminder_update_failed">Could not update the reminder. Try again.</string>
 </resources>

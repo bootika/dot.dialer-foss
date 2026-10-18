@@ -748,4 +748,13 @@
     <string name="call_reminder_due">Lembrete de duração da chamada</string>
     <string name="company_colleagues">Colegas</string>
     <string name="call_history_unavailable">O histórico de chamadas está indisponível.</string>
+    <string name="phone_extension">Ramal</string>
+    <string name="extension_label">Nome do ramal (opcional)</string>
+    <string name="send_phone_extension">Enviar %1$s</string>
+    <string name="remind_to_call">Lembrar de ligar</string>
+    <string name="cancel_reminder">Cancelar lembrete</string>
+    <string name="quick_action_gesture">Toque, segure e deslize para uma ação</string>
+    <string name="quick_action_gesture_description">Escolha uma ação de contato ou chamada recente sem levantar o dedo.</string>
+    <string name="reminder_future_time">Escolha uma data e hora futuras.</string>
+    <string name="reminder_update_failed">Não foi possível atualizar o lembrete. Tente novamente.</string>
 </resources>

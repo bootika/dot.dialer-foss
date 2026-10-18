@@ -868,7 +868,8 @@ private fun ExpressiveCallScreenContent(
                                                 InCallKeypad(
                                                     call = call,
                                                     typedDigits = typedDigits,
-                                                    onDigitClick = { digit -> typedDigits += digit }
+                                                    onDigitClick = { digit -> typedDigits += digit },
+                                                    callState = callState
                                                 )
                                             }
                                         }

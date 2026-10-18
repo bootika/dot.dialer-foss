@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Existing translations were preserved; machine-generated additions require native review. -->
     <string name="widget_description">Apeluri recente cu apelare rapidă</string>
     <string name="copy_action">Copiază</string>
@@ -742,4 +742,13 @@
     <string name="call_reminder_due">Reminder pentru durata apelului</string>
     <string name="company_colleagues">Colegi</string>
     <string name="call_history_unavailable">Istoricul apelurilor nu este disponibil.</string>
+    <string name="phone_extension" tools:ignore="MissingTranslation">Interior</string>
+    <string name="extension_label" tools:ignore="MissingTranslation">Etichetă interior (opțional)</string>
+    <string name="send_phone_extension" tools:ignore="MissingTranslation">Trimite %1$s</string>
+    <string name="remind_to_call" tools:ignore="MissingTranslation">Amintește-mi să sun</string>
+    <string name="cancel_reminder" tools:ignore="MissingTranslation">Anulează reminderul</string>
+    <string name="quick_action_gesture" tools:ignore="MissingTranslation">Ține apăsat și glisează spre o acțiune</string>
+    <string name="quick_action_gesture_description" tools:ignore="MissingTranslation">Alege o acțiune pe un contact sau apel recent fără să ridici degetul.</string>
+    <string name="reminder_future_time" tools:ignore="MissingTranslation">Alege o dată și o oră în viitor.</string>
+    <string name="reminder_update_failed">Nu am putut actualiza reminderul. Încearcă din nou.</string>
 </resources>

@@ -19,6 +19,7 @@ internal data class SettingsOption(
     val category: Int,
 ) {
     val planFeature: io.github.bootika.dotdialer.core.license.PlanFeature? get() = when (id) {
+        "H11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY
         "K11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL
         "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
         "T19", "T17" -> io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER
@@ -64,6 +65,7 @@ internal val settingsOptions = listOf(
     SettingsOption("I10", R.string.ignore_system_font_scale, SettingsEditor.ACCESSIBILITY, true, R.string.accessibility),
     SettingsOption("H04", R.string.show_recents_favorites, SettingsEditor.HOME, false, R.string.home_and_gestures),
     SettingsOption("H08", R.string.recent_history_period, SettingsEditor.HOME, false, R.string.home_and_gestures),
+    SettingsOption("H11", R.string.quick_action_gesture, SettingsEditor.HOME, false, R.string.home_and_gestures),
     SettingsOption("H01", R.string.tap_a_recent, SettingsEditor.HOME, false, R.string.home_and_gestures),
     SettingsOption("H02", R.string.swipe_right_action, SettingsEditor.HOME, false, R.string.home_and_gestures),
     SettingsOption("H03", R.string.swipe_left_action, SettingsEditor.HOME, false, R.string.home_and_gestures),

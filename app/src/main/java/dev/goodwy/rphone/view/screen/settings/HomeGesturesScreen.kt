@@ -130,6 +130,8 @@ fun HomeGesturesScreen(navigator: DestinationsNavigator) {
             item {
                 SettingsSectionLabel(stringResource(R.string.actions))
                 DotSettingsCard {
+                    QuickActionGestureSetting(prefs)
+                    DotSettingsDivider()
                     DotSettingsChoiceRow(
                         title = stringResource(R.string.tap_a_recent),
                         value = swipeLabel(tapAction),

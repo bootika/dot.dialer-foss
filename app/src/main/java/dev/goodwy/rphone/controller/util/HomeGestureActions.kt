@@ -8,6 +8,8 @@ import dev.goodwy.rphone.controller.util.PreferenceManager.Companion.DEFAULT_SWI
 import dev.goodwy.rphone.controller.util.PreferenceManager.Companion.KEY_SWIPE_LEFT_ACTION
 import dev.goodwy.rphone.controller.util.PreferenceManager.Companion.DEFAULT_SWIPE_LEFT_ACTION
 
+internal const val HOME_QUICK_ACTION_GESTURE = "home_quick_action_gesture"
+
 /** Persisted IDs are stable: removed actions must never become a different action. */
 internal val HOME_ROW_ACTIONS = listOf(
     PreferenceManager.SWIPE_ACTION_NONE,

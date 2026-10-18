@@ -72,6 +72,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -260,6 +261,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
     var showSimPicker by remember { mutableStateOf(false) }
     var pendingNumber by remember { mutableStateOf<String?>(null) }
     var pendingContactId by remember { mutableStateOf<String?>(null) }
+    var callbackTarget by remember { mutableStateOf<Pair<String, String>?>(null) }
     var contextTarget by remember { mutableStateOf<HomeContextTarget?>(null) }
     var pendingContactNumberAction by remember { mutableStateOf<PendingContactNumberAction?>(null) }
     var favoriteNumberTarget by remember { mutableStateOf<Contact?>(null) }
@@ -438,6 +440,8 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
 
     fun runContactNumberAction(action: ContactNumberMenuAction, number: String, name: String? = null) {
         when (action) {
+            ContactNumberMenuAction.WhatsApp -> performHomeAction(
+                PreferenceManager.SWIPE_ACTION_WHATSAPP, context, number, onCall = ::call, onContact = {})
             ContactNumberMenuAction.Call -> call(number)
             ContactNumberMenuAction.Message -> context.startActivity(
                 Intent(Intent.ACTION_VIEW, "sms:$number".toUri())
@@ -612,6 +616,9 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
         }
     }
 
+    callbackTarget?.let { (number, name) ->
+        RecentCallBackReminder(number, name, prefs) { callbackTarget = null }
+    }
     contextTarget?.let { target ->
         ModalBottomSheet(
             onDismissRequest = { contextTarget = null },
@@ -625,6 +632,16 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                 when (target) {
                     is HomeContextTarget.Recent -> {
                         val log = target.call
+                        if (log.type == android.provider.CallLog.Calls.MISSED_TYPE && log.number.isNotBlank()) {
+                            item { HomeMenuAction(stringResource(R.string.remind_to_call), Icons.Default.History,
+                                enabled = true, locked = !prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY), subtitle = if (prefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) null else "Power Up") {
+                                if (dev.goodwy.rphone.controller.util.CallBackReminderScheduler.pending(context, log.number) != null ||
+                                    prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) {
+                                    callbackTarget = log.number to (target.contact?.displayName ?: log.name.orEmpty())
+                                    contextTarget = null
+                                }
+                            } }
+                        }
                         item { HomeMenuAction(stringResource(R.string.select), Icons.Default.CheckBox) {
                             selectedContactIds = emptySet()
                             selectedRecentIds = selectedRecentIds + log.id
@@ -1003,6 +1020,13 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             } else selectedRecentIds + callEntry.id
                         }
                         HomeResultRow(
+                            quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
+                            onQuickAction = { action ->
+                                if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) {
+                                    runContactNumberAction(listOf(ContactNumberMenuAction.Call, ContactNumberMenuAction.Message,
+                                        ContactNumberMenuAction.WhatsApp, ContactNumberMenuAction.CopyIdentity)[action], callEntry.number, row.title)
+                                }
+                            },
                             title = row.title,
                             subtitle = callEntry.number.takeUnless { it == row.title },
                             photoUri = callEntry.photoUri,
@@ -1108,6 +1132,12 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                         val contact = (document.payload as DotDialerSearchPayload.ContactResult).contact
                         val phoneNumber = primaryNumber(contact)
                         HomeResultRow(
+                            quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && phoneNumber != null,
+                            onQuickAction = { action ->
+                                if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY))
+                                    chooseContactNumber(contact, listOf(ContactNumberMenuAction.Call, ContactNumberMenuAction.Message,
+                                        ContactNumberMenuAction.WhatsApp, ContactNumberMenuAction.CopyIdentity)[action])
+                            },
                             title = getDisplayName(contact, displayOrder),
                             subtitle = getDisplayContactInfo(contact),
                             photoUri = canonicalContactPhotoUri(contact, contactsByPhone),
@@ -1366,8 +1396,13 @@ internal fun HomeResultRow(
     expandedListDetails: Boolean = PreferenceManager.DEFAULT_EXPANDED_LIST_DETAILS,
     onRowBoundsChanged: ((Rect) -> Unit)? = null,
     onAvatarBoundsChanged: ((Rect) -> Unit)? = null,
+    quickActionsEnabled: Boolean = false,
+    onQuickAction: (Int) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val quickGesture = remember(phoneNumber, title) { HomeQuickGestureState() }
+    LaunchedEffect(quickActionsEnabled) { if (!quickActionsEnabled) quickGesture.expanded = false }
+    val quickAction by rememberUpdatedState(onQuickAction)
     val rowTextColor = if (callVisual?.accentMetadata == true) {
         callStatusColor(callVisual.status)
     } else {
@@ -1401,8 +1436,9 @@ internal fun HomeResultRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .homeCombinedClickable(
-                            context, haptics, hapticsStrength, hapticsIntensity, onClick, onLongClick,
+                            context, haptics, hapticsStrength, hapticsIntensity, onClick, if (quickActionsEnabled) null else onLongClick,
                         )
+                        .then(if (quickActionsEnabled) Modifier.quickActionGesture(quickGesture) { quickAction(it) } else Modifier)
                         .padding(
                             horizontal = 14.dp,
                             vertical = HOME_RESULT_VERTICAL_PADDING_DP.dp,
@@ -1439,6 +1475,7 @@ internal fun HomeResultRow(
                         modifier = Modifier.weight(1f).padding(start = 12.dp),
                     )
                 }
+                HomeQuickActionTray(quickGesture, { quickAction(it) }, { onLongClick?.invoke() })
                 if (!isLastInSection) {
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 72.dp, end = 14.dp),

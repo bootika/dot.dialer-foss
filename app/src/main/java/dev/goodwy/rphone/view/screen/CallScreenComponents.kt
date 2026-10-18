@@ -10,6 +10,7 @@ import dev.goodwy.rphone.view.components.rememberCallTapHaptic
 import dev.goodwy.rphone.view.components.rememberCallTapFeedback
 import dev.goodwy.rphone.view.components.rememberEnabledCallAction
 
+import dev.goodwy.rphone.controller.util.currentTelecomState
 import android.telecom.Call
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -2831,7 +2832,8 @@ fun MoreItem(
 fun InCallKeypad(
     call: Call,
     typedDigits: String,
-    onDigitClick: (Char) -> Unit
+    onDigitClick: (Char) -> Unit,
+    callState: Int = call.currentTelecomState(),
 ) {
     val windowSize = LocalWindowInfo.current.containerSize
     val keyHeight = with(LocalDensity.current) {
@@ -2839,6 +2841,7 @@ fun InCallKeypad(
     }
     val prefs = koinInject<PreferenceManager>()
     val settingsState by prefs.settingsChanged.collectAsStateWithLifecycle()
+    var extensionBusy by remember(call) { mutableStateOf(false) }
     val toneGenerator = remember { ToneGenerator(AudioManager.STREAM_DTMF, 80) }
     val dialpadStyle by remember(settingsState) {
         mutableIntStateOf(prefs.getInt(PreferenceManager.KEY_DIALPAD_STYLE, 3))
@@ -2897,6 +2900,7 @@ fun InCallKeypad(
                             style = dialpadStyle,
                             keyHeightDp = keyHeight,
                             onClick = {
+                                if (extensionBusy) return@KeypadButton
                                 if (prefs.getBoolean(PreferenceManager.KEY_DTMF_TONE, true)) {
                                     val toneType = when (key) {
                                         '1' -> ToneGenerator.TONE_DTMF_1
@@ -2926,6 +2930,7 @@ fun InCallKeypad(
                 }
             }
         }
+        InCallExtensionButton(call, callState, onDigitClick) { extensionBusy = it }
     }
 }
 

@@ -743,4 +743,13 @@
     <string name="call_reminder_due">Erinnerung zur Anrufdauer</string>
     <string name="company_colleagues">Kollegen</string>
     <string name="call_history_unavailable">Anrufverlauf nicht verfügbar.</string>
+    <string name="phone_extension">Durchwahl</string>
+    <string name="extension_label">Bezeichnung (optional)</string>
+    <string name="send_phone_extension">%1$s senden</string>
+    <string name="remind_to_call">An Rückruf erinnern</string>
+    <string name="cancel_reminder">Erinnerung abbrechen</string>
+    <string name="quick_action_gesture">Gedrückt halten und zur Aktion ziehen</string>
+    <string name="quick_action_gesture_description">Wähle eine Kontakt- oder Anrufaktion, ohne den Finger anzuheben.</string>
+    <string name="reminder_future_time">Wähle ein Datum und eine Uhrzeit in der Zukunft.</string>
+    <string name="reminder_update_failed">Die Erinnerung konnte nicht aktualisiert werden. Versuche es erneut.</string>
 </resources>

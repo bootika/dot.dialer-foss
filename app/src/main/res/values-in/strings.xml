@@ -732,4 +732,13 @@
     <string name="call_reminder_due">Pengingat durasi panggilan</string>
     <string name="company_colleagues">Rekan kerja</string>
     <string name="call_history_unavailable">Riwayat panggilan tidak tersedia.</string>
+    <string name="phone_extension">Ekstensi</string>
+    <string name="extension_label">Label ekstensi (opsional)</string>
+    <string name="send_phone_extension">Kirim %1$s</string>
+    <string name="remind_to_call">Ingatkan saya untuk menelepon</string>
+    <string name="cancel_reminder">Batalkan pengingat</string>
+    <string name="quick_action_gesture">Tahan dan geser ke tindakan</string>
+    <string name="quick_action_gesture_description">Pilih tindakan kontak atau panggilan terbaru tanpa mengangkat jari.</string>
+    <string name="reminder_future_time">Pilih tanggal dan waktu mendatang.</string>
+    <string name="reminder_update_failed">Pengingat tidak dapat diperbarui. Coba lagi.</string>
 </resources>

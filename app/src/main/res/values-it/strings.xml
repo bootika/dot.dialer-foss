@@ -748,4 +748,13 @@
     <string name="call_reminder_due">Promemoria durata chiamata</string>
     <string name="company_colleagues">Colleghi</string>
     <string name="call_history_unavailable">La cronologia delle chiamate non è disponibile.</string>
+    <string name="phone_extension">Interno</string>
+    <string name="extension_label">Etichetta interno (facoltativa)</string>
+    <string name="send_phone_extension">Invia %1$s</string>
+    <string name="remind_to_call">Ricordami di chiamare</string>
+    <string name="cancel_reminder">Annulla promemoria</string>
+    <string name="quick_action_gesture">Tieni premuto e trascina su un’azione</string>
+    <string name="quick_action_gesture_description">Scegli un’azione su un contatto o una chiamata recente senza sollevare il dito.</string>
+    <string name="reminder_future_time">Scegli una data e un’ora future.</string>
+    <string name="reminder_update_failed">Impossibile aggiornare il promemoria. Riprova.</string>
 </resources>

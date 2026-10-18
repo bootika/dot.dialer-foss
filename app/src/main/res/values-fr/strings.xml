@@ -748,4 +748,13 @@
     <string name="call_reminder_due">Rappel de durée d’appel</string>
     <string name="company_colleagues">Collègues</string>
     <string name="call_history_unavailable">Historique des appels indisponible.</string>
+    <string name="phone_extension">Poste</string>
+    <string name="extension_label">Libellé du poste (facultatif)</string>
+    <string name="send_phone_extension">Envoyer %1$s</string>
+    <string name="remind_to_call">Me rappeler d’appeler</string>
+    <string name="cancel_reminder">Annuler le rappel</string>
+    <string name="quick_action_gesture">Maintenir et glisser vers une action</string>
+    <string name="quick_action_gesture_description">Choisissez une action sur un contact ou un appel récent sans lever le doigt.</string>
+    <string name="reminder_future_time">Choisissez une date et une heure futures.</string>
+    <string name="reminder_update_failed">Impossible de modifier le rappel. Réessayez.</string>
 </resources>

@@ -734,4 +734,13 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="call_reminder_due">Nhắc thời lượng cuộc gọi</string>
     <string name="company_colleagues">Đồng nghiệp</string>
     <string name="call_history_unavailable">Không có lịch sử cuộc gọi.</string>
+    <string name="phone_extension">Số máy lẻ</string>
+    <string name="extension_label">Nhãn máy lẻ (không bắt buộc)</string>
+    <string name="send_phone_extension">Gửi %1$s</string>
+    <string name="remind_to_call">Nhắc tôi gọi lại</string>
+    <string name="cancel_reminder">Hủy lời nhắc</string>
+    <string name="quick_action_gesture">Nhấn giữ và trượt đến thao tác</string>
+    <string name="quick_action_gesture_description">Chọn thao tác cho liên hệ hoặc cuộc gọi gần đây mà không nhấc ngón tay.</string>
+    <string name="reminder_future_time">Chọn ngày và giờ trong tương lai.</string>
+    <string name="reminder_update_failed">Không thể cập nhật lời nhắc. Hãy thử lại.</string>
 </resources>

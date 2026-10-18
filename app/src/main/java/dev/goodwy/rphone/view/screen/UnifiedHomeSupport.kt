@@ -133,7 +133,7 @@ internal sealed interface HomeContextTarget {
     data class Favorite(val contact: Contact) : HomeContextTarget
 }
 
-internal enum class ContactNumberMenuAction { Call, Message, EditBeforeCall, Copy, CopyIdentity }
+internal enum class ContactNumberMenuAction { Call, Message, WhatsApp, EditBeforeCall, Copy, CopyIdentity }
 
 internal data class PendingContactNumberAction(
     val contact: Contact,
@@ -152,9 +152,10 @@ internal fun HomeMenuAction(
     subtitle: String? = null,
     destructive: Boolean = false,
     enabled: Boolean = true,
+    locked: Boolean = false,
     onClick: () -> Unit,
 ) {
-    val contentColor = if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+    val contentColor = (if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface).copy(alpha = if (locked) .45f else 1f)
     Surface(
         onClick = onClick,
         enabled = enabled,

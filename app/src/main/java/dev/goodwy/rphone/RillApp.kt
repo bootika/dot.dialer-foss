@@ -37,6 +37,9 @@ class RillApp : Application() {
         plans.attach(koinApplication.koin.get<dev.goodwy.rphone.controller.PurchaseHelper>())
         observePlanChanges(plans, preferences)
         AppTelemetry.initialize(this, preferences)
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO).launch {
+            dev.goodwy.rphone.controller.util.CallBackReminderScheduler.recover(this@RillApp)
+        }
         dev.goodwy.rphone.controller.util.ContactsOptimizerJob.schedule(this)
         if (AndroidAutoIntegration.isAvailable()) {
             AndroidAutoIntegration.setEnabled(

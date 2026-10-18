@@ -53,6 +53,7 @@ class ContactEditFlowTest {
     private var createdViewModel: ContactsViewModel? = null
     private val screenLoads = ConcurrentHashMap.newKeySet<Job>()
     private var holdScreenLoad: CompletableDeferred<Unit>? = null
+    private var paidAllowed = true
     private var editorClosed = false
     private var navigations=0
     private val navigator=Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,
@@ -77,7 +78,7 @@ class ContactEditFlowTest {
                 return repository.getContactById(contactId)
             }
         }
-        val prefs=PreferenceManager(context)
+        val prefs=PreferenceManager(context,featureAllowed={paidAllowed})
         // Construct the VM when the composition's main dispatcher is installed, not before setContent.
         startKoin { modules(module { single { prefs }; single {
             ContactsViewModel(context,screenRepository,prefs).also { createdViewModel=it }
@@ -108,6 +109,41 @@ class ContactEditFlowTest {
             stopKoin()
             provider.close()
         }
+    }
+
+    @Test fun freePlanCanAddPhoneWithoutEditingOrLosingStoredPaidMetadata() {
+        val prefs=org.koin.java.KoinJavaComponent.get<PreferenceManager>(PreferenceManager::class.java)
+        runBlocking { dev.goodwy.rphone.controller.util.PhoneExtensions.replace(prefs,emptyList(),
+            mapOf("07700900123" to dev.goodwy.rphone.controller.util.PhoneExtension("204"))) }
+        paidAllowed=false;prefs.notifyPlanChanged()
+        val visual=visualContext()
+        rule.setContent { CompositionLocalProvider(LocalContext provides visual) {
+            DotDialerTheme { ContactEditScreen(contactId="101",navigator=navigator) }
+        } }
+        rule.waitUntil(10000) { rule.onAllNodesWithText("Studio").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithTag("contactEditFields").performScrollToNode(hasText(visual.getString(dev.goodwy.rphone.R.string.add_phone)))
+        rule.onNodeWithText(visual.getString(dev.goodwy.rphone.R.string.add_phone)).performClick()
+        rule.onAllNodes(hasSetTextAction() and hasText("Mobile")).onLast().performTextInput("07700900124")
+        rule.onNodeWithText("Save").performClick()
+        rule.waitUntil(10000) { org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();navigations==1 }
+        assertEquals(setOf("07700900123","07700900124"),runBlocking { repository.getRawContactData("11") }!!.phoneNumbers.toSet())
+        assertEquals("204",dev.goodwy.rphone.controller.util.PhoneExtensions.find(prefs,"07700900123")?.digits)
+    }
+
+    @Test fun localExtensionDraftCommitsWithContactAndKeepsProviderPhoneUnchanged() {
+        val visual=visualContext()
+        rule.setContent { CompositionLocalProvider(LocalContext provides visual) {
+            DotDialerTheme { ContactEditScreen(contactId="101",navigator=navigator) }
+        } }
+        rule.waitUntil(10000) { rule.onAllNodesWithText("Studio").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithTag("contactEditFields").performScrollToNode(hasText("Extension"))
+        rule.onNode(hasSetTextAction() and hasText("Extension")).performTextInput("204#")
+        val prefs=org.koin.java.KoinJavaComponent.get<PreferenceManager>(PreferenceManager::class.java)
+        assertNull(dev.goodwy.rphone.controller.util.PhoneExtensions.find(prefs,"07700900123"))
+        rule.onNodeWithText("Save").performClick()
+        rule.waitUntil(10000) { org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle(); navigations==1 }
+        assertEquals("204#",dev.goodwy.rphone.controller.util.PhoneExtensions.find(prefs,"07700900123")?.digits)
+        assertEquals(listOf("07700900123"),runBlocking { repository.getRawContactData("11") }?.phoneNumbers)
     }
 
     @Test fun pendingEditorLoadIsCancelledBeforeProviderTeardown() {

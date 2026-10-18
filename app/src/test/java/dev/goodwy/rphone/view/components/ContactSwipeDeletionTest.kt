@@ -65,6 +65,17 @@ class ContactSwipeDeletionTest {
         rule.onNodeWithText("Delete Contact").assertDoesNotExist()
         assertEquals(emptyList<String>(), deleted)
     }
+    @Test fun quickGestureUsesTheExistingNumberChooserBeforeCopyingIdentity() {
+        render(hasNumber = true, quickGesture = true, multiple = true)
+        rule.onNodeWithText("Test Alexandru Butica").performTouchInput { longClick() }
+        rule.onNodeWithText("Copy").performClick()
+        rule.onNodeWithText("+40722000001").performClick()
+        val clipboard = RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
+        val text = clipboard.primaryClip!!.getItemAt(0).text.toString()
+        assertTrue(text.contains("Test Alexandru Butica")); assertTrue(text.contains("+40722000001"))
+        assertEquals(emptyList<String>(), deleted)
+    }
+
     private fun captureConfirmation() = rule.runOnIdle {
         val view = rule.activity.window.decorView
         val bitmap = android.graphics.Bitmap.createBitmap(view.width, view.height, android.graphics.Bitmap.Config.ARGB_8888)
@@ -79,11 +90,11 @@ class ContactSwipeDeletionTest {
         file.parentFile!!.mkdirs(); file.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
         bitmap.recycle()
     }
-    private fun render(hasNumber: Boolean, selectionMode: Boolean = false) {
+    private fun render(hasNumber: Boolean, selectionMode: Boolean = false, quickGesture: Boolean = false, multiple: Boolean = false) {
         val context = RuntimeEnvironment.getApplication()
         val prefs = PreferenceManager(context)
         val contact = Contact("contact-42", givenName = "Test Alexandru Butica",
-            phoneNumbers = if (hasNumber) listOf("+40722000000") else emptyList())
+            phoneNumbers = if (multiple) listOf("+40722000000", "+40722000001") else if (hasNumber) listOf("+40722000000") else emptyList())
         val repo = Proxy.newProxyInstance(IContactsRepository::class.java.classLoader,
             arrayOf(IContactsRepository::class.java)) { _, method, args -> when (method.name) {
                 "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
@@ -101,7 +112,7 @@ class ContactSwipeDeletionTest {
             DotDialerTheme(systemDark = false) {
                 Box(Modifier.fillMaxWidth().testTag("contact-row")) {
                     ContactListItem(contact, navigator, selectionMode = selectionMode, displayOrder = 0,
-                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48))
+                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48, quickActionsEnabled = quickGesture))
                 }
             }
         }

@@ -743,4 +743,13 @@
     <string name="call_reminder_due">Arama süresi hatırlatıcısı</string>
     <string name="company_colleagues">İş arkadaşları</string>
     <string name="call_history_unavailable">Arama geçmişi kullanılamıyor.</string>
+    <string name="phone_extension">Dahili numara</string>
+    <string name="extension_label">Dahili etiketi (isteğe bağlı)</string>
+    <string name="send_phone_extension">%1$s gönder</string>
+    <string name="remind_to_call">Aramayı hatırlat</string>
+    <string name="cancel_reminder">Hatırlatıcıyı iptal et</string>
+    <string name="quick_action_gesture">Basılı tutup bir eyleme kaydırın</string>
+    <string name="quick_action_gesture_description">Parmağınızı kaldırmadan kişi veya son arama eylemini seçin.</string>
+    <string name="reminder_future_time">Gelecekteki bir tarih ve saat seçin.</string>
+    <string name="reminder_update_failed">Hatırlatıcı güncellenemedi. Tekrar deneyin.</string>
 </resources>

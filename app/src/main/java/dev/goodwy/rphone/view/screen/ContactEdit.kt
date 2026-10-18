@@ -136,6 +136,7 @@ fun ContactEditScreen(
     initialAvatarColorIndex: Int? = null,
     navigator: DestinationsNavigator
 ) {
+    val extensionPrefs = org.koin.compose.koinInject<PreferenceManager>()
     val context = LocalContext.current
     val contactsVM: ContactsViewModel = koinActivityViewModel()
     val availableAccounts by contactsVM.availableAccounts.collectAsStateWithLifecycle()
@@ -156,6 +157,7 @@ fun ContactEditScreen(
                     editableRawId = sourceId
                     requireNotNull(contactsVM.getRawContactData(sourceId))
                 } else full ?: Contact(id = "0")
+                extensionPrefs.getPersistedPreferences()
                 loadedJson = Json.encodeToString(loaded)
             } catch (error: CancellationException) {
                 throw error
@@ -252,6 +254,13 @@ fun ContactEditScreen(
         }
     }
     
+    val extensions = rememberSaveable(existingContact, saver = contactEditListSaver<dev.goodwy.rphone.controller.util.PhoneExtension>()) {
+        mutableStateListOf<dev.goodwy.rphone.controller.util.PhoneExtension>().apply {
+            addAll(phoneDetails.map { dev.goodwy.rphone.controller.util.PhoneExtensions.find(extensionPrefs, it.number)
+                ?: dev.goodwy.rphone.controller.util.PhoneExtension() })
+        }
+    }
+    var extensionsChanged by rememberSaveable(existingContact) { mutableStateOf(false) }
     val emails = rememberSaveable(existingContact, saver = contactEditListSaver<ContactEmail>()) {
         mutableStateListOf<ContactEmail>().apply {
             if (existingContact != null && existingContact.emails.isNotEmpty()) {
@@ -373,7 +382,7 @@ fun ContactEditScreen(
         val original = existingContact ?: Contact(id = "0", givenName = initialName.orEmpty(),
             phoneNumbers = listOfNotNull(initialPhone?.takeIf { it.isNotBlank() }),
             phoneDetails = listOfNotNull(initialPhone?.takeIf { it.isNotBlank() }?.let { ContactPhoneDetail(number = it) }))
-        return draftContact() != original || selectedBackgroundUri != null ||
+        return extensionsChanged || draftContact() != original || selectedBackgroundUri != null ||
             tempCallBackground != null || tempBackgroundDeleted
     }
     val canSave = !isSaving && (existingContact != null || draftContact().let {
@@ -410,6 +419,7 @@ fun ContactEditScreen(
 
     fun saveAndExit() {
         if (!canSave) return
+        if (extensionsChanged && !extensionPrefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) return
         val contactToSave = draftContact()
         isSaving = true
         scope.launch {
@@ -420,6 +430,14 @@ fun ContactEditScreen(
                 committedId = saved.id
                 if (!saved.isPrivate) editableRawId = saved.rawContactIds.singleOrNull() ?: editableRawId
                 val savedNumbers = saved.phoneNumbers
+                if (extensionsChanged || phoneDetails.map { it.number } != existingContact?.phoneNumbers.orEmpty()) {
+                    if (extensionPrefs.allowsFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) {
+                        val extensionEntries = phoneDetails.mapIndexed { index, phone -> phone.number to extensions[index] }
+                            .filter { it.first.isNotBlank() }.toMap()
+                        dev.goodwy.rphone.controller.util.PhoneExtensions.replace(extensionPrefs,
+                            existingContact?.phoneNumbers.orEmpty(), extensionEntries)
+                    }
+                }
                 if (existingContact?.id != null && existingContact.id != saved.id) {
                     CallBackgroundStore.carryBlocking(context, existingContact.id, saved.id, (backgroundNumbers + savedNumbers).distinct())
                 }
@@ -1291,6 +1309,7 @@ fun ContactEditScreen(
                                             if (index < phoneDetails.size && index < phoneNumbers.size) {
                                                 phoneDetails.removeAt(index)
                                                 phoneNumbers.removeAt(index)
+                                                extensions.removeAt(index)
                                             }
                                         }
                                     } else null,
@@ -1304,12 +1323,14 @@ fun ContactEditScreen(
                                         phoneNumbers[index] = phoneDetail.number
                                     }
                                 )
+                                ContactExtensionFields(extensions[index], extensionPrefs) { extensions[index] = it; extensionsChanged = true }
                             }
                             AddButton(
                                 text = stringResource(R.string.add_phone),
                                 onClick = {
                                     phoneDetails.add(blankPhoneDetail)
                                     phoneNumbers.add("")
+                                    extensions.add(dev.goodwy.rphone.controller.util.PhoneExtension())
                                 }
                             )
                         }
@@ -2018,6 +2039,7 @@ fun ContactEditScreen(
                                         if (index < phoneDetails.size && index < phoneNumbers.size) {
                                             phoneDetails.removeAt(index)
                                             phoneNumbers.removeAt(index)
+                                                extensions.removeAt(index)
                                         }
                                     }
                                 } else null,
@@ -2031,12 +2053,14 @@ fun ContactEditScreen(
                                     phoneNumbers[index] = phoneDetail.number
                                 }
                             )
+                                ContactExtensionFields(extensions[index], extensionPrefs) { extensions[index] = it; extensionsChanged = true }
                         }
                         AddButton(
                             text = stringResource(R.string.add_phone),
                             onClick = {
                                 phoneDetails.add(blankPhoneDetail)
                                 phoneNumbers.add("")
+                                    extensions.add(dev.goodwy.rphone.controller.util.PhoneExtension())
                             }
                         )
                     }
@@ -2450,87 +2474,6 @@ fun EditField(
             }
         }
     }
-}
-
-@Composable
-fun EditPhoneField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    onDelete: (() -> Unit)? = null,
-    onLabelChange: ((String, Int?) -> Unit)? = null
-) {
-    val phoneTypes = listOf(
-        Phone.TYPE_MOBILE to stringResource(R.string.mobile),
-        Phone.TYPE_WORK to stringResource(R.string.work),
-        Phone.TYPE_HOME to stringResource(R.string.home),
-        Phone.TYPE_MAIN to stringResource(R.string.main_number),
-//        Phone.TYPE_FAX_WORK to stringResource(R.string.work_fax),
-//        Phone.TYPE_FAX_HOME to stringResource(R.string.home_fax),
-//        Phone.TYPE_PAGER to stringResource(R.string.pager),
-        Phone.TYPE_OTHER to stringResource(R.string.other)
-    ).distinctBy { it.first }
-
-    EditField(
-        value = value,
-        onValueChange = onValueChange,
-        label = label,
-        icon = DotDialerHandsetIcon,
-        onDelete = onDelete,
-        onLabelChange = onLabelChange,
-        availableLabels = phoneTypes
-    )
-}
-
-@Composable
-fun EditEmailField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    onDelete: (() -> Unit)? = null,
-    onLabelChange: ((String, Int?) -> Unit)? = null
-) {
-    val emailTypes = listOf(
-        Email.TYPE_HOME to stringResource(R.string.home),
-        Email.TYPE_WORK to stringResource(R.string.work),
-        Email.TYPE_MOBILE to stringResource(R.string.mobile),
-        Email.TYPE_OTHER to stringResource(R.string.other)
-    )
-
-    EditField(
-        value = value,
-        onValueChange = onValueChange,
-        label = label,
-        icon = Icons.Default.Email,
-        onDelete = onDelete,
-        onLabelChange = onLabelChange,
-        availableLabels = emailTypes
-    )
-}
-
-@Composable
-fun EditAddressField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    onDelete: (() -> Unit)? = null,
-    onLabelChange: ((String, Int?) -> Unit)? = null
-) {
-    val addressTypes = listOf(
-        StructuredPostal.TYPE_HOME to stringResource(R.string.home),
-        StructuredPostal.TYPE_WORK to stringResource(R.string.work),
-        StructuredPostal.TYPE_OTHER to stringResource(R.string.other)
-    )
-
-    EditField(
-        value = value,
-        onValueChange = onValueChange,
-        label = label,
-        icon = Icons.Default.LocationOn,
-        onDelete = onDelete,
-        onLabelChange = onLabelChange,
-        availableLabels = addressTypes
-    )
 }
 
 @Composable

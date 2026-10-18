@@ -748,4 +748,13 @@
     <string name="call_reminder_due">Recordatorio de duración de llamada</string>
     <string name="company_colleagues">Compañeros</string>
     <string name="call_history_unavailable">El historial de llamadas no está disponible.</string>
+    <string name="phone_extension">Extensión</string>
+    <string name="extension_label">Etiqueta de extensión (opcional)</string>
+    <string name="send_phone_extension">Enviar %1$s</string>
+    <string name="remind_to_call">Recordarme llamar</string>
+    <string name="cancel_reminder">Cancelar recordatorio</string>
+    <string name="quick_action_gesture">Mantener pulsado y deslizar a una acción</string>
+    <string name="quick_action_gesture_description">Elige una acción de contacto o llamada reciente sin levantar el dedo.</string>
+    <string name="reminder_future_time">Elige una fecha y hora futuras.</string>
+    <string name="reminder_update_failed">No se pudo actualizar el recordatorio. Inténtalo de nuevo.</string>
 </resources>

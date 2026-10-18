@@ -56,7 +56,7 @@ class QuickActionNativeUiTest {
         allowed=true;prefs.notifyPlanChanged();rule.onNode(isToggleable()).assertIsOn()
     }
 
-    @Test fun holdWithoutDragKeepsTappableTrayAndMoreRetainsNormalMenu() {
+    @Test fun holdWithoutDragKeepsFourTappableActionsWithoutMore() {
         var action=-1;var more=0;var taps=0
         startKoin {modules(module {single {PreferenceManager(context)}})}
         rule.setContent {DotDialerTheme {Surface {
@@ -70,7 +70,7 @@ class QuickActionNativeUiTest {
         assertEquals(3,action);assertEquals("Long press never executes the default tap action",0,taps)
         rule.onNodeWithText("Test Alexandru Butica").performTouchInput {longClick()}
         capture("quick-gesture-light")
-        rule.onNodeWithText(context.getString(R.string.more)).performClick();assertEquals(1,more);assertEquals(0,taps)
+        rule.onNodeWithText(context.getString(R.string.more)).assertDoesNotExist();assertEquals(0,more);assertEquals(0,taps)
     }
 
     @Test fun continuousHoldSlideReleaseChoosesActionAndOutsideReleaseCancels() {
@@ -141,12 +141,42 @@ class QuickActionNativeUiTest {
         assertEquals("204#",extension.digits)
     }
 
+    @Test fun trayIsFourContiguousSquaresInLightDarkAndLargeText() {
+        val state=HomeQuickGestureState().apply{expanded=true}
+        var selected=-1
+        var dark by mutableStateOf(false)
+        var scale by mutableStateOf(1f)
+        rule.setContent {DotDialerTheme(systemDark=dark) {
+            CompositionLocalProvider(LocalDensity provides Density(1f,scale)) {
+                Surface {HomeQuickActionTray(state){selected=it}}
+            }
+        }}
+        val labels=listOf(context.getString(R.string.call),context.getString(R.string.sms),"WhatsApp",context.getString(R.string.copy_action))
+        for (mode in 0..2) {
+            dark=mode==1;scale=if(mode==2)1.5f else 1f
+            state.expanded=true
+            rule.waitForIdle()
+            rule.onAllNodes(hasClickAction()).assertCountEquals(4)
+            val bounds=rule.onAllNodes(hasClickAction()).fetchSemanticsNodes().map{it.boundsInRoot}.sortedBy{it.left}
+            bounds.forEach {assertEquals(it.width,it.height,.5f)}
+            bounds.zipWithNext().forEach{(a,b)->assertEquals(a.right,b.left,.5f);assertEquals(a.width,b.width,.5f)}
+            rule.onNodeWithText(context.getString(R.string.more)).assertDoesNotExist()
+            capture("quick-squares-$mode")
+            labels.forEachIndexed {index,label->
+                state.expanded=true
+                rule.onNodeWithText(label).performTouchInput{click()}
+                assertEquals(index,selected)
+                rule.runOnIdle{assertFalse(state.expanded)}
+            }
+        }
+    }
+
     private fun capture(name:String) {
         rule.waitForIdle()
         val decor=rule.activity.window.decorView
         val bitmap=Bitmap.createBitmap(decor.width,decor.height,Bitmap.Config.ARGB_8888)
         rule.runOnIdle {decor.draw(Canvas(bitmap))}
-        val directory=File("../evidence/local-verification/quick-actions-v272-20261018").apply{mkdirs()}
+        val directory=File("../evidence/local-verification/quick-tray-squares-20261018").apply{mkdirs()}
         File(directory,"$name.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
         bitmap.recycle()
     }

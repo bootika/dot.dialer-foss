@@ -1425,6 +1425,7 @@ internal fun HomeResultRow(
         Surface(
             color = if (selected) callLogSelectionColor else MaterialTheme.colorScheme.surfaceBright,
             shape = when {
+                quickGesture.expanded -> if (isFirstInSection) RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp) else RoundedCornerShape(0.dp)
                 isFirstInSection && isLastInSection -> RoundedCornerShape(22.dp)
                 isFirstInSection -> RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp)
                 isLastInSection -> RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp)
@@ -1475,7 +1476,7 @@ internal fun HomeResultRow(
                         modifier = Modifier.weight(1f).padding(start = 12.dp),
                     )
                 }
-                HomeQuickActionTray(quickGesture, { quickAction(it) }, { onLongClick?.invoke() })
+                HomeQuickActionTray(quickGesture) { quickAction(it) }
                 if (!isLastInSection) {
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 72.dp, end = 14.dp),

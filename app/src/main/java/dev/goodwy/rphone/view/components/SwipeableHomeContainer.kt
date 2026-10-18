@@ -175,7 +175,7 @@ private fun HomeSwipeAction(visual: HomeSwipeVisual, progress: Float) {
     }
 }
 
-private data class HomeSwipeVisual(
+internal data class HomeSwipeVisual(
     val icon: ImageVector,
     val label: String,
     val background: Color,
@@ -183,7 +183,7 @@ private data class HomeSwipeVisual(
 )
 
 @Composable
-private fun homeSwipeVisual(action: Int): HomeSwipeVisual? = when (supportedHomeSwipeAction(action)) {
+internal fun homeSwipeVisual(action: Int): HomeSwipeVisual? = when (supportedHomeSwipeAction(action)) {
     PreferenceManager.SWIPE_ACTION_CALL -> HomeSwipeVisual(
         DotDialerHandsetIcon,
         stringResource(R.string.call),
@@ -211,8 +211,8 @@ private fun homeSwipeVisual(action: Int): HomeSwipeVisual? = when (supportedHome
     PreferenceManager.SWIPE_ACTION_COPY_NUMBER -> HomeSwipeVisual(
         Icons.Rounded.ContentCopy,
         stringResource(R.string.copy_action),
-        MaterialTheme.colorScheme.tertiaryContainer,
-        MaterialTheme.colorScheme.onTertiaryContainer,
+        Color(0xFF58655F),
+        Color.White,
     )
     PreferenceManager.SWIPE_ACTION_DELETE_ENTRY -> HomeSwipeVisual(
         Icons.Rounded.Delete,

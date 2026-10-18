@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -44,7 +43,6 @@ class ConnectionShieldPressTest {
         var connecting by mutableStateOf(false)
         var scale by mutableStateOf(1f)
         var clicks = 0
-        var darkPressedRed = 0
         val account = PhoneAccount.builder(
             PhoneAccountHandle(ComponentName("dot.dialer.test", "TestPhoneAccountService"), "sim-1"), "SIM 1",
         ).build()
@@ -53,7 +51,6 @@ class ConnectionShieldPressTest {
             val density = LocalDensity.current
             CompositionLocalProvider(LocalDensity provides Density(density.density, scale)) {
                 DotDialerTheme(systemDark = dark) {
-                    darkPressedRed = android.graphics.Color.red(MaterialTheme.colorScheme.surface.toArgb())
                     Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
                         CallConnectionStatusRow(
                             CallConnectionInfo(CallTransportKind.Cellular, VoiceQualityTier.HdPlus, null, null, null),
@@ -84,7 +81,7 @@ class ConnectionShieldPressTest {
             val x = bounds.center.x.toInt()
             val y = bounds.top.toInt() + 1
             val base = if (theme) 51 else 128
-            val pushed = if (theme) kotlin.math.round(darkPressedRed * .25f).toInt() else 230
+            val pushed = if (theme) 77 else 230
             assertEquals(base.toDouble(), android.graphics.Color.red(idle.getPixel(x, y)).toDouble(), 1.0)
             assertEquals(pushed.toDouble(), android.graphics.Color.red(pressed.getPixel(x, y)).toDouble(), 1.0)
             var changed = 0
@@ -95,7 +92,7 @@ class ConnectionShieldPressTest {
                     val before = android.graphics.Color.red(idle.getPixel(px, py))
                     val after = android.graphics.Color.red(pressed.getPixel(px, py))
                     // Native color interpolation/edge antialiasing may round by one channel unit.
-                    assertTrue("fill changes toward readable90light25dark theme=$theme font=$font setup=$setup at $px,$py: $before -> $after target=$pushed", if (theme) after <= before + 1 else after + 1 >= before)
+                    assertTrue("white fill lightens toward90light30dark theme=$theme font=$font setup=$setup at $px,$py: $before -> $after target=$pushed", after + 1 >= before)
                 }
             }
             assertTrue(changed > 100)
@@ -130,7 +127,7 @@ class ConnectionShieldPressTest {
     }
 
     private fun save(bitmap: Bitmap, name: String) {
-        val folder = File("../evidence/local-verification/shield-dark25-20261018").apply { mkdirs() }
+        val folder = File("../evidence/local-verification/shield-white30-20261019").apply { mkdirs() }
         File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 }

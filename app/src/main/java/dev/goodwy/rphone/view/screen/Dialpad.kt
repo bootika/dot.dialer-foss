@@ -1850,6 +1850,7 @@ fun DialerActionExpressive(
     liquidGlassEnabled: Boolean = false,
     blurEnabled: Boolean = false,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val sizedModifier = modifier.size(64.dp)
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -1894,7 +1895,7 @@ fun DialerActionExpressive(
                         blur(2f * d)
                         lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                     },
-                    highlight = { Highlight.Default }
+                    highlight = { roundHighlight }
                 )
                 .combinedClickable(
                     onClick = wrappedOnClick,

@@ -82,3 +82,10 @@ internal fun DialpadGlassSurface(
     Surface(modifier = decorated, shape = shape, color = dialpadEffectFill(normal, target, effect),
         shadowElevation = 0.dp, tonalElevation = 0.dp, content = content)
 }
+
+@Composable
+internal fun roundButtonGlassHighlight(): Highlight =
+    roundButtonGlassHighlight(MaterialTheme.colorScheme.surface.luminance() < .5f)
+
+internal fun roundButtonGlassHighlight(dark: Boolean): Highlight =
+    Highlight.Default.copy(alpha = if (dark) .35f else 1f)

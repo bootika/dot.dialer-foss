@@ -992,6 +992,7 @@ fun CallScreenActionButton(
     blurIntensity: Float = 20f,
     onClick: () -> Unit,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val interaction = remember { MutableInteractionSource() }
     val feedback = rememberCallTapFeedback(interaction, enabled)
     val isPressed = feedback.pressed
@@ -1038,7 +1039,7 @@ fun CallScreenActionButton(
                                 blur(blurIntensity * d)
                                 lens(refractionHeight = 12f * d, refractionAmount = 34f * d)
                             },
-                            highlight = { Highlight.Default },
+                            highlight = { roundHighlight },
                         )
                         !isActive && !isResumeAction && useBlur && globalBackdrop != null -> Modifier.drawPlainBackdrop(
                             backdrop = globalBackdrop,
@@ -1211,6 +1212,7 @@ fun HorizontalSwipeToAnswer(
     onAnswer: () -> Unit,
     onDecline: () -> Unit
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     val localDensity = LocalDensity.current
@@ -1306,7 +1308,7 @@ fun HorizontalSwipeToAnswer(
                         blur(blurIntensity * d)
                         lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                     },
-                    highlight = { Highlight.Default }
+                    highlight = { roundHighlight }
                 )
                 else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                     backdrop = globalBackdrop,
@@ -1497,6 +1499,7 @@ fun VerticalSwipeToAnswer(
     onAnswer: () -> Unit,
     onDecline: () -> Unit
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val coroutineScope = rememberCoroutineScope()
     val offsetY = remember { Animatable(0f) }
     val localDensity = LocalDensity.current
@@ -1719,7 +1722,7 @@ fun VerticalSwipeToAnswer(
                                 blur(blurIntensity * d)
                                 lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                             },
-                            highlight = { Highlight.Default }
+                            highlight = { roundHighlight }
                         )
                         else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                             backdrop = globalBackdrop,
@@ -1767,6 +1770,7 @@ fun DualActionHorizontalSlider(
     onAnswer: () -> Unit,
     onDecline: () -> Unit,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val scope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val view = LocalView.current
@@ -1835,7 +1839,7 @@ fun DualActionHorizontalSlider(
                                 blur(blurIntensity * d)
                                 lens(refractionHeight = 12f * d, refractionAmount = 38f * d)
                             },
-                            highlight = { Highlight.Default },
+                            highlight = { roundHighlight },
                         ) else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                             backdrop = globalBackdrop,
                             shape = { CircleShape },
@@ -1981,6 +1985,7 @@ fun IPhoneSwipeToAnswer(
     onDecline: () -> Unit,
     onMessage: () -> Unit
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val view = LocalView.current
@@ -2070,7 +2075,7 @@ fun IPhoneSwipeToAnswer(
                                     blur(blurIntensity * d)
                                     lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                                 },
-                                highlight = { Highlight.Default }
+                                highlight = { roundHighlight }
                             )
                             else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                                 backdrop = globalBackdrop,
@@ -2113,7 +2118,7 @@ fun IPhoneSwipeToAnswer(
                                     blur(blurIntensity * d)
                                     lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                                 },
-                                highlight = { Highlight.Default }
+                                highlight = { roundHighlight }
                             )
                             else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                                 backdrop = globalBackdrop,
@@ -2177,7 +2182,7 @@ fun IPhoneSwipeToAnswer(
                                 blur(blurIntensity * d)
                                 lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                             },
-                            highlight = { Highlight.Default }
+                            highlight = { roundHighlight }
                         )
                         else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                             backdrop = globalBackdrop,
@@ -2359,6 +2364,7 @@ private fun IncomingWaitingDecisionButton(
     blurIntensity: Float,
     onClick: () -> Unit,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val view = LocalView.current
     val interaction = remember { MutableInteractionSource() }
     val isPressed by interaction.collectIsPressedAsState()
@@ -2399,7 +2405,7 @@ private fun IncomingWaitingDecisionButton(
                                     blur(blurIntensity * d)
                                     lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                                 },
-                                highlight = { Highlight.Default },
+                                highlight = { roundHighlight },
                             )
                         useBlur && globalBackdrop != null ->
                             Modifier.drawPlainBackdrop(
@@ -2454,6 +2460,7 @@ fun DefaultSwipeToAnswer(
     secondaryActions: (@Composable () -> Unit)? = null,
     secondaryCount: Int = 2,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     val view = LocalView.current
@@ -2558,7 +2565,7 @@ fun DefaultSwipeToAnswer(
                                 blur(blurIntensity * d)
                                 lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                             },
-                            highlight = { Highlight.Default }
+                            highlight = { roundHighlight }
                         )
                         else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                             backdrop = globalBackdrop,
@@ -2699,6 +2706,7 @@ private fun DefaultIncomingDeclineAction(
     blurIntensity: Float,
     onDecline: () -> Unit,
 ) {
+    val roundHighlight = roundButtonGlassHighlight()
     val view = LocalView.current
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val globalBackdrop = LocalLiquidGlassBackdrop.current
@@ -2732,7 +2740,7 @@ private fun DefaultIncomingDeclineAction(
                             blur(blurIntensity * d)
                             lens(refractionHeight = 18f * d, refractionAmount = 52f * d)
                         },
-                        highlight = { Highlight.Default }
+                        highlight = { roundHighlight }
                     )
                     else if (useBlur && globalBackdrop != null) Modifier.drawPlainBackdrop(
                         backdrop = globalBackdrop,

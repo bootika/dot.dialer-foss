@@ -9,8 +9,10 @@ internal fun contactIdentityText(name: String?, number: String): String =
 /** Reject ambiguous text, multiple numbers, MMI and hidden values. Never initiates a call. */
 internal fun selectedPhoneNumber(text: CharSequence?): String? {
     val raw = text?.toString()?.trim()?.takeIf { it.length <= 120 } ?: return null
-    if (!raw.matches(Regex("[+]?\\d[\\d\\s().-]*"))) return null
-    val digits = raw.filter(Char::isDigit)
+    val prefix = Regex("^\\(\\+([1-9]\\d{0,2})\\)\\s*(?=\\d)").find(raw)
+    val normalized = if (prefix != null) "+" + prefix.groupValues[1] + raw.substring(prefix.range.last + 1) else raw
+    if (!normalized.matches(Regex("[+]?\\d[\\d\\s().-]*"))) return null
+    val digits = normalized.filter(Char::isDigit)
     if (digits.length !in 3..15) return null
-    return (if (raw.startsWith('+')) "+" else "") + digits
+    return (if (normalized.startsWith('+')) "+" else "") + digits
 }

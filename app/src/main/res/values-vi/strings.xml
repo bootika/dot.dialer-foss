@@ -721,7 +721,7 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="review_selected_count">Đã chọn: %1$d</string>
     <string name="open_in_dot">Mở bằng dot.dialer</string>
     <string name="copy_name_number">Sao chép tên và số</string>
-    <string name="open_in_dot_summary">Đề xuất Dot khi chọn số điện thoại trong ứng dụng khác</string>
+    <string name="open_in_dot_summary">Hiển thị dot.dialer trong menu chọn văn bản của ứng dụng tương thích</string>
     <string name="sim_in_use">SIM đang dùng</string>
     <string name="end_and_redial">Kết thúc và gọi lại</string>
     <string name="end_and_redial_summary">Kết thúc cuộc gọi này rồi gọi lại cùng số bằng SIM đã chọn.</string>

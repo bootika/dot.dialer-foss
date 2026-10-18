@@ -733,7 +733,7 @@
     <string name="review_selected_count">Seleccionados: %1$d</string>
     <string name="open_in_dot">Abrir con dot.dialer</string>
     <string name="copy_name_number">Copiar nombre y número</string>
-    <string name="open_in_dot_summary">Ofrecer Dot al seleccionar un número en otra app</string>
+    <string name="open_in_dot_summary">Mostrar dot.dialer en el menú de selección de texto de apps compatibles</string>
     <string name="sim_in_use">SIM en uso</string>
     <string name="end_and_redial">Finalizar y volver a llamar</string>
     <string name="end_and_redial_summary">Finaliza esta llamada y marca el mismo número con la SIM elegida.</string>

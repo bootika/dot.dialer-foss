@@ -729,7 +729,7 @@
     <string name="review_selected_count">Seçilen: %1$d</string>
     <string name="open_in_dot">dot.dialer ile aç</string>
     <string name="copy_name_number">Adı ve numarayı kopyala</string>
-    <string name="open_in_dot_summary">Başka bir uygulamada telefon numarası seçildiğinde Dot’u öner</string>
+    <string name="open_in_dot_summary">Uyumlu uygulamaların metin seçimi menüsünde dot.dialer göster</string>
     <string name="sim_in_use">Kullanılan SIM</string>
     <string name="end_and_redial">Bitir ve yeniden ara</string>
     <string name="end_and_redial_summary">Bu aramayı bitirir, ardından seçilen SIM ile aynı numarayı arar.</string>

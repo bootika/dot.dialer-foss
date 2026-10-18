@@ -737,7 +737,7 @@
     <string name="review_selected_count">Wybrane: %1$d</string>
     <string name="open_in_dot">Otwórz za pomocą dot.dialer</string>
     <string name="copy_name_number">Kopiuj nazwę i numer</string>
-    <string name="open_in_dot_summary">Proponuj Dot po zaznaczeniu numeru telefonu w innej aplikacji</string>
+    <string name="open_in_dot_summary">Pokazuj dot.dialer w menu zaznaczania tekstu zgodnych aplikacji</string>
     <string name="sim_in_use">Używana karta SIM</string>
     <string name="end_and_redial">Zakończ i zadzwoń ponownie</string>
     <string name="end_and_redial_summary">Kończy to połączenie i wybiera ten sam numer z wybranej karty SIM.</string>

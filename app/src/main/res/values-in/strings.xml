@@ -719,7 +719,7 @@
     <string name="review_selected_count">Dipilih: %1$d</string>
     <string name="open_in_dot">Buka dengan dot.dialer</string>
     <string name="copy_name_number">Salin nama dan nomor</string>
-    <string name="open_in_dot_summary">Tawarkan Dot saat memilih nomor telepon di aplikasi lain</string>
+    <string name="open_in_dot_summary">Tampilkan dot.dialer di menu pilihan teks aplikasi yang kompatibel</string>
     <string name="sim_in_use">SIM digunakan</string>
     <string name="end_and_redial">Akhiri dan telepon lagi</string>
     <string name="end_and_redial_summary">Mengakhiri panggilan ini, lalu menelepon nomor yang sama dengan SIM pilihan.</string>

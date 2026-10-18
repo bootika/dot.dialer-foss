@@ -810,7 +810,7 @@
     <string name="review_selected_count">Selected: %1$d</string>
     <string name="open_in_dot">Open with dot.dialer</string>
     <string name="copy_name_number">Copy name and number</string>
-    <string name="open_in_dot_summary">Offer Dot when selecting a phone number in another app</string>
+    <string name="open_in_dot_summary">Show dot.dialer in the text selection menu of compatible apps</string>
     <string name="sim_in_use">SIM in use</string>
     <string name="end_and_redial">End and redial</string>
     <string name="end_and_redial_summary">Ends this call, then calls the same number using the selected SIM.</string>

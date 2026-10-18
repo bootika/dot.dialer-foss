@@ -725,7 +725,7 @@
     <string name="contact_photos_auto_fill">Sursele autorizate sunt verificate periodic pe Wi-Fi, când bateria permite. Avatarurile WhatsApp vin prin notificări.</string>
     <string name="review_source_title">Rezultate: %1$s</string>
     <string name="review_selected_count">Selectate: %1$d</string>
-    <string name="open_in_dot">Deschide în Dot</string>
+    <string name="open_in_dot">Deschide cu dot.dialer</string>
     <string name="copy_name_number">Copiază numele și numărul</string>
     <string name="open_in_dot_summary">Oferă Dot când selectezi un număr în altă aplicație</string>
     <string name="sim_in_use">SIM folosit acum</string>

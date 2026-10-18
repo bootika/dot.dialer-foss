@@ -808,7 +808,7 @@
     <string name="contact_photos_auto_fill">Authorized sources are checked periodically on Wi-Fi when battery permits. WhatsApp avatars arrive through notifications.</string>
     <string name="review_source_title">Results: %1$s</string>
     <string name="review_selected_count">Selected: %1$d</string>
-    <string name="open_in_dot">Open in Dot</string>
+    <string name="open_in_dot">Open with dot.dialer</string>
     <string name="copy_name_number">Copy name and number</string>
     <string name="open_in_dot_summary">Offer Dot when selecting a phone number in another app</string>
     <string name="sim_in_use">SIM in use</string>

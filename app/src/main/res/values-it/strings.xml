@@ -731,7 +731,7 @@
     <string name="contact_photos_auto_fill">Le fonti autorizzate vengono controllate periodicamente tramite Wi-Fi quando la batteria lo consente. Gli avatar WhatsApp arrivano nelle notifiche.</string>
     <string name="review_source_title">Risultati: %1$s</string>
     <string name="review_selected_count">Selezionati: %1$d</string>
-    <string name="open_in_dot">Apri in Dot</string>
+    <string name="open_in_dot">Apri con dot.dialer</string>
     <string name="copy_name_number">Copia nome e numero</string>
     <string name="open_in_dot_summary">Proponi Dot quando selezioni un numero in un’altra app</string>
     <string name="sim_in_use">SIM in uso</string>

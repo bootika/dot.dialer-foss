@@ -735,7 +735,7 @@
     <string name="contact_photos_auto_fill">Dozwolone źródła są sprawdzane okresowo przez Wi-Fi, gdy pozwala na to bateria. Awatary WhatsApp pochodzą z powiadomień.</string>
     <string name="review_source_title">Wyniki: %1$s</string>
     <string name="review_selected_count">Wybrane: %1$d</string>
-    <string name="open_in_dot">Otwórz w Dot</string>
+    <string name="open_in_dot">Otwórz za pomocą dot.dialer</string>
     <string name="copy_name_number">Kopiuj nazwę i numer</string>
     <string name="open_in_dot_summary">Proponuj Dot po zaznaczeniu numeru telefonu w innej aplikacji</string>
     <string name="sim_in_use">Używana karta SIM</string>

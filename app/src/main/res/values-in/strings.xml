@@ -717,7 +717,7 @@
     <string name="contact_photos_auto_fill">Sumber yang diizinkan diperiksa berkala melalui Wi-Fi jika baterai mencukupi. Avatar WhatsApp diterima melalui notifikasi.</string>
     <string name="review_source_title">Hasil: %1$s</string>
     <string name="review_selected_count">Dipilih: %1$d</string>
-    <string name="open_in_dot">Buka di Dot</string>
+    <string name="open_in_dot">Buka dengan dot.dialer</string>
     <string name="copy_name_number">Salin nama dan nomor</string>
     <string name="open_in_dot_summary">Tawarkan Dot saat memilih nomor telepon di aplikasi lain</string>
     <string name="sim_in_use">SIM digunakan</string>

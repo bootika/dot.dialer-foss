@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.util.*
 import dev.goodwy.rphone.modal.repository.CallRepositoryImpl
@@ -47,8 +46,7 @@ class QuickCallToolsUiTest {
         val prefs = PreferenceManager(context)
         runBlocking { prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_SELECTED_TEXT_DIALER to false)) }
         rule.setContent {
-            val revision by prefs.settingsChanged.collectAsStateWithLifecycle()
-            key(revision) { DotDialerTheme { Surface { SelectedTextCallSettings(prefs) } } }
+            DotDialerTheme { Surface { SelectedTextCallSettings(prefs) } }
         }
         rule.onNode(isToggleable()).assertIsOff()
         assertFalse(SelectedTextDialerIntegration.isEnabled(context))
@@ -56,9 +54,18 @@ class QuickCallToolsUiTest {
         rule.waitUntil(5000) { prefs.getBoolean(PreferenceManager.KEY_SELECTED_TEXT_DIALER, false) && SelectedTextDialerIntegration.isEnabled(context) }
         rule.onNode(isToggleable()).assertIsOn()
         save(frame(), "selected-text-enabled")
-        rule.onNodeWithText(context.getString(R.string.open_in_dot)).performClick()
+        rule.onNode(isToggleable()).performClick()
         rule.waitUntil(5000) { !prefs.getBoolean(PreferenceManager.KEY_SELECTED_TEXT_DIALER, true) && !SelectedTextDialerIntegration.isEnabled(context) }
         rule.onNode(isToggleable()).assertIsOff()
+        runBlocking { prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_SELECTED_TEXT_DIALER to true)) }
+        rule.onNode(isToggleable()).assertIsOn()
+        assertTrue(SelectedTextDialerIntegration.isEnabled(context))
+        val persisted = runBlocking { prefs.getPersistedPreferences() }
+        assertEquals(true, persisted[PreferenceManager.KEY_SELECTED_TEXT_DIALER])
+        assertTrue(PreferenceManager(context).getBoolean(PreferenceManager.KEY_SELECTED_TEXT_DIALER, false))
+        runBlocking { prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_SELECTED_TEXT_DIALER to false)) }
+        rule.onNode(isToggleable()).assertIsOff()
+        assertFalse(SelectedTextDialerIntegration.isEnabled(context))
     }
 
     @Test fun actualTimerOpensChoicesAndAnOpenSheetTracksNonComposePlanChanges() {

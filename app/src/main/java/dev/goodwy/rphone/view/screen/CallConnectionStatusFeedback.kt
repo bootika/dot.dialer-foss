@@ -28,7 +28,7 @@ internal fun rememberCallConnectionStatusFeedback(onClick: () -> Unit): CallConn
     val surface = MaterialTheme.colorScheme.surface
     val dark = surface.luminance() < .5f
     val base = callConnectionShieldColor(dark)
-    val pressedFill = if (dark) surface.copy(alpha = 1f) else Color.White
+    val pressedFill = (if (dark) surface else Color.White).copy(alpha = .80f)
     val fill by animateColorAsState(
         if (feedback.pressed) pressedFill else base,
         tween(CallControlFeedback.DurationMillis), label = "connectionShieldFill",

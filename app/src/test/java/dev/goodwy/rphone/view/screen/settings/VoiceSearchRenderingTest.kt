@@ -184,6 +184,11 @@ class VoiceSearchRenderingTest {
         }
         rule.runOnIdle { prefs.setBoolean(PreferenceManager.KEY_VOICE_SEARCH_ENABLED,false) }
         flush()
+        // Persisted writes do not await the lifecycle collector and its recomposition.
+        rule.waitUntil(10_000) {
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.voice_input))
+                .fetchSemanticsNodes().isEmpty()
+        }
         rule.onNodeWithContentDescription(rule.activity.getString(R.string.voice_input)).assertDoesNotExist()
         rule.onNode(hasSetTextAction()).assertTextEquals("Test Alexandru Butica")
     }

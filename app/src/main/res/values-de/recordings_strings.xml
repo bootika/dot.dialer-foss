@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_title">Aufnahmen und Transkripte</string>
+    <string name="recordings_requirements">Erfordert eine dot.dictate-Lizenz und deinen API-Schlüssel.</string>
+    <string name="recordings_connect">dot.dictate verbinden</string>
+    <string name="recordings_open_dictate">dot.dictate öffnen</string>
+    <string name="recordings_disconnect">Trennen</string>
+    <string name="recordings_connected">Mit dot.dictate verbunden</string>
+    <string name="recordings_disconnected">Verbinde dot.dictate, um Aufnahmen zu verarbeiten.</string>
+    <string name="recordings_license_required">Aktiviere deine dot.dictate-Lizenz.</string>
+    <string name="recordings_license_unavailable">Die dot.dictate-Lizenz konnte nicht überprüft werden.</string>
+    <string name="recordings_key_required">Hinterlege deinen API-Schlüssel in dot.dictate.</string>
+    <string name="recordings_update_required">Aktualisiere dot.dictate, um diese Integration zu nutzen.</string>
+    <string name="recordings_plan_required">Verfügbar mit Power Up und Complete.</string>
+    <string name="recordings_import">Audio importieren</string>
+    <string name="recordings_empty">Deine Aufnahmen und Transkripte erscheinen hier.</string>
+    <string name="recordings_transcribe">Transkribieren</string>
+    <string name="recordings_translate">Übersetzen</string>
+    <string name="recordings_original">Originaltranskript</string>
+    <string name="recordings_translation">Übersetzung · %1$s</string>
+    <string name="recordings_language">Zielsprache</string>
+    <string name="recordings_auto_transcribe">Automatische Transkription</string>
+    <string name="recordings_auto_transcribe_summary">Neue Aufnahmen an deinen eingerichteten Anbieter senden. Complete.</string>
+    <string name="recordings_auto_translate">Automatische Übersetzung</string>
+    <string name="recordings_auto_translate_summary">Neue Transkripte in deine gewählte Sprache übersetzen. Complete.</string>
+    <string name="recordings_export_audio">Audio exportieren</string>
+    <string name="recordings_export_text">Text exportieren</string>
+    <string name="recordings_delete">Aufnahme löschen</string>
+    <string name="recordings_delete_confirm">Diese Aufnahme und ihre gespeicherten Transkripte und Übersetzungen löschen?</string>
+    <string name="recordings_play">Abspielen</string>
+    <string name="recordings_pause">Pause</string>
+    <string name="recordings_play_after_call">Die Wiedergabe ist nach dem Anruf verfügbar.</string>
+    <string name="recordings_error">Der Vorgang konnte nicht abgeschlossen werden. Deine gespeicherten Aufnahmen bleiben erhalten.</string>
+    <string name="recordings_job_queued">Warten auf Verarbeitung</string>
+    <string name="recordings_job_running">Verarbeitung läuft</string>
+    <string name="recordings_job_completed">Abgeschlossen</string>
+    <string name="recordings_job_failed">Verarbeitung fehlgeschlagen</string>
+    <string name="recordings_job_cancelled">Abgebrochen</string>
+    <string name="recordings_job_cancelling">Wird abgebrochen</string>
+    <string name="recordings_job_blocked">Verarbeitung pausiert. Prüfe deinen Tarif und die Einrichtung von dot.dictate.</string>
+    <plurals name="recordings_parts">
+        <item quantity="one">%1$d / %2$d Teil</item>
+        <item quantity="other">%1$d / %2$d Teile</item>
+    </plurals>
+    <string name="recordings_retry">Erneut versuchen</string>
+    <string name="recordings_back">Zurück</string>
+    <string name="recordings_audio_format">Lange Aufnahmen erfordern AAC-Audio für die Aufteilung. Wandle die Datei vor dem Import in AAC/M4A um.</string>
+</resources>

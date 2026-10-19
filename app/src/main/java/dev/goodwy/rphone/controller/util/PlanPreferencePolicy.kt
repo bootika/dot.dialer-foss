@@ -7,6 +7,7 @@ internal object PlanPreferencePolicy {
     private val effects = setOf("liquid_glass_ui", "ui_blur", "floating_bar_blur", "blur_effects_ui",
         "frosted_call_background", "ambient_droplets_enabled")
     fun feature(key: String): PlanFeature? = when {
+        key in setOf("recording_auto_transcribe", "recording_auto_translate_language") -> PlanFeature.RECORDINGS_AUTOMATIC
         key == dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE -> PlanFeature.CALL_PRODUCTIVITY
         key == "call_message_channel" -> PlanFeature.CALL_MESSAGE_CHANNEL
         key in effects || key.startsWith("lg_") || key.startsWith("blur_") || key == "BLUR_dialpad" ||

@@ -57,5 +57,6 @@
                 <action android:name="dev.goodwy.rphone.debug.CALL_LAB" />
             </intent-filter>
         </receiver>
+        <activity android:name=".debug.DictateBridgeLabActivity" android:exported="false" android:theme="@style/Theme.RillPhone" />
     </application>
 </manifest>

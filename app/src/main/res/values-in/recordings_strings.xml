@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_title">Rekaman dan transkrip</string>
+    <string name="recordings_requirements">Memerlukan lisensi dot.dictate dan kunci API Anda.</string>
+    <string name="recordings_connect">Hubungkan dot.dictate</string>
+    <string name="recordings_open_dictate">Buka dot.dictate</string>
+    <string name="recordings_disconnect">Putuskan koneksi</string>
+    <string name="recordings_connected">Terhubung ke dot.dictate</string>
+    <string name="recordings_disconnected">Hubungkan dot.dictate untuk memproses rekaman.</string>
+    <string name="recordings_license_required">Aktifkan lisensi dot.dictate Anda.</string>
+    <string name="recordings_license_unavailable">Lisensi dot.dictate tidak dapat diverifikasi.</string>
+    <string name="recordings_key_required">Tambahkan kunci API Anda di dot.dictate.</string>
+    <string name="recordings_update_required">Perbarui dot.dictate untuk menggunakan integrasi ini.</string>
+    <string name="recordings_plan_required">Tersedia dengan Power Up dan Complete.</string>
+    <string name="recordings_import">Impor audio</string>
+    <string name="recordings_empty">Rekaman dan transkrip Anda akan muncul di sini.</string>
+    <string name="recordings_transcribe">Transkripsikan</string>
+    <string name="recordings_translate">Terjemahkan</string>
+    <string name="recordings_original">Transkrip asli</string>
+    <string name="recordings_translation">Terjemahan · %1$s</string>
+    <string name="recordings_language">Bahasa terjemahan</string>
+    <string name="recordings_auto_transcribe">Transkripsi otomatis</string>
+    <string name="recordings_auto_transcribe_summary">Kirim rekaman baru ke penyedia yang dikonfigurasi. Complete.</string>
+    <string name="recordings_auto_translate">Terjemahan otomatis</string>
+    <string name="recordings_auto_translate_summary">Terjemahkan transkrip baru ke bahasa pilihan Anda. Complete.</string>
+    <string name="recordings_export_audio">Ekspor audio</string>
+    <string name="recordings_export_text">Ekspor teks</string>
+    <string name="recordings_delete">Hapus rekaman</string>
+    <string name="recordings_delete_confirm">Hapus rekaman ini beserta transkrip dan terjemahan yang tersimpan?</string>
+    <string name="recordings_play">Putar</string>
+    <string name="recordings_pause">Jeda</string>
+    <string name="recordings_play_after_call">Pemutaran tersedia setelah panggilan.</string>
+    <string name="recordings_error">Operasi tidak dapat diselesaikan. Rekaman yang tersimpan tetap disimpan.</string>
+    <string name="recordings_job_queued">Menunggu pemrosesan</string>
+    <string name="recordings_job_running">Memproses</string>
+    <string name="recordings_job_completed">Selesai</string>
+    <string name="recordings_job_failed">Pemrosesan gagal</string>
+    <string name="recordings_job_cancelled">Dibatalkan</string>
+    <string name="recordings_job_cancelling">Membatalkan</string>
+    <string name="recordings_job_blocked">Pemrosesan dijeda. Periksa paket dan pengaturan dot.dictate Anda.</string>
+    <plurals name="recordings_parts">
+        <item quantity="other">%1$d / %2$d bagian</item>
+    </plurals>
+    <string name="recordings_retry">Coba lagi</string>
+    <string name="recordings_back">Kembali</string>
+    <string name="recordings_audio_format">Rekaman panjang memerlukan audio AAC untuk dibagi. Konversikan file ke AAC/M4A sebelum mengimpor.</string>
+</resources>

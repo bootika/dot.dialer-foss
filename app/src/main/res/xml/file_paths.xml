@@ -3,4 +3,6 @@
     <cache-path name="shared_contacts" path="shared_contacts/" />
     <cache-path name="shared_contact_photos" path="shared_contact_photos/" />
     <cache-path name="diagnostic_reports" path="diagnostic_reports/" />
+    <files-path name="recording_audio" path="recordings/audio/" />
+    <files-path name="recording_bridge" path="recordings/bridge/" />
 </paths>

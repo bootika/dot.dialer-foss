@@ -36,6 +36,7 @@ fun SettingsOptionScreen(navigator: DestinationsNavigator, optionId: String) {
     })
     SettingsFocusContent(targetId, label, if (target.id == "B02" && prefs.isAuthenticationEnabled()) 1 else settingsFocusIndex(target.id, option.editor)) {
         when (option.editor) {
+            SettingsEditor.RECORDINGS -> dev.goodwy.rphone.view.screen.recordings.RecordingsScreen(navigator)
             SettingsEditor.INTERFACE, SettingsEditor.KEYPAD -> InterfaceScreen(navigator)
             SettingsEditor.ACCESSIBILITY -> InterfaceScreen(navigator, accessibility = true)
             SettingsEditor.AVATARS, SettingsEditor.FRAME -> AvatarsPreferenceScreen(navigator)

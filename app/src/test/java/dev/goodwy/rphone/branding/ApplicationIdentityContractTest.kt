@@ -45,7 +45,23 @@ class ApplicationIdentityContractTest {
         assertTrue(paths.contains("<cache-path name=\"shared_contacts\" path=\"shared_contacts/\" />"))
         assertTrue(!paths.contains("external-path"))
         assertTrue(!paths.contains("external-files-path"))
-        assertTrue(!paths.contains("<files-path"))
+        val root = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            .parse(paths.byteInputStream()).documentElement
+        assertEquals("paths", root.tagName)
+        val actualRoots = (0 until root.childNodes.length).mapNotNull { index ->
+            (root.childNodes.item(index) as? org.w3c.dom.Element)?.let {
+                Triple(it.tagName, it.getAttribute("name"), it.getAttribute("path"))
+            }
+        }
+        val expectedRoots = setOf(
+            Triple("cache-path", "shared_contacts", "shared_contacts/"),
+            Triple("cache-path", "shared_contact_photos", "shared_contact_photos/"),
+            Triple("cache-path", "diagnostic_reports", "diagnostic_reports/"),
+            Triple("files-path", "recording_audio", "recordings/audio/"),
+            Triple("files-path", "recording_bridge", "recordings/bridge/"),
+        )
+        assertEquals(expectedRoots.size, actualRoots.size)
+        assertEquals(expectedRoots, actualRoots.toSet())
     }
 
     private fun repoFile(relativePath: String): File {

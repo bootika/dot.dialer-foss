@@ -3,7 +3,7 @@ package dev.goodwy.rphone.view.screen.settings.components
 import dev.goodwy.rphone.R
 
 internal enum class SettingsEditor {
-    ACCESSIBILITY, ADVANCED, REPORTING, INTERFACE, AVATARS, FONT, HOME, HISTORY, CALL_UI, CALL_EFFECTS, ACCOUNTS, NUMBERS, DEVICE, QUICK, CALLS, SOUND, SCROLL, FRAME, KEYPAD, SOURCES, CONTACTS, BLOCKED, AUTH, CALL_AUTH, SUPPORT, DIAGNOSTICS, CONTEXT, LEGACY
+    ACCESSIBILITY, ADVANCED, REPORTING, INTERFACE, AVATARS, FONT, HOME, HISTORY, CALL_UI, CALL_EFFECTS, ACCOUNTS, NUMBERS, DEVICE, QUICK, CALLS, SOUND, SCROLL, FRAME, KEYPAD, SOURCES, CONTACTS, BLOCKED, AUTH, CALL_AUTH, SUPPORT, DIAGNOSTICS, CONTEXT, LEGACY, RECORDINGS
 }
 
 internal enum class SettingsFunction(val title: Int) {
@@ -20,6 +20,7 @@ internal data class SettingsOption(
 ) {
     val planFeature: io.github.bootika.dotdialer.core.license.PlanFeature? get() = when (id) {
         "H11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY
+        "K14", "K15" -> io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_AUTOMATIC
         "K11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL
         "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
         "T19", "T17" -> io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER
@@ -31,7 +32,7 @@ internal data class SettingsOption(
         SettingsEditor.FRAME, SettingsEditor.ACCESSIBILITY, SettingsEditor.HOME, SettingsEditor.HISTORY,
         SettingsEditor.CALL_UI, SettingsEditor.CALL_EFFECTS -> SettingsFunction.INTERFACE
         SettingsEditor.ACCOUNTS, SettingsEditor.NUMBERS, SettingsEditor.DEVICE,
-        SettingsEditor.QUICK, SettingsEditor.CALLS -> SettingsFunction.CALLS
+        SettingsEditor.QUICK, SettingsEditor.CALLS, SettingsEditor.RECORDINGS -> SettingsFunction.CALLS
         SettingsEditor.SOUND, SettingsEditor.SCROLL -> SettingsFunction.SOUND
         SettingsEditor.SOURCES, SettingsEditor.CONTACTS -> SettingsFunction.CONTACTS
         SettingsEditor.BLOCKED, SettingsEditor.AUTH, SettingsEditor.CALL_AUTH, SettingsEditor.REPORTING -> SettingsFunction.PRIVACY
@@ -39,6 +40,7 @@ internal data class SettingsOption(
         SettingsEditor.CONTEXT, SettingsEditor.LEGACY -> SettingsFunction.HELP
     }
     fun isAvailable(flavor: String, autoAvailable: Boolean, testBuild: Boolean = dev.goodwy.rphone.BuildConfig.DEBUG): Boolean = when (id) {
+        "K13", "K14", "K15" -> dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED
         "O02" -> testBuild
         "T09", "T10" -> flavor == "gplay"
         "F01" -> flavor == "foss"
@@ -85,6 +87,9 @@ internal val settingsOptions = listOf(
     SettingsOption("C03", R.string.ambient_droplets, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C04", R.string.ambient_droplet_brightness, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C08", R.string.customize_width, SettingsEditor.CALL_EFFECTS, true, R.string.settings_fine_tuning),
+    SettingsOption("K13", R.string.recordings_title, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
+    SettingsOption("K14", R.string.recordings_auto_transcribe, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
+    SettingsOption("K15", R.string.recordings_auto_translate, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
     SettingsOption("K01", R.string.default_sim, SettingsEditor.ACCOUNTS, false, R.string.calling_accounts),
     SettingsOption("K10", R.string.manage_calling_accounts_system, SettingsEditor.ACCOUNTS, false, R.string.calling_accounts),
     SettingsOption("K02", R.string.add_country_code_automatically, SettingsEditor.CALLS, true, R.string.phone_number_formatting),

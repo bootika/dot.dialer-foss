@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import groovy.json.JsonSlurper
+import java.security.MessageDigest
 
 plugins {
     id 'com.android.application'
@@ -22,7 +24,45 @@ def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificat
 if (!(gplayNotificationAvatars in ['true', 'false'])) {
     throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
 }
-def baseVersionCode = 283
+// A pending or stale real-provider receipt keeps the integration out of the product UI.
+// No app preference or Gradle property can bypass this source-bound release gate.
+def bridgeReceipt = new JsonSlurper().parse(rootProject.file('config/quality/dictate-integration-release.json'))
+def bridgeSourceDigest = MessageDigest.getInstance('SHA-256')
+// Bind the receipt to integration code, not unrelated UI edits or version-number bumps.
+def bridgeSourceFiles = rootProject.fileTree('app/src/main/java/dev/goodwy/rphone') {
+    include 'recordings/**/*.kt', 'view/screen/recordings/**/*.kt', 'controller/license/**/*.kt'
+}.files + rootProject.fileTree('core/domain/src/main') {
+    include '**/recordings/**/*.kt', '**/license/**/*.kt'
+}.files + [file('src/main/AndroidManifest.xml'),file('src/main/res/xml/file_paths.xml')]
+bridgeSourceFiles.sort { rootProject.relativePath(it).replace('\\','/') }.each { source ->
+    bridgeSourceDigest.update(rootProject.relativePath(source).replace('\\','/').getBytes('UTF-8'))
+    bridgeSourceDigest.update((byte)0)
+    bridgeSourceDigest.update(source.getText('UTF-8').replace('\r\n','\n').getBytes('UTF-8'))
+    bridgeSourceDigest.update((byte)0)
+}
+def bridgeSourceHash = bridgeSourceDigest.digest().encodeHex().toString()
+def bridgeReceiptAllowsIntegration = { receipt, sourceHash ->
+    receipt.schemaVersion == 1 && receipt.protocolVersion == 1 && receipt.status == 'verified' &&
+        receipt.realProviderTranscriptionCompleted == true && receipt.realProviderTranslationCompleted == true &&
+        receipt.verifiedAt && receipt.providerApkSha256 ==~ /(?i)[0-9a-f]{64}/ && receipt.consumerSourceSha256 == sourceHash
+}
+def dictateIntegrationEnabled = bridgeReceiptAllowsIntegration(bridgeReceipt, bridgeSourceHash)
+tasks.register('verifyDictateIntegrationGate') {
+    doLast {
+        def valid = [schemaVersion:1, protocolVersion:1, status:'verified', realProviderTranscriptionCompleted:true,
+            realProviderTranslationCompleted:true, verifiedAt:'2026-10-19', providerApkSha256:'a'*64, consumerSourceSha256:bridgeSourceHash]
+        assert bridgeReceiptAllowsIntegration(valid,bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [status:'pending_real_provider_verification'],bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [realProviderTranscriptionCompleted:false],bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [realProviderTranslationCompleted:false],bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [consumerSourceSha256:'stale'],bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [providerApkSha256:null],bridgeSourceHash)
+        assert !bridgeReceiptAllowsIntegration(valid + [verifiedAt:null],bridgeSourceHash)
+        println "Dictate integration enabled=${dictateIntegrationEnabled}; source SHA256=${bridgeSourceHash}"
+    }
+}
+
+def baseVersionCode = 284
 def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
 def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
 def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"
@@ -58,6 +98,7 @@ android {
         buildConfigField "String", "SUBSCRIPTION_YEAR_ID_X1", "\"$subscriptionYearId\""
         buildConfigField "String", "SENTRY_DSN", "\"$escapedSentryDsn\""
         buildConfigField "boolean", "NOTIFICATION_AVATARS_AVAILABLE", "true"
+        buildConfigField "boolean", "DICTATE_INTEGRATION_ENABLED", dictateIntegrationEnabled ? "true" : "false"
     }
 
     base {

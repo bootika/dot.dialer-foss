@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_title">Bản ghi và bản chép lời</string>
+    <string name="recordings_requirements">Cần giấy phép dot.dictate và khóa API của bạn.</string>
+    <string name="recordings_connect">Kết nối dot.dictate</string>
+    <string name="recordings_open_dictate">Mở dot.dictate</string>
+    <string name="recordings_disconnect">Ngắt kết nối</string>
+    <string name="recordings_connected">Đã kết nối với dot.dictate</string>
+    <string name="recordings_disconnected">Kết nối dot.dictate để xử lý bản ghi.</string>
+    <string name="recordings_license_required">Kích hoạt giấy phép dot.dictate của bạn.</string>
+    <string name="recordings_license_unavailable">Không thể xác minh giấy phép dot.dictate.</string>
+    <string name="recordings_key_required">Thêm khóa API của bạn trong dot.dictate.</string>
+    <string name="recordings_update_required">Cập nhật dot.dictate để sử dụng tính năng tích hợp này.</string>
+    <string name="recordings_plan_required">Có trong Power Up và Complete.</string>
+    <string name="recordings_import">Nhập âm thanh</string>
+    <string name="recordings_empty">Bản ghi và bản chép lời của bạn sẽ xuất hiện tại đây.</string>
+    <string name="recordings_transcribe">Chép lời</string>
+    <string name="recordings_translate">Dịch</string>
+    <string name="recordings_original">Bản chép lời gốc</string>
+    <string name="recordings_translation">Bản dịch · %1$s</string>
+    <string name="recordings_language">Ngôn ngữ dịch</string>
+    <string name="recordings_auto_transcribe">Chép lời tự động</string>
+    <string name="recordings_auto_transcribe_summary">Gửi bản ghi mới đến nhà cung cấp đã cấu hình. Complete.</string>
+    <string name="recordings_auto_translate">Dịch tự động</string>
+    <string name="recordings_auto_translate_summary">Dịch bản chép lời mới sang ngôn ngữ bạn chọn. Complete.</string>
+    <string name="recordings_export_audio">Xuất âm thanh</string>
+    <string name="recordings_export_text">Xuất văn bản</string>
+    <string name="recordings_delete">Xóa bản ghi</string>
+    <string name="recordings_delete_confirm">Xóa bản ghi này cùng các bản chép lời và bản dịch đã lưu?</string>
+    <string name="recordings_play">Phát</string>
+    <string name="recordings_pause">Tạm dừng</string>
+    <string name="recordings_play_after_call">Có thể phát lại sau cuộc gọi.</string>
+    <string name="recordings_error">Không thể hoàn tất thao tác. Các bản ghi đã lưu vẫn được giữ lại.</string>
+    <string name="recordings_job_queued">Đang chờ xử lý</string>
+    <string name="recordings_job_running">Đang xử lý</string>
+    <string name="recordings_job_completed">Đã hoàn tất</string>
+    <string name="recordings_job_failed">Xử lý thất bại</string>
+    <string name="recordings_job_cancelled">Đã hủy</string>
+    <string name="recordings_job_cancelling">Đang hủy</string>
+    <string name="recordings_job_blocked">Đã tạm dừng xử lý. Kiểm tra gói và thiết lập dot.dictate của bạn.</string>
+    <plurals name="recordings_parts">
+        <item quantity="other">%1$d / %2$d phần</item>
+    </plurals>
+    <string name="recordings_retry">Thử lại</string>
+    <string name="recordings_back">Quay lại</string>
+    <string name="recordings_audio_format">Bản ghi dài cần âm thanh AAC để chia nhỏ. Hãy chuyển tệp sang AAC/M4A trước khi nhập.</string>
+</resources>

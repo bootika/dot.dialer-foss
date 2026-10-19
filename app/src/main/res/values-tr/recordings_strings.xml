@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_title">Kayıtlar ve dökümler</string>
+    <string name="recordings_requirements">dot.dictate lisansı ve API anahtarınız gerekir.</string>
+    <string name="recordings_connect">dot.dictate uygulamasını bağla</string>
+    <string name="recordings_open_dictate">dot.dictate uygulamasını aç</string>
+    <string name="recordings_disconnect">Bağlantıyı kes</string>
+    <string name="recordings_connected">dot.dictate bağlı</string>
+    <string name="recordings_disconnected">Kayıtları işlemek için dot.dictate uygulamasını bağlayın.</string>
+    <string name="recordings_license_required">dot.dictate lisansınızı etkinleştirin.</string>
+    <string name="recordings_license_unavailable">dot.dictate lisansı doğrulanamadı.</string>
+    <string name="recordings_key_required">API anahtarınızı dot.dictate uygulamasına ekleyin.</string>
+    <string name="recordings_update_required">Bu entegrasyonu kullanmak için dot.dictate uygulamasını güncelleyin.</string>
+    <string name="recordings_plan_required">Power Up ve Complete ile kullanılabilir.</string>
+    <string name="recordings_import">Ses içe aktar</string>
+    <string name="recordings_empty">Kayıtlarınız ve dökümleriniz burada görünecek.</string>
+    <string name="recordings_transcribe">Metne dönüştür</string>
+    <string name="recordings_translate">Çevir</string>
+    <string name="recordings_original">Özgün döküm</string>
+    <string name="recordings_translation">Çeviri · %1$s</string>
+    <string name="recordings_language">Çeviri dili</string>
+    <string name="recordings_auto_transcribe">Otomatik döküm</string>
+    <string name="recordings_auto_transcribe_summary">Yeni kayıtları yapılandırılmış sağlayıcınıza gönderin. Complete.</string>
+    <string name="recordings_auto_translate">Otomatik çeviri</string>
+    <string name="recordings_auto_translate_summary">Yeni dökümleri seçtiğiniz dile çevirin. Complete.</string>
+    <string name="recordings_export_audio">Sesi dışa aktar</string>
+    <string name="recordings_export_text">Metni dışa aktar</string>
+    <string name="recordings_delete">Kaydı sil</string>
+    <string name="recordings_delete_confirm">Bu kayıt ve kaydedilmiş dökümleri ile çevirileri silinsin mi?</string>
+    <string name="recordings_play">Oynat</string>
+    <string name="recordings_pause">Duraklat</string>
+    <string name="recordings_play_after_call">Oynatma, aramadan sonra kullanılabilir.</string>
+    <string name="recordings_error">İşlem tamamlanamadı. Kaydedilmiş kayıtlarınız korunuyor.</string>
+    <string name="recordings_job_queued">İşlenmeyi bekliyor</string>
+    <string name="recordings_job_running">İşleniyor</string>
+    <string name="recordings_job_completed">Tamamlandı</string>
+    <string name="recordings_job_failed">İşleme başarısız</string>
+    <string name="recordings_job_cancelled">İptal edildi</string>
+    <string name="recordings_job_cancelling">İptal ediliyor</string>
+    <string name="recordings_job_blocked">İşleme duraklatıldı. Planınızı ve dot.dictate kurulumunu kontrol edin.</string>
+    <plurals name="recordings_parts">
+        <item quantity="one">%1$d / %2$d bölüm</item>
+        <item quantity="other">%1$d / %2$d bölüm</item>
+    </plurals>
+    <string name="recordings_retry">Yeniden dene</string>
+    <string name="recordings_back">Geri</string>
+    <string name="recordings_audio_format">Uzun kayıtların bölünmesi için AAC ses gerekir. İçe aktarmadan önce dosyayı AAC/M4A biçimine dönüştürün.</string>
+</resources>

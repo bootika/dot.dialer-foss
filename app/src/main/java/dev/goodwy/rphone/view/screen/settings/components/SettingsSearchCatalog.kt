@@ -74,6 +74,7 @@ internal fun createSettingsSearchEntries(
 
 internal fun DestinationsNavigator.openSettingsEditor(editor: SettingsEditor) {
     when (editor) {
+        SettingsEditor.RECORDINGS -> navigate(RecordingsScreenDestination())
         SettingsEditor.ACCESSIBILITY -> navigate(InterfaceScreenDestination(accessibility = true))
         SettingsEditor.ADVANCED -> navigate(AdvancedSettingsScreenDestination)
         SettingsEditor.REPORTING -> navigate(ReportingSettingsScreenDestination)

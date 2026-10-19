@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_title">Înregistrări și transcrieri</string>
+    <string name="recordings_requirements">Necesită licență dot.dictate și cheia ta API.</string>
+    <string name="recordings_connect">Conectează dot.dictate</string>
+    <string name="recordings_open_dictate">Deschide dot.dictate</string>
+    <string name="recordings_disconnect">Deconectează</string>
+    <string name="recordings_connected">Conectat la dot.dictate</string>
+    <string name="recordings_disconnected">Conectează dot.dictate pentru procesarea înregistrărilor.</string>
+    <string name="recordings_license_required">Activează licența dot.dictate.</string>
+    <string name="recordings_license_unavailable">Licența dot.dictate nu a putut fi verificată.</string>
+    <string name="recordings_key_required">Adaugă cheia API în dot.dictate.</string>
+    <string name="recordings_update_required">Actualizează dot.dictate pentru această integrare.</string>
+    <string name="recordings_plan_required">Disponibil cu Power Up și Complete.</string>
+    <string name="recordings_import">Importă audio</string>
+    <string name="recordings_empty">Înregistrările și transcrierile tale vor apărea aici.</string>
+    <string name="recordings_transcribe">Transcrie</string>
+    <string name="recordings_translate">Tradu</string>
+    <string name="recordings_original">Transcriere originală</string>
+    <string name="recordings_translation">Traducere · %1$s</string>
+    <string name="recordings_language">Limba traducerii</string>
+    <string name="recordings_auto_transcribe">Transcriere automată</string>
+    <string name="recordings_auto_transcribe_summary">Trimite înregistrările noi la furnizorul configurat. Complete.</string>
+    <string name="recordings_auto_translate">Traducere automată</string>
+    <string name="recordings_auto_translate_summary">Traduce transcrierile noi în limba aleasă. Complete.</string>
+    <string name="recordings_export_audio">Exportă audio</string>
+    <string name="recordings_export_text">Exportă textul</string>
+    <string name="recordings_delete">Șterge înregistrarea</string>
+    <string name="recordings_delete_confirm">Ștergi această înregistrare și transcrierile și traducerile ei salvate?</string>
+    <string name="recordings_play">Redă</string>
+    <string name="recordings_pause">Pauză</string>
+    <string name="recordings_play_after_call">Redarea este disponibilă după apel.</string>
+    <string name="recordings_error">Operația nu a putut fi finalizată. Înregistrările salvate sunt păstrate.</string>
+    <string name="recordings_job_queued">În așteptare</string>
+    <string name="recordings_job_running">Se procesează</string>
+    <string name="recordings_job_completed">Finalizat</string>
+    <string name="recordings_job_failed">Procesarea a eșuat</string>
+    <string name="recordings_job_cancelled">Anulat</string>
+    <string name="recordings_job_cancelling">Se anulează</string>
+    <string name="recordings_job_blocked">Procesarea este oprită. Verifică planul și configurarea dot.dictate.</string>
+    <plurals name="recordings_parts">
+        <item quantity="one">%1$d / %2$d fragment</item>
+        <item quantity="few">%1$d / %2$d fragmente</item>
+        <item quantity="other">%1$d / %2$d fragmente</item>
+    </plurals>
+    <string name="recordings_retry">Reîncearcă</string>
+    <string name="recordings_back">Înapoi</string>
+    <string name="recordings_audio_format">Înregistrările lungi necesită audio AAC pentru fragmentare. Convertește fișierul în AAC/M4A înainte de import.</string>
+</resources>

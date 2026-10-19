@@ -279,6 +279,7 @@ class LocalizationContractTest {
                 "pager", "suffix_description",
             ),
             "fr" to sortedSetOf(
+                "recordings_pause", // "Pause" is also the native French label.
                 "conference_participant_count",
                 "contact_action",
                 "accent_jade", "accent_violet", "actions", "audio_route_bluetooth",
@@ -287,6 +288,7 @@ class LocalizationContractTest {
                 "notes", "notif_via_sim", "suffix_description", "theme_auto",
             ),
             "de" to sortedSetOf(
+                "recordings_pause", // "Pause" is also the native German label.
                 "rating_okay",
                 "accent_jade", "audio_route_bluetooth", "audio_route_headset", "avatar_palette_google",
                 "avatar_palette_jade", "avatar_size_medium", "call_avatar_size_medium", "name", "pager",

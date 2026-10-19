@@ -823,6 +823,7 @@ private fun ExpressiveCallScreenContent(
 
                                         if (showMore) {
                                             RillExpressiveCard {
+                                                dev.goodwy.rphone.view.screen.recordings.CallRecordingsEntry(call, contactName)
                                                 MoreItem(
                                                     headline = stringResource(R.string.view_contact),
                                                     leadingIcon = Icons.Rounded.PersonOutline,

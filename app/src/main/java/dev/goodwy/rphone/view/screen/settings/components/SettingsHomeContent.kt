@@ -72,6 +72,7 @@ internal fun SettingsHomeContent(
                 SettingsHomeCard {
                     SettingsRootRow(SettingsFunction.INTERFACE.title, Icons.Rounded.Palette) { navigator.navigate(InterfaceScreenDestination()) }
                     SettingsRootRow(SettingsFunction.CALLS.title, DotDialerHandsetIcon) { navigator.navigate(CallSettingScreenDestination()) }
+                    dev.goodwy.rphone.view.screen.recordings.RecordingsSettingsEntry { navigator.navigate(RecordingsScreenDestination()) }
                     SettingsRootRow(SettingsFunction.CONTACTS.title, Icons.Rounded.PeopleAlt) { navigator.navigate(ContactManagementScreenDestination()) }
                     SettingsRootRow(SettingsFunction.SOUND.title, Icons.AutoMirrored.Rounded.VolumeUp) { navigator.navigate(SoundVibrationScreenDestination()) }
                     SettingsRootRow(SettingsFunction.PRIVACY.title, Icons.Rounded.Lock) { navigator.navigate(SettingsCategoryScreenDestination(category = "privacy")) }

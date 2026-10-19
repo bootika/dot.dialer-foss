@@ -59,12 +59,14 @@ class RecentCallsWidgetActionReceiverTest {
             "app/src/main/java/dev/goodwy/rphone/widget/RecentCallsWidgetProvider.kt",
         ).readText()
 
-        assertTrue(
-            manifest.contains(
-                "android:name=\".widget.RecentCallsWidgetActionReceiver\"\n" +
-                    "            android:exported=\"false\"",
-            ),
-        )
+        val factory = javax.xml.parsers.DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
+        val document = factory.newDocumentBuilder().parse(manifest.byteInputStream())
+        val android = "http://schemas.android.com/apk/res/android"
+        val receivers = document.getElementsByTagName("receiver")
+        val actions = (0 until receivers.length).map { receivers.item(it) as org.w3c.dom.Element }
+            .filter { it.getAttributeNS(android, "name") == ".widget.RecentCallsWidgetActionReceiver" }
+        assertEquals(1, actions.size)
+        assertEquals("false", actions.single().getAttributeNS(android, "exported"))
         assertTrue(provider.contains("Intent(context, RecentCallsWidgetActionReceiver::class.java)"))
     }
 

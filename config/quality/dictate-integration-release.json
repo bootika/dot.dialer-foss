@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "status": "pending_real_provider_verification",
+  "verifiedAt": null,
+  "consumerSourceSha256": null,
+  "providerApkSha256": null,
+  "realProviderTranscriptionCompleted": false,
+  "realProviderTranslationCompleted": false
+}

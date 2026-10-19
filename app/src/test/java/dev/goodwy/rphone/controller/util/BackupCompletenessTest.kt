@@ -29,6 +29,8 @@ class BackupCompletenessTest {
     private data class Field(val id: String, val key: String, val values: List<Any>)
     private fun field(id: String, key: String, vararg values: Any) = Field(id, key, values.toList())
     private val fields = listOf(
+        field("K14", dev.goodwy.rphone.recordings.RecordingsRepository.AUTO_TRANSCRIBE, false, true),
+        field("K15", dev.goodwy.rphone.recordings.RecordingsRepository.AUTO_TRANSLATE, "", "ro", "en"),
         field("K12", P.KEY_SELECTED_TEXT_DIALER, false, true),
         field("K11", P.KEY_CALL_MESSAGE_CHANNEL, 0, 1, 2),
         field("T11", WhatsAppAvatarSyncPreferences.ENABLED, false, true),
@@ -99,6 +101,7 @@ class BackupCompletenessTest {
         "O02" to "Test-only temporary log level in noBackupFilesDir; expires24h, intentionally not cloned to another phone",
         "I01" to "platform.json / LocaleManager; Android-owned during phone transfer",
         "C07" to "Owned background bytes plus rebased default pointer",
+        "K13" to "Local library action; recording files/database and Dictate pairing are excluded from backup",
         "K10" to "Android calling-account administration, not an app parameter",
         "V01" to "Android sound settings, not an app parameter",
         "T10" to "Scan action; no parameter or OAuth token to clone",

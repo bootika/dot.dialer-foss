@@ -2,7 +2,18 @@ name: Android quality gate
 
 on:
   push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'evidence/**'
+      - 'deliverables/**'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'evidence/**'
+      - 'deliverables/**'
   workflow_dispatch:
   release:
     types: [published]
@@ -51,10 +62,12 @@ jobs:
         run: timeout --kill-after=30s 8m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process architectureCheck sourceSizeRatchet legacySmellRatchet :core:domain:test :core:diagnostics:test
 
       - name: Upload core reports
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v6
         with:
           name: core-check-reports
+          retention-days: 3
+          compression-level: 9
           if-no-files-found: ignore
           path: |
             core/diagnostics/build/test-results/
@@ -124,10 +137,12 @@ jobs:
         run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testGplayDebugUnitTest --tests '*AppModuleResolutionTest' :app:testRustoreDebugUnitTest --tests '*AppModuleResolutionTest'
 
       - name: Upload test and lint reports
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v6
         with:
           name: android-quality-reports
+          retention-days: 3
+          compression-level: 9
           if-no-files-found: ignore
           path: |
             ci-diagnostics/
@@ -140,11 +155,3 @@ jobs:
             core/diagnostics/build/test-results/
             core/domain/build/reports/tests/
             core/domain/build/test-results/
-
-      - name: Upload installable test APK
-        if: success()
-        uses: actions/upload-artifact@v6
-        with:
-          name: dot-dialer-test-apk
-          if-no-files-found: error
-          path: app/build/outputs/apk/foss/debug/*.apk

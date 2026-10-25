@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Nagrywanie rozmów</string>
+    <string name="capture_reactivate">Aktywuj nagrywanie ponownie</string>
+    <string name="capture_activate">Aktywuj</string>
+    <string name="capture_next">Dalej</string>
+    <string name="capture_wizard_done">Zacznij korzystać z nagrywania</string>
+    <string name="capture_open_about">Otwórz Informacje o telefonie</string>
+    <string name="capture_open_developer">Otwórz Opcje programistyczne</string>
+    <string name="capture_open_wireless">Otwórz Debugowanie bezprzewodowe</string>
+    <string name="capture_open_pairing">Otwórz parowanie</string>
+    <string name="capture_pair_manual">Problem z powiadomieniem?</string>
+    <string name="capture_connection_manual">Nie znaleziono połączenia?</string>
+    <string name="capture_pair_again">Sparuj telefon ponownie</string>
+    <string name="capture_pair_port">Port parowania</string>
+    <string name="capture_connect_port">Port połączenia</string>
+    <string name="capture_pair_code">Sześciocyfrowy kod parowania</string>
+    <string name="capture_pair_title">Sparuj dot.dialer</string>
+    <string name="capture_android_required">Aktywacja bez kabla wymaga Androida 11 lub nowszego.</string>
+    <string name="capture_code_error">Wpisz aktualny sześciocyfrowy kod i właściwy port. Zostaw okno Androida otwarte.</string>
+    <string name="capture_pair_error">Parowanie nieudane. Otwórz nowe okno Androida i użyj nowego kodu.</string>
+    <string name="capture_start_error">Aktywacja nieudana. Skorzystaj z pomocy sieci i spróbuj ponownie. Paruj ponownie tylko po usunięciu parowania przez Androida.</string>
+    <string name="capture_wireless_pending">Wyłącz debugowanie bezprzewodowe i wróć do weryfikacji. Jeszcze nie gotowe.</string>
+    <string name="capture_network_recovery_title">Okno zgody sieciowej zniknęło?</string>
+    <string name="capture_wizard_developer_title">Przygotuj telefon</string>
+    <string name="capture_wizard_pair_title">Aktywuj nagrywanie</string>
+    <string name="capture_wizard_ready_title">Dokończ aktywację</string>
+    <string name="capture_wizard_intro">Ta zaawansowana konfiguracja tymczasowo używa debugowania bezprzewodowego. To nie jest zwykłe uprawnienie Androida do nagrywania. Prowadzimy krok po kroku.</string>
+    <string name="capture_wizard_privacy">Bez roota, kabla ani dodatkowej aplikacji. Parowanie zostaje na tym telefonie. Aktywacja nie rozpoczyna nagrywania.</string>
+    <string name="capture_wizard_developer">Połącz Wi-Fi. W razie potrzeby: Informacje o telefonie → Informacje o oprogramowaniu (Samsung) → dotknij siedem razy Numer kompilacji i potwierdź PIN.\n\nW Opcjach programistycznych włącz Debugowanie bezprzewodowe. Jeśli Android zapyta, wybierz Zezwól przed wyjściem; Zawsze zezwalaj nie jest wymagane. Wróć do dot.dialer.</string>
+    <string name="capture_wizard_pair">Otwórz parowanie i udziel wymaganych zgód. Android: Debugowanie bezprzewodowe → Paruj za pomocą kodu.\n\nZostaw kod otwarty. Rozwiń powiadomienia i dot.dialer, wpisz sześć cyfr w powiadomieniu i wyślij. Wróć i wybierz Aktywuj, jeśli dostępne.</string>
+    <string name="capture_wizard_reactivate">Połącz Wi-Fi i włącz Debugowanie bezprzewodowe. Zezwól na sieć, jeśli wymagane. Wróć i wybierz Aktywuj. Zapisane parowanie zostaje użyte; nowy kod tylko po cofnięciu zgody. Poczekaj na weryfikację.</string>
+    <string name="capture_wizard_ready">Podczas rozmowy: Więcej → Nagraj lub Nagraj i transkrybuj. Stop, koniec lub zawieszenie kończy nagranie. Aktywuj ponownie po restarcie. Pliki w Zapisanych nagraniach.</string>
+    <string name="capture_network_help">Wi-Fi potrzebne tylko do aktywacji i reaktywacji. Potem dźwięk działa bez Wi-Fi, danych komórkowych lub kabla. Transkrypcja i tłumaczenie wymagają Internetu, także komórkowego.</string>
+    <string name="capture_network_recovery">Otwórz Debugowanie bezprzewodowe, wyłącz i włącz ponownie. Zezwól na sieć przed zmianą aplikacji; stała zgoda jest opcjonalna. Wróć do dot.dialer i aktywuj, najpierw parując w razie potrzeby.</string>
+    <string name="capture_quiet_ready">Debugowanie bezprzewodowe wyłączone. Lokalne nagrywanie gotowe. Transkrypcja wymaga Internetu.</string>
+</resources>

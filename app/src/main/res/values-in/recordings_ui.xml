@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Aktifkan perekaman panggilan dan alat transkripsi.</string>
+    <string name="rec_ui_ready">Siap merekam</string>
+    <string name="rec_ui_activation">Perlu aktivasi</string>
+    <string name="rec_ui_capture_hint">Saat panggilan tersambung: Lainnya → Rekam atau Rekam dan transkripsikan.</string>
+    <string name="rec_ui_processing">Transkripsi dan terjemahan</string>
+    <string name="rec_ui_connection_ready">dot.dictate terhubung</string>
+    <string name="rec_ui_api_hint">Koneksi dan persyaratan diperiksa. Pemrosesan API diverifikasi saat audio diproses.</string>
+    <string name="rec_ui_output_hint">Digunakan oleh Rekam dan transkripsikan. Bahasa percakapan dideteksi otomatis.</string>
+    <string name="rec_ui_translation_hint">Terjemahkan transkrip baru secara otomatis. Pilih bahasa saat mengaktifkan opsi ini.</string>
+    <string name="rec_ui_automatic_hint">Transkripsikan rekaman yang baru disimpan secara otomatis.</string>
+    <string name="rec_ui_more">Opsi tambahan</string>
+    <string name="rec_ui_translation_title">Bahasa terjemahan otomatis</string>
+</resources>

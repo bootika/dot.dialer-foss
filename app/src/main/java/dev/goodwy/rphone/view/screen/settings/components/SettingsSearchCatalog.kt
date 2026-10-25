@@ -38,7 +38,8 @@ internal fun createSettingsSearchEntries(
     val language = LocalConfiguration.current.locales[0].language
     val entries = settingsOptions.filter { it.isAvailable(BuildConfig.FLAVOR, AndroidAutoIntegration.isAvailable()) }.map { option ->
         val category = stringResource(option.category)
-        val terms = settingsSearchTerms(option) + settingsMenuAliases(option) + settingsLabelAliases(option.id)
+        val terms = settingsSearchTerms(option) + settingsMenuAliases(option) + settingsLabelAliases(option.id) +
+            dev.goodwy.rphone.view.screen.settings.settingExplanations.filter { it.label == option.label }.map { context.getString(it.text) }
         SettingsSearchEntry(
             headline = stringResource(option.label),
             supporting = settingsBreadcrumb(option),

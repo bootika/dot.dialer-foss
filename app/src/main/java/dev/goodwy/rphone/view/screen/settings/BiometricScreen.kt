@@ -276,6 +276,7 @@ fun BiometricScreen(navigator: DestinationsNavigator, callActionsOnly: Boolean =
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+            item { SettingsHelpText(R.string.guide_auth) }
                 if (!callActionsOnly) item {
                     RillExpressiveCard {
                         RillSwitchListItem(
@@ -347,7 +348,7 @@ RillSwitchListItem(
                                     RillListItem(
                                 expandText = true,
                                         headline = stringResource(R.string.lock_timeout),
-                                        supporting = currentTimeoutLabel,
+                                        supporting = currentTimeoutLabel + "\n" + stringResource(R.string.guide_timeout),
                                         leadingIcon = Icons.Rounded.Timer,
                                         iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
                                         iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,

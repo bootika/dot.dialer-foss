@@ -65,6 +65,7 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
                         style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.testTag("plan-current"))
                     Text(stringResource(planSummary(effective)), style = MaterialTheme.typography.bodyMedium)
+                    SettingsHelpText(R.string.guide_plans)
                     if (effective > AppPlan.FREE && onGuides != null) {
                         TextButton(onClick = onGuides, modifier = Modifier.testTag("plan-guide-replay")) {
                             Text(stringResource(R.string.plan_guide_replay))

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Enregistrement des appels</string>
+    <string name="capture_reactivate">Réactiver l’enregistrement</string>
+    <string name="capture_activate">Activer</string>
+    <string name="capture_next">Suivant</string>
+    <string name="capture_wizard_done">Utiliser l’enregistrement</string>
+    <string name="capture_open_about">Ouvrir À propos du téléphone</string>
+    <string name="capture_open_developer">Ouvrir Options pour développeurs</string>
+    <string name="capture_open_wireless">Ouvrir Débogage sans fil</string>
+    <string name="capture_open_pairing">Ouvrir l’association</string>
+    <string name="capture_pair_manual">Problème avec la notification ?</string>
+    <string name="capture_connection_manual">Connexion introuvable ?</string>
+    <string name="capture_pair_again">Associer à nouveau ce téléphone</string>
+    <string name="capture_pair_port">Port d’association</string>
+    <string name="capture_connect_port">Port de connexion</string>
+    <string name="capture_pair_code">Code d’association à six chiffres</string>
+    <string name="capture_pair_title">Associer dot.dialer</string>
+    <string name="capture_android_required">L’activation sans câble nécessite Android 11 ou ultérieur.</string>
+    <string name="capture_code_error">Saisissez le code actuel à six chiffres et le bon port. Gardez la fenêtre Android ouverte.</string>
+    <string name="capture_pair_error">Association échouée. Ouvrez une nouvelle fenêtre Android et utilisez son nouveau code.</string>
+    <string name="capture_start_error">Activation échouée. Suivez l’aide réseau puis réessayez. Réassociez uniquement si Android a supprimé l’association.</string>
+    <string name="capture_wireless_pending">Désactivez Débogage sans fil puis revenez vérifier. Pas encore prêt.</string>
+    <string name="capture_network_recovery_title">La demande réseau a disparu ?</string>
+    <string name="capture_wizard_developer_title">Préparer le téléphone</string>
+    <string name="capture_wizard_pair_title">Activer l’enregistrement</string>
+    <string name="capture_wizard_ready_title">Finaliser l’activation</string>
+    <string name="capture_wizard_intro">Cette configuration avancée utilise temporairement le débogage sans fil. Ce n’est pas une autorisation Android ordinaire d’enregistrement. Nous vous guidons étape par étape.</string>
+    <string name="capture_wizard_privacy">Sans root, câble ni autre application. L’association reste sur ce téléphone. L’activation ne lance pas d’enregistrement.</string>
+    <string name="capture_wizard_developer">Connectez-vous au Wi-Fi. Si nécessaire : À propos du téléphone → Informations logiciel (Samsung) → touchez sept fois Numéro de version et confirmez le PIN.\n\nDans Options pour développeurs, activez Débogage sans fil. Si Android le demande, touchez Autoriser avant de quitter ; Toujours autoriser n’est pas nécessaire. Revenez dans dot.dialer.</string>
+    <string name="capture_wizard_pair">Ouvrez l’association et accordez les autorisations demandées. Dans Android : Débogage sans fil → Associer avec un code.\n\nGardez le code affiché. Déroulez les notifications, développez dot.dialer puis saisissez et envoyez les six chiffres dans sa notification. Revenez et touchez Activer si proposé.</string>
+    <string name="capture_wizard_reactivate">Connectez-vous au Wi-Fi, ouvrez et activez Débogage sans fil. Autorisez le réseau si demandé. Revenez et touchez Activer. L’association enregistrée est réutilisée ; nouveau code seulement si révoquée. Attendez la vérification finale.</string>
+    <string name="capture_wizard_ready">En appel connecté : Plus → Enregistrer ou Enregistrer et transcrire. Arrêter, fin d’appel ou attente coupe la capture. Réactivez après redémarrage. Retrouvez les fichiers dans Enregistrements sauvegardés.</string>
+    <string name="capture_network_help">Wi-Fi requis seulement pour activer ou réactiver. Ensuite l’audio fonctionne sans Wi-Fi, données mobiles ni câble. Transcription et traduction nécessitent Internet ; les données mobiles conviennent.</string>
+    <string name="capture_network_recovery">Ouvrez Débogage sans fil, désactivez puis réactivez. Touchez Autoriser dans la demande réseau avant de changer d’application ; Toujours autoriser est facultatif. Revenez dans dot.dialer pour activer, après association si nécessaire.</string>
+    <string name="capture_quiet_ready">Débogage sans fil désactivé. L’enregistrement local est prêt. La transcription nécessite Internet.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Activează înregistrarea apelurilor și instrumentele pentru transcriere.</string>
+    <string name="rec_ui_ready">Pregătit pentru înregistrare</string>
+    <string name="rec_ui_activation">Necesită activare</string>
+    <string name="rec_ui_capture_hint">Într-un apel conectat: Mai multe → Înregistrează sau Înregistrează și transcrie.</string>
+    <string name="rec_ui_processing">Transcriere și traducere</string>
+    <string name="rec_ui_connection_ready">dot.dictate este conectat</string>
+    <string name="rec_ui_api_hint">Conexiunea și cerințele sunt verificate. Procesarea API se verifică la procesarea audio.</string>
+    <string name="rec_ui_output_hint">Folosită de Înregistrează și transcrie. Limba vorbită este detectată automat.</string>
+    <string name="rec_ui_translation_hint">Tradu automat transcrierile noi. Alege limba traducerii când activezi opțiunea.</string>
+    <string name="rec_ui_automatic_hint">Transcrie automat înregistrările nou salvate.</string>
+    <string name="rec_ui_more">Opțiuni suplimentare</string>
+    <string name="rec_ui_translation_title">Limba traducerii automate</string>
+</resources>

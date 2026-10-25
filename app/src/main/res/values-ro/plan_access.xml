@@ -2,7 +2,7 @@
 <resources>
     <string name="plan_current">Plan curent: %1$s</string>
     <string name="plan_free_summary">Apeluri, contacte, căutare, favorite și backup de bază.</string>
-    <string name="plan_plus_summary">Contacts Optimizer complet la cerere, cu toate sursele disponibile și selecție în masă.</string>
+    <string name="plan_plus_summary">Optimizarea contactelor la cerere, cu toate sursele disponibile și selecție multiplă.</string>
     <string name="plan_premium_summary">Power Up, actualizări automate ale contactelor și personalizare vizuală avansată.</string>
     <plurals name="plan_trial_remaining">
         <item quantity="one">Trial Complete: %1$d zi rămasă</item>
@@ -10,9 +10,9 @@
         <item quantity="other">Trial Complete: %1$d de zile rămase</item>
     </plurals>
     <string name="plan_start_trial">Încearcă Complete gratuit 30 de zile</string>
-    <string name="plan_trial_terms">Fără taxare automată. Fotografiile existente rămân utilizabile după trial.</string>
-    <string name="plan_store_unavailable">Momentan indisponibil în acest store</string>
-    <string name="plan_connection_required">Conectează-te pentru verificarea planului sau pornirea trial-ului.</string>
+    <string name="plan_trial_terms">Fără taxare automată. Fotografiile existente rămân utilizabile după perioada de probă.</string>
+    <string name="plan_store_unavailable">Momentan indisponibil în acest magazin</string>
+    <string name="plan_connection_required">Conectează-te la internet pentru verificarea planului sau pornirea perioadei de probă.</string>
     <string name="plan_refresh">Actualizează planul</string>
     <string name="plan_lifetime">Pe viață</string>
     <string name="plan_restore">Restaurează achizițiile</string>
@@ -40,7 +40,7 @@
     <string name="plan_access_options">Ai deja acces?</string>
     <string name="plan_included">Inclus în planul tău</string>
     <string name="plan_upgrade_to">Treci la %1$s</string>
-    <string name="plan_base">După trial: %1$s</string>
+    <string name="plan_base">După perioada de probă: %1$s</string>
     <string name="plan_guide_title">Ghidul planului</string>
     <string name="plan_guide_replay">Revezi ghidul planului</string>
     <string name="plan_optimizer_guide_summary">Găsește fotografii mai bune pentru contacte și standardizează numerele. Verifică modificările înainte de aplicare.</string>
@@ -49,8 +49,9 @@
     <string name="plan_source_configured">Configurată</string>
     <string name="plan_source_setup">Configurează</string>
     <string name="plan_source_unavailable">Indisponibilă</string>
-    <string name="plan_guide_begin">Începe să folosești Dot Dialer</string>
+    <string name="plan_guide_begin">Începe să folosești dot.dialer</string>
     <string name="plan_activation_congratulations">Felicitări!</string>
     <string name="plan_activation_active">Planul tău %1$s este acum activ.</string>
     <string name="plan_activation_setup">Hai să-l configurăm pe gustul tău. În continuare, alegi setările care ți se potrivesc.</string>
+    <string name="plan_interface_magic">Magia interfeței</string>
 </resources>

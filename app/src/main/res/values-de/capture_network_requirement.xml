@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Mit WLAN verbinden und kabelloses Debugging in Android einschalten. Bei Nachfrage das Netzwerk zulassen, zurückkehren und Aktivieren wählen. Nur zur Aktivierung nötig; Debugging wird am Ende ausgeschaltet.</string>
+</resources>

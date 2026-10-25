@@ -12,21 +12,28 @@ internal object RecordingSyncEngine {
     private val lock=Mutex()
     suspend fun <T> mutate(block: suspend ()->T): T = lock.withLock {block()}
     suspend fun synchronize(repo: RecordingsRepository): Boolean = lock.withLock {
+        if(!repo.moduleEnabled())return@withLock false
         repo.awaitReady()
+        if(!repo.moduleEnabled())return@withLock false
         val jobs=repo.catalog.jobs().filter {it.state in setOf("queued","running","cancelling")}
         for(job in jobs) {
+            if(!repo.moduleEnabled())return@withLock false
             try {
                 if(job.state=="cancelling" || repo.catalog.recording(job.recordingId)==null) {
                     if(job.accepted || repo.bridge.trusted())repo.bridge.request(DictateProtocol.CANCEL,bundle(job))
                     repo.catalog.cancelled(job.id);repo.files.clearJob(job);repo.changed();continue
                 }
-                val capabilities=if(repo.integrationEnabled())repo.bridge.refresh()else repo.bridge.capabilities.value
+                val capabilities=if(repo.integrationEnabled())repo.refreshBridge()else repo.bridge.capabilities.value
+                if(!repo.moduleEnabled())return@withLock false
+                // A transient offline/authority outage pauses queued work; it is not a denial.
+                if(!capabilities.connected || capabilities.licenseState=="unavailable")return@withLock true
                 val access=repo.allowed(job.operation=="translate")
+                val speakerAllowed=!job.language.startsWith("@capture:") || capabilities.separateSpeakerChannels
                 val autoAllowed=!job.automatic || repo.plan()==AppPlan.PREMIUM &&
                     (if(job.operation=="translate")repo.translationLanguage()==job.language else repo.optedIn())
-                if(access!=RecordingAccess.READY || !autoAllowed || job.operation=="translate" && job.language !in capabilities.targetLanguages) {
+                if(access!=RecordingAccess.READY || !autoAllowed || !speakerAllowed || job.operation=="translate" && job.language !in capabilities.targetLanguages) {
                     if(job.accepted)repo.bridge.request(DictateProtocol.CANCEL,bundle(job))
-                    repo.catalog.update(job.id,"blocked",job.accepted,error=if(autoAllowed)access.name else "AUTOMATION_DISABLED")
+                    repo.catalog.update(job.id,"blocked",job.accepted,error=if(!speakerAllowed)"UPDATE_REQUIRED" else if(autoAllowed)access.name else "AUTOMATION_DISABLED")
                     repo.files.clearJob(job);repo.changed();continue
                 }
                 val reply=if(job.accepted)repo.bridge.request(DictateProtocol.STATUS,bundle(job)) else submit(repo,job)
@@ -45,10 +52,11 @@ internal object RecordingSyncEngine {
                 }
             } catch(error: Exception) {RecordingDiagnostics.failure("RecordingSyncEngine",error);repo.catalog.update(job.id,"failed",job.accepted,error="INVALID_RESPONSE");repo.files.clearJob(job);repo.changed()}
         }
-        repo.catalog.jobs().any {it.state in setOf("queued","running","cancelling")}
+        repo.moduleEnabled() && repo.catalog.jobs().any {it.state in setOf("queued","running","cancelling")}
     }
     private fun bundle(job: RecordingJob)=Bundle().apply {putString("jobId",job.id)}
     private suspend fun submit(repo: RecordingsRepository,job: RecordingJob): Bundle {
+        check(repo.moduleEnabled())
         val asset=repo.catalog.recording(job.recordingId) ?: error("Recording removed")
         require(RecordingPolicy.acceptedAudio(asset.bytes,asset.durationMs,asset.codecMime,repo.bridge.capabilities.value))
         val data=bundle(job).apply {
@@ -56,7 +64,10 @@ internal object RecordingSyncEngine {
             if(job.operation=="translate") {
                 val text=repo.catalog.texts(asset.id).single {it.id==job.sourceTextId && it.operation=="transcribe"}.text
                 putString("textUri",repo.files.grantText(job,text).toString());putString("targetLanguage",job.language)
-            } else putString("audioUri",repo.files.grantAudio(asset).toString())
+            } else {
+                putString("audioUri",repo.files.grantAudio(asset).toString())
+                if(job.language.startsWith("@capture:"))putString("channelMode","separate_speakers")
+            }
         }
         return try {
             repo.bridge.request(DictateProtocol.SUBMIT,data).also {

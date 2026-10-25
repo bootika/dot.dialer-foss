@@ -44,7 +44,7 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(24.dp)) {
             Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                 Text(tier.displayName, style=MaterialTheme.typography.labelLarge, color=MaterialTheme.colorScheme.primary)
-                Text(if(premium) stringResource(R.string.plan_interface_magic) else "Contacts Optimizer", style=MaterialTheme.typography.headlineMedium)
+                Text(stringResource(if(premium) R.string.plan_interface_magic else R.string.contact_photos_title), style=MaterialTheme.typography.headlineMedium)
                 Text(stringResource(if(premium) R.string.plan_premium_summary else R.string.plan_optimizer_guide_summary), style=MaterialTheme.typography.bodyLarge)
                 if(premium) {
                     DotSettingsCard {

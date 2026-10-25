@@ -9,7 +9,8 @@ import androidx.core.database.sqlite.transaction
 import java.util.UUID
 
 internal data class SavedRecording(val id: String, val title: String, val createdAt: Long,
-    val durationMs: Long, val bytes: Long, val fileName: String, val callKey: String, val mimeType: String, val codecMime: String = "")
+    val durationMs: Long, val bytes: Long, val fileName: String, val callKey: String, val mimeType: String, val codecMime: String = "",
+    val phoneNumber: String="", val contactKey: String="", val contactName: String="")
 internal data class SavedTranscript(val id: Long, val recordingId: String, val operation: String,
     val language: String, val text: String, val jobId: String)
 internal data class RecordingJob(val id: String, val recordingId: String, val operation: String,
@@ -17,20 +18,19 @@ internal data class RecordingJob(val id: String, val recordingId: String, val op
     val completedParts: Int, val totalParts: Int, val error: String, val automatic: Boolean)
 
 /** Separate credential-protected catalogue; no migration or mutation of the contact database. */
-internal class RecordingCatalog(context: Context) : SQLiteOpenHelper(context, "recordings.db", null, 2) {
+internal class RecordingCatalog(context: Context) : SQLiteOpenHelper(context, "recordings.db", null, 3) {
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("CREATE TABLE recordings(id TEXT PRIMARY KEY,title TEXT NOT NULL,createdAt INTEGER NOT NULL,durationMs INTEGER NOT NULL,bytes INTEGER NOT NULL,fileName TEXT NOT NULL,callKey TEXT NOT NULL,mimeType TEXT NOT NULL,codecMime TEXT NOT NULL)")
+        db.execSQL("CREATE TABLE recordings(id TEXT PRIMARY KEY,title TEXT NOT NULL,createdAt INTEGER NOT NULL,durationMs INTEGER NOT NULL,bytes INTEGER NOT NULL,fileName TEXT NOT NULL,callKey TEXT NOT NULL,mimeType TEXT NOT NULL,codecMime TEXT NOT NULL,phoneNumber TEXT NOT NULL DEFAULT '',contactKey TEXT NOT NULL DEFAULT '',contactName TEXT NOT NULL DEFAULT '')")
         db.execSQL("CREATE TABLE recording_texts(id INTEGER PRIMARY KEY AUTOINCREMENT,recordingId TEXT NOT NULL,operation TEXT NOT NULL,language TEXT NOT NULL,text TEXT NOT NULL,jobId TEXT NOT NULL UNIQUE)")
         db.execSQL("CREATE TABLE recording_jobs(id TEXT PRIMARY KEY,recordingId TEXT NOT NULL,operation TEXT NOT NULL,language TEXT NOT NULL,sourceTextId INTEGER NOT NULL,state TEXT NOT NULL,accepted INTEGER NOT NULL,completedParts INTEGER NOT NULL,totalParts INTEGER NOT NULL,error TEXT NOT NULL,automatic INTEGER NOT NULL)")
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        require(oldVersion==1 && newVersion==2)
-        val hasCodec=db.rawQuery("PRAGMA table_info(recordings)",null).use {cursor ->
-            var present=false
-            while(cursor.moveToNext())if(cursor.getString(cursor.getColumnIndexOrThrow("name"))=="codecMime")present=true
-            present
+        require(oldVersion in 1..2 && newVersion==3)
+        val columns=db.rawQuery("PRAGMA table_info(recordings)",null).use {cursor ->
+            buildSet {while(cursor.moveToNext())add(cursor.getString(cursor.getColumnIndexOrThrow("name")))}
         }
-        if(!hasCodec)db.execSQL("ALTER TABLE recordings ADD COLUMN codecMime TEXT NOT NULL DEFAULT ''")
+        for(column in listOf("codecMime","phoneNumber","contactKey","contactName"))
+            if(column !in columns)db.execSQL("ALTER TABLE recordings ADD COLUMN $column TEXT NOT NULL DEFAULT ''")
     }
     fun recordings(): List<SavedRecording> = readableDatabase.rawQuery("SELECT * FROM recordings ORDER BY createdAt DESC", null).use { c ->
         buildList { while (c.moveToNext()) add(c.recording()) }
@@ -42,10 +42,14 @@ internal class RecordingCatalog(context: Context) : SQLiteOpenHelper(context, "r
         writableDatabase.insertOrThrow("recordings", null, ContentValues().apply {
             put("id", recording.id); put("title", recording.title); put("createdAt", recording.createdAt)
             put("durationMs", recording.durationMs); put("bytes", recording.bytes); put("fileName", recording.fileName); put("callKey", recording.callKey);put("mimeType",recording.mimeType);put("codecMime",recording.codecMime)
+            put("phoneNumber",recording.phoneNumber);put("contactKey",recording.contactKey);put("contactName",recording.contactName)
         })
     }
     fun texts(id: String): List<SavedTranscript> = readableDatabase.rawQuery("SELECT * FROM recording_texts WHERE recordingId=? ORDER BY id", arrayOf(id)).use { c ->
         buildList { while(c.moveToNext()) add(SavedTranscript(c.long("id"), c.string("recordingId"),c.string("operation"),c.string("language"),c.string("text"),c.string("jobId"))) }
+    }
+    fun textCounts(): Map<String,Pair<Int,Int>> = readableDatabase.rawQuery("SELECT recordingId,SUM(CASE WHEN operation='transcribe' THEN 1 ELSE 0 END),SUM(CASE WHEN operation='translate' THEN 1 ELSE 0 END) FROM recording_texts GROUP BY recordingId",null).use { c ->
+        buildMap {while(c.moveToNext())put(c.getString(0),c.getInt(1) to c.getInt(2))}
     }
     fun jobs(): List<RecordingJob> = readableDatabase.rawQuery("SELECT * FROM recording_jobs ORDER BY rowid DESC", null).use { c -> buildList { while(c.moveToNext()) add(c.job()) } }
     fun job(id: String): RecordingJob? = readableDatabase.rawQuery("SELECT * FROM recording_jobs WHERE id=?", arrayOf(id)).use { if(it.moveToFirst()) it.job() else null }
@@ -75,9 +79,11 @@ internal class RecordingCatalog(context: Context) : SQLiteOpenHelper(context, "r
             if(recording(job.recordingId)==null || this@RecordingCatalog.job(job.id)?.state !in setOf("queued","running"))return@transaction false
             db.insertWithOnConflict("recording_texts",null,ContentValues().apply { put("recordingId",job.recordingId);put("operation",job.operation);put("language",language);put("text",text);put("jobId",job.id) },SQLiteDatabase.CONFLICT_IGNORE)
             update(job.id,"completed",true,job.completedParts,job.totalParts)
-            if(job.operation=="transcribe" && automaticLanguage.isNotEmpty()) {
+            val explicitOutput=job.language.startsWith("@output:") || job.language.startsWith("@capture:")
+            val target=if(explicitOutput)job.language.substringAfter(':') else automaticLanguage
+            if(job.operation=="transcribe" && target.isNotEmpty()) {
                 val source=texts(job.recordingId).single {it.jobId==job.id}
-                enqueue(job.recordingId,"translate",automaticLanguage,source.id,true)
+                enqueue(job.recordingId,"translate",target,source.id,!explicitOutput)
             }
             true
         }
@@ -89,7 +95,7 @@ internal class RecordingCatalog(context: Context) : SQLiteOpenHelper(context, "r
             db.delete("recording_texts","recordingId=?",arrayOf(id));db.delete("recordings","id=?",arrayOf(id))
         }
     }
-    private fun Cursor.recording() = SavedRecording(string("id"),string("title"),long("createdAt"),long("durationMs"),long("bytes"),string("fileName"),string("callKey"),string("mimeType"),string("codecMime"))
+    private fun Cursor.recording() = SavedRecording(string("id"),string("title"),long("createdAt"),long("durationMs"),long("bytes"),string("fileName"),string("callKey"),string("mimeType"),string("codecMime"),string("phoneNumber"),string("contactKey"),string("contactName"))
     private fun Cursor.job() = RecordingJob(string("id"),string("recordingId"),string("operation"),string("language"),long("sourceTextId"),string("state"),long("accepted")==1L,long("completedParts").toInt(),long("totalParts").toInt(),string("error"),long("automatic")==1L)
     private fun Cursor.string(key: String) = getString(getColumnIndexOrThrow(key))
     private fun Cursor.long(key: String) = getLong(getColumnIndexOrThrow(key))

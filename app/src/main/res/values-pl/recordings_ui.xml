@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Włącz nagrywanie rozmów i narzędzia transkrypcji.</string>
+    <string name="rec_ui_ready">Gotowe do nagrywania</string>
+    <string name="rec_ui_activation">Wymagana aktywacja</string>
+    <string name="rec_ui_capture_hint">Podczas połączonej rozmowy: Więcej → Nagrywaj lub Nagrywaj i transkrybuj.</string>
+    <string name="rec_ui_processing">Transkrypcja i tłumaczenie</string>
+    <string name="rec_ui_connection_ready">Połączono z dot.dictate</string>
+    <string name="rec_ui_api_hint">Połączenie i wymagania sprawdzone. Przetwarzanie API jest weryfikowane podczas przetwarzania dźwięku.</string>
+    <string name="rec_ui_output_hint">Używany przez Nagrywaj i transkrybuj. Język mówiony jest wykrywany automatycznie.</string>
+    <string name="rec_ui_translation_hint">Automatycznie tłumacz nowe transkrypcje. Wybierz język przy włączaniu tej opcji.</string>
+    <string name="rec_ui_automatic_hint">Automatycznie transkrybuj nowo zapisane nagrania.</string>
+    <string name="rec_ui_more">Dodatkowe opcje</string>
+    <string name="rec_ui_translation_title">Język automatycznego tłumaczenia</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Anrufaufzeichnung</string>
+    <string name="capture_reactivate">Aufzeichnung erneut aktivieren</string>
+    <string name="capture_activate">Aktivieren</string>
+    <string name="capture_next">Weiter</string>
+    <string name="capture_wizard_done">Aufzeichnung verwenden</string>
+    <string name="capture_open_about">Telefoninfo öffnen</string>
+    <string name="capture_open_developer">Entwickleroptionen öffnen</string>
+    <string name="capture_open_wireless">Kabelloses Debugging öffnen</string>
+    <string name="capture_open_pairing">Kopplung öffnen</string>
+    <string name="capture_pair_manual">Probleme mit der Benachrichtigung?</string>
+    <string name="capture_connection_manual">Verbindung nicht gefunden?</string>
+    <string name="capture_pair_again">Telefon erneut koppeln</string>
+    <string name="capture_pair_port">Kopplungsport</string>
+    <string name="capture_connect_port">Verbindungsport</string>
+    <string name="capture_pair_code">Sechsstelliger Kopplungscode</string>
+    <string name="capture_pair_title">dot.dialer koppeln</string>
+    <string name="capture_android_required">Aktivierung ohne Kabel benötigt Android 11 oder neuer.</string>
+    <string name="capture_code_error">Aktuellen sechsstelligen Code und gültigen Kopplungsport eingeben. Android-Codefenster geöffnet lassen.</string>
+    <string name="capture_pair_error">Kopplung fehlgeschlagen. Ein neues Android-Codefenster öffnen und den neuen Code verwenden.</string>
+    <string name="capture_start_error">Aktivierung fehlgeschlagen. Netzwerkhilfe öffnen und erneut aktivieren. Nur neu koppeln, wenn Android die Kopplung entfernt hat.</string>
+    <string name="capture_wireless_pending">Kabelloses Debugging ausschalten und zur Prüfung zurückkehren. Noch nicht bereit.</string>
+    <string name="capture_network_recovery_title">Ist der Netzwerkdialog verschwunden?</string>
+    <string name="capture_wizard_developer_title">Telefon vorbereiten</string>
+    <string name="capture_wizard_pair_title">Aufzeichnung aktivieren</string>
+    <string name="capture_wizard_ready_title">Aktivierung abschließen</string>
+    <string name="capture_wizard_intro">Diese erweiterte Einrichtung nutzt kurzzeitig kabelloses Debugging. Es ist keine gewöhnliche Android-Berechtigung zur Anrufaufzeichnung. Wir führen dich durch die Schritte.</string>
+    <string name="capture_wizard_privacy">Kein Root, Kabel oder zusätzliches Programm. Die Kopplung bleibt auf diesem Telefon. Aktivierung startet keine Aufnahme.</string>
+    <string name="capture_wizard_developer">Mit WLAN verbinden. Falls nötig: Telefoninfo → Softwareinformationen (Samsung) → siebenmal Buildnummer antippen; Telefon-PIN bestätigen.\n\nEntwickleroptionen → Kabelloses Debugging einschalten. Falls Android fragt, vor dem Verlassen Zulassen wählen; Immer zulassen ist nicht nötig. Zurück zu dot.dialer.</string>
+    <string name="capture_wizard_pair">Kopplung öffnen und angefragte Berechtigungen zulassen. In Android: Kabelloses Debugging → Gerät über Kopplungscode koppeln.\n\nCodefenster geöffnet lassen. Benachrichtigungen herunterziehen, dot.dialer erweitern und dort den sechsstelligen Code eingeben und senden. Danach zurückkehren und Aktivieren wählen, falls angeboten.</string>
+    <string name="capture_wizard_reactivate">Mit WLAN verbinden und kabelloses Debugging öffnen. Einschalten und gegebenenfalls Netzwerk zulassen. Zurückkehren und Aktivieren wählen. Die gespeicherte Kopplung wird wiederverwendet; nur bei Widerruf ist ein neuer Code nötig. Warte auf die Abschlussprüfung.</string>
+    <string name="capture_wizard_ready">Im verbundenen Anruf: Mehr → Aufnehmen oder Aufnehmen und transkribieren. Stopp, Anrufende oder Halten beendet die Aufnahme. Nach Telefonneustart erneut aktivieren. Dateien findest du unter Gespeicherte Aufnahmen.</string>
+    <string name="capture_network_help">WLAN ist nur zur Aktivierung oder Reaktivierung nötig. Danach funktioniert Audio ohne WLAN, Mobilfunkdaten oder Kabel. Transkription und Übersetzung brauchen Internet; Mobilfunkdaten reichen.</string>
+    <string name="capture_network_recovery">Kabelloses Debugging öffnen, aus- und wieder einschalten. Den Netzwerkdialog mit Zulassen bestätigen, bevor du die App wechselst. Immer zulassen ist optional. Danach zu dot.dialer zurück und aktivieren; zuerst koppeln, falls noch nicht geschehen.</string>
+    <string name="capture_quiet_ready">Kabelloses Debugging ist aus. Die lokale Aufnahme ist bereit. Transkription benötigt Internet.</string>
+</resources>

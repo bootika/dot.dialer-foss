@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Dyktuj wyszukiwanie mikrofonem. Rozpoznawanie Androida może wymagać Internetu. Zmienia wyszukiwanie bez dzwonienia.</string>
+    <string name="guide_fullscreen">Automatycznie otwiera połączenia przychodzące na ekranie rozmowy. Niezależne od zdjęć pełnoekranowych; obowiązują uprawnienia i ograniczenia Androida.</string>
+    <string name="guide_finish_work">Wyłączanie debugowania bezprzewodowego i sprawdzanie nagrywania. Poczekaj na potwierdzenie.</string>
+    <string name="guide_plans">Free zachowuje podstawowe rozmowy. Power Up dodaje narzędzia kontaktów i wydajności; Complete także automatyzację i zaawansowany wygląd. Test Complete przez 30 dni nie pobiera opłat automatycznie. Zdjęcia pozostają po wygaśnięciu. dot.dictate wymaga własnej licencji i klucza API.</string>
+    <string name="capture_pair_manual_help">Użyj podzielonego ekranu, aby zachować okno kodu Androida podczas wpisywania portu i kodu. Porty parowania i połączenia różnią się.</string>
+</resources>

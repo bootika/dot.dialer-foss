@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Diktiere Suchtext per Mikrofon. Die Android-Spracherkennung kann Internet benötigen. Ändert die Suche, ohne anzurufen.</string>
+    <string name="guide_fullscreen">Öffnet eingehende Anrufe automatisch im Anrufbildschirm. Unabhängig vom Vollbildfoto; Android-Berechtigungen und Einschränkungen gelten weiterhin.</string>
+    <string name="guide_finish_work">Kabelloses Debugging wird ausgeschaltet und die Aufnahme geprüft. Bitte Bestätigung abwarten.</string>
+    <string name="guide_plans">Free bietet grundlegende Anrufe. Power Up ergänzt Kontakt- und Anrufwerkzeuge; Complete enthält zusätzlich Automatisierung und erweiterte Gestaltung. Die 30-tägige Complete-Testphase kostet nicht automatisch Geld. Gespeicherte Kontaktfotos bleiben nach Ablauf nutzbar. dot.dictate benötigt eigene Lizenz und API-Schlüssel.</string>
+    <string name="capture_pair_manual_help">Nutze geteilten Bildschirm, damit das Android-Codefenster beim Eingeben von Port und Code offen bleibt. Kopplungs- und Verbindungsport unterscheiden sich.</string>
+</resources>

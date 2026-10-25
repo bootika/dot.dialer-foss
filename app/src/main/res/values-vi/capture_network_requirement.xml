@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Kết nối Wi-Fi và bật Gỡ lỗi không dây trong Android. Cho phép mạng nếu được hỏi, quay lại và chạm Kích hoạt. Chỉ cần khi kích hoạt; gỡ lỗi được tắt khi xong.</string>
+</resources>

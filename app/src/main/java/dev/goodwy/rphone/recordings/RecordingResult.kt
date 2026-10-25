@@ -12,7 +12,7 @@ internal data class RecordingResult(val text: String, val language: String) {
             require(text.isNotBlank() && text.toByteArray(Charsets.UTF_8).size<=DictateProtocol.RESULT_LIMIT)
             val language=result.optString("language").take(48)
             if(job.operation=="translate") require(language.isEmpty() || language.equals(job.language,true))
-            return RecordingResult(text,language.ifBlank {job.language})
+            return RecordingResult(text,language.ifBlank {if(job.operation=="translate")job.language else ""})
         }
     }
 }

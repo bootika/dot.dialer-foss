@@ -28,7 +28,7 @@ class RecordingSyncEngineTest {
     @After fun cleanup() {opened.forEach {it.catalog.close()};worker.cancel()}
     private fun repo(plan: AppPlan,bridge: FixtureBridge): RecordingsRepository {
         val manager=verifiedPlanFixture(context.packageName,plan,worker)
-        return RecordingsRepository(context,{manager},bridge,{true}).also {opened.add(it)}
+        return RecordingsRepository(context,{manager},bridge,{true},moduleState=MutableStateFlow(true)).also {opened.add(it)}
     }
     private fun asset(repo: RecordingsRepository): SavedRecording {
         val id=UUID.randomUUID().toString()
@@ -44,6 +44,16 @@ class RecordingSyncEngineTest {
         RecordingSyncEngine.synchronize(recovered)
         assertEquals(listOf(DictateProtocol.SUBMIT,DictateProtocol.STATUS),bridge.calls)
         assertEquals(1,recovered.catalog.recordings().size)
+    }
+    @Test fun unavailableAuthorityPausesQueuedWorkWithoutBlockingOrCancellingIt()=runBlocking {
+        val bridge=FixtureBridge();val repo=repo(AppPlan.PLUS,bridge);val asset=asset(repo)
+        val id=repo.catalog.enqueue(asset.id,"transcribe")
+        val valid=bridge.state.value
+        bridge.state.value=valid.copy(licenseState="unavailable")
+        assertTrue(RecordingSyncEngine.synchronize(repo))
+        assertEquals("queued",repo.catalog.job(id)?.state);assertTrue(bridge.calls.isEmpty())
+        bridge.state.value=valid;RecordingSyncEngine.synchronize(repo)
+        assertEquals(listOf(DictateProtocol.SUBMIT),bridge.calls)
     }
     @Test fun missingDictateKeyBlocksWorkWithoutTouchingSavedAssets()=runBlocking {
         val bridge=FixtureBridge();bridge.state.value=bridge.state.value.copy(apiKeyConfigured=false)
@@ -107,17 +117,42 @@ class RecordingSyncEngineTest {
         assertFalse(bridge.capabilities.value.connected);assertEquals("cancelled",repo.catalog.job(id)?.state)
         assertEquals(asset,repo.catalog.recordings().single());assertTrue(repo.files.audio(asset).exists())
     }
+    @Test fun separateSpeakerJobCannotSilentlyFallBackToOrdinaryTranscription()=runBlocking {
+        val bridge=FixtureBridge();val repo=repo(AppPlan.PLUS,bridge);val asset=asset(repo)
+        val id=repo.catalog.enqueue(asset.id,"transcribe","@capture:")
+        RecordingSyncEngine.synchronize(repo)
+        assertEquals("blocked",repo.catalog.job(id)?.state);assertEquals("UPDATE_REQUIRED",repo.catalog.job(id)?.error)
+        assertTrue(bridge.calls.isEmpty());assertTrue(repo.files.audio(asset).exists())
+        bridge.state.value=bridge.state.value.copy(separateSpeakerChannels=true);repo.catalog.retry(id)
+        RecordingSyncEngine.synchronize(repo)
+        assertEquals("separate_speakers",bridge.lastSubmit?.getString("channelMode"))
+        assertEquals("auto",bridge.lastSubmit?.getString("sourceLanguage"))
+        assertEquals("queued",repo.catalog.job(id)?.state);assertTrue(checkNotNull(repo.catalog.job(id)).accepted)
+    }
+    @Test fun masterOffPausesPendingWorkAndBlocksNewProcessingWithoutIpc()=runBlocking {
+        val bridge=FixtureBridge();val repo=repo(AppPlan.PLUS,bridge);val asset=asset(repo)
+        val id=repo.catalog.enqueue(asset.id,"transcribe")
+        val master=repo.moduleState as MutableStateFlow<Boolean>;master.value=false
+        assertFalse(RecordingSyncEngine.synchronize(repo));assertEquals(0,bridge.refreshCalls);assertTrue(bridge.calls.isEmpty())
+        assertEquals("queued",repo.catalog.job(id)?.state);assertEquals(1,repo.catalog.recordings().size)
+        assertTrue(runCatching {repo.queue(asset.id)}.isFailure);assertEquals(0,bridge.refreshCalls)
+        master.value=true;RecordingSyncEngine.synchronize(repo)
+        assertTrue(bridge.calls.contains(DictateProtocol.SUBMIT));assertTrue(bridge.refreshCalls>0)
+    }
     class FixtureBridge : DictateBridge {
         val state=MutableStateFlow(DictateCapabilities(true,"valid",true,true,true,268435456,14400,maxChunkBytes=8388608,maxChunkSeconds=300))
         override val capabilities=state.asStateFlow()
         val calls=mutableListOf<Int>();var wrongJob=false;var failure: String?=null
+        var lastSubmit: Bundle?=null
         override fun installed()=true
         override fun setupIntent()=Intent()
         override suspend fun approveSetup()=Unit
         override fun trusted()=true
         override suspend fun disconnect() {state.value=DictateCapabilities()}
-        override suspend fun refresh()=state.value
+        var refreshCalls=0
+        override suspend fun refresh()=state.value.also {refreshCalls++}
         override suspend fun request(what: Int,extras: Bundle): Bundle {
+            if(what==DictateProtocol.SUBMIT)lastSubmit=Bundle(extras)
             calls.add(what)
             failure?.let {throw DictateFailure(it)}
             return Bundle().apply {putInt("protocolVersion",1);putBoolean("ok",true)

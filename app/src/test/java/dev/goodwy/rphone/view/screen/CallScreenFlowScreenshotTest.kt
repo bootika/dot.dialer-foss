@@ -247,7 +247,9 @@ class CallScreenFlowScreenshotTest {
             val current = scenario.value
             val audioSnapshot by repository.audioState.collectAsState()
             key(current.id) {
-                CompositionLocalProvider(LocalDensity provides Density(1f, current.fontScale)) {
+                CompositionLocalProvider(LocalDensity provides Density(1f, current.fontScale),
+                    dev.goodwy.rphone.view.screen.recordings.LocalCallCapturePresentation provides
+                        (if(current.recording)dev.goodwy.rphone.recordings.CallCaptureState("fixture","recording",18000) to {} else null)) {
                 DotDialerTheme(systemDark = current.darkTheme) {
                     val sharedBackdrop = rememberLayerBackdrop()
                     CompositionLocalProvider(LocalLiquidGlassBackdrop provides sharedBackdrop) {
@@ -283,6 +285,14 @@ class CallScreenFlowScreenshotTest {
             }
         }
         val scenarios = listOf(
+            Scenario("capture-circle-light",Call.STATE_ACTIVE,withPhoto=true,recording=true),
+            Scenario("capture-circle-dark",Call.STATE_ACTIVE,withPhoto=true,recording=true,darkTheme=true),
+            Scenario("capture-full-light",Call.STATE_ACTIVE,withPhoto=true,fullPhoto=true,recording=true),
+            Scenario("capture-full-dark",Call.STATE_ACTIVE,withPhoto=true,fullPhoto=true,recording=true,darkTheme=true),
+            Scenario("capture-circle-light-large",Call.STATE_ACTIVE,withPhoto=true,recording=true,fontScale=1.5f),
+            Scenario("capture-circle-dark-large",Call.STATE_ACTIVE,withPhoto=true,recording=true,darkTheme=true,fontScale=1.5f),
+            Scenario("capture-full-light-large",Call.STATE_ACTIVE,withPhoto=true,fullPhoto=true,recording=true,fontScale=1.5f),
+            Scenario("capture-full-dark-large",Call.STATE_ACTIVE,withPhoto=true,fullPhoto=true,recording=true,darkTheme=true,fontScale=1.5f),
             Scenario("77-default-grid-photo", Call.STATE_RINGING, incomingMode = 10, withPhoto = true, fullPhoto = true),
             Scenario("78-default-grid-font150", Call.STATE_RINGING, incomingMode = 10, fontScale = 1.5f),
             Scenario("79-default-grid-dark", Call.STATE_RINGING, incomingMode = 10, darkTheme = true),
@@ -358,12 +368,22 @@ class CallScreenFlowScreenshotTest {
             Scenario("68-secondary-hour-font150", Call.STATE_ACTIVE, otherState = Call.STATE_HOLDING, fontScale = 1.5f, secondaryDurationMillis = 3_605_000),
             Scenario("69-secondary-unknown-time", Call.STATE_RINGING, otherState = Call.STATE_ACTIVE, secondaryDurationMillis = 0),
             Scenario("70-conference-on-hold", Call.STATE_HOLDING, participants = 3),
-        ).filter { !it.referencePhoto || referencePhotoFixture != null }
+        ).filter { !it.referencePhoto || referencePhotoFixture != null }.filter {System.getProperty("captureVisualOnly")!="true" || it.recording}
         val stableConnectionPortraits = mutableMapOf<String, androidx.compose.ui.geometry.Rect>()
         scenarios.forEach { current ->
             present(current)
             rule.mainClock.advanceTimeBy(650)
             rule.waitForIdle()
+            if(current.recording) {
+                rule.onNodeWithTag("capture-stop").assertIsDisplayed()
+                rule.onNodeWithText("Recording · 0:18").assertIsDisplayed()
+                val shield=rule.onNodeWithTag("capture-indicator").fetchSemanticsNode().boundsInRoot
+                val controls=rule.onNodeWithTag("callActionControls",useUnmergedTree=true).fetchSemanticsNode().boundsInRoot
+                org.junit.Assert.assertTrue("Recording above controls: ${current.id}",shield.bottom<=controls.top+1)
+                org.junit.Assert.assertTrue("Recording in window: ${current.id}",shield.top>=0 && shield.bottom<800)
+                capture(current.id)
+                return@forEach
+            }
             assertSquareActionGrid(current.id)
             if (current.state == Call.STATE_RINGING &&
                 current.incomingMode == PreferenceManager.INCOMING_CALL_UI_DEFAULT_SWIPE) {
@@ -538,6 +558,7 @@ class CallScreenFlowScreenshotTest {
                 capture("39-conference-large-font-scrolled")
             }
         }
+        if(System.getProperty("captureVisualOnly")=="true")return
         val dialingPortrait = requireNotNull(stableConnectionPortraits["08-dialing"])
         stableConnectionPortraits.forEach { (state, portrait) ->
             org.junit.Assert.assertEquals("Avatar center must stay fixed while timer appears: $state", dialingPortrait.center.y, portrait.center.y, 1f)
@@ -1427,6 +1448,7 @@ class CallScreenFlowScreenshotTest {
         val neutralPhoto: Boolean = false,
         val participantPhotos: Boolean = false,
         val referenceComposition: Boolean = false,
+        val recording: Boolean = false,
         val secondaryDurationMillis: Long = 114_000,
     )
 

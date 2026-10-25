@@ -65,7 +65,33 @@ class RecordingCatalogTest {
         catalog=RecordingCatalog(ApplicationProvider.getApplicationContext())
         assertEquals(recording,catalog.recordings().single())
         assertEquals("Discutie de test.",catalog.texts(recording.id).single().text)
-        assertEquals(2,catalog.readableDatabase.version)
+        assertEquals(3,catalog.readableDatabase.version)
+    }
+    @Test fun versionTwoMigrationRetainsAudioIdentityJobsAndOriginalTexts() {
+        val recording=asset();val job=catalog.enqueue(recording.id,"transcribe")
+        catalog.complete(requireNotNull(catalog.job(job)),"Discutie de test.","ro")
+        for(column in listOf("phoneNumber","contactKey","contactName"))catalog.writableDatabase.execSQL("ALTER TABLE recordings DROP COLUMN $column")
+        catalog.writableDatabase.version=2;catalog.close()
+        catalog=RecordingCatalog(ApplicationProvider.getApplicationContext())
+        assertEquals(recording,catalog.recordings().single())
+        assertEquals("Discutie de test.",catalog.texts(recording.id).single().text)
+        assertEquals("completed",catalog.job(job)?.state)
+        assertEquals(1 to 0,catalog.textCounts()[recording.id])
+    }
+    @Test fun groupsUseContactIdentityThenNumbersAndNewestDatesWithoutMergingNames() {
+        val base=asset()
+        val a=base.copy(id=UUID.randomUUID().toString(),createdAt=4000,phoneNumber="+40720000001",contactKey="person-a",contactName="Test Alexandru Butica")
+        val b=a.copy(id=UUID.randomUUID().toString(),createdAt=2000,phoneNumber="+40720000002")
+        val c=a.copy(id=UUID.randomUUID().toString(),createdAt=3000,contactKey="person-b")
+        val d=a.copy(id=UUID.randomUUID().toString(),createdAt=5000,phoneNumber="+40720000003",contactKey="",contactName="")
+        val groups=groupRecordings(listOf(b,base,c,a,d))
+        assertEquals(listOf("number:+40720000003","contact:person-a","contact:person-b","legacy:${base.id}"),groups.map{it.key})
+        assertEquals(listOf(a.phoneNumber,b.phoneNumber),groups[1].numbers.map{it.number})
+        assertEquals(base,groups.last().numbers.single().assets.single())
+        assertEquals(2,groups.count{it.title=="Test Alexandru Butica" && it.key.startsWith("contact:")})
+        val renamed=groupRecordings(listOf(a,b),mapOf(a.phoneNumber to RecordingContactIdentity(a.phoneNumber,"person-a","Nume actual"),b.phoneNumber to RecordingContactIdentity(b.phoneNumber,"person-a","Nume actual")))
+        assertEquals("Nume actual",renamed.single().title)
+        assertEquals(a,renamed.single().numbers.first().assets.single())
     }
     @Test fun acceptedReplyNeverLosesCancellationAndTranslationChainIsDurable() {
         val recording=asset();val cancelled=catalog.enqueue(recording.id,"transcribe")

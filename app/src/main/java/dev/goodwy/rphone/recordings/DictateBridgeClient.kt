@@ -136,7 +136,7 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
             if (license !in setOf("valid", "required", "unavailable")) throw DictateFailure("INVALID_CAPABILITIES")
             return DictateCapabilities(true, license, reply.getBoolean("apiKeyConfigured"),
                 reply.getBoolean("supportsTranscription"), reply.getBoolean("supportsTranslation"),
-                reply.getLong("maxInputBytes"), reply.getLong("maxInputSeconds"), reply.getStringArrayList("targetLanguages").orEmpty().filter {it.matches(Regex("[A-Za-z]{2,8}(-[A-Za-z0-9]{2,8})*"))}.distinct(),reply.getLong("maxChunkBytes"),reply.getInt("maxChunkSeconds").toLong(),reply.getStringArrayList("segmentedAudioMimeTypes").orEmpty()).also { mutable.value = it }
+                reply.getLong("maxInputBytes"), reply.getLong("maxInputSeconds"), reply.getStringArrayList("targetLanguages").orEmpty().filter {it.matches(Regex("[A-Za-z]{2,8}(-[A-Za-z0-9]{2,8})*"))}.distinct(),reply.getLong("maxChunkBytes"),reply.getInt("maxChunkSeconds").toLong(),reply.getStringArrayList("segmentedAudioMimeTypes").orEmpty(),reply.getBoolean("supportsSeparateSpeakerChannels")).also { mutable.value = it }
         } catch (error: Exception) { mutable.value = DictateCapabilities(); throw error }
     }
 }

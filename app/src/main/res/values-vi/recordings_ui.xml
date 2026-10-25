@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Bật ghi âm cuộc gọi và công cụ chép lời.</string>
+    <string name="rec_ui_ready">Sẵn sàng ghi âm</string>
+    <string name="rec_ui_activation">Cần kích hoạt</string>
+    <string name="rec_ui_capture_hint">Trong cuộc gọi đã kết nối: Thêm → Ghi âm hoặc Ghi âm và chép lời.</string>
+    <string name="rec_ui_processing">Chép lời và dịch</string>
+    <string name="rec_ui_connection_ready">Đã kết nối dot.dictate</string>
+    <string name="rec_ui_api_hint">Đã kiểm tra kết nối và yêu cầu. Xử lý API được xác minh khi xử lý âm thanh.</string>
+    <string name="rec_ui_output_hint">Dùng cho Ghi âm và chép lời. Ngôn ngữ nói được tự động phát hiện.</string>
+    <string name="rec_ui_translation_hint">Tự động dịch bản chép lời mới. Chọn ngôn ngữ dịch khi bật tùy chọn này.</string>
+    <string name="rec_ui_automatic_hint">Tự động chép lời các bản ghi âm mới lưu.</string>
+    <string name="rec_ui_more">Tùy chọn bổ sung</string>
+    <string name="rec_ui_translation_title">Ngôn ngữ dịch tự động</string>
+</resources>

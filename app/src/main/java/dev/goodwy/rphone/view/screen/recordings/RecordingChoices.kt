@@ -19,7 +19,8 @@ import java.util.Locale
 @Composable
 internal fun RecordingLanguageDialog(codes: List<String>,onDismiss: ()->Unit,choose: (String)->Unit) {
     val display=LocalConfiguration.current.locales[0]
-    val languages=remember(display,codes) {codes.map {it to Locale.forLanguageTag(it).getDisplayName(display)}.sortedBy {it.second}}
+    val original=stringResource(R.string.capture_original_language)
+    val languages=remember(display,codes,original) {codes.map {it to if(it.isEmpty())original else Locale.forLanguageTag(it).getDisplayName(display)}.sortedBy {it.second}}
     AlertDialog(onDismissRequest=onDismiss,title={Text(stringResource(R.string.recordings_language))},text={
         LazyColumn(Modifier.fillMaxWidth().heightIn(max=360.dp)) {items(languages,key={it.first}) {language ->
             TextButton(onClick={choose(language.first)},modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {Text(language.second,style=MaterialTheme.typography.bodyLarge)}
@@ -35,5 +36,6 @@ internal fun RecordingJobStatus(job: RecordingJob) {
         else->R.string.recordings_job_failed
     }
     Text(stringResource(label),style=MaterialTheme.typography.bodyMedium)
+    if(job.error=="INPUT_TOO_LARGE")Text(stringResource(R.string.capture_transcript_limit),style=MaterialTheme.typography.bodyMedium)
     RecordingPolicy.progress(job.completedParts,job.totalParts)?.let {Text(pluralStringResource(R.plurals.recordings_parts,it.second,it.first,it.second),style=MaterialTheme.typography.labelLarge)}
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Detta la ricerca col microfono. Il riconoscimento Android può richiedere Internet. Cambia la ricerca senza chiamare.</string>
+    <string name="guide_fullscreen">Apre automaticamente le chiamate in arrivo nella schermata chiamata. Separato dalle foto a tutto schermo; restano validi permessi e limiti Android.</string>
+    <string name="guide_finish_work">Disattivazione Debug wireless e verifica registrazione. Attendi conferma.</string>
+    <string name="guide_plans">Free mantiene le chiamate essenziali. Power Up aggiunge strumenti per contatti e produttività; Complete include automazioni e aspetto avanzato. La prova Complete di 30 giorni non addebita automaticamente. Le foto salvate restano utilizzabili dopo la scadenza. dot.dictate richiede licenza e chiave API proprie.</string>
+    <string name="capture_pair_manual_help">Usa schermo diviso per mantenere aperto il codice Android inserendo qui porta e codice. Porta associazione e connessione sono diverse.</string>
+</resources>

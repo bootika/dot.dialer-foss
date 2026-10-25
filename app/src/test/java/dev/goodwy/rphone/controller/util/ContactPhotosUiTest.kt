@@ -464,8 +464,12 @@ class ContactPhotosUiTest {
         rule.onNodeWithTag("contactFindAction-google").performScrollTo().assertIsEnabled()
         rule.waitForIdle()
         rule.onNodeWithTag("contactFindAction-google").performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.OnClick) { it() }
-        rule.waitUntil(10_000) { !processor.profiles.settings(account).googleAuthorized &&
-            processor.profiles.result(account).outcome == "consent_required" }
+        try {
+            rule.waitUntil(10_000) { !processor.profiles.settings(account).googleAuthorized &&
+                processor.profiles.result(account).outcome == "consent_required" }
+        } catch(error: androidx.compose.ui.test.ComposeTimeoutException) {
+            throw AssertionError("Google reconnect state: authorized=${processor.profiles.settings(account).googleAuthorized}, outcome=${processor.profiles.result(account).outcome}, requests=$authorizationRequests, selected=${processor.currentAccount()}, enabled=${prefs.getBoolean(GoogleContactPhotoPreferences.ENABLED,false)}",error)
+        }
         rule.onNodeWithTag("contactGoogleConnect").performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("contactFindAction-google").assertIsNotEnabled()
         assertTrue(processor.profiles.settings(account).google)

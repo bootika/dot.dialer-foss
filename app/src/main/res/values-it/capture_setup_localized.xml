@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Registrazione chiamate</string>
+    <string name="capture_reactivate">Riattiva registrazione</string>
+    <string name="capture_activate">Attiva</string>
+    <string name="capture_next">Avanti</string>
+    <string name="capture_wizard_done">Usa la registrazione</string>
+    <string name="capture_open_about">Apri Informazioni sul telefono</string>
+    <string name="capture_open_developer">Apri Opzioni sviluppatore</string>
+    <string name="capture_open_wireless">Apri Debug wireless</string>
+    <string name="capture_open_pairing">Apri associazione</string>
+    <string name="capture_pair_manual">Problemi con la notifica?</string>
+    <string name="capture_connection_manual">Connessione non trovata?</string>
+    <string name="capture_pair_again">Associa di nuovo il telefono</string>
+    <string name="capture_pair_port">Porta associazione</string>
+    <string name="capture_connect_port">Porta connessione</string>
+    <string name="capture_pair_code">Codice associazione a sei cifre</string>
+    <string name="capture_pair_title">Associa dot.dialer</string>
+    <string name="capture_android_required">L’attivazione senza cavo richiede Android 11 o successivo.</string>
+    <string name="capture_code_error">Inserisci il codice attuale a sei cifre e la porta corretta. Lascia aperta la finestra Android.</string>
+    <string name="capture_pair_error">Associazione non riuscita. Apri una nuova finestra Android e usa il nuovo codice.</string>
+    <string name="capture_start_error">Attivazione non riuscita. Segui l’aiuto rete e riprova. Riassocia solo se Android ha rimosso l’associazione.</string>
+    <string name="capture_wireless_pending">Spegni Debug wireless e torna per verificare. Non ancora pronto.</string>
+    <string name="capture_network_recovery_title">La richiesta di rete è scomparsa?</string>
+    <string name="capture_wizard_developer_title">Prepara il telefono</string>
+    <string name="capture_wizard_pair_title">Attiva la registrazione</string>
+    <string name="capture_wizard_ready_title">Completa l’attivazione</string>
+    <string name="capture_wizard_intro">Questa configurazione avanzata usa temporaneamente Debug wireless. Non è un normale permesso Android di registrazione chiamate. Ti guidiamo passo passo.</string>
+    <string name="capture_wizard_privacy">Niente root, cavo o altre app. L’associazione resta su questo telefono. L’attivazione non avvia registrazioni.</string>
+    <string name="capture_wizard_developer">Connetti il Wi-Fi. Se necessario: Informazioni sul telefono → Informazioni software (Samsung) → tocca sette volte Numero build e conferma il PIN.\n\nIn Opzioni sviluppatore attiva Debug wireless. Se Android chiede, tocca Consenti prima di uscire; Consenti sempre non è necessario. Torna a dot.dialer.</string>
+    <string name="capture_wizard_pair">Apri associazione e concedi i permessi richiesti. In Android: Debug wireless → Associa tramite codice.\n\nLascia aperto il codice. Apri le notifiche, espandi dot.dialer e inserisci e invia le sei cifre nella notifica. Torna e tocca Attiva se proposto.</string>
+    <string name="capture_wizard_reactivate">Connetti il Wi-Fi, apri e attiva Debug wireless. Consenti la rete se richiesto. Torna e tocca Attiva. L’associazione salvata viene riutilizzata; codice nuovo solo se revocata. Attendi la verifica finale.</string>
+    <string name="capture_wizard_ready">In chiamata connessa: Altro → Registra o Registra e trascrivi. Stop, fine o attesa ferma la cattura. Riattiva dopo il riavvio. File in Registrazioni salvate.</string>
+    <string name="capture_network_help">Wi-Fi necessario solo per attivare o riattivare. Poi l’audio funziona senza Wi-Fi, dati mobili o cavo. Trascrizione e traduzione richiedono Internet; vanno bene i dati mobili.</string>
+    <string name="capture_network_recovery">Apri Debug wireless, spegni e riaccendi. Tocca Consenti nella richiesta rete prima di cambiare app; Consenti sempre è facoltativo. Torna a dot.dialer e attiva, associando prima se necessario.</string>
+    <string name="capture_quiet_ready">Debug wireless spento. Registrazione locale pronta. La trascrizione richiede Internet.</string>
+</resources>

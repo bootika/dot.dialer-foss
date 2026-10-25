@@ -104,7 +104,7 @@ internal fun DotSettingsDivider() {
 }
 
 @Composable
-internal fun DotSettingsSwitchRow(
+private fun DotSettingsSwitchRowControl(
     title: String,
     supporting: String? = null,
     checked: Boolean,
@@ -319,7 +319,7 @@ private fun <T> DotSettingsInlineSelector(
 }
 
 @Composable
-internal fun DotSettingsChoiceRow(
+private fun DotSettingsChoiceRowControl(
     title: String,
     value: String,
     choices: List<Pair<String, Int>>,
@@ -390,7 +390,7 @@ internal fun DotSettingsChoiceRow(
 }
 
 @Composable
-internal fun DotSettingsStringChoiceRow(
+private fun DotSettingsStringChoiceRowControl(
     title: String,
     value: String,
     choices: List<Pair<String, String>>,
@@ -480,5 +480,49 @@ internal fun DotSettingsStringChoiceRow(
                 }
             },
         )
+    }
+}
+
+@Composable
+internal fun DotSettingsSwitchRow(
+    title: String,
+    supporting: String? = null,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    contentActive: Boolean = true,
+) {
+    Column {
+        DotSettingsSwitchRowControl(title = title, supporting = supporting, checked = checked, onCheckedChange = onCheckedChange, enabled = enabled, contentActive = contentActive)
+        SettingsExplanation(title)
+    }
+}
+
+@Composable
+internal fun DotSettingsChoiceRow(
+    title: String,
+    value: String,
+    choices: List<Pair<String, Int>>,
+    selectedValue: Int,
+    onValueChange: (Int) -> Unit,
+    mutedValues: Set<Int> = emptySet(),
+) {
+    Column {
+        DotSettingsChoiceRowControl(title = title, value = value, choices = choices, selectedValue = selectedValue, onValueChange = onValueChange, mutedValues = mutedValues)
+        SettingsExplanation(title)
+    }
+}
+
+@Composable
+internal fun DotSettingsStringChoiceRow(
+    title: String,
+    value: String,
+    choices: List<Pair<String, String>>,
+    selectedValue: String,
+    onValueChange: (String) -> Unit,
+) {
+    Column {
+        DotSettingsStringChoiceRowControl(title = title, value = value, choices = choices, selectedValue = selectedValue, onValueChange = onValueChange)
+        SettingsExplanation(title)
     }
 }

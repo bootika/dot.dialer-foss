@@ -23,11 +23,16 @@ enum class ContactPhotoApplyResult { STARTED, SUCCESS, NO_ACCOUNT, QUEUE_MISSING
 
 enum class DiagnosticPresence { PRESENT, ABSENT, UNAVAILABLE }
 enum class DiagnosticNumberForm { INTERNATIONAL_PLUS, INTERNATIONAL_PREFIX, NATIONAL, OTHER, HIDDEN, UNKNOWN }
+enum class DialNumberStage { INTENT_RECEIVED, INTENT_NORMALIZED, NAVIGATION, DIALPAD_INITIALIZED, BEFORE_NORMALIZATION, AFTER_NORMALIZATION }
+
 enum class DiagnosticCallService { SYSTEM_TELEPHONY, WHATSAPP, WHATSAPP_BUSINESS, OTHER, UNKNOWN }
 enum class DiagnosticBluetoothProfile { ADAPTER, HFP, HFP_AUDIO, A2DP }
 
 /** No fields capable of carrying contact identities, URIs, account names, device names or images. */
 sealed interface DiagnosticDetail {
+    data class DialNumber(val stage: DialNumberStage, val form: DiagnosticNumberForm, val changed: Boolean) : DiagnosticDetail {
+        override val level = DiagnosticLevel.NORMAL
+    }
     val level: DiagnosticLevel
     data class CallIdentity(val session: Int, val phase: Int, val direction: Int,
         val numberForm: DiagnosticNumberForm, val addressType: Int, val handlePresentation: Int,
@@ -73,6 +78,7 @@ sealed interface DiagnosticDetail {
 
 object DiagnosticDetailFormatter {
     fun format(event: DiagnosticDetail): String = when (event) {
+        is DiagnosticDetail.DialNumber -> "dial_number | stage=${event.stage} | form=${event.form} | changed=${event.changed}"
         is DiagnosticDetail.CallIdentity -> "call_identity | session=call-${event.session} | phase=${event.phase}" +
             " | direction=${event.direction} | number_form=${event.numberForm} | address_type=${event.addressType}" +
             " | handle_presentation=${event.handlePresentation} | caller_presentation=${event.callerPresentation}" +

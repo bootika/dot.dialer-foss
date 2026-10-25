@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Enable call recording and transcript tools.</string>
+    <string name="rec_ui_ready">Ready to record</string>
+    <string name="rec_ui_activation">Activation required</string>
+    <string name="rec_ui_capture_hint">During a connected call: More → Record or Record &amp; transcribe.</string>
+    <string name="rec_ui_processing">Transcription &amp; translation</string>
+    <string name="rec_ui_connection_ready">dot.dictate is connected</string>
+    <string name="rec_ui_api_hint">Connection and requirements checked. API processing is verified when audio is processed.</string>
+    <string name="rec_ui_output_hint">Used by Record &amp; transcribe. The spoken language is detected automatically.</string>
+    <string name="rec_ui_translation_hint">Translate new transcripts automatically. Choose the translation language when enabling this option.</string>
+    <string name="rec_ui_automatic_hint">Automatically transcribe newly saved recordings.</string>
+    <string name="rec_ui_more">Additional options</string>
+    <string name="rec_ui_translation_title">Automatic translation language</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Ghi âm cuộc gọi</string>
+    <string name="capture_reactivate">Kích hoạt lại ghi âm</string>
+    <string name="capture_activate">Kích hoạt</string>
+    <string name="capture_next">Tiếp theo</string>
+    <string name="capture_wizard_done">Bắt đầu dùng ghi âm</string>
+    <string name="capture_open_about">Mở Giới thiệu điện thoại</string>
+    <string name="capture_open_developer">Mở Tùy chọn nhà phát triển</string>
+    <string name="capture_open_wireless">Mở Gỡ lỗi không dây</string>
+    <string name="capture_open_pairing">Mở ghép đôi</string>
+    <string name="capture_pair_manual">Gặp vấn đề với thông báo?</string>
+    <string name="capture_connection_manual">Không tìm thấy kết nối?</string>
+    <string name="capture_pair_again">Ghép đôi lại điện thoại</string>
+    <string name="capture_pair_port">Cổng ghép đôi</string>
+    <string name="capture_connect_port">Cổng kết nối</string>
+    <string name="capture_pair_code">Mã ghép đôi sáu chữ số</string>
+    <string name="capture_pair_title">Ghép đôi dot.dialer</string>
+    <string name="capture_android_required">Kích hoạt không dây cần Android 11 trở lên.</string>
+    <string name="capture_code_error">Nhập mã sáu chữ số hiện tại và đúng cổng ghép đôi. Giữ hộp thoại Android mở.</string>
+    <string name="capture_pair_error">Ghép đôi chưa xong. Mở hộp thoại Android mới và dùng mã mới.</string>
+    <string name="capture_start_error">Không kích hoạt được. Làm theo trợ giúp mạng rồi thử lại. Chỉ ghép lại nếu Android đã xóa ghép đôi.</string>
+    <string name="capture_wireless_pending">Tắt Gỡ lỗi không dây rồi quay lại kiểm tra. Chưa sẵn sàng.</string>
+    <string name="capture_network_recovery_title">Hộp thoại cho phép mạng biến mất?</string>
+    <string name="capture_wizard_developer_title">Chuẩn bị điện thoại</string>
+    <string name="capture_wizard_pair_title">Kích hoạt ghi âm</string>
+    <string name="capture_wizard_ready_title">Hoàn tất kích hoạt</string>
+    <string name="capture_wizard_intro">Thiết lập nâng cao này tạm dùng Gỡ lỗi không dây. Đây không phải quyền ghi âm cuộc gọi Android thông thường. Chúng tôi hướng dẫn từng bước.</string>
+    <string name="capture_wizard_privacy">Không root, cáp hay ứng dụng khác. Ghép đôi chỉ lưu trên điện thoại này. Kích hoạt không bắt đầu ghi âm.</string>
+    <string name="capture_wizard_developer">Kết nối Wi-Fi. Nếu cần: Giới thiệu điện thoại → Thông tin phần mềm (Samsung) → chạm Số bản dựng bảy lần và xác nhận PIN.\n\nTrong Tùy chọn nhà phát triển, bật Gỡ lỗi không dây. Nếu Android hỏi, chạm Cho phép trước khi thoát; không cần Luôn cho phép. Quay lại dot.dialer.</string>
+    <string name="capture_wizard_pair">Mở ghép đôi và cấp quyền được yêu cầu. Android: Gỡ lỗi không dây → Ghép đôi bằng mã.\n\nGiữ hộp thoại mã mở. Kéo thông báo, mở rộng dot.dialer và nhập rồi gửi sáu chữ số trong thông báo. Quay lại và chạm Kích hoạt nếu được đề nghị.</string>
+    <string name="capture_wizard_reactivate">Kết nối Wi-Fi rồi bật Gỡ lỗi không dây. Cho phép mạng nếu được hỏi. Quay lại và chạm Kích hoạt. Ghép đôi đã lưu được dùng lại; chỉ cần mã mới nếu bị thu hồi. Chờ kiểm tra cuối.</string>
+    <string name="capture_wizard_ready">Khi cuộc gọi kết nối: Thêm → Ghi âm hoặc Ghi âm và chép lời. Dừng, kết thúc hoặc giữ cuộc gọi sẽ dừng ghi. Kích hoạt lại sau khởi động. Tệp ở Bản ghi đã lưu.</string>
+    <string name="capture_network_help">Wi-Fi chỉ cần khi kích hoạt hoặc kích hoạt lại. Sau đó âm thanh hoạt động không cần Wi-Fi, dữ liệu di động hay cáp. Chép lời và dịch cần Internet; dữ liệu di động cũng được.</string>
+    <string name="capture_network_recovery">Mở Gỡ lỗi không dây, tắt rồi bật lại. Chạm Cho phép trong hộp thoại mạng trước khi đổi ứng dụng; cho phép luôn là tùy chọn. Quay lại dot.dialer để kích hoạt, ghép đôi trước nếu cần.</string>
+    <string name="capture_quiet_ready">Gỡ lỗi không dây đã tắt. Ghi âm cục bộ sẵn sàng. Chép lời cần Internet.</string>
+</resources>

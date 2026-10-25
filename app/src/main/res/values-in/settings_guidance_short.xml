@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Mengubah bahasa antarmuka, bukan nama kontak atau bahasa hasil transkrip.</string>
+    <string name="guide_contrast">Memperjelas teks; foto dan latar masih dapat memengaruhi keterbacaan.</string>
+    <string name="guide_region">Menafsirkan nomor lokal. Tidak mengubah SIM, negara atau lokasi.</string>
+    <string name="guide_avatar">Menyembunyikan atau menampilkan foto tanpa menghapusnya dari kontak.</string>
+    <string name="guide_interval">Jarak antara getaran gulir, bukan selang waktunya.</string>
+    <string name="guide_timeout">Lama autentikasi aplikasi tetap berlaku sebelum diminta lagi.</string>
+</resources>

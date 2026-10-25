@@ -110,6 +110,7 @@ fun ContactMergeDuplicatesScreen(navigator: DestinationsNavigator) {
         snackbarHost={SnackbarHost(snackbar)}) { padding ->
         LazyColumn(modifier=Modifier.fillMaxSize().padding(padding),contentPadding=PaddingValues(16.dp),
             verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            item { SettingsHelpText(R.string.guide_contacts_actions) }
             item { Text(stringResource(R.string.contact_merge_description),style=MaterialTheme.typography.bodyMedium,
                 color=MaterialTheme.colorScheme.onSurfaceVariant,modifier=Modifier.padding(8.dp)) }
             if(loading || busy) item { RillLoadingIndicatorView() }

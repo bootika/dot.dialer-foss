@@ -16,7 +16,7 @@
     <string name="contact_photos_ignore">Ignoră fotografia</string>
     <string name="contact_photos_business">Logo-uri de companii</string>
     <string name="contact_photos_business_summary">Caută logo-uri după site, domeniul e-mailului de serviciu sau numele firmei. Pozele persoanelor rămân.</string>
-    <string name="contact_photos_business_disclosure">Dot Dialer verifică iconițele publice de pe site-urile firmelor și domeniile e-mailurilor de serviciu. Cu acordul tău, trimitem doar numele firmei către Dot Dialer și Logo.dev pentru identificare. Nu trimitem numere de telefon, adrese complete de e-mail, nume de persoane sau mesaje. Potrivirile neclare le alegi tu; pozele existente ale persoanelor rămân.</string>
+    <string name="contact_photos_business_disclosure">dot.dialer verifică iconițele publice de pe site-urile firmelor și domeniile e-mailurilor de serviciu. Cu acordul tău, trimitem doar numele firmei către dot.dialer și Logo.dev pentru identificare. Nu trimitem numere de telefon, adrese complete de e-mail, nume de persoane sau mesaje. Potrivirile neclare le alegi tu; pozele existente ale persoanelor rămân.</string>
     <string name="contact_photos_proposals">Propuneri</string>
     <string name="contact_photos_apply">Aplică selecția</string>
     <string name="contact_photos_select">Alege fotografia</string>
@@ -30,9 +30,9 @@
     <string name="contact_photos_stopped">Căutarea s-a oprit. Propunerile găsite sunt păstrate.</string>
     <string name="contact_photos_auto_update">Actualizează automat fotografiile existente</string>
     <string name="contact_photos_whatsapp_summary">Preia avatarurile expeditorilor din notificările WhatsApp.</string>
-    <string name="contact_photos_disclosure">Dot Dialer citește identitatea și avatarul expeditorului din notificările WhatsApp. Mesajele nu sunt salvate sau trimise unui server. Fotografiile sunt procesate local. Pozele pot fi aplicate automat conform politicii alese. Alegerile manuale rămân protejate.</string>
+    <string name="contact_photos_disclosure">dot.dialer citește identitatea și avatarul expeditorului din notificările WhatsApp. Mesajele nu sunt salvate sau trimise unui server. Fotografiile sunt procesate local. Pozele pot fi aplicate automat conform politicii alese. Alegerile manuale rămân protejate.</string>
     <string name="contact_photos_only_same_or_larger">Doar dacă este de aceeași dimensiune sau mai mare</string>
-    <string name="contact_photos_only_same_or_larger_summary">Pentru update-uri automate WhatsApp, lățimea și înălțimea trebuie să fie cel puțin egale. Debifează pentru a permite fotografii mai mici.</string>
+    <string name="contact_photos_only_same_or_larger_summary">Pentru actualizările automate WhatsApp, lățimea și înălțimea trebuie să fie cel puțin egale. Debifează pentru a permite fotografii mai mici.</string>
     <string name="contact_photos_source_consent_required">Confirmă această sursă foto înainte de căutare.</string>
     <string name="contact_photos_google_source_summary">Caută fotografii cu rezoluție mai mare în Contacte Google. Conectează contul înainte de căutare.</string>
     <string name="contact_photos_google_connect_action">Conectează Google</string>
@@ -49,7 +49,8 @@
     <string name="contact_photos_review_results">Verifică rezultatele (%1$d)</string>
     <string name="contact_photos_review_summary">Alege fotografiile și modificările de numere înainte de aplicare.</string>
     <string name="contact_photos_google_disabled">Activează fotografiile Google pentru căutare.</string>
-    <string name="contact_photos_reset">Reset rezultate</string>
+    <string name="contact_photos_reset">Resetează rezultatele</string>
     <string name="contact_photos_reset_confirm">Resetezi rezultatele căutării?</string>
     <string name="contact_photos_reset_summary">Oprește căutarea activă și golește rezultatele acestui cont. Fotografiile și numerele deja aplicate, precum și setările, rămân neschimbate.</string>
+    <string name="contact_photos_title">Optimizarea contactelor</string>
 </resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Gravação de chamadas</string>
+    <string name="capture_reactivate">Reativar gravação</string>
+    <string name="capture_activate">Ativar</string>
+    <string name="capture_next">Próximo</string>
+    <string name="capture_wizard_done">Começar a usar gravação</string>
+    <string name="capture_open_about">Abrir Sobre o telefone</string>
+    <string name="capture_open_developer">Abrir Opções do desenvolvedor</string>
+    <string name="capture_open_wireless">Abrir Depuração sem fio</string>
+    <string name="capture_open_pairing">Abrir pareamento</string>
+    <string name="capture_pair_manual">Problemas com a notificação?</string>
+    <string name="capture_connection_manual">Conexão não encontrada?</string>
+    <string name="capture_pair_again">Parear este telefone novamente</string>
+    <string name="capture_pair_port">Porta de pareamento</string>
+    <string name="capture_connect_port">Porta de conexão</string>
+    <string name="capture_pair_code">Código de pareamento de seis dígitos</string>
+    <string name="capture_pair_title">Parear dot.dialer</string>
+    <string name="capture_android_required">A ativação sem cabo exige Android 11 ou posterior.</string>
+    <string name="capture_code_error">Digite o código atual de seis dígitos e a porta correta. Mantenha o diálogo Android aberto.</string>
+    <string name="capture_pair_error">Pareamento incompleto. Abra um novo diálogo Android e use o código novo.</string>
+    <string name="capture_start_error">Não foi possível ativar. Siga a ajuda de rede e tente de novo. Refaça o pareamento só se Android o removeu.</string>
+    <string name="capture_wireless_pending">Desative Depuração sem fio e volte para verificar. Ainda não está pronto.</string>
+    <string name="capture_network_recovery_title">A solicitação de rede sumiu?</string>
+    <string name="capture_wizard_developer_title">Prepare o telefone</string>
+    <string name="capture_wizard_pair_title">Ative a gravação</string>
+    <string name="capture_wizard_ready_title">Conclua a ativação</string>
+    <string name="capture_wizard_intro">Esta configuração avançada usa temporariamente Depuração sem fio. Não é uma permissão Android comum de gravação. Guiamos você passo a passo.</string>
+    <string name="capture_wizard_privacy">Sem root, cabo ou outro app. O pareamento fica neste telefone. A ativação não inicia gravação.</string>
+    <string name="capture_wizard_developer">Conecte o Wi-Fi. Se necessário: Sobre o telefone → Informações do software (Samsung) → toque sete vezes Número da versão e confirme o PIN.\n\nEm Opções do desenvolvedor ative Depuração sem fio. Se Android perguntar, toque Permitir antes de sair; não precisa Permitir sempre. Volte ao dot.dialer.</string>
+    <string name="capture_wizard_pair">Abra o pareamento e permita os acessos pedidos. No Android: Depuração sem fio → Parear com código.\n\nMantenha o código aberto. Abra as notificações, expanda dot.dialer e digite e envie os seis dígitos na notificação. Volte e toque Ativar, se oferecido.</string>
+    <string name="capture_wizard_reactivate">Conecte o Wi-Fi e ative Depuração sem fio. Permita a rede se solicitado. Volte e toque Ativar. O pareamento salvo é reutilizado; código novo só se revogado. Aguarde a verificação final.</string>
+    <string name="capture_wizard_ready">Em chamada conectada: Mais → Gravar ou Gravar e transcrever. Parar, encerrar ou esperar termina a captura. Reative após reiniciar. Arquivos em Gravações salvas.</string>
+    <string name="capture_network_help">Wi-Fi só é necessário para ativar ou reativar. Depois o áudio funciona sem Wi-Fi, dados móveis ou cabo. Transcrição e tradução precisam de Internet; dados móveis funcionam.</string>
+    <string name="capture_network_recovery">Abra Depuração sem fio, desligue e ligue. Toque Permitir na solicitação da rede antes de trocar de app; Permitir sempre é opcional. Volte ao dot.dialer e ative, após parear se necessário.</string>
+    <string name="capture_quiet_ready">Depuração sem fio desligada. Gravação local pronta. A transcrição precisa de Internet.</string>
+</resources>

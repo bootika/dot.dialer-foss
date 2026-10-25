@@ -39,7 +39,19 @@ class MainViewModel(private val prefs: PreferenceManager) : ViewModel() {
     fun getNavigationTarget(intent: Intent, context: Context): NavigationTarget? {
         val data = intent.data
         val action = intent.action ?: return null
+        if (data?.scheme == "tel" && action in setOf(Intent.ACTION_DIAL, Intent.ACTION_VIEW, Intent.ACTION_CALL)) {
+            io.github.bootika.dotdialer.diagnostics.recordDialNumber(
+                io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.INTENT_RECEIVED, data.schemeSpecificPart)
+        }
 
+        val telephoneNumber by lazy {
+            val original = data?.schemeSpecificPart.orEmpty()
+            (if (intent.getBooleanExtra(dev.goodwy.rphone.controller.util.EXTRA_PREPARED_TEL_NUMBER, false)) original
+            else dev.goodwy.rphone.controller.util.normalizeExternalTelNumber(context, original, prefs)).also {
+                io.github.bootika.dotdialer.diagnostics.recordDialNumber(
+                    io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.INTENT_NORMALIZED, it, original != it)
+            }
+        }
         return when (action) {
             Intent.ACTION_PROCESS_TEXT -> {
                 if (!prefs.getBoolean(PreferenceManager.KEY_SELECTED_TEXT_DIALER, false) ||
@@ -61,7 +73,7 @@ class MainViewModel(private val prefs: PreferenceManager) : ViewModel() {
                         data.pathSegments.firstOrNull() == "calls")) {
                     NavigationTarget.Recents
                 } else if (data?.scheme == "tel") {
-                    NavigationTarget.Dialpad(data.schemeSpecificPart)
+                    NavigationTarget.Dialpad(telephoneNumber)
                 } else if (data?.let(ExternalContactUriResolver::accepts) == true) {
                     ExternalContactUriResolver.resolve(context.contentResolver, data)?.let(NavigationTarget::ContactDetails)
                         ?: NavigationTarget.ContactUnavailable
@@ -71,7 +83,7 @@ class MainViewModel(private val prefs: PreferenceManager) : ViewModel() {
             }
             Intent.ACTION_DIAL -> {
                 when {
-                    data?.scheme == "tel" -> NavigationTarget.Dialpad(data.schemeSpecificPart)
+                    data?.scheme == "tel" -> NavigationTarget.Dialpad(telephoneNumber)
                     intent.getBooleanExtra(MainActivity.EXTRA_RETURN_TO_CALL_ON_BACK, false) -> {
                         NavigationTarget.Recents
                     }
@@ -89,7 +101,7 @@ class MainViewModel(private val prefs: PreferenceManager) : ViewModel() {
             Intent.ACTION_SEARCH -> NavigationTarget.Search(intent.getStringExtra(SearchManager.QUERY).orEmpty())
             Intent.ACTION_CALL -> {
                 if (data?.scheme == "tel") {
-                    val number = data.schemeSpecificPart
+                    val number = telephoneNumber
                     if (isAlreadyDefaultDialer(context)) {
                         makeCall(context, number = number)
                         null

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Wi-Fi’a bağlanıp Android’de Kablosuz hata ayıklamayı açın. İstenirse ağa izin verin, dönüp Etkinleştir seçin. Yalnızca etkinleştirme için gerekir; hata ayıklama sonunda kapatılır.</string>
+</resources>

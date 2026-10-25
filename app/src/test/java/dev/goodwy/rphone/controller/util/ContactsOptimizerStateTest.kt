@@ -19,6 +19,29 @@ import java.util.UUID
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[35], application=Application::class)
 class ContactsOptimizerStateTest {
+    @Test fun concurrentResultReadsDoNotInvalidateAtomicWrites() {
+        val profiles=ContactOptimizationProfiles(context())
+        val account="first@example.test"
+        profiles.record(account,ContactOptimizationResult(1,"scanning"))
+        val pool=java.util.concurrent.Executors.newFixedThreadPool(4)
+        val start=java.util.concurrent.CountDownLatch(1)
+        try {
+            val readers=(1..3).map {pool.submit {
+                start.await()
+                repeat(250) {assertTrue(profiles.result(account).outcome.isNotEmpty())}
+            }}
+            val writer=pool.submit {
+                start.await()
+                repeat(100) {profiles.record(account,ContactOptimizationResult(it.toLong()+2,"scanning"))}
+                profiles.record(account,ContactOptimizationResult(200,"consent_required"))
+            }
+            start.countDown()
+            writer.get(30,java.util.concurrent.TimeUnit.SECONDS)
+            readers.forEach {it.get(30,java.util.concurrent.TimeUnit.SECONDS)}
+            assertEquals("consent_required",profiles.result(account).outcome)
+            assertFalse(profiles.storageFailed.value)
+        } finally {pool.shutdownNow()}
+    }
     private fun context(): Context {
         val app = ApplicationProvider.getApplicationContext<Application>()
         val root = File(app.cacheDir, "optimizer-test-"+UUID.randomUUID()).apply { mkdirs() }

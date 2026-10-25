@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Connectez-vous au Wi-Fi et activez Débogage sans fil dans Android. Autorisez le réseau si demandé, revenez et touchez Activer. Nécessaires uniquement pour l’activation ; le débogage est désactivé à la fin.</string>
+</resources>

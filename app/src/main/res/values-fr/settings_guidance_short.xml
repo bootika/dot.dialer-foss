@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Change la langue d’interface, pas les noms des contacts ni la langue des transcriptions.</string>
+    <string name="guide_contrast">Rend le texte plus distinct ; photos et fonds peuvent encore affecter la lisibilité.</string>
+    <string name="guide_region">Interprète les numéros locaux. Ne change ni SIM, ni pays, ni localisation.</string>
+    <string name="guide_avatar">Masque ou affiche les photos sans les supprimer du carnet.</string>
+    <string name="guide_interval">Distance entre les vibrations de défilement, pas leur intervalle de temps.</string>
+    <string name="guide_timeout">Durée de validité de l’authentification avant une nouvelle demande.</string>
+</resources>

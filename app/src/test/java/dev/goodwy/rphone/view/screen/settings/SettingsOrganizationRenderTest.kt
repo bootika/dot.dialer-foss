@@ -151,6 +151,7 @@ class SettingsOrganizationRenderTest {
         rule.onNodeWithContentDescription(context.getString(R.string.keypad_effect_preview)).assertDoesNotExist()
         rule.onNodeWithText(context.getString(R.string.keypad_effect_preview)).assertDoesNotExist()
         rule.runOnUiThread { scene = "interface-advanced"; font = 1f }
+        rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(context.getString(R.string.ignore_system_font_scale)))
         rule.onNodeWithText(context.getString(R.string.ignore_system_font_scale)).performScrollTo().assertIsDisplayed()
         rule.runOnUiThread { scene = "effects" }
         rule.onNodeWithText(context.getString(R.string.call_screen)).performScrollTo().performClick()

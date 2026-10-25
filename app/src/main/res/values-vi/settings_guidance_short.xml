@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Đổi ngôn ngữ giao diện, không đổi tên liên hệ hay ngôn ngữ bản chép lời.</string>
+    <string name="guide_contrast">Làm chữ rõ hơn; ảnh và nền vẫn có thể ảnh hưởng khả năng đọc.</string>
+    <string name="guide_region">Diễn giải số nội địa. Không đổi SIM, quốc gia hay vị trí.</string>
+    <string name="guide_avatar">Ẩn hoặc hiện ảnh mà không xóa khỏi danh bạ.</string>
+    <string name="guide_interval">Khoảng cách giữa rung khi cuộn, không phải thời gian.</string>
+    <string name="guide_timeout">Thời gian xác thực ứng dụng còn hiệu lực trước khi được yêu cầu lại.</string>
+</resources>

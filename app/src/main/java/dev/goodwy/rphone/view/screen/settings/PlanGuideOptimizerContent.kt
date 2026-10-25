@@ -50,6 +50,7 @@ internal fun PlanGuideOptimizerContent(account: String?, settings: ContactOptimi
             GlobalContext.getOrNull()?.getOrNull<GoogleContactsAuthorization>()?.isAvailable == true, googleEnabled)
     }
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        SettingsHelpText(R.string.guide_optimizer, initiallyExpanded = false)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Icon(Icons.Rounded.AccountCircle, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
             Text(account ?: stringResource(R.string.plan_choose_account), style = MaterialTheme.typography.bodyMedium,
@@ -90,6 +91,8 @@ private fun GuideCardHeading(icon: ImageVector, title: String, navigation: Boole
 
 @Composable
 private fun GuideSourceRow(icon: ImageVector, title: String, state: GuideSourceState, tag: String) {
+    Column {
+
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Icon(icon, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         FlowRow(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -101,5 +104,8 @@ private fun GuideSourceRow(icon: ImageVector, title: String, state: GuideSourceS
                     modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp).testTag("plan-source-$tag"))
             }
         }
+    }
+
+        SettingsHelpText(when(tag) { "google"->R.string.guide_google; "whatsapp"->R.string.guide_whatsapp; "gravatar"->R.string.contact_photos_gravatar_disclosure; else->R.string.contact_photos_business_disclosure })
     }
 }

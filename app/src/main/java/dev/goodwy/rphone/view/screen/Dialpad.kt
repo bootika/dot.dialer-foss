@@ -162,7 +162,7 @@ fun DialPadScreen(
         }
     }
 
-    var number by remember { mutableStateOf(initialNumber?.ifBlank { DialpadDraftHolder.pendingNumber } ?: DialpadDraftHolder.pendingNumber) }
+    var number by remember(initialNumber) { mutableStateOf(initialNumber?.ifBlank { DialpadDraftHolder.pendingNumber } ?: DialpadDraftHolder.pendingNumber) }
     // Keep the draft holder in sync so dismissing the sheet (including swipe-down-to-dismiss)
     // and reopening it restores whatever digits were typed, instead of clearing them.
     LaunchedEffect(number) { DialpadDraftHolder.pendingNumber = number }
@@ -221,11 +221,11 @@ fun DialPadContent(
         LaunchedEffect(contactsVM) {
             contactsVM.fetchContacts()
         }
-        var number by remember { mutableStateOf(initialNumber ?: DialpadDraftHolder.pendingNumber) }
+        var number by rememberDialpadNumber(initialNumber) { DialpadDraftHolder.pendingNumber }
         // Where new digits get inserted / backspace deletes from. Defaults to the end of the number
         // (normal typing behaviour), but the user can tap anywhere in the number to move it, so they
         // can fill in a missing digit in the middle without having to delete and retype everything.
-        var cursorPosition by remember { mutableIntStateOf(number.length) }
+        var cursorPosition by remember(initialNumber) { mutableIntStateOf(number.length) }
 
         // Route every edit through these so the cursor position stays correct and consistent no
         // matter where the edit originates from (dialpad keys, backspace, paste, clipboard banner,

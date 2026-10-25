@@ -3,7 +3,7 @@
     <string name="settings_fine_tuning">Reglaje fine</string>
     <string name="settings_scroll_calibration">Calibrarea vibrațiilor la derulare</string>
     <string name="settings_reporting">Raportare de diagnostic</string>
-    <string name="settings_blur_dependency">Folosit când Glass din apel este oprit. Suportul depinde de dispozitiv.</string>
+    <string name="settings_blur_dependency">Folosit când efectul de sticlă din apel este oprit. Disponibilitatea depinde de dispozitiv.</string>
     <string name="settings_repeat_contacts_explanation">Arată aceeași persoană în Recente și Contacte când cauți.</string>
     <string name="settings_protected_numbers">Numere protejate</string>
     <string name="settings_alias_home_and_gestures">Pagina principală și gesturi</string>

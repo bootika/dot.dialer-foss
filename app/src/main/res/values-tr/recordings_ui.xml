@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Arama kaydını ve metne dönüştürme araçlarını etkinleştirin.</string>
+    <string name="rec_ui_ready">Kayda hazır</string>
+    <string name="rec_ui_activation">Etkinleştirme gerekli</string>
+    <string name="rec_ui_capture_hint">Bağlı bir aramada: Diğer → Kaydet veya Kaydet ve metne dönüştür.</string>
+    <string name="rec_ui_processing">Metne dönüştürme ve çeviri</string>
+    <string name="rec_ui_connection_ready">dot.dictate bağlı</string>
+    <string name="rec_ui_api_hint">Bağlantı ve gereksinimler kontrol edildi. API işlemesi, ses işlenirken doğrulanır.</string>
+    <string name="rec_ui_output_hint">Kaydet ve metne dönüştür için kullanılır. Konuşulan dil otomatik algılanır.</string>
+    <string name="rec_ui_translation_hint">Yeni metinleri otomatik çevirin. Bu seçeneği açarken çeviri dilini seçin.</string>
+    <string name="rec_ui_automatic_hint">Yeni kaydedilen kayıtları otomatik olarak metne dönüştürün.</string>
+    <string name="rec_ui_more">Ek seçenekler</string>
+    <string name="rec_ui_translation_title">Otomatik çeviri dili</string>
+</resources>

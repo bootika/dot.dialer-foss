@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Connetti il Wi-Fi e attiva Debug wireless in Android. Consenti la rete se richiesto, torna e tocca Attiva. Necessari solo per attivare; il debug si spegne al termine.</string>
+</resources>

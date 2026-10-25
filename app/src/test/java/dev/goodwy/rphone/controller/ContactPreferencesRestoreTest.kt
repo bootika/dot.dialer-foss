@@ -27,7 +27,7 @@ class ContactPreferencesRestoreTest {
             val app = RuntimeEnvironment.getApplication()
             val prefs = PreferenceManager(app)
             prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_CONTACT_SORT_ORDER to 0,
-                PreferenceManager.KEY_CONTACT_DISPLAY_ORDER to 0, PreferenceManager.KEY_VISIBLE_ACCOUNTS to "com.google|alex@dotdesign.ro"))
+                PreferenceManager.KEY_CONTACT_DISPLAY_ORDER to 0, PreferenceManager.KEY_VISIBLE_ACCOUNTS to "com.google|test.user@example.test"))
             val vm = ContactsViewModel(app, ContactsRepository(app, ContactEditPersistenceAuditTest.MemoryPrivateDao()), prefs)
             store.put("contacts", vm)
             prefs.restoreAllPreferences(mapOf(PreferenceManager.KEY_CONTACT_SORT_ORDER to 1,

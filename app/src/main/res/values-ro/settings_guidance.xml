@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Cum funcționează</string>
+    <string name="guide_stage">Pasul %1$d din 3</string>
+    <string name="guide_google">Caută poze mai clare în Contacte Google, dacă există originale mai mari. Conectează contul în care ai contactele. Accesul Google este doar pentru citire; nu este Google Photos. Salvarea pozelor în agendă cere acces separat la contacte și respectă politica aleasă.</string>
+    <string name="guide_whatsapp">Folosește avatarurile expeditorilor din notificările WhatsApp primite. Pozele apar pe măsură ce primești notificări compatibile; nu descarcă toate pozele WhatsApp. Android acordă acces la notificări, dar dot.dialer extrage doar identitatea și avatarul din notificări compatibile, fără să salveze sau să trimită mesajele. Rezoluția depinde de notificare.</string>
+    <string name="guide_optimizer">Alege contul ale cărui contacte vrei să le îmbunătățești. Fiecare cont are surse și acorduri proprii. Caută produce propuneri; în Rezultate alegi ce aplici. Actualizările automate respectă politica foto. Pozele alese manual rămân protejate până reiei actualizarea automată. Oprirea unei surse nu anulează pozele deja salvate în agendă.</string>
+    <string name="guide_recording">Activarea nu pornește înregistrarea. Într-un apel conectat, folosește Mai multe → Înregistrează sau Înregistrează și transcrie. Stop, finalul apelului sau Hold opresc captura. Audio și textele salvate rămân disponibile cu modulul oprit. Accesul la modul cere dot.dictate conectat, licențiat și cu cheie API; audio este trimis furnizorului configurat, care poate avea costuri API. Procesarea cere internet, inclusiv date mobile. Limba de intrare se detectează automat; traducerea păstrează originalul.</string>
+    <string name="guide_contacts">Alege conturile afișate în dot.dialer. Ascunderea unei surse nu șterge contactele și nu oprește sincronizarea Android.</string>
+    <string name="guide_format">Formatează numerele salvate internațional, de exemplu 0720… → +40 720…. Poate modifica agenda. Este separat de formatarea unui număr doar la apelare și de actualizarea pozelor.</string>
+    <string name="guide_auth">Protejează accesul la dot.dialer prin metoda de autentificare aleasă. Nu criptează și nu blochează agenda Android în alte aplicații. Configurează și verifică metoda înainte de activarea protecției.</string>
+    <string name="guide_lock">Cere autentificare pentru a răspunde sau a refuza apelurile alese. Listele stabilesc ce apeluri cer autentificare; nu sunt liste de blocare spam. Ține cont de pasul suplimentar când răspunzi rapid.</string>
+    <string name="guide_backup">Salvează setări portabile, notițe și fundaluri personalizate. Nu este un backup al agendei, înregistrărilor, transcrierilor, licențelor sau permisiunilor Android. Păstrează fișierul privat: notițele pot conține date personale.</string>
+    <string name="guide_restore">Restaurarea înlocuiește setările portabile și notițele cu aceleași nume de fișier. Nu acordă permisiuni, nu transferă licențe și nu configurează autentificarea. Înregistrările și agenda Android nu se restaurează din acest fișier.</string>
+    <string name="guide_history">Limitele schimbă ce apare în Recente; nu șterg istoricul Android. Ascunderea Favoritelor păstrează favoritele și ordinea lor.</string>
+    <string name="guide_gesture">Alege acțiunea la tap. Acțiuni rapide deschide cele patru opțiuni; încă un tap pe rând le închide. Ține și glisează este un gest separat; eliberarea fără alegere îl anulează.</string>
+    <string name="guide_accessibility">Când este pornită, textul nu mai urmează dimensiunea fontului din Android. Setarea telefonului nu se schimbă. Verifică lizibilitatea înainte să alegi.</string>
+    <string name="guide_names">Sortarea schimbă ordinea listei; formatul numelui schimbă afișarea. Niciuna nu rescrie numele din agendă.</string>
+    <string name="guide_sim">Alege SIM-ul implicit. SIM-ul salvat pentru un număr sau contact are prioritate. Un SIM indisponibil nu poate fi folosit.</string>
+    <string name="guide_visual">Schimbă efectul vizual indicat, nu poza sau toate animațiile aplicației. Folosește preview-ul ca să alegi aspectul.</string>
+    <string name="guide_search_clear">Golește căutarea la inițierea apelului, nu la terminarea conversației.</string>
+    <string name="guide_scale">Elementele mai mari sunt mai ușor de citit, dar încap mai puține. Scala interfeței este separată de fontul Android.</string>
+    <string name="guide_delete">În Recente, Șterge elimină doar apelul afișat, fără confirmare. Pe un contact, șterge contactul după o confirmare. Celelalte apeluri nu se șterg odată cu acel recent.</string>
+    <string name="guide_background">Folosește un fundal în ecranul de apel fără să schimbi poza contactului din agendă. Fundalul ales pentru un contact are prioritate față de cel global.</string>
+    <string name="guide_contacts_actions">Verifică persoanele selectate înainte de aplicare. Standardizarea numerelor scrie în agendă. Unirea leagă înregistrările contactelor; separarea afișează distinct înregistrările sursă. Separarea nu anulează orice editare anterioară.</string>
+</resources>

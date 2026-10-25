@@ -88,7 +88,7 @@ fun AvatarsPreferenceScreen(navigator: DestinationsNavigator, advanced: Boolean 
                             run {
                                 RillSwitchListItem(
                                 headline = stringResource(R.string.show_picture_in_avatar),
-                                supporting = stringResource(R.string.show_picture_in_avatar_subtitle),
+                                supporting = stringResource(R.string.guide_avatar),
                                 leadingIcon = if (showPicture) Icons.Rounded.Portrait else Icons.Rounded.TextFields,
                                 iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
                                 iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Cách hoạt động</string>
+    <string name="guide_stage">Bước %1$d trong 3</string>
+    <string name="guide_google">Tìm ảnh rõ hơn trong Danh bạ Google khi có bản gốc lớn hơn. Kết nối tài khoản chứa danh bạ. Quyền Google chỉ đọc, không truy cập Google Photos. Lưu vào danh bạ cần quyền riêng và tuân theo chính sách cập nhật đã chọn.</string>
+    <string name="guide_whatsapp">Dùng ảnh đại diện từ thông báo WhatsApp đến. Ảnh xuất hiện khi nhận thông báo phù hợp; không tải mọi ảnh WhatsApp. Android cấp quyền thông báo, nhưng dot.dialer chỉ lấy danh tính và ảnh đại diện, không lưu hay gửi tin nhắn. Độ phân giải tùy thông báo.</string>
+    <string name="guide_optimizer">Chọn tài khoản danh bạ cần cải thiện. Mỗi tài khoản có nguồn và quyền riêng. Tìm kiếm tạo đề xuất để xem và áp dụng. Cập nhật tự động tuân theo chính sách ảnh. Ảnh chọn thủ công được bảo vệ đến khi tiếp tục cập nhật. Tắt nguồn không hoàn tác ảnh đã lưu.</string>
+    <string name="guide_recording">Kích hoạt không bắt đầu ghi âm. Khi cuộc gọi đã kết nối: Thêm → Ghi âm hoặc Ghi âm và chép lời. Dừng, kết thúc hoặc giữ cuộc gọi sẽ dừng ghi. Tệp vẫn còn khi tắt mô-đun. Truy cập mô-đun cần dot.dictate đã kết nối, có giấy phép và khóa API. Âm thanh được gửi đến nhà cung cấp đã cấu hình; có thể phát sinh phí API. Xử lý cần Internet, kể cả dữ liệu di động. Ngôn ngữ đầu vào được tự nhận diện; bản dịch giữ bản gốc.</string>
+    <string name="guide_contacts">Chọn tài khoản hiển thị trong dot.dialer. Ẩn nguồn không xóa liên hệ hay dừng đồng bộ Android.</string>
+    <string name="guide_format">Đổi số đã lưu sang định dạng quốc tế, ví dụ 0720… → +40 720…. Có thể thay đổi danh bạ. Khác với định dạng khi gọi và cập nhật ảnh.</string>
+    <string name="guide_auth">Bảo vệ dot.dialer bằng cách xác thực đã chọn. Không mã hóa hay khóa danh bạ Android trong ứng dụng khác. Thiết lập và kiểm tra trước khi bật.</string>
+    <string name="guide_lock">Yêu cầu xác thực để nhận hoặc từ chối các cuộc gọi đã chọn. Danh sách quy định xác thực, không chặn thư rác. Lưu ý bước bổ sung khi cần trả lời nhanh.</string>
+    <string name="guide_backup">Lưu cài đặt di chuyển được, ghi chú và nền riêng. Không sao lưu danh bạ, bản ghi, bản chép lời, giấy phép hay quyền Android. Giữ tệp riêng tư vì ghi chú có thể chứa dữ liệu cá nhân.</string>
+    <string name="guide_restore">Thay thế cài đặt di chuyển được và ghi chú trùng tên. Không cấp quyền, chuyển giấy phép hay thiết lập xác thực. Không khôi phục bản ghi hoặc danh bạ Android.</string>
+    <string name="guide_history">Các giới hạn chỉ đổi hiển thị Gần đây, không xóa lịch sử Android. Ẩn Yêu thích vẫn giữ thứ tự.</string>
+    <string name="guide_gesture">Chọn thao tác khi chạm. Thao tác nhanh mở bốn lựa chọn; chạm lại để đóng. Giữ và trượt là cử chỉ riêng; thả mà không chọn sẽ hủy.</string>
+    <string name="guide_accessibility">Khi bật, chữ không theo cỡ phông Android. Cài đặt điện thoại không đổi. Kiểm tra khả năng đọc.</string>
+    <string name="guide_names">Sắp xếp đổi thứ tự danh sách; định dạng tên đổi cách hiển thị. Không ghi lại tên trong danh bạ.</string>
+    <string name="guide_sim">Chọn SIM mặc định. SIM đã lưu cho số hoặc liên hệ được ưu tiên. Không thể dùng SIM không khả dụng.</string>
+    <string name="guide_visual">Đổi hiệu ứng được chỉ định, không đổi ảnh hay mọi hoạt ảnh. Dùng bản xem trước.</string>
+    <string name="guide_search_clear">Xóa tìm kiếm khi bắt đầu gọi, không phải lúc kết thúc trò chuyện.</string>
+    <string name="guide_scale">Thành phần lớn dễ đọc hơn nhưng hiển thị ít mục hơn. Tỷ lệ giao diện tách biệt với cỡ chữ Android.</string>
+    <string name="guide_delete">Trong Gần đây, Xóa chỉ bỏ cuộc gọi hiển thị mà không xác nhận. Liên hệ được xóa sau một xác nhận. Cuộc gọi khác vẫn còn.</string>
+    <string name="guide_background">Đổi nền cuộc gọi mà không đổi ảnh liên hệ. Nền riêng cho liên hệ được ưu tiên hơn nền chung.</string>
+    <string name="guide_contacts_actions">Xem lại liên hệ trước khi áp dụng. Định dạng số sẽ sửa danh bạ. Hợp nhất liên kết các bản ghi; tách hiển thị riêng các bản ghi nguồn. Tách không hoàn tác mọi sửa đổi trước đó.</string>
+</resources>

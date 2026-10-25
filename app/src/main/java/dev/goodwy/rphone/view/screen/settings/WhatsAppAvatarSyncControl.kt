@@ -72,6 +72,7 @@ internal fun WhatsAppAvatarSyncControl(account: String, resumed: Int = 0, initia
         }
 
         DotSettingsCard {
+            SettingsHelpText(R.string.guide_whatsapp)
             ContactPhotoReadinessRow(readiness) { disclosure = "access" }
             if (readiness != ContactPhotoReadiness.Unavailable) {
                 DotSettingsSwitchRow(stringResource(R.string.whatsapp_avatar_sync_title),

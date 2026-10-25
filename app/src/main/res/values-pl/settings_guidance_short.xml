@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Zmienia język interfejsu, nie nazwy kontaktów ani język wyniku transkrypcji.</string>
+    <string name="guide_contrast">Zwiększa wyrazistość tekstu; zdjęcia i tła nadal mogą wpływać na czytelność.</string>
+    <string name="guide_region">Interpretuje numery lokalne. Nie zmienia SIM, kraju ani lokalizacji.</string>
+    <string name="guide_avatar">Ukrywa lub pokazuje zdjęcia bez usuwania ich z książki.</string>
+    <string name="guide_interval">Odległość między wibracjami przewijania, nie czas między nimi.</string>
+    <string name="guide_timeout">Jak długo uwierzytelnienie aplikacji jest ważne przed ponownym żądaniem.</string>
+</resources>

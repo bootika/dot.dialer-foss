@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Schimbă limba interfeței, nu numele contactelor sau limba rezultatului transcrierii.</string>
+    <string name="guide_contrast">Face textul mai ușor de distins; pozele și fundalurile pot influența în continuare lizibilitatea.</string>
+    <string name="guide_region">Interpretează numerele locale. Nu schimbă SIM-ul, țara sau locația.</string>
+    <string name="guide_avatar">Ascunde sau arată pozele fără să le șteargă din agendă.</string>
+    <string name="guide_interval">Distanța dintre vibrațiile de derulare, nu timpul dintre ele.</string>
+    <string name="guide_timeout">Cât timp rămâne valabilă autentificarea aplicației înainte să fie cerută din nou.</string>
+</resources>

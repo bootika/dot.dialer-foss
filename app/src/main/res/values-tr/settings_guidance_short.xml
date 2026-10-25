@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Arayüz dilini değiştirir; kişi adlarını veya döküm çıkış dilini değiştirmez.</string>
+    <string name="guide_contrast">Metni belirginleştirir; fotoğraf ve arka planlar okunabilirliği etkileyebilir.</string>
+    <string name="guide_region">Yerel numaraları yorumlar. SIM, ülke veya konumu değiştirmez.</string>
+    <string name="guide_avatar">Fotoğrafları rehberden silmeden gizler veya gösterir.</string>
+    <string name="guide_interval">Kaydırma titreşimleri arasındaki mesafe; zaman aralığı değil.</string>
+    <string name="guide_timeout">Uygulama doğrulamasının yeniden istenmeden ne kadar geçerli kalacağı.</string>
+</resources>

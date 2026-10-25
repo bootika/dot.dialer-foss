@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="contact_photos_title" translatable="false">Contacts Optimizer</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="contact_photos_title" tools:ignore="MissingTranslation">Contacts Optimizer</string>
     <string name="contact_photos_permission">Allow contact access to read and update photos and phone numbers.</string>
     <string name="contact_photos_account">Google account</string>
     <string name="contact_photos_no_account">No Google contacts are available. Add an account in Android Settings.</string>

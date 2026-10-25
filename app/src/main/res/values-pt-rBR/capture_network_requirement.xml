@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Conecte o Wi-Fi e ative Depuração sem fio no Android. Permita a rede se solicitado, volte e toque Ativar. Só são necessários para ativar; a depuração desliga ao concluir.</string>
+</resources>

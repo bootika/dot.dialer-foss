@@ -21,6 +21,7 @@ internal data class SettingsOption(
     val planFeature: io.github.bootika.dotdialer.core.license.PlanFeature? get() = when (id) {
         "H11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY
         "K14", "K15" -> io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_AUTOMATIC
+        "K16" -> io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_MANUAL
         "K11" -> io.github.bootika.dotdialer.core.license.PlanFeature.CALL_MESSAGE_CHANNEL
         "I03", "C07", "C02", "A05", "A07", "C03", "C04", "C08", "A06" -> io.github.bootika.dotdialer.core.license.PlanFeature.PREMIUM_APPEARANCE
         "T19", "T17" -> io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER
@@ -40,7 +41,7 @@ internal data class SettingsOption(
         SettingsEditor.CONTEXT, SettingsEditor.LEGACY -> SettingsFunction.HELP
     }
     fun isAvailable(flavor: String, autoAvailable: Boolean, testBuild: Boolean = dev.goodwy.rphone.BuildConfig.DEBUG): Boolean = when (id) {
-        "K13", "K14", "K15" -> dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED
+        "K13", "K14", "K15", "K16" -> dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED
         "O02" -> testBuild
         "T09", "T10" -> flavor == "gplay"
         "F01" -> flavor == "foss"
@@ -90,6 +91,7 @@ internal val settingsOptions = listOf(
     SettingsOption("K13", R.string.recordings_title, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
     SettingsOption("K14", R.string.recordings_auto_transcribe, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
     SettingsOption("K15", R.string.recordings_auto_translate, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
+    SettingsOption("K16", R.string.capture_output_language, SettingsEditor.RECORDINGS, false, R.string.recordings_title),
     SettingsOption("K01", R.string.default_sim, SettingsEditor.ACCOUNTS, false, R.string.calling_accounts),
     SettingsOption("K10", R.string.manage_calling_accounts_system, SettingsEditor.ACCOUNTS, false, R.string.calling_accounts),
     SettingsOption("K02", R.string.add_country_code_automatically, SettingsEditor.CALLS, true, R.string.phone_number_formatting),

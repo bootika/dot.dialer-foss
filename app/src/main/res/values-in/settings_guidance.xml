@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Cara kerja</string>
+    <string name="guide_stage">Langkah %1$d dari 3</string>
+    <string name="guide_google">Cari foto lebih jelas di Google Kontak jika tersedia versi asli lebih besar. Hubungkan akun kontak Anda. Akses Google hanya baca, bukan Google Foto. Menyimpan ke buku alamat perlu izin kontak terpisah dan mengikuti kebijakan pembaruan.</string>
+    <string name="guide_whatsapp">Gunakan avatar pengirim dari notifikasi WhatsApp masuk. Foto muncul saat notifikasi yang sesuai diterima; tidak mengunduh semua foto. Android memberikan akses notifikasi, tetapi dot.dialer hanya mengambil identitas dan avatar, tanpa menyimpan atau mengirim pesan. Resolusi bergantung pada notifikasi.</string>
+    <string name="guide_optimizer">Pilih akun kontak yang ingin ditingkatkan. Setiap akun punya sumber dan izin sendiri. Cari membuat saran untuk ditinjau dan diterapkan. Pembaruan otomatis mengikuti kebijakan foto. Pilihan manual dilindungi hingga pembaruan dilanjutkan. Mematikan sumber tidak membatalkan foto tersimpan.</string>
+    <string name="guide_recording">Aktivasi tidak memulai rekaman. Saat panggilan terhubung: Lainnya → Rekam atau Rekam dan transkripsi. Berhenti, akhir panggilan atau tahan mengakhiri rekaman. File tetap tersedia saat modul mati. Akses modul perlu dot.dictate terhubung, berlisensi, dan kunci API. Audio dikirim ke penyedia terkonfigurasi; biaya API mungkin berlaku. Pemrosesan perlu Internet, termasuk data seluler. Bahasa masukan dideteksi otomatis; terjemahan menyimpan aslinya.</string>
+    <string name="guide_contacts">Pilih akun yang terlihat di dot.dialer. Menyembunyikan sumber tidak menghapus kontak atau menghentikan sinkronisasi Android.</string>
+    <string name="guide_format">Ubah nomor tersimpan ke format internasional, misalnya 0720… → +40 720…. Dapat mengubah buku alamat. Terpisah dari format saat menelepon dan pembaruan foto.</string>
+    <string name="guide_auth">Lindungi dot.dialer dengan autentikasi pilihan. Tidak mengenkripsi atau mengunci kontak Android di aplikasi lain. Atur dan verifikasi metode sebelum mengaktifkan.</string>
+    <string name="guide_lock">Meminta autentikasi untuk menerima atau menolak panggilan tertentu. Daftar mengatur autentikasi, bukan pemblokiran spam. Pertimbangkan langkah tambahan saat menjawab cepat.</string>
+    <string name="guide_backup">Simpan setelan portabel, catatan dan latar pribadi. Bukan cadangan kontak, rekaman, transkrip, lisensi atau izin Android. Jaga file tetap privat: catatan bisa berisi data pribadi.</string>
+    <string name="guide_restore">Mengganti setelan portabel dan catatan bernama sama. Tidak memberikan izin, memindahkan lisensi atau mengatur autentikasi. Tidak memulihkan rekaman atau kontak Android.</string>
+    <string name="guide_history">Batas ini mengubah tampilan Terbaru tanpa menghapus riwayat Android. Menyembunyikan Favorit menjaga urutannya.</string>
+    <string name="guide_gesture">Pilih tindakan ketukan. Tindakan cepat membuka empat opsi; ketuk baris lagi untuk menutup. Tahan dan geser terpisah; lepas tanpa pilihan membatalkan.</string>
+    <string name="guide_accessibility">Saat aktif, teks tidak mengikuti ukuran font Android. Setelan ponsel tetap. Periksa keterbacaan.</string>
+    <string name="guide_names">Pengurutan mengubah urutan daftar, format nama mengubah tampilan. Nama tersimpan tidak ditulis ulang.</string>
+    <string name="guide_sim">Pilih SIM bawaan. SIM tersimpan untuk nomor atau kontak diprioritaskan. SIM tidak tersedia tidak bisa digunakan.</string>
+    <string name="guide_visual">Mengubah efek yang ditunjukkan, bukan foto atau semua animasi. Gunakan pratinjau.</string>
+    <string name="guide_search_clear">Bersihkan pencarian saat memulai panggilan, bukan saat percakapan berakhir.</string>
+    <string name="guide_scale">Elemen besar lebih terbaca tetapi lebih sedikit yang muat. Skala antarmuka dan font Android terpisah.</string>
+    <string name="guide_delete">Di Terbaru, Hapus hanya menghapus panggilan yang tampil tanpa konfirmasi. Kontak dihapus setelah satu konfirmasi. Panggilan lain tetap ada.</string>
+    <string name="guide_background">Ubah latar panggilan tanpa mengubah foto kontak. Latar khusus kontak diprioritaskan dibanding latar umum.</string>
+    <string name="guide_contacts_actions">Tinjau kontak sebelum menerapkan. Format nomor menulis ke buku alamat. Gabungkan menautkan catatan; pisahkan menampilkan catatan sumber terpisah. Memisahkan tidak membatalkan semua edit sebelumnya.</string>
+</resources>

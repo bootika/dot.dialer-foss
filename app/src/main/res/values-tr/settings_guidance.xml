@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Nasıl çalışır</string>
+    <string name="guide_stage">Adım %1$d / 3</string>
+    <string name="guide_google">Daha büyük orijinaller varsa Google Kişiler’de daha net fotoğraflar bulun. Kişilerinizin hesabını bağlayın. Google erişimi salt okunurdur; Google Fotoğraflar değildir. Rehbere kaydetmek ayrı kişi izni gerektirir ve seçtiğiniz güncelleme kuralını izler.</string>
+    <string name="guide_whatsapp">Gelen WhatsApp bildirimlerindeki gönderen avatarlarını kullanın. Fotoğraflar uyumlu bildirimlerle gelir; tüm fotoğraflar indirilmez. Android bildirim erişimi verir, ancak dot.dialer yalnızca kimlik ve avatar alır; mesajları kaydetmez veya göndermez. Çözünürlük bildirime bağlıdır.</string>
+    <string name="guide_optimizer">İyileştirilecek kişi hesabını seçin. Her hesabın kaynak ve izinleri ayrıdır. Ara öneriler üretir; inceleyip uygularsınız. Otomatik güncellemeler fotoğraf kuralını izler. Manuel seçimler otomatik güncellemeler yeniden başlatılana kadar korunur. Kaynağı kapatmak kaydedilmiş fotoğrafları geri almaz.</string>
+    <string name="guide_recording">Etkinleştirme kayıt başlatmaz. Bağlı aramada: Diğer → Kaydet veya Kaydet ve yazıya dök. Durdur, arama sonu veya bekletme kaydı bitirir. Modül kapalıyken dosyalar korunur. Modül erişimi, bağlı ve lisanslı dot.dictate ile API anahtarı gerektirir. Ses yapılandırılmış sağlayıcıya gönderilir; API ücreti olabilir. İşlem için mobil veri dahil İnternet gerekir. Giriş dili otomatik algılanır; çeviri orijinali korur.</string>
+    <string name="guide_contacts">dot.dialer’da görünen hesapları seçin. Kaynağı gizlemek kişileri silmez veya Android eşitlemesini durdurmaz.</string>
+    <string name="guide_format">Kayıtlı numaraları uluslararası biçime getirir; örneğin 0720… → +40 720…. Rehberi değiştirebilir. Ararken biçimlendirmeden ve fotoğraflardan ayrıdır.</string>
+    <string name="guide_auth">dot.dialer’ı seçilen doğrulamayla koruyun. Diğer uygulamalardaki Android rehberini şifrelemez veya kilitlemez. Önce yöntemi yapılandırıp doğrulayın.</string>
+    <string name="guide_lock">Seçilen aramaları yanıtlarken veya reddederken doğrulama ister. Listeler kimlik doğrulamayı belirler, spam engellemez. Ek adımı dikkate alın.</string>
+    <string name="guide_backup">Taşınabilir ayarları, notları ve özel arka planları kaydeder. Rehber, kayıt, döküm, lisans veya Android izinlerini içermez. Notlar kişisel veri içerebilir; dosyayı gizli tutun.</string>
+    <string name="guide_restore">Taşınabilir ayarları ve aynı adlı notları değiştirir. İzin vermez, lisans taşımaz, doğrulama yapılandırmaz. Kayıtları veya Android rehberini geri yüklemez.</string>
+    <string name="guide_history">Bu sınırlar Android geçmişini silmeden Son Aramalar görünümünü değiştirir. Favorileri gizlemek sıralarını korur.</string>
+    <string name="guide_gesture">Dokunma eylemini seçin. Hızlı eylemler dört seçenek açar; tekrar dokunmak kapatır. Basılı tutup kaydırma ayrıdır; seçim yapmadan bırakmak iptal eder.</string>
+    <string name="guide_accessibility">Açıkken metin Android yazı boyutunu izlemez. Telefon ayarı değişmez. Okunabilirliği kontrol edin.</string>
+    <string name="guide_names">Sıralama liste düzenini, ad biçimi görünümü değiştirir. Rehberdeki adlar değişmez.</string>
+    <string name="guide_sim">Varsayılan SIM’i seçin. Numara veya kişiye kaydedilen SIM önceliklidir. Kullanılamayan SIM kullanılamaz.</string>
+    <string name="guide_visual">Belirtilen efekti değiştirir; fotoğrafı veya tüm animasyonları değil. Önizlemeyi kullanın.</string>
+    <string name="guide_search_clear">Arama başlarken aramayı temizler; görüşme bittiğinde değil.</string>
+    <string name="guide_scale">Büyük öğeler daha okunaklıdır ama daha az öğe sığar. Arayüz ölçeği ve Android yazı boyutu ayrıdır.</string>
+    <string name="guide_delete">Son Aramalar’da yalnızca gösterilen aramayı onaysız siler. Kişiyi bir onaydan sonra siler. Diğer aramalar kalır.</string>
+    <string name="guide_background">Rehber fotoğrafını değiştirmeden arama arka planını değiştirir. Kişiye özel arka plan genel olandan önceliklidir.</string>
+    <string name="guide_contacts_actions">Uygulamadan önce kişileri inceleyin. Numara biçimlendirme rehbere yazar. Birleştirme kayıtları bağlar; ayırma kaynak kayıtlarını ayrı gösterir. Ayırma önceki tüm düzenlemeleri geri almaz.</string>
+</resources>

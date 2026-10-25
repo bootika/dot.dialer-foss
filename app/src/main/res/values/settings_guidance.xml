@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">How it works</string>
+    <string name="guide_stage">Step %1$d of 3</string>
+    <string name="guide_google">Find clearer photos in Google Contacts when larger originals exist. Connect the account containing your contacts. Google access is read-only; this is not Google Photos. Saving photos to your address book needs separate contact access and follows your chosen update policy.</string>
+    <string name="guide_whatsapp">Use sender avatars from incoming WhatsApp notifications. Photos appear as compatible notifications arrive; this does not download every WhatsApp photo. Android grants notification access, but dot.dialer only extracts sender identity and avatars from compatible notifications, without saving or sending messages. Resolution depends on the notification.</string>
+    <string name="guide_optimizer">Choose the account whose contacts you want to improve. Each account has its own sources and permissions. Find creates suggestions; Review and Apply let you choose changes. Automatic updates follow your photo policy. Manual photo choices stay protected until you resume automatic updates. Turning off a source does not undo photos already saved in your address book.</string>
+    <string name="guide_recording">Activation never starts a recording. During a connected call, use More → Record or Record &amp; transcribe. Stop, call end or Hold ends capture. Saved audio and texts remain available when the module is off. Module access requires connected, licensed dot.dictate and an API key; audio is sent to its configured provider and API charges may apply. Internet is needed for processing, including mobile data. Input language is detected automatically; translation keeps the original.</string>
+    <string name="guide_contacts">Choose which accounts appear in dot.dialer. Hiding a source does not delete contacts or stop Android synchronization.</string>
+    <string name="guide_format">Standardize saved phone numbers into international format, for example 0720… → +40 720…. This can update your address book. It is separate from formatting a number only when placing a call, and from photo updates.</string>
+    <string name="guide_auth">Protect access to dot.dialer using the selected authentication method. This does not encrypt or lock your Android address book in other apps. Configure and verify the method before enabling protection.</string>
+    <string name="guide_lock">Require authentication for answering or declining selected calls. The lists select which calls need authentication; they are not spam-blocking lists. Consider the extra step when answering quickly.</string>
+    <string name="guide_backup">Save portable settings, notes and custom backgrounds. This is not a backup of your address book, recordings, transcripts, licenses or Android permissions. Keep the file private: notes may contain personal information.</string>
+    <string name="guide_restore">Restoring replaces portable settings and notes with matching filenames. It does not grant permissions, transfer licenses or configure authentication. Recordings and your Android address book are not restored from this file.</string>
+    <string name="guide_history">These limits change what Recents shows; they do not delete Android call history. Hiding Favorites keeps your saved favorites and order.</string>
+    <string name="guide_gesture">Choose what a tap does. Quick actions opens the four actions; tap the row again to close it. Hold-and-slide is a separate gesture, cancelled when released without an action.</string>
+    <string name="guide_accessibility">When enabled, text stops following Android’s font-size setting. The phone setting itself is unchanged. Check readability before choosing this.</string>
+    <string name="guide_names">Sorting changes list order; name format changes how names are displayed. Neither rewrites contact names in your address book.</string>
+    <string name="guide_sim">Choose the SIM used by default. A number or contact’s saved SIM takes priority. Unavailable SIMs cannot be used.</string>
+    <string name="guide_visual">This changes the indicated visual effect, not your photo or every animation in the app. Use the preview to choose the appearance.</string>
+    <string name="guide_search_clear">Clear the search when starting a call, rather than when the conversation ends.</string>
+    <string name="guide_scale">Larger elements improve readability but leave room for fewer items. Interface scale and Android font size are separate settings.</string>
+    <string name="guide_delete">Delete removes only the displayed call entry in Recents, without confirmation. On a contact, it deletes the contact after one confirmation. Other call entries are not removed with that recent.</string>
+    <string name="guide_background">Use a background for the call screen without changing the contact photo saved in your address book. A contact-specific background overrides the global background.</string>
+    <string name="guide_contacts_actions">Review the selected contacts before applying changes. Standardizing numbers writes to your address book. Merging links contact records; separating displays their source records separately. Separation is not a general undo for earlier edits.</string>
+</resources>

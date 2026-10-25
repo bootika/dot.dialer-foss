@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen.recordings
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,8 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,7 +40,9 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
     var delete by remember {mutableStateOf(false)};var translate by remember {mutableStateOf(false)}
     var error by remember {mutableStateOf(false)};var busy by remember {mutableStateOf(false)}
     var exportText by remember {mutableStateOf("")}
-    val access=remember(planRevision,capabilities) {RecordingPolicy.processing(plans.effective,capabilities)}
+    var showHistory by remember(asset.id) {mutableStateOf(false)}
+    val moduleEnabled by repo.moduleState.collectAsState()
+    val access=remember(planRevision,capabilities,moduleEnabled) {RecordingPolicy.processing(plans.effective,capabilities)}
     fun run(action: suspend ()->Unit) {scope.launch {busy=true;error=false;try {action()}catch(e: CancellationException) {throw e}catch(failure: Exception) {RecordingDiagnostics.failure("RecordingDetails",failure);error=true}finally {busy=false}}}
     LaunchedEffect(revision,asset.id) {val data=withContext(Dispatchers.IO) {repo.catalog.texts(asset.id) to repo.catalog.jobs().filter {it.recordingId==asset.id}};texts=data.first;jobs=data.second}
     val audioExport=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(asset.mimeType)) {uri ->if(uri!=null)run {
@@ -49,31 +57,52 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
         dismissButton={TextButton(onClick={delete=false}) {Text(stringResource(R.string.cancel))}})
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         TextButton(onClick=onBack) {Text(stringResource(R.string.recordings_back))}
-        Text(asset.title,style=MaterialTheme.typography.titleLarge)
-        Text(recordingTime(asset.durationMs),style=MaterialTheme.typography.bodyLarge)
-        RecordingPlayback(asset,repo,canPlay)
-        OutlinedButton(onClick={audioExport.launch(asset.fileName)},modifier=Modifier.fillMaxWidth()) {Text(stringResource(R.string.recordings_export_audio))}
-        if(repo.integrationEnabled())Button(onClick={if(access==RecordingAccess.READY)run {repo.queue(asset.id)}else onConfigure()},enabled=!busy,modifier=Modifier.fillMaxWidth().alpha(if(access==RecordingAccess.READY)1f else .45f)) {Text(stringResource(R.string.recordings_transcribe))}
-        if(repo.integrationEnabled() && access!=RecordingAccess.READY)Text(stringResource(recordingAccessText(access)),style=MaterialTheme.typography.bodyMedium)
+        Text(asset.title,style=MaterialTheme.typography.headlineSmall)
+        if(asset.phoneNumber.isNotEmpty())Text(asset.phoneNumber,style=MaterialTheme.typography.bodyLarge,color=MaterialTheme.colorScheme.onSurfaceVariant)
+        RillExpressiveCard {
+            Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
+                Text(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM,java.text.DateFormat.SHORT).format(java.util.Date(asset.createdAt)),style=MaterialTheme.typography.titleMedium)
+                Text(recordingTime(asset.durationMs),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                RecordingPlayback(asset,repo,canPlay)
+                TextButton(onClick={audioExport.launch(asset.fileName)},modifier=Modifier.align(Alignment.End)) {Text(stringResource(R.string.recordings_export_audio))}
+            }
+        }
+        if(repo.integrationEnabled() && moduleEnabled)Button(onClick={if(access==RecordingAccess.READY)run {repo.queue(asset.id)}else onConfigure()},enabled=!busy,modifier=Modifier.fillMaxWidth().alpha(if(access==RecordingAccess.READY)1f else .45f)) {Text(stringResource(R.string.recordings_transcribe))}
+        if(repo.integrationEnabled() && moduleEnabled && access!=RecordingAccess.READY)Text(stringResource(recordingAccessText(access)),style=MaterialTheme.typography.bodyMedium)
         if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
         if(error)Text(stringResource(R.string.recordings_error),color=MaterialTheme.colorScheme.error)
-        for(job in jobs)RillExpressiveCard {
+        for(job in jobs.filter {it.state !in setOf("completed","cancelled")})RillExpressiveCard {
             Column(Modifier.padding(16.dp)) {
                 RecordingJobStatus(job)
                 if(job.state in setOf("queued","running","blocked"))TextButton(onClick={run {repo.cancel(job.id)}}) {Text(stringResource(R.string.cancel))}
-                if(repo.integrationEnabled() && job.state in setOf("failed","blocked"))TextButton(onClick={if(access==RecordingAccess.READY)run {repo.retry(job)}else onConfigure()}) {Text(stringResource(R.string.recordings_retry))}
+                if(repo.integrationEnabled() && moduleEnabled && job.state in setOf("failed","blocked"))TextButton(onClick={if(access==RecordingAccess.READY)run {repo.retry(job)}else onConfigure()}) {Text(stringResource(R.string.recordings_retry))}
             }
         }
         for(text in texts)RillExpressiveCard {
             Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
-                Text(if(text.operation=="transcribe")stringResource(R.string.recordings_original)else stringResource(R.string.recordings_translation,text.language),style=MaterialTheme.typography.titleMedium)
+                val title=if(text.operation=="transcribe")stringResource(R.string.recordings_original)else stringResource(R.string.recordings_translation,text.language)
+                Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
+                    Text(title,style=MaterialTheme.typography.titleMedium,modifier=Modifier.weight(1f))
+                    IconButton(onClick={context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(title,text.text))},
+                        modifier=Modifier.testTag("copy-transcript-${text.id}")) {
+                        Icon(Icons.Rounded.ContentCopy,contentDescription=stringResource(R.string.copy_action),tint=MaterialTheme.colorScheme.primary)
+                    }
+                }
                 SelectionContainer {Text(text.text,style=MaterialTheme.typography.bodyLarge)}
-                Row {
+                FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick={exportText=text.text;textExport.launch("${asset.id}-${text.id}.txt")}) {Text(stringResource(R.string.recordings_export_text))}
-                    if(repo.integrationEnabled() && text.operation=="transcribe")TextButton(modifier=Modifier.alpha(if(RecordingPolicy.processing(plans.effective,capabilities,true)==RecordingAccess.READY)1f else .45f),onClick={if(RecordingPolicy.processing(plans.effective,capabilities,true)==RecordingAccess.READY)translate=true else onConfigure()}) {Text(stringResource(R.string.recordings_translate))}
+                    if(repo.integrationEnabled() && moduleEnabled && text.operation=="transcribe")TextButton(modifier=Modifier.alpha(if(RecordingPolicy.processing(plans.effective,capabilities,true)==RecordingAccess.READY)1f else .45f),onClick={if(RecordingPolicy.processing(plans.effective,capabilities,true)==RecordingAccess.READY)translate=true else onConfigure()}) {Text(stringResource(R.string.recordings_translate))}
                 }
             }
         }
+        val history=jobs.filter {it.state in setOf("completed","cancelled")}
+        if(history.isNotEmpty()) {
+            TextButton(onClick={showHistory=!showHistory},modifier=Modifier.testTag("recording-history")) {Text(stringResource(if(showHistory)R.string.recordings_hide_history else R.string.recordings_history))}
+            if(showHistory)RillExpressiveCard {
+                Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {for(job in history)RecordingJobStatus(job)}
+            }
+        }
+        HorizontalDivider(color=MaterialTheme.colorScheme.outlineVariant)
         TextButton(onClick={delete=true}) {Text(stringResource(R.string.recordings_delete),color=MaterialTheme.colorScheme.error)}
         Spacer(Modifier.height(24.dp))
     }

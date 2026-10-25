@@ -4,7 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
@@ -41,7 +41,6 @@ import dev.goodwy.rphone.R
 import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.modal.data.getDisplayName
 import dev.goodwy.rphone.view.theme.color_call_end
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -90,13 +89,15 @@ fun IPhoneFavoritesRow(
         }
     }
 
-    var draggedIndex by remember { mutableIntStateOf(-1) }
+    var draggedContactId by remember { mutableStateOf<String?>(null) }
+    var dragPointerX by remember { mutableFloatStateOf(0f) }
+    var dragTouchOffsetX by remember { mutableFloatStateOf(0f) }
+    var preDragOrder by remember { mutableStateOf<List<Contact>>(emptyList()) }
     var dragOffsetX by remember { mutableFloatStateOf(0f) }
 
     val density = LocalDensity.current
     val haptic = LocalHapticFeedback.current
     val lazyListState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
     val favoriteIds = remember(favorites) { favorites.map(Contact::id) }
     var hasAlignedInitialFavorites by remember { mutableStateOf(false) }
 
@@ -142,25 +143,52 @@ fun IPhoneFavoritesRow(
         translationY = 0f
     }
 
-    LaunchedEffect(draggedIndex, dragOffsetX) {
-        if (draggedIndex != -1) {
-            val layoutInfo = lazyListState.layoutInfo
-            val containerWidth = layoutInfo.viewportEndOffset
-            val draggedItemInfo = layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
-            
-            if (draggedItemInfo != null) {
-                val currentPos = draggedItemInfo.offset + dragOffsetX
-                val scrollThreshold = 120f
-                
-                if (currentPos < scrollThreshold) {
-                    scope.launch { lazyListState.animateScrollBy(-500f) }
-                } else if (currentPos > containerWidth - itemWidthPx - scrollThreshold) {
-                    scope.launch { lazyListState.animateScrollBy(500f) }
-                }
-            }
+    fun moveDraggedBy(amount: Float) {
+        val id = draggedContactId ?: return
+        dragOffsetX += amount
+        var index = favoritesList.indexOfFirst { it.id == id }
+        if (index < 0) return
+        val threshold = itemTotalWidthPx * 0.55f
+        while (dragOffsetX > threshold && index < favoritesList.lastIndex) {
+            favoritesList.add(index + 1, favoritesList.removeAt(index))
+            index++
+            dragOffsetX -= itemTotalWidthPx
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+        while (dragOffsetX < -threshold && index > 0) {
+            favoritesList.add(index - 1, favoritesList.removeAt(index))
+            index--
+            dragOffsetX += itemTotalWidthPx
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
     }
 
+    val edgeWidthPx = with(density) { 32.dp.toPx() }
+    val scrollSpeedPx = with(density) { 240.dp.toPx() }
+    LaunchedEffect(draggedContactId, isEditing, itemTotalWidthPx) {
+        if (draggedContactId == null || !isEditing) return@LaunchedEffect
+        var previousFrame = withFrameNanos { it }
+        while (isEditing && draggedContactId != null) {
+            val frame = withFrameNanos { it }
+            val seconds = ((frame - previousFrame) / 1_000_000_000f).coerceIn(0f, 0.032f)
+            previousFrame = frame
+            val layout = lazyListState.layoutInfo
+            val left = layout.viewportStartOffset.toFloat()
+            val right = layout.viewportEndOffset.toFloat()
+            val direction = when {
+                dragPointerX < left + edgeWidthPx && lazyListState.canScrollBackward ->
+                    -((left + edgeWidthPx - dragPointerX) / edgeWidthPx).coerceIn(0f, 1f)
+                dragPointerX > right - edgeWidthPx && lazyListState.canScrollForward ->
+                    ((dragPointerX - right + edgeWidthPx) / edgeWidthPx).coerceIn(0f, 1f)
+                else -> 0f
+            }
+            if (direction != 0f) {
+                val scrolled = lazyListState.scrollBy(direction * scrollSpeedPx * seconds)
+                // Content moved under a stationary finger: keep the dragged avatar anchored.
+                moveDraggedBy(scrolled)
+            }
+        }
+    }
     LazyRow(
         state = lazyListState,
         flingBehavior = rememberSnapFlingBehavior(lazyListState),
@@ -174,7 +202,7 @@ fun IPhoneFavoritesRow(
             items = favoritesList,
             key = { _, contact -> contact.id }
         ) { index, contact ->
-            val isDragged = index == draggedIndex
+            val isDragged = contact.id == draggedContactId
             
             val animatedScale by animateFloatAsState(
                 targetValue = if (isDragged) 1.08f else 1.0f,
@@ -188,6 +216,39 @@ fun IPhoneFavoritesRow(
                 label = "elevation"
             )
 
+            val reorderGesture = if (isEditing) Modifier.pointerInput(contact.id) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = { start ->
+                        onDraggingChange(true)
+                        preDragOrder = favoritesList.toList()
+                        dragTouchOffsetX = start.x
+                        draggedContactId = contact.id
+                        dragPointerX = (lazyListState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == contact.id }?.offset ?: 0) + start.x
+                        dragOffsetX = 0f
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        dragPointerX += dragAmount.x
+                        moveDraggedBy(dragAmount.x)
+                    },
+                    onDragEnd = {
+                        onSaveOrder(favoritesList.map { it.id })
+                        draggedContactId = null
+                        dragOffsetX = 0f
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onDraggingChange(false)
+                    },
+                    onDragCancel = {
+                        favoritesList.clear()
+                        favoritesList.addAll(preDragOrder)
+                        draggedContactId = null
+                        dragOffsetX = 0f
+                        onDraggingChange(false)
+                    },
+                )
+            } else Modifier
+
             Box(
                 modifier = Modifier
                     .width(itemWidth)
@@ -197,13 +258,17 @@ fun IPhoneFavoritesRow(
                         placementSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
                     ) else Modifier)
                     .zIndex(if (isDragged) 100f else 0f)
+                    .then(reorderGesture)
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .graphicsLayer {
                             if (isDragged) {
-                                translationX = dragOffsetX
+                                translationX = lazyListState.layoutInfo.visibleItemsInfo
+                                    .firstOrNull { it.key == contact.id }
+                                    ?.let { dragPointerX - dragTouchOffsetX - it.offset }
+                                    ?: dragOffsetX
                                 scaleX = animatedScale
                                 scaleY = animatedScale
                             }
@@ -211,7 +276,7 @@ fun IPhoneFavoritesRow(
                 ) {
                     Surface(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .padding(2.dp)
                             .graphicsLayer {
                                 if (isEditing && !isDragged) {
@@ -225,65 +290,11 @@ fun IPhoneFavoritesRow(
                                 ambientColor = Color.Black.copy(alpha = 0.25f),
                                 spotColor = Color.Black.copy(alpha = 0.4f)
                             )
-                            .then(
-                                if (isEditing) {
-                                    Modifier.pointerInput(contact.id) {
-                                        detectDragGesturesAfterLongPress(
-                                            onDragStart = {
-                                                onDraggingChange(true)
-                                                draggedIndex = favoritesList.indexOfFirst { it.id == contact.id }
-                                                dragOffsetX = 0f
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            },
-                                            onDrag = { change, dragAmount ->
-                                                change.consume()
-                                                dragOffsetX += dragAmount.x
-
-                                                val currentIndex = favoritesList.indexOfFirst { it.id == contact.id }
-                                                if (currentIndex == -1) return@detectDragGesturesAfterLongPress
-
-                                                val swapThreshold = itemTotalWidthPx * 0.55f
-
-                                                if (dragOffsetX > swapThreshold && currentIndex < favoritesList.lastIndex) {
-                                                    val targetIndex = currentIndex + 1
-                                                    val item = favoritesList[currentIndex]
-                                                    favoritesList.removeAt(currentIndex)
-                                                    favoritesList.add(targetIndex, item)
-                                                    draggedIndex = targetIndex
-                                                    dragOffsetX -= itemTotalWidthPx
-                                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                                } else if (dragOffsetX < -swapThreshold && currentIndex > 0) {
-                                                    val targetIndex = currentIndex - 1
-                                                    val item = favoritesList[currentIndex]
-                                                    favoritesList.removeAt(currentIndex)
-                                                    favoritesList.add(targetIndex, item)
-                                                    draggedIndex = targetIndex
-                                                    dragOffsetX += itemTotalWidthPx
-                                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                                }
-                                            },
-                                            onDragEnd = {
-                                                onSaveOrder(favoritesList.map { it.id })
-                                                draggedIndex = -1
-                                                dragOffsetX = 0f
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                onDraggingChange(false)
-                                            },
-                                            onDragCancel = {
-                                                draggedIndex = -1
-                                                dragOffsetX = 0f
-                                                onDraggingChange(false)
-                                            },
-                                        )
-                                    }
-                                } else {
-                                    Modifier.clickable(
-                                        interactionSource = null,
-                                        indication = null,
-                                        onClick = { onClick(contact) },
-                                    )
-                                },
-                            ),
+                            .then(if (isEditing) Modifier else Modifier.clickable(
+                                interactionSource = null,
+                                indication = null,
+                                onClick = { onClick(contact) },
+                            )),
                         shape = RoundedCornerShape(12.dp),
                         color = Color.Transparent,
 //                        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f)),
@@ -299,13 +310,13 @@ fun IPhoneFavoritesRow(
                                     photoUri = contact.photoUri,
                                     modifier = Modifier
                                         .size(avatarSize)
-                                        .circularCombinedClickable(
+                                        .then(if (isEditing) Modifier else Modifier.circularCombinedClickable(
                                             onClick = { onClick(contact) },
                                             onLongClick = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                 onLongClick(contact)
                                             },
-                                        ),
+                                        )),
                                     shape = CircleShape
                                 )
                             }

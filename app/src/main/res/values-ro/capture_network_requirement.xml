@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Conectează-te la Wi-Fi și pornește Depanare wireless în Android. Permite rețeaua dacă este cerut, apoi revino și apasă Activează. Wi-Fi și depanarea sunt necesare doar pentru activare; depanarea se oprește la final.</string>
+</resources>

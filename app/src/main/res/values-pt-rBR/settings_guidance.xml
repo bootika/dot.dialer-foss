@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Como funciona</string>
+    <string name="guide_stage">Etapa %1$d de 3</string>
+    <string name="guide_google">Busque fotos mais nítidas nos Contatos do Google quando houver originais maiores. Conecte a conta dos seus contatos. Acesso Google somente leitura, não ao Google Fotos. Salvar na agenda exige permissão separada e segue a política escolhida.</string>
+    <string name="guide_whatsapp">Use avatares das notificações recebidas do WhatsApp. As fotos aparecem com notificações compatíveis; não baixa todas as fotos. O Android concede acesso às notificações, mas dot.dialer extrai apenas identidade e avatar, sem salvar ou enviar mensagens. A resolução depende da notificação.</string>
+    <string name="guide_optimizer">Escolha a conta a melhorar. Cada conta tem fontes e consentimentos próprios. Buscar cria sugestões para revisar e aplicar. Atualizações automáticas seguem sua política. Fotos escolhidas manualmente ficam protegidas até retomar as atualizações. Desativar uma fonte não desfaz fotos já salvas.</string>
+    <string name="guide_recording">Ativar não inicia gravação. Em uma chamada conectada: Mais → Gravar ou Gravar e transcrever. Parar, encerrar ou colocar em espera termina a captura. Arquivos continuam disponíveis com o módulo desligado. O acesso ao módulo exige dot.dictate conectado e licenciado com chave API. O áudio vai ao provedor configurado; pode haver custos API. Processamento exige Internet, inclusive dados móveis. O idioma de entrada é detectado automaticamente; a tradução mantém o original.</string>
+    <string name="guide_contacts">Escolha as contas visíveis no dot.dialer. Ocultar uma fonte não apaga contatos nem interrompe a sincronização Android.</string>
+    <string name="guide_format">Formata números salvos no padrão internacional, por exemplo 0720… → +40 720…. Pode alterar a agenda. É separado da formatação ao ligar e das fotos.</string>
+    <string name="guide_auth">Proteja dot.dialer com a autenticação escolhida. Isso não criptografa nem bloqueia a agenda Android em outros apps. Configure e verifique o método antes de ativar.</string>
+    <string name="guide_lock">Exige autenticação para atender ou recusar chamadas escolhidas. As listas controlam autenticação, não spam. Considere a etapa adicional ao atender rapidamente.</string>
+    <string name="guide_backup">Salva configurações transferíveis, notas e fundos personalizados. Não inclui agenda, gravações, transcrições, licenças ou permissões Android. Mantenha o arquivo privado: notas podem conter dados pessoais.</string>
+    <string name="guide_restore">Substitui configurações transferíveis e notas com o mesmo nome. Não concede permissões, transfere licenças nem configura autenticação. Não restaura gravações ou a agenda Android.</string>
+    <string name="guide_history">Esses limites mudam o que aparece em Recentes sem apagar o histórico Android. Ocultar Favoritos mantém sua ordem.</string>
+    <string name="guide_gesture">Escolha a ação ao tocar. Ações rápidas abre quatro opções; tocar novamente fecha. Segurar e deslizar é separado; soltar sem escolher cancela.</string>
+    <string name="guide_accessibility">Ativado, o texto não segue mais o tamanho da fonte Android. A configuração do telefone não muda. Verifique a legibilidade.</string>
+    <string name="guide_names">A ordenação muda a lista, o formato do nome muda a apresentação. Não altera nomes salvos.</string>
+    <string name="guide_sim">Escolha a SIM padrão. A SIM salva para um número ou contato tem prioridade. SIMs indisponíveis não podem ser usadas.</string>
+    <string name="guide_visual">Muda o efeito indicado, não a foto nem todas as animações. Use a prévia.</string>
+    <string name="guide_search_clear">Limpa a busca ao iniciar a chamada, não ao terminar a conversa.</string>
+    <string name="guide_scale">Elementos maiores são mais legíveis, mas cabem menos. Escala da interface e fonte Android são separadas.</string>
+    <string name="guide_delete">Em Recentes, Excluir remove apenas a chamada mostrada, sem confirmação. Um contato é excluído após uma confirmação. As outras chamadas permanecem.</string>
+    <string name="guide_background">Muda o fundo de chamada sem alterar a foto na agenda. Um fundo específico do contato tem prioridade sobre o global.</string>
+    <string name="guide_contacts_actions">Revise os contatos antes de aplicar. Formatar números altera a agenda. Mesclar vincula registros; separar exibe os registros de origem separadamente. Separar não desfaz todas as edições anteriores.</string>
+</resources>

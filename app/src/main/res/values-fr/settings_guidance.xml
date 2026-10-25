@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Comment ça marche</string>
+    <string name="guide_stage">Étape %1$d sur 3</string>
+    <string name="guide_google">Recherchez des photos plus nettes dans Google Contacts lorsque des originaux plus grands existent. Connectez le compte contenant vos contacts. Accès Google en lecture seule, sans Google Photos. L’enregistrement dans le carnet nécessite une autorisation distincte et respecte votre règle de mise à jour.</string>
+    <string name="guide_whatsapp">Utilisez les avatars des notifications WhatsApp reçues. Les photos apparaissent avec les notifications compatibles, sans télécharger tous les avatars. Android accorde un accès aux notifications, mais dot.dialer extrait uniquement l’identité et l’avatar, sans enregistrer ni transmettre les messages. La résolution dépend de la notification.</string>
+    <string name="guide_optimizer">Choisissez le compte à améliorer. Chaque compte a ses sources et autorisations. La recherche propose des changements à vérifier et appliquer. Les mises à jour automatiques suivent votre règle photo. Les choix manuels restent protégés jusqu’à la reprise des mises à jour. Désactiver une source ne supprime pas les photos déjà enregistrées.</string>
+    <string name="guide_recording">L’activation ne démarre aucun enregistrement. Pendant un appel connecté : Plus → Enregistrer ou Enregistrer et transcrire. Arrêter, terminer ou mettre en attente coupe la capture. Les fichiers restent accessibles module désactivé. L’accès au module nécessite dot.dictate connecté et licencié avec une clé API. L’audio est envoyé au fournisseur configuré ; des frais API peuvent s’appliquer. Le traitement nécessite Internet, y compris les données mobiles. La langue source est détectée automatiquement ; la traduction conserve l’original.</string>
+    <string name="guide_contacts">Choisissez les comptes visibles dans dot.dialer. Masquer une source ne supprime pas les contacts et n’arrête pas la synchronisation Android.</string>
+    <string name="guide_format">Passe les numéros enregistrés au format international, par exemple 0720… → +40 720…. Peut modifier le carnet. Distinct du formatage lors de l’appel et des photos.</string>
+    <string name="guide_auth">Protégez dot.dialer avec la méthode d’authentification choisie. Cela ne chiffre ni ne verrouille le carnet Android dans les autres applications. Configurez et vérifiez la méthode avant activation.</string>
+    <string name="guide_lock">Demande une authentification pour accepter ou refuser certains appels. Ces listes règlent l’authentification, pas le blocage des spams. Prévoyez cette étape supplémentaire.</string>
+    <string name="guide_backup">Sauvegarde réglages transférables, notes et fonds personnalisés. Ni carnet, ni enregistrements, transcriptions, licences ou autorisations Android. Gardez le fichier privé : les notes peuvent contenir des données personnelles.</string>
+    <string name="guide_restore">Remplace les réglages transférables et les notes de même nom. N’accorde aucune autorisation, ne transfère pas de licence et ne configure pas l’authentification. Ne restaure ni les enregistrements ni le carnet Android.</string>
+    <string name="guide_history">Ces limites changent l’affichage des appels récents sans supprimer l’historique Android. Masquer les favoris conserve leur ordre.</string>
+    <string name="guide_gesture">Choisissez l’action au toucher. Les actions rapides ouvrent quatre options ; retoucher la ligne les ferme. Maintenir et glisser est distinct ; relâcher sans choix annule.</string>
+    <string name="guide_accessibility">Activé, le texte ne suit plus la taille de police Android. Le réglage du téléphone reste inchangé. Vérifiez la lisibilité.</string>
+    <string name="guide_names">Le tri change l’ordre de la liste, le format du nom change l’affichage. Les noms du carnet restent inchangés.</string>
+    <string name="guide_sim">Choisissez la SIM par défaut. Celle enregistrée pour un numéro ou contact est prioritaire. Une SIM indisponible ne peut être utilisée.</string>
+    <string name="guide_visual">Change l’effet indiqué, pas votre photo ni toutes les animations. Utilisez l’aperçu.</string>
+    <string name="guide_search_clear">Efface la recherche au lancement de l’appel, pas à la fin de la conversation.</string>
+    <string name="guide_scale">Des éléments plus grands sont plus lisibles mais occupent davantage de place. Échelle d’interface et police Android sont distinctes.</string>
+    <string name="guide_delete">Dans Récents, Supprimer retire seulement l’appel affiché, sans confirmation. Un contact est supprimé après une confirmation. Les autres appels restent.</string>
+    <string name="guide_background">Change le fond d’appel sans modifier la photo du contact. Un fond propre au contact remplace le fond global.</string>
+    <string name="guide_contacts_actions">Vérifiez les contacts avant application. Le formatage modifie le carnet. Fusionner lie les fiches ; séparer affiche leurs fiches sources distinctement. Séparer n’annule pas toutes les modifications précédentes.</string>
+</resources>

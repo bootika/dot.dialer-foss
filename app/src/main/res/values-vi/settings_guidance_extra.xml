@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Đọc tìm kiếm qua micrô. Nhận dạng Android có thể cần Internet. Đổi tìm kiếm mà không gọi.</string>
+    <string name="guide_fullscreen">Tự mở cuộc gọi đến trong màn hình gọi. Tách biệt với ảnh toàn màn hình; vẫn tuân theo quyền và giới hạn Android.</string>
+    <string name="guide_finish_work">Đang tắt Gỡ lỗi không dây và kiểm tra ghi âm. Vui lòng chờ xác nhận.</string>
+    <string name="guide_plans">Free giữ gọi cơ bản. Power Up thêm công cụ danh bạ và hiệu quả; Complete có thêm tự động hóa và giao diện nâng cao. Dùng thử Complete 30 ngày không tự tính phí. Ảnh đã lưu vẫn dùng được sau hết hạn. dot.dictate cần giấy phép và khóa API riêng.</string>
+    <string name="capture_pair_manual_help">Dùng chia đôi màn hình để giữ mã Android mở khi nhập cổng và mã ở đây. Cổng ghép đôi và cổng kết nối khác nhau.</string>
+</resources>

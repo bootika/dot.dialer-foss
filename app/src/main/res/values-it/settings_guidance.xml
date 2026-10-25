@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Come funziona</string>
+    <string name="guide_stage">Passaggio %1$d di 3</string>
+    <string name="guide_google">Cerca foto più nitide in Contatti Google quando esistono originali più grandi. Collega l’account dei tuoi contatti. Accesso Google in sola lettura, non a Google Foto. Salvare nella rubrica richiede un permesso distinto e segue la regola scelta.</string>
+    <string name="guide_whatsapp">Usa gli avatar delle notifiche WhatsApp ricevute. Le foto arrivano con notifiche compatibili; non scarica tutti gli avatar. Android concede accesso alle notifiche, ma dot.dialer estrae solo identità e avatar senza salvare o inviare messaggi. La risoluzione dipende dalla notifica.</string>
+    <string name="guide_optimizer">Scegli l’account da migliorare. Ogni account ha fonti e consensi propri. Cerca crea proposte da verificare e applicare. Gli aggiornamenti automatici seguono la regola foto. Le scelte manuali restano protette finché riprendi gli aggiornamenti. Disattivare una fonte non annulla le foto già salvate.</string>
+    <string name="guide_recording">L’attivazione non avvia registrazioni. Durante una chiamata connessa: Altro → Registra o Registra e trascrivi. Stop, fine chiamata o attesa fermano la cattura. I file restano disponibili col modulo spento. L’accesso al modulo richiede dot.dictate collegato, con licenza e chiave API. L’audio va al fornitore configurato; possono esserci costi API. Serve Internet, anche dati mobili. La lingua iniziale è rilevata automaticamente; la traduzione conserva l’originale.</string>
+    <string name="guide_contacts">Scegli gli account visibili in dot.dialer. Nascondere una fonte non elimina contatti e non ferma la sincronizzazione Android.</string>
+    <string name="guide_format">Formatta i numeri salvati in formato internazionale, ad esempio 0720… → +40 720…. Può modificare la rubrica. È separato dalla formattazione durante la chiamata e dalle foto.</string>
+    <string name="guide_auth">Proteggi dot.dialer col metodo di autenticazione scelto. Non cifra né blocca la rubrica Android nelle altre app. Configura e verifica il metodo prima di attivare.</string>
+    <string name="guide_lock">Richiede autenticazione per rispondere o rifiutare chiamate selezionate. Gli elenchi regolano l’autenticazione, non lo spam. Considera il passaggio aggiuntivo.</string>
+    <string name="guide_backup">Salva impostazioni trasferibili, note e sfondi personali. Non include rubrica, registrazioni, trascrizioni, licenze o permessi Android. Tieni privato il file: le note possono contenere dati personali.</string>
+    <string name="guide_restore">Sostituisce impostazioni trasferibili e note con lo stesso nome. Non concede permessi, trasferisce licenze o configura autenticazione. Non ripristina registrazioni o rubrica Android.</string>
+    <string name="guide_history">Questi limiti cambiano la vista Recenti, senza cancellare la cronologia Android. Nascondere Preferiti ne mantiene l’ordine.</string>
+    <string name="guide_gesture">Scegli l’azione al tocco. Azioni rapide apre quattro opzioni; toccare di nuovo chiude. Tieni e trascina è separato; rilasciare senza scelta annulla.</string>
+    <string name="guide_accessibility">Se attivo, il testo non segue la dimensione carattere Android. L’impostazione del telefono non cambia. Verifica la leggibilità.</string>
+    <string name="guide_names">L’ordinamento cambia la lista, il formato del nome cambia la visualizzazione. I nomi salvati non cambiano.</string>
+    <string name="guide_sim">Scegli la SIM predefinita. Quella salvata per numero o contatto ha priorità. Le SIM non disponibili non si possono usare.</string>
+    <string name="guide_visual">Cambia l’effetto indicato, non la foto o tutte le animazioni. Usa l’anteprima.</string>
+    <string name="guide_search_clear">Cancella la ricerca all’avvio della chiamata, non al termine della conversazione.</string>
+    <string name="guide_scale">Elementi più grandi sono leggibili ma ne entrano meno. Scala interfaccia e carattere Android sono separati.</string>
+    <string name="guide_delete">In Recenti, Elimina rimuove solo la chiamata mostrata, senza conferma. Per un contatto serve una conferma. Le altre chiamate rimangono.</string>
+    <string name="guide_background">Cambia lo sfondo chiamata senza modificare la foto in rubrica. Lo sfondo del contatto prevale su quello globale.</string>
+    <string name="guide_contacts_actions">Verifica i contatti prima di applicare. Formattare numeri modifica la rubrica. Unire collega le schede; separare mostra distintamente le schede sorgenti. Separare non annulla tutte le modifiche precedenti.</string>
+</resources>

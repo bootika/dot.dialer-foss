@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Cambia el idioma de interfaz, no los nombres ni el idioma de salida de transcripción.</string>
+    <string name="guide_contrast">Hace el texto más distinguible; fotos y fondos aún pueden afectar su lectura.</string>
+    <string name="guide_region">Interpreta números locales. No cambia SIM, país ni ubicación.</string>
+    <string name="guide_avatar">Oculta o muestra fotos sin borrarlas de la agenda.</string>
+    <string name="guide_interval">Distancia entre vibraciones al desplazar, no tiempo entre ellas.</string>
+    <string name="guide_timeout">Tiempo de validez de la autenticación antes de solicitarla otra vez.</string>
+</resources>

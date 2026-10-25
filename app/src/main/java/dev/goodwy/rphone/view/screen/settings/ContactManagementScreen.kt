@@ -192,6 +192,7 @@ fun ContactManagementScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+            item { SettingsHelpText(R.string.guide_contacts_actions) }
 if (!toolsOnly) {
                 item {
                     SettingsImmediateSection() {
@@ -225,6 +226,7 @@ if (!toolsOnly) {
                             RillExpressiveCard {
                                 RillSelectListItem(
                                     headline = stringResource(R.string.sort_by),
+                                    supporting = stringResource(R.string.guide_names),
                                     leadingIcon = Icons.Rounded.SortByAlpha,
                                     iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
                                     iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
@@ -237,6 +239,7 @@ if (!toolsOnly) {
                                 )
                                 RillSelectListItem(
                                     headline = stringResource(R.string.name_format),
+                                    supporting = stringResource(R.string.guide_names),
                                     leadingIcon = Icons.Rounded.Badge,
                                     iconContainerColor = MaterialTheme.colorScheme.customColors.colorDarkAmber,
                                     iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,

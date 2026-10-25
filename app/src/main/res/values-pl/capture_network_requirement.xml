@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Połącz Wi-Fi i włącz Debugowanie bezprzewodowe w Androidzie. Zezwól na sieć, jeśli wymagane, wróć i wybierz Aktywuj. Potrzebne tylko do aktywacji; debugowanie zostanie wyłączone na końcu.</string>
+</resources>

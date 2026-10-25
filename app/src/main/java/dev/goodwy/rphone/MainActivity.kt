@@ -704,6 +704,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
+        dev.goodwy.rphone.recordings.CaptureSetupNotifications.check(applicationContext)
         defaultDialerRevision++
         AppDiagnostics.record(DiagnosticEvent.ActivityLifecycle(ActivityStage.RESUMED))
         AppLockManager.onAppForegrounded(prefs)
@@ -792,6 +793,8 @@ class MainActivity : FragmentActivity() {
                 }
             }
             is NavigationTarget.Dialpad -> {
+                io.github.bootika.dotdialer.diagnostics.recordDialNumber(
+                    io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.NAVIGATION, target.number)
                 navController.navigate(DialPadScreenDestination(initialNumber = target.number).route)
             }
             is NavigationTarget.ContactUnavailable -> {

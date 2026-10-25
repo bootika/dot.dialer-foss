@@ -90,7 +90,7 @@ class BackupCompletenessTest {
         field("V07", P.KEY_SCROLL_HAPTICS, false, true),
         field("V08", P.KEY_SCROLL_CM_PER_HAPTIC, 0.5f, 1.5f, 5f),
         field("V09", P.KEY_SCROLL_HAPTIC_STRENGTH, 1, 60, 255),
-        field("T01", P.KEY_VISIBLE_ACCOUNTS, "", "com.google:alex@dotdesign.ro"),
+        field("T01", P.KEY_VISIBLE_ACCOUNTS, "", "com.google:test.user@example.test"),
         field("T02", P.KEY_CONTACT_SORT_ORDER, 0, 1),
         field("T03", P.KEY_CONTACT_DISPLAY_ORDER, 0, 1),
         field("T09", "high_res_call_photos_enabled", false, true),

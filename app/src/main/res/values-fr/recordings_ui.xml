@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Activer l’enregistrement des appels et les outils de transcription.</string>
+    <string name="rec_ui_ready">Prêt à enregistrer</string>
+    <string name="rec_ui_activation">Activation nécessaire</string>
+    <string name="rec_ui_capture_hint">Pendant un appel connecté : Plus → Enregistrer ou Enregistrer et transcrire.</string>
+    <string name="rec_ui_processing">Transcription et traduction</string>
+    <string name="rec_ui_connection_ready">dot.dictate est connecté</string>
+    <string name="rec_ui_api_hint">Connexion et prérequis vérifiés. Le traitement API est vérifié lors du traitement audio.</string>
+    <string name="rec_ui_output_hint">Utilisée par Enregistrer et transcrire. La langue parlée est détectée automatiquement.</string>
+    <string name="rec_ui_translation_hint">Traduire automatiquement les nouvelles transcriptions. Choisissez la langue en activant cette option.</string>
+    <string name="rec_ui_automatic_hint">Transcrire automatiquement les nouveaux enregistrements sauvegardés.</string>
+    <string name="rec_ui_more">Options supplémentaires</string>
+    <string name="rec_ui_translation_title">Langue de traduction automatique</string>
+</resources>

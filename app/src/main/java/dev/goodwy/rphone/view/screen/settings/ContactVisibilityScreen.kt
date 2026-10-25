@@ -132,6 +132,7 @@ fun ContactVisibilityScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            item { SettingsHelpText(R.string.guide_contacts) }
             item {
                 SettingsImmediateSection() {
                     Text(

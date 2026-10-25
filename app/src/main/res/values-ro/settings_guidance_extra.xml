@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Dictează căutarea folosind microfonul. Recunoașterea folosește serviciul Android și poate cere internet. Schimbă textul căutării fără să pornească un apel.</string>
+    <string name="guide_fullscreen">Deschide automat apelurile primite în ecranul de apel. Este separat de fotografia pe tot ecranul și respectă permisiunile și restricțiile Android.</string>
+    <string name="guide_finish_work">Oprim Depanare wireless și verificăm înregistrarea. Așteaptă confirmarea.</string>
+    <string name="guide_plans">Free păstrează apelurile esențiale. Power Up adaugă instrumente pentru contacte și eficiență în apeluri; Complete include și automatizări și personalizare avansată. Trial-ul Complete de 30 de zile nu taxează automat. Pozele aplicate rămân utilizabile după expirare. dot.dictate cere licență și cheie API proprii.</string>
+</resources>

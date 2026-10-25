@@ -18,15 +18,17 @@ class RecordingSyncJob : JobService() {
                 if(!getSystemService(UserManager::class.java).isUserUnlocked)true
                 else RecordingSyncEngine.synchronize(RecordingsRepository.get(this@RecordingSyncJob))
             } catch(error: CancellationException) {throw error} catch(error: Exception) {RecordingDiagnostics.failure("RecordingSyncJob",error);true}
-            withContext(Dispatchers.Main) {jobFinished(params,retry)}
+            withContext(Dispatchers.Main) {jobFinished(params,retry && IntegratedCallCapture.get(this@RecordingSyncJob).enabled())}
         }
         return true
     }
-    override fun onStopJob(params: JobParameters): Boolean {work?.cancel();work=null;return true}
+    override fun onStopJob(params: JobParameters): Boolean {work?.cancel();work=null;return IntegratedCallCapture.get(this).enabled()}
     override fun onDestroy() {work?.cancel();super.onDestroy()}
     companion object {
         private const val ID=0x524543
+        fun cancel(context: Context){context.getSystemService(JobScheduler::class.java).cancel(ID)}
         fun schedule(context: Context) {
+            if(!IntegratedCallCapture.get(context).enabled()){cancel(context);return}
             val job=JobInfo.Builder(ID,ComponentName(context,RecordingSyncJob::class.java))
                 .setPersisted(true).setMinimumLatency(1_000)
                 .setBackoffCriteria(30_000,JobInfo.BACKOFF_POLICY_LINEAR).build()

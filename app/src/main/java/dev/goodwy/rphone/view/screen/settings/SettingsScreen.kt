@@ -153,14 +153,18 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             }
         }
     }
+    var pendingBackup by remember { mutableStateOf(false) }
+    var pendingRestore by remember { mutableStateOf(false) }
+    if(pendingBackup || pendingRestore) AlertDialog(onDismissRequest={pendingBackup=false;pendingRestore=false},
+        title={Text(stringResource(if(pendingRestore)R.string.restore_backup else R.string.create_backup))},
+        text={Text(stringResource(if(pendingRestore)R.string.guide_restore else R.string.guide_backup))},
+        confirmButton={TextButton(onClick={val restore=pendingRestore;pendingBackup=false;pendingRestore=false;if(restore)restoreLauncher.launch(Unit) else {val stamp=java.text.SimpleDateFormat("yyyyMMdd_HHmmss",java.util.Locale.getDefault()).format(java.util.Date());createBackupLauncher.launch("DotDialer_Backup_$stamp.rphone")}}){Text(stringResource(R.string.capture_next))}},
+        dismissButton={TextButton(onClick={pendingBackup=false;pendingRestore=false}){Text(stringResource(R.string.cancel))}})
     fun createBackup() {
-        val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
-        val defaultFileName = "DotDialer_Backup_$timestamp.rphone"
-        createBackupLauncher.launch(defaultFileName)
+        pendingBackup=true
     }
-
     fun restoreBackup() {
-        restoreLauncher.launch(Unit)
+        pendingRestore=true
     }
 
     // ── Search in Settings ─────────────────────────────────────────────────

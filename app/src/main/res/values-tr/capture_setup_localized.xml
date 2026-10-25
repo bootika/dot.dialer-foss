@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Arama kaydı</string>
+    <string name="capture_reactivate">Kaydı yeniden etkinleştir</string>
+    <string name="capture_activate">Etkinleştir</string>
+    <string name="capture_next">İleri</string>
+    <string name="capture_wizard_done">Kaydı kullanmaya başla</string>
+    <string name="capture_open_about">Telefon hakkında aç</string>
+    <string name="capture_open_developer">Geliştirici seçeneklerini aç</string>
+    <string name="capture_open_wireless">Kablosuz hata ayıklamayı aç</string>
+    <string name="capture_open_pairing">Eşleştirmeyi aç</string>
+    <string name="capture_pair_manual">Bildirimle sorun mu var?</string>
+    <string name="capture_connection_manual">Bağlantı bulunamadı mı?</string>
+    <string name="capture_pair_again">Telefonu yeniden eşleştir</string>
+    <string name="capture_pair_port">Eşleştirme bağlantı noktası</string>
+    <string name="capture_connect_port">Bağlantı noktası</string>
+    <string name="capture_pair_code">Altı haneli eşleştirme kodu</string>
+    <string name="capture_pair_title">dot.dialer eşleştir</string>
+    <string name="capture_android_required">Kablosuz etkinleştirme Android 11 veya yenisini gerektirir.</string>
+    <string name="capture_code_error">Güncel altı haneli kodu ve doğru eşleştirme bağlantı noktasını girin. Android iletişim kutusunu açık tutun.</string>
+    <string name="capture_pair_error">Eşleştirme tamamlanmadı. Yeni Android kod penceresi açıp yeni kodu kullanın.</string>
+    <string name="capture_start_error">Etkinleştirilemedi. Ağ yardımını izleyip yeniden deneyin. Yalnızca Android eşleştirmeyi sildiyse yeniden eşleştirin.</string>
+    <string name="capture_wireless_pending">Kablosuz hata ayıklamayı kapatıp doğrulama için dönün. Henüz hazır değil.</string>
+    <string name="capture_network_recovery_title">Ağ izin penceresi kayboldu mu?</string>
+    <string name="capture_wizard_developer_title">Telefonu hazırla</string>
+    <string name="capture_wizard_pair_title">Kaydı etkinleştir</string>
+    <string name="capture_wizard_ready_title">Etkinleştirmeyi tamamla</string>
+    <string name="capture_wizard_intro">Bu gelişmiş kurulum geçici olarak kablosuz hata ayıklama kullanır. Sıradan bir Android arama kaydı izni değildir. Adım adım yardımcı oluruz.</string>
+    <string name="capture_wizard_privacy">Root, kablo veya ek uygulama gerekmez. Eşleştirme bu telefonda kalır. Etkinleştirme kayıt başlatmaz.</string>
+    <string name="capture_wizard_developer">Wi-Fi’a bağlanın. Gerekirse: Telefon hakkında → Yazılım bilgileri (Samsung) → Yapım numarasına yedi kez dokunup PIN’i doğrulayın.\n\nGeliştirici seçeneklerinde Kablosuz hata ayıklamayı açın. Android sorarsa çıkmadan İzin ver seçin; Her zaman izin ver gerekmez. dot.dialer’a dönün.</string>
+    <string name="capture_wizard_pair">Eşleştirmeyi açıp istenen izinleri verin. Android: Kablosuz hata ayıklama → Kodla eşleştir.\n\nKod penceresini açık tutun. Bildirimleri indirip dot.dialer’ı genişletin; bildirimde altı haneyi girip gönderin. Dönüp sunulursa Etkinleştir seçin.</string>
+    <string name="capture_wizard_reactivate">Wi-Fi’a bağlanıp Kablosuz hata ayıklamayı açın. Gerekirse ağa izin verin. Dönüp Etkinleştir seçin. Kayıtlı eşleştirme kullanılır; yalnızca iptal edilmişse yeni kod gerekir. Son doğrulamayı bekleyin.</string>
+    <string name="capture_wizard_ready">Bağlı aramada: Diğer → Kaydet veya Kaydet ve yazıya dök. Durdur, arama sonu veya bekletme kaydı bitirir. Yeniden başlatmadan sonra etkinleştirin. Dosyalar Kayıtlı kayıtlarda.</string>
+    <string name="capture_network_help">Wi-Fi yalnızca etkinleştirme ve yeniden etkinleştirmede gerekir. Sonra ses Wi-Fi, mobil veri veya kablosuz hata ayıklama olmadan çalışır. Döküm ve çeviri İnternet gerektirir; mobil veri uygundur.</string>
+    <string name="capture_network_recovery">Kablosuz hata ayıklamayı açın, kapatıp yeniden açın. Uygulama değiştirmeden ağ penceresinde İzin ver seçin; sürekli izin isteğe bağlıdır. Gerekirse eşleştirip dot.dialer’a dönerek etkinleştirin.</string>
+    <string name="capture_quiet_ready">Kablosuz hata ayıklama kapalı. Yerel kayıt hazır. Yazıya dökme İnternet gerektirir.</string>
+</resources>

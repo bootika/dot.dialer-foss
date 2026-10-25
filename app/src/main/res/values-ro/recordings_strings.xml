@@ -46,4 +46,21 @@
     <string name="recordings_retry">Reîncearcă</string>
     <string name="recordings_back">Înapoi</string>
     <string name="recordings_audio_format">Înregistrările lungi necesită audio AAC pentru fragmentare. Convertește fișierul în AAC/M4A înainte de import.</string>
+    <string name="recordings_checking">Se verifică legătura, licența și configurarea API…</string>
+    <string name="recordings_check_failed">Nu am putut verifica dot.dictate. Reîncercăm automat.</string>
+    <string name="recordings_ready">Pregătit pentru transcriere</string>
+    <string name="recordings_api_check_on_use">Accesul API se confirmă la procesarea unui fișier audio.</string>
+    <string name="recordings_translation_unavailable">Traducerea nu este disponibilă în configurația actuală dot.dictate.</string>
+    <string name="recordings_settings">Setările înregistrării</string>
+    <string name="recordings_audio">Audio</string>
+    <string name="recordings_no_number">Fără număr de telefon salvat</string>
+    <plurals name="recordings_translations"><item quantity="one">%1$d traducere</item><item quantity="few">%1$d traduceri</item><item quantity="other">%1$d de traduceri</item></plurals>
+    <string name="recordings_history">Istoricul procesării</string>
+    <string name="recordings_hide_history">Ascunde istoricul procesării</string>
+    <string name="capture_off_summary">Oprit. Fără comenzi de înregistrare sau notificări de reactivare. Înregistrările și transcrierile salvate rămân disponibile.</string>
+    <string name="recordings_master_summary">Audio, transcrieri și automatizări.</string>
+    <string name="recordings_module_off">Înregistrarea și transcrierea sunt oprite. Înregistrările și textele salvate rămân disponibile.</string>
+    <string name="recordings_wireless_off_needed">Modul oprit. Oprește Depanarea wireless din Opțiuni pentru dezvoltatori ca să nu mai apară mesajele Android despre rețele.</string>
+    <string name="recordings_master_off_summary">Oprit · Salvările sunt păstrate.</string>
+    <string name="recordings_wireless_off_effect">Oprirea modulului oprește și depanarea wireless Android, dacă accesul este disponibil. Altfel, Setări îți arată pasul manual rămas.</string>
 </resources>

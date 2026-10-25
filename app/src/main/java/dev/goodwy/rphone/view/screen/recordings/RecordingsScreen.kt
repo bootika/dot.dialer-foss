@@ -4,9 +4,18 @@ import android.telecom.Call
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.GraphicEq
+import androidx.compose.material.icons.filled.ChevronRight
+import dev.goodwy.rphone.view.screen.settings.components.SettingsHomeListItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import kotlinx.coroutines.launch
+import dev.goodwy.rphone.recordings.IntegratedCallCapture
+import dev.goodwy.rphone.recordings.RecordingSyncJob
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -30,7 +39,15 @@ import java.util.WeakHashMap
 @Composable
 fun RecordingsScreen(navigator: DestinationsNavigator) {
     Scaffold(topBar={DotSettingsTopBar(stringResource(R.string.recordings_title),navigator::navigateUp)}) {padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {RecordingsContent()}
+        Box(Modifier.fillMaxSize().padding(padding)) {RecordingsContent(settingsOnly=true,onOpenLibrary={navigator.navigate(com.ramcosta.composedestinations.generated.destinations.RecordingsLibraryScreenDestination)})}
+    }
+}
+
+@Destination<RootGraph>
+@Composable
+fun RecordingsLibraryScreen(navigator: DestinationsNavigator) {
+    Scaffold(topBar={DotSettingsTopBar(stringResource(R.string.recordings_saved),navigator::navigateUp)}) {padding ->
+        Box(Modifier.fillMaxSize().padding(padding)){RecordingsContent()}
     }
 }
 
@@ -41,10 +58,8 @@ internal fun RecordingsSettingsEntry(onOpen: ()->Unit) {
     val existing by produceState(false,repo) {value=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {repo.catalog.recordings().isNotEmpty()}}
     if(!repo.integrationEnabled() && !existing)return
     RecordingsBridgeLifecycle(repo)
-    val plans=rememberPlanAccessManager();val rights by plans.state.collectAsState()
-    val capabilities by repo.bridge.capabilities.collectAsState()
-    val active=remember(rights,capabilities) {RecordingPolicy.processing(plans.effective,capabilities)==RecordingAccess.READY}
-    DotSettingsNavigationRow(stringResource(R.string.recordings_title),supporting=if(repo.integrationEnabled())stringResource(R.string.recordings_requirements)else null,contentActive=active || existing,onClick=onOpen)
+    SettingsHomeListItem(headline=stringResource(R.string.recordings_title),
+        leadingIcon=Icons.Rounded.GraphicEq,onClick=onOpen,trailingContent={Icon(Icons.Default.ChevronRight,null)})
 }
 
 @Composable
@@ -52,7 +67,8 @@ internal fun CallRecordingsEntry(call: Call,title: String) {
     if(!dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED)return
     if(!LocalContext.current.getSystemService(android.os.UserManager::class.java).isUserUnlocked)return
     val repo=rememberRecordingsRepository()
-    if(!repo.integrationEnabled())return
+    val enabled by repo.moduleState.collectAsState()
+    if(!repo.integrationEnabled() || !enabled)return
     RecordingsBridgeLifecycle(repo);val plans=rememberPlanAccessManager()
     val capabilities by repo.bridge.capabilities.collectAsState();val rights by plans.state.collectAsState()
     var open by remember {mutableStateOf(false)}
@@ -67,7 +83,7 @@ internal fun CallRecordingsEntry(call: Call,title: String) {
                 Text(stringResource(R.string.recordings_title),style=MaterialTheme.typography.titleLarge,modifier=Modifier.weight(1f))
                 TextButton(onClick={open=false}) {Text(stringResource(R.string.close))}
             }
-            Box(Modifier.weight(1f)) {RecordingsContent(callKey,title)}
+            Box(Modifier.weight(1f)) {RecordingsContent(callKey,title,call.details?.handle?.takeIf{it.scheme=="tel"}?.schemeSpecificPart.orEmpty())}
         }
     }
 }

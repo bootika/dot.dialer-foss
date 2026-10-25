@@ -9,6 +9,7 @@ data class DictateCapabilities(
     val apiKeyConfigured: Boolean = false, val transcription: Boolean = false,
     val translation: Boolean = false, val maxInputBytes: Long = 0, val maxInputSeconds: Long = 0, val targetLanguages: List<String> = emptyList(),
     val maxChunkBytes: Long = 0, val maxChunkSeconds: Long = 0, val segmentedAudioMimeTypes: List<String> = emptyList(),
+    val separateSpeakerChannels: Boolean = false,
 )
 object RecordingPolicy {
     fun processing(plan: AppPlan, capabilities: DictateCapabilities, translate: Boolean = false): RecordingAccess = when {

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Conecta el Wi-Fi y activa Depuración inalámbrica en Android. Permite la red si se solicita, vuelve y toca Activar. Solo hacen falta para activar; la depuración se apaga al terminar.</string>
+</resources>

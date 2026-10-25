@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">Jak to działa</string>
+    <string name="guide_stage">Krok %1$d z 3</string>
+    <string name="guide_google">Znajdź wyraźniejsze zdjęcia w Kontaktach Google, jeśli istnieją większe oryginały. Połącz konto z kontaktami. Dostęp Google jest tylko do odczytu, nie do Zdjęć Google. Zapis w książce wymaga osobnej zgody i stosuje wybraną zasadę aktualizacji.</string>
+    <string name="guide_whatsapp">Używaj awatarów z przychodzących powiadomień WhatsApp. Zdjęcia pojawiają się z obsługiwanymi powiadomieniami; nie pobiera wszystkich zdjęć. Android udziela dostępu do powiadomień, ale dot.dialer pobiera tylko tożsamość i awatar, bez zapisywania ani wysyłania wiadomości. Rozdzielczość zależy od powiadomienia.</string>
+    <string name="guide_optimizer">Wybierz konto do ulepszenia. Każde ma własne źródła i zgody. Szukanie tworzy propozycje do sprawdzenia i zastosowania. Automatyczne zmiany stosują zasadę zdjęć. Ręczne wybory są chronione do wznowienia aktualizacji. Wyłączenie źródła nie usuwa zapisanych zdjęć.</string>
+    <string name="guide_recording">Aktywacja nie rozpoczyna nagrywania. Podczas połączonej rozmowy: Więcej → Nagraj lub Nagraj i transkrybuj. Stop, koniec lub zawieszenie kończy nagranie. Pliki pozostają dostępne po wyłączeniu modułu. Dostęp do modułu wymaga połączonego, licencjonowanego dot.dictate i klucza API. Dźwięk trafia do wybranego dostawcy; mogą wystąpić opłaty API. Przetwarzanie wymaga Internetu, także komórkowego. Język wejściowy jest wykrywany automatycznie; tłumaczenie zachowuje oryginał.</string>
+    <string name="guide_contacts">Wybierz konta widoczne w dot.dialer. Ukrycie źródła nie usuwa kontaktów ani nie zatrzymuje synchronizacji Androida.</string>
+    <string name="guide_format">Zmienia zapisane numery na format międzynarodowy, np. 0720… → +40 720…. Może zmienić książkę adresową. Niezależne od formatowania podczas wybierania i zdjęć.</string>
+    <string name="guide_auth">Chroń dot.dialer wybraną metodą uwierzytelniania. Nie szyfruje ani nie blokuje kontaktów Androida w innych aplikacjach. Skonfiguruj i sprawdź metodę przed włączeniem.</string>
+    <string name="guide_lock">Wymaga uwierzytelnienia przy odbieraniu lub odrzucaniu wybranych połączeń. Listy dotyczą uwierzytelniania, nie blokowania spamu. Uwzględnij dodatkowy krok.</string>
+    <string name="guide_backup">Zapisuje przenośne ustawienia, notatki i własne tła. Nie obejmuje kontaktów, nagrań, transkrypcji, licencji ani uprawnień Androida. Chroń plik: notatki mogą zawierać dane osobowe.</string>
+    <string name="guide_restore">Zastępuje przenośne ustawienia i notatki o tych samych nazwach. Nie przyznaje uprawnień, nie przenosi licencji i nie ustawia uwierzytelniania. Nie odtwarza nagrań ani kontaktów Androida.</string>
+    <string name="guide_history">Limity zmieniają widok ostatnich połączeń bez usuwania historii Androida. Ukrycie Ulubionych zachowuje ich kolejność.</string>
+    <string name="guide_gesture">Wybierz działanie dotknięcia. Szybkie akcje otwierają cztery opcje; ponowne dotknięcie zamyka. Przytrzymaj i przesuń to osobny gest; puszczenie bez wyboru anuluje.</string>
+    <string name="guide_accessibility">Po włączeniu tekst nie stosuje rozmiaru czcionki Androida. Ustawienie telefonu pozostaje bez zmian. Sprawdź czytelność.</string>
+    <string name="guide_names">Sortowanie zmienia kolejność listy, format nazw zmienia wyświetlanie. Nie zmienia zapisanych nazw kontaktów.</string>
+    <string name="guide_sim">Wybierz domyślną SIM. Karta zapisana dla numeru lub kontaktu ma pierwszeństwo. Niedostępnej karty nie można użyć.</string>
+    <string name="guide_visual">Zmienia wskazany efekt, nie zdjęcie ani wszystkie animacje. Użyj podglądu.</string>
+    <string name="guide_search_clear">Czyści wyszukiwanie przy rozpoczynaniu połączenia, nie po zakończeniu rozmowy.</string>
+    <string name="guide_scale">Większe elementy są czytelniejsze, ale mieści się ich mniej. Skala interfejsu i czcionka Androida są osobne.</string>
+    <string name="guide_delete">W Ostatnich usuwa tylko wskazane połączenie bez potwierdzenia. Kontakt usuwa po jednym potwierdzeniu. Inne połączenia pozostają.</string>
+    <string name="guide_background">Zmienia tło rozmowy bez zmiany zdjęcia kontaktu. Tło wybrane dla kontaktu ma pierwszeństwo przed globalnym.</string>
+    <string name="guide_contacts_actions">Sprawdź kontakty przed zastosowaniem. Formatowanie numerów zmienia książkę. Łączenie wiąże rekordy; rozdzielenie pokazuje osobno ich rekordy źródłowe. Nie cofa wszystkich wcześniejszych zmian.</string>
+</resources>

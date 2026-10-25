@@ -2,21 +2,35 @@ package dev.goodwy.rphone.view.screen.recordings
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import dev.goodwy.rphone.recordings.RecordingsRepository
 import dev.goodwy.rphone.recordings.RecordingDiagnostics
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
+
+internal enum class RecordingBridgeCheck { IDLE, CHECKING, FAILED }
 
 @Composable
-internal fun RecordingsBridgeLifecycle(repo: RecordingsRepository) {
-    if(!repo.integrationEnabled())return
-    val scope=rememberCoroutineScope();val lifecycle=LocalLifecycleOwner.current.lifecycle
-    fun refresh() {scope.launch {if(repo.bridge.trusted())try {repo.bridge.refresh()}catch(error: Exception) {RecordingDiagnostics.failure("resume",error)}}}
-    LaunchedEffect(repo) {refresh()}
-    DisposableEffect(repo,lifecycle) {
-        val observer=LifecycleEventObserver {_,event->if(event==Lifecycle.Event.ON_RESUME)refresh()}
-        lifecycle.addObserver(observer)
-        onDispose {lifecycle.removeObserver(observer)}
+internal fun RecordingsBridgeLifecycle(repo: RecordingsRepository, poll: Boolean=false): RecordingBridgeCheck {
+    var check by remember(repo) {mutableStateOf(RecordingBridgeCheck.IDLE)}
+    val lifecycle=LocalLifecycleOwner.current.lifecycle
+    val enabled by repo.moduleState.collectAsState()
+    LaunchedEffect(repo,lifecycle,poll,enabled) {
+        check=RecordingBridgeCheck.IDLE
+        if(!repo.integrationEnabled() || !enabled)return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            do {
+                if(repo.bridge.trusted()) {
+                    check=RecordingBridgeCheck.CHECKING
+                    try {repo.refreshBridge();check=RecordingBridgeCheck.IDLE}
+                    catch(error: CancellationException) {check=RecordingBridgeCheck.IDLE;throw error}
+                    catch(error: Exception) {check=RecordingBridgeCheck.FAILED;RecordingDiagnostics.failure("resume",error)}
+                } else check=RecordingBridgeCheck.IDLE
+                if(poll)delay(30_000)else awaitCancellation()
+            } while(true)
+        }
     }
+    return check
 }

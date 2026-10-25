@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Aramayı mikrofonla dikte edin. Android tanıma servisi İnternet gerektirebilir. Arama başlatmadan arama metnini değiştirir.</string>
+    <string name="guide_fullscreen">Gelen aramaları otomatik olarak arama ekranında açar. Tam ekran fotoğraftan ayrıdır; Android izinleri ve kısıtları geçerlidir.</string>
+    <string name="guide_finish_work">Kablosuz hata ayıklama kapatılıp kayıt kontrol ediliyor. Onayı bekleyin.</string>
+    <string name="guide_plans">Free temel aramaları korur. Power Up kişi ve verimlilik araçları ekler; Complete otomasyon ve gelişmiş görünümü de içerir. 30 günlük Complete denemesi otomatik ücretlendirmez. Fotoğraflar süre bitince kullanılabilir kalır. dot.dictate ayrı lisans ve API anahtarı ister.</string>
+    <string name="capture_pair_manual_help">Android kod penceresini açık tutarken buraya bağlantı noktası ve kod girmek için bölünmüş ekran kullanın. Eşleştirme ve bağlantı noktaları farklıdır.</string>
+</resources>

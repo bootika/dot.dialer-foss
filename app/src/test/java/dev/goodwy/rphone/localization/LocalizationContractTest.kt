@@ -175,7 +175,6 @@ class LocalizationContractTest {
             "app_name" to "dot.dialer",
             "dark_edge_radio" to "Dark Edge Radio",
             "dot_dictate" to "Dot Dictate",
-            "contact_photos_title" to "Contacts Optimizer",
             "call_screen_sim_label" to "SIM %1\$s",
             "about_copyright" to "© Dot Design, %1\$d",
         )

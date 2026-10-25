@@ -27,6 +27,17 @@ import org.robolectric.annotation.*
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk=[36],application=Application::class,qualifiers="w360dp-h800dp-mdpi")
 class PlanGuideRenderingTest {
+    @Test @Config(qualifiers="ro-rRO-w360dp-h800dp-mdpi")
+    fun `Romanian guides use localized optimizer and interface titles`() {
+        var tier by mutableStateOf(AppPlan.PLUS)
+        rule.setContent {DotDialerTheme(systemDark=false) {PlanGuideContent(tier,{},{})}}
+        rule.onNodeWithText("Optimizarea contactelor").assertIsDisplayed()
+        rule.onNodeWithText("Contacts Optimizer").assertDoesNotExist()
+        rule.runOnIdle {tier=AppPlan.PREMIUM}
+        rule.onNodeWithText("Magia interfeței").assertIsDisplayed()
+        rule.onNodeWithText("Interface Magic").assertDoesNotExist()
+        rule.onNodeWithTag("plan-guide-more").assertIsDisplayed()
+    }
     @get:Rule val rule=createAndroidComposeRule<ComponentActivity>()
     private lateinit var prefs: PreferenceManager
     @Before fun setup() {

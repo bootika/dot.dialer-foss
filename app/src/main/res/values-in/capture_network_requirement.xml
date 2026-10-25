@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_network_required">Hubungkan Wi-Fi dan hidupkan Debug nirkabel di Android. Izinkan jaringan jika diminta, kembali dan pilih Aktifkan. Hanya perlu saat aktivasi; debug dimatikan setelah selesai.</string>
+</resources>

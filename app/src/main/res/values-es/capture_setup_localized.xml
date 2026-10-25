@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Grabación de llamadas</string>
+    <string name="capture_reactivate">Reactivar grabación</string>
+    <string name="capture_activate">Activar</string>
+    <string name="capture_next">Siguiente</string>
+    <string name="capture_wizard_done">Empezar a grabar</string>
+    <string name="capture_open_about">Abrir Información del teléfono</string>
+    <string name="capture_open_developer">Abrir Opciones de desarrollador</string>
+    <string name="capture_open_wireless">Abrir Depuración inalámbrica</string>
+    <string name="capture_open_pairing">Abrir vinculación</string>
+    <string name="capture_pair_manual">¿Problemas con la notificación?</string>
+    <string name="capture_connection_manual">¿No se detecta la conexión?</string>
+    <string name="capture_pair_again">Vincular este teléfono de nuevo</string>
+    <string name="capture_pair_port">Puerto de vinculación</string>
+    <string name="capture_connect_port">Puerto de conexión</string>
+    <string name="capture_pair_code">Código de vinculación de seis dígitos</string>
+    <string name="capture_pair_title">Vincular dot.dialer</string>
+    <string name="capture_android_required">La activación sin cable requiere Android 11 o posterior.</string>
+    <string name="capture_code_error">Introduce el código actual de seis dígitos y el puerto correcto. Mantén abierto el diálogo Android.</string>
+    <string name="capture_pair_error">No se completó la vinculación. Abre un diálogo Android nuevo y usa el nuevo código.</string>
+    <string name="capture_start_error">No se pudo activar. Sigue la ayuda de red y reintenta. Vincula de nuevo solo si Android borró la vinculación.</string>
+    <string name="capture_wireless_pending">Apaga Depuración inalámbrica y vuelve para verificar. Todavía no está listo.</string>
+    <string name="capture_network_recovery_title">¿Desapareció el diálogo de red?</string>
+    <string name="capture_wizard_developer_title">Prepara el teléfono</string>
+    <string name="capture_wizard_pair_title">Activa la grabación</string>
+    <string name="capture_wizard_ready_title">Finaliza la activación</string>
+    <string name="capture_wizard_intro">Esta configuración avanzada usa temporalmente Depuración inalámbrica. No es un permiso Android normal para grabar llamadas. Te guiamos paso a paso.</string>
+    <string name="capture_wizard_privacy">Sin root, cable ni otra app. La vinculación permanece en este teléfono. Activar no inicia grabación.</string>
+    <string name="capture_wizard_developer">Conecta el Wi-Fi. Si hace falta: Información del teléfono → Información de software (Samsung) → toca siete veces Número de compilación y confirma el PIN.\n\nEn Opciones de desarrollador, activa Depuración inalámbrica. Si Android pregunta, toca Permitir antes de salir; no necesitas Permitir siempre. Vuelve a dot.dialer.</string>
+    <string name="capture_wizard_pair">Abre la vinculación y concede los permisos solicitados. En Android: Depuración inalámbrica → Vincular con código.\n\nMantén visible el código. Baja las notificaciones, expande dot.dialer e introduce y envía los seis dígitos en su notificación. Vuelve y toca Activar si aparece.</string>
+    <string name="capture_wizard_reactivate">Conecta el Wi-Fi y activa Depuración inalámbrica. Permite la red si se solicita. Vuelve y toca Activar. Se reutiliza la vinculación guardada; solo necesitas código nuevo si fue revocada. Espera la verificación final.</string>
+    <string name="capture_wizard_ready">En llamada conectada: Más → Grabar o Grabar y transcribir. Detener, finalizar o poner en espera acaba la captura. Reactiva tras reiniciar. Los archivos están en Grabaciones guardadas.</string>
+    <string name="capture_network_help">El Wi-Fi solo hace falta para activar o reactivar. Después el audio funciona sin Wi-Fi, datos móviles ni cable. Transcripción y traducción necesitan Internet; los datos móviles sirven.</string>
+    <string name="capture_network_recovery">Abre Depuración inalámbrica, apágala y enciéndela. Toca Permitir en el diálogo de red antes de cambiar de app; Permitir siempre es opcional. Vuelve a dot.dialer y activa, tras vincular si hace falta.</string>
+    <string name="capture_quiet_ready">Depuración inalámbrica apagada. Grabación local lista. La transcripción necesita Internet.</string>
+</resources>

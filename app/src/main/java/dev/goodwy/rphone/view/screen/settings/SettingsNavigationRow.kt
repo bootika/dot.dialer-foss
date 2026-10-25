@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 
 /** Standard settings row that delegates a choice to an Android system screen. */
 @Composable
-internal fun DotSettingsNavigationRow(
+private fun DotSettingsNavigationRowControl(
     title: String,
     value: String? = null,
     supporting: String? = null,
@@ -75,5 +75,20 @@ internal fun DotSettingsNavigationRow(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(19.dp),
         )
+    }
+}
+
+@Composable
+internal fun DotSettingsNavigationRow(
+    title: String,
+    value: String? = null,
+    supporting: String? = null,
+    valueBelowTitle: Boolean = false,
+    contentActive: Boolean = true,
+    onClick: () -> Unit,
+) {
+    Column {
+        DotSettingsNavigationRowControl(title = title, value = value, supporting = supporting, valueBelowTitle = valueBelowTitle, contentActive = contentActive, onClick = onClick)
+        SettingsExplanation(title)
     }
 }

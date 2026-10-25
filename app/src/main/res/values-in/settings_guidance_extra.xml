@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Diktekan pencarian lewat mikrofon. Pengenalan Android mungkin perlu Internet. Mengubah pencarian tanpa menelepon.</string>
+    <string name="guide_fullscreen">Otomatis membuka panggilan masuk di layar panggilan. Terpisah dari foto layar penuh; izin dan pembatasan Android tetap berlaku.</string>
+    <string name="guide_finish_work">Mematikan Debug nirkabel dan memeriksa rekaman. Tunggu konfirmasi.</string>
+    <string name="guide_plans">Free menjaga panggilan dasar. Power Up menambah alat kontak dan produktivitas; Complete mencakup otomatisasi dan tampilan lanjutan. Uji coba Complete 30 hari tidak menagih otomatis. Foto tersimpan tetap bisa dipakai setelah berakhir. dot.dictate perlu lisensi dan kunci API sendiri.</string>
+    <string name="capture_pair_manual_help">Gunakan layar terbagi agar dialog kode Android tetap terbuka saat memasukkan port dan kode di sini. Port penyandingan dan koneksi berbeda.</string>
+</resources>

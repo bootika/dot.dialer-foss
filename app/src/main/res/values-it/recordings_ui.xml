@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Attiva la registrazione delle chiamate e gli strumenti di trascrizione.</string>
+    <string name="rec_ui_ready">Pronto a registrare</string>
+    <string name="rec_ui_activation">Attivazione necessaria</string>
+    <string name="rec_ui_capture_hint">Durante una chiamata connessa: Altro → Registra o Registra e trascrivi.</string>
+    <string name="rec_ui_processing">Trascrizione e traduzione</string>
+    <string name="rec_ui_connection_ready">dot.dictate è connesso</string>
+    <string name="rec_ui_api_hint">Connessione e requisiti verificati. La verifica API avviene durante l’elaborazione audio.</string>
+    <string name="rec_ui_output_hint">Usata da Registra e trascrivi. La lingua parlata viene rilevata automaticamente.</string>
+    <string name="rec_ui_translation_hint">Traduci automaticamente le nuove trascrizioni. Scegli la lingua quando attivi questa opzione.</string>
+    <string name="rec_ui_automatic_hint">Trascrivi automaticamente le registrazioni appena salvate.</string>
+    <string name="rec_ui_more">Altre opzioni</string>
+    <string name="rec_ui_translation_title">Lingua della traduzione automatica</string>
+</resources>

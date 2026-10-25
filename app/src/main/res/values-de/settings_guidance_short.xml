@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_language">Ändert die Oberflächensprache, nicht Kontaktnamen oder Transkript-Ausgabesprache.</string>
+    <string name="guide_contrast">Macht Text deutlicher; Fotos und eigene Hintergründe können die Lesbarkeit weiter beeinflussen.</string>
+    <string name="guide_region">Zur Interpretation lokaler Nummern. Ändert weder SIM noch Land oder Standort.</string>
+    <string name="guide_avatar">Zeigt oder verbirgt Fotos, ohne sie aus dem Adressbuch zu löschen.</string>
+    <string name="guide_interval">Abstand zwischen Scroll-Vibrationen, nicht die Zeit dazwischen.</string>
+    <string name="guide_timeout">Wie lange die App-Authentifizierung gilt, bevor sie erneut angefordert wird.</string>
+</resources>

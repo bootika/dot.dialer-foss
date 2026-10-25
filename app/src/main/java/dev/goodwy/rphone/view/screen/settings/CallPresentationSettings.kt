@@ -26,5 +26,5 @@ internal fun CallPresentationSettings(prefs: PreferenceManager) {
     DotSettingsDivider()
     SettingsPreferenceSwitch(prefs, PreferenceManager.KEY_ALWAYS_FULLSCREEN_CALLS,
         CallPresentationPolicy.DEFAULT_ALWAYS_FULL_SCREEN, R.string.fullscreen_calls,
-        stringResource(R.string.fullscreen_calls_subtitle))
+        stringResource(R.string.guide_fullscreen))
 }

@@ -119,9 +119,10 @@ internal class ContactOptimizationProfiles(context: Context) {
     fun gravatarAllowed(account: String) = settings(account).let { it.gravatar && it.gravatarDisclosed }
     fun businessAllowed(account: String) = settings(account).let { it.business && it.businessDisclosed }
     fun googleAllowed(account: String) = settings(account).let { it.google && it.googleAuthorized }
-    fun result(account: String): ContactOptimizationResult {
+    // AtomicFile reads may recover/delete pending files; use the same lock as all writes.
+    fun result(account: String): ContactOptimizationResult = synchronized(lock) {
         val j = read(account, "result.json")
-        return ContactOptimizationResult(j.optLong("detectedAt"), j.optString("outcome"),
+        ContactOptimizationResult(j.optLong("detectedAt"), j.optString("outcome"),
             if (j.has("contactId")) j.optLong("contactId") else null, j.optString("source"),
             j.optInt("originalWidth"), j.optInt("originalHeight"), j.optInt("writtenWidth"),
             j.optInt("writtenHeight"), j.optBoolean("hydrated"))

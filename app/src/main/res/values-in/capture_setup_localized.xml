@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_setup">Rekaman panggilan</string>
+    <string name="capture_reactivate">Aktifkan ulang rekaman</string>
+    <string name="capture_activate">Aktifkan</string>
+    <string name="capture_next">Berikutnya</string>
+    <string name="capture_wizard_done">Mulai gunakan rekaman</string>
+    <string name="capture_open_about">Buka Tentang ponsel</string>
+    <string name="capture_open_developer">Buka Opsi pengembang</string>
+    <string name="capture_open_wireless">Buka Debug nirkabel</string>
+    <string name="capture_open_pairing">Buka penyandingan</string>
+    <string name="capture_pair_manual">Masalah dengan notifikasi?</string>
+    <string name="capture_connection_manual">Koneksi tidak ditemukan?</string>
+    <string name="capture_pair_again">Sandingkan ulang ponsel</string>
+    <string name="capture_pair_port">Port penyandingan</string>
+    <string name="capture_connect_port">Port koneksi</string>
+    <string name="capture_pair_code">Kode penyandingan enam digit</string>
+    <string name="capture_pair_title">Sandingkan dot.dialer</string>
+    <string name="capture_android_required">Aktivasi tanpa kabel perlu Android 11 atau lebih baru.</string>
+    <string name="capture_code_error">Masukkan kode enam digit saat ini dan port yang benar. Biarkan dialog Android terbuka.</string>
+    <string name="capture_pair_error">Penyandingan gagal. Buka dialog Android baru dan gunakan kode baru.</string>
+    <string name="capture_start_error">Tidak dapat mengaktifkan. Ikuti bantuan jaringan lalu coba lagi. Sandingkan ulang hanya jika Android menghapus penyandingan.</string>
+    <string name="capture_wireless_pending">Matikan Debug nirkabel lalu kembali untuk memeriksa. Belum siap.</string>
+    <string name="capture_network_recovery_title">Dialog izin jaringan hilang?</string>
+    <string name="capture_wizard_developer_title">Siapkan ponsel</string>
+    <string name="capture_wizard_pair_title">Aktifkan rekaman</string>
+    <string name="capture_wizard_ready_title">Selesaikan aktivasi</string>
+    <string name="capture_wizard_intro">Pengaturan lanjutan ini memakai Debug nirkabel sementara. Ini bukan izin Android biasa untuk merekam panggilan. Kami memandu setiap langkah.</string>
+    <string name="capture_wizard_privacy">Tanpa root, kabel atau aplikasi lain. Penyandingan tetap di ponsel ini. Aktivasi tidak memulai rekaman.</string>
+    <string name="capture_wizard_developer">Hubungkan Wi-Fi. Jika perlu: Tentang ponsel → Informasi perangkat lunak (Samsung) → ketuk Nomor bentukan tujuh kali dan konfirmasi PIN.\n\nDi Opsi pengembang aktifkan Debug nirkabel. Jika Android meminta, pilih Izinkan sebelum keluar; Selalu izinkan tidak wajib. Kembali ke dot.dialer.</string>
+    <string name="capture_wizard_pair">Buka penyandingan dan berikan izin yang diminta. Android: Debug nirkabel → Sandingkan dengan kode.\n\nBiarkan kode terbuka. Tarik notifikasi, luaskan dot.dialer lalu masukkan dan kirim enam digit dalam notifikasi. Kembali dan pilih Aktifkan jika ditawarkan.</string>
+    <string name="capture_wizard_reactivate">Hubungkan Wi-Fi dan aktifkan Debug nirkabel. Izinkan jaringan jika diminta. Kembali lalu pilih Aktifkan. Penyandingan tersimpan dipakai lagi; kode baru hanya jika dicabut. Tunggu pemeriksaan akhir.</string>
+    <string name="capture_wizard_ready">Dalam panggilan terhubung: Lainnya → Rekam atau Rekam dan transkripsi. Berhenti, akhir atau tahan mengakhiri rekaman. Aktifkan ulang setelah mulai ulang. File di Rekaman tersimpan.</string>
+    <string name="capture_network_help">Wi-Fi hanya perlu untuk aktivasi dan pengaktifan ulang. Sesudahnya audio berjalan tanpa Wi-Fi, data seluler atau kabel. Transkripsi dan terjemahan perlu Internet; data seluler dapat digunakan.</string>
+    <string name="capture_network_recovery">Buka Debug nirkabel, matikan lalu hidupkan. Pilih Izinkan pada dialog jaringan sebelum berpindah aplikasi; izin selalu opsional. Kembali ke dot.dialer dan aktifkan, sandingkan dahulu jika perlu.</string>
+    <string name="capture_quiet_ready">Debug nirkabel mati. Rekaman lokal siap. Transkripsi perlu Internet.</string>
+</resources>

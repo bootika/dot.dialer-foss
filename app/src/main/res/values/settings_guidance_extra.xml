@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_voice">Dictate a search using your microphone. Recognition uses the Android speech service and may need internet. It changes the search text without starting a call.</string>
+    <string name="guide_fullscreen">Open incoming calls automatically on the call screen. This is separate from showing photos full screen and remains subject to Android permissions and restrictions.</string>
+    <string name="guide_finish_work">Turning off Wireless debugging and checking the recorder. Please wait for confirmation.</string>
+    <string name="guide_plans">Free keeps essential calling features. Power Up adds contact and call productivity tools; Complete includes those plus automation and advanced appearance. The 30-day Complete trial has no automatic charge. Applied contact photos remain usable after expiry. dot.dictate needs its own license and API key.</string>
+</resources>

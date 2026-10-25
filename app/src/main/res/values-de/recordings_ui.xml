@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Anrufaufzeichnung und Transkriptionswerkzeuge aktivieren.</string>
+    <string name="rec_ui_ready">Aufnahmebereit</string>
+    <string name="rec_ui_activation">Aktivierung erforderlich</string>
+    <string name="rec_ui_capture_hint">Im verbundenen Anruf: Mehr → Aufnehmen oder Aufnehmen und transkribieren.</string>
+    <string name="rec_ui_processing">Transkription und Übersetzung</string>
+    <string name="rec_ui_connection_ready">dot.dictate ist verbunden</string>
+    <string name="rec_ui_api_hint">Verbindung und Voraussetzungen geprüft. Die API-Verarbeitung wird bei der Audioverarbeitung geprüft.</string>
+    <string name="rec_ui_output_hint">Für Aufnehmen und transkribieren. Die gesprochene Sprache wird automatisch erkannt.</string>
+    <string name="rec_ui_translation_hint">Neue Transkripte automatisch übersetzen. Die Zielsprache beim Aktivieren auswählen.</string>
+    <string name="rec_ui_automatic_hint">Neu gespeicherte Aufnahmen automatisch transkribieren.</string>
+    <string name="rec_ui_more">Weitere Optionen</string>
+    <string name="rec_ui_translation_title">Sprache der automatischen Übersetzung</string>
+</resources>

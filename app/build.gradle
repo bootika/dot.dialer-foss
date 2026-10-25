@@ -24,7 +24,7 @@ def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificat
 if (!(gplayNotificationAvatars in ['true', 'false'])) {
     throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
 }
-// A pending or stale real-provider receipt keeps the integration out of the product UI.
+// A pending or stale real-provider receipt keeps release builds hidden; debug exposes normal testing access.
 // No app preference or Gradle property can bypass this source-bound release gate.
 def bridgeReceipt = new JsonSlurper().parse(rootProject.file('config/quality/dictate-integration-release.json'))
 def bridgeSourceDigest = MessageDigest.getInstance('SHA-256')
@@ -58,11 +58,13 @@ tasks.register('verifyDictateIntegrationGate') {
         assert !bridgeReceiptAllowsIntegration(valid + [consumerSourceSha256:'stale'],bridgeSourceHash)
         assert !bridgeReceiptAllowsIntegration(valid + [providerApkSha256:null],bridgeSourceHash)
         assert !bridgeReceiptAllowsIntegration(valid + [verifiedAt:null],bridgeSourceHash)
-        println "Dictate integration enabled=${dictateIntegrationEnabled}; source SHA256=${bridgeSourceHash}"
+        assert android.buildTypes.getByName('debug').buildConfigFields['DICTATE_INTEGRATION_ENABLED'].value == 'true'
+        assert !android.buildTypes.getByName('release').buildConfigFields.containsKey('DICTATE_INTEGRATION_ENABLED')
+        println "Dictate integration debug enabled=true; release enabled=${dictateIntegrationEnabled}; source SHA256=${bridgeSourceHash}"
     }
 }
 
-def baseVersionCode = 284
+def baseVersionCode = 302
 def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
 def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
 def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"
@@ -142,6 +144,7 @@ android {
         debug {
             manifestPlaceholders = [invitationPathPrefix: '/invite/test/']
             signingConfig = signingConfigs.debug
+            buildConfigField "boolean", "DICTATE_INTEGRATION_ENABLED", "true"
             applicationIdSuffix = ".test"
             versionNameSuffix = "-test"
         }
@@ -227,6 +230,9 @@ ksp {
 }
 
 dependencies {
+    implementation 'com.github.MuntashirAkon:libadb-android:3.1.1'
+    implementation 'org.conscrypt:conscrypt-android:2.5.3'
+    implementation 'org.bouncycastle:bcpkix-jdk15to18:1.81'
     implementation project(':core:diagnostics')
     implementation project(':core:domain')
 
@@ -295,6 +301,7 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     testImplementation 'app.cash.turbine:turbine:1.2.1'
     testImplementation 'org.robolectric:robolectric:4.16.1'
+    testRuntimeOnly 'org.conscrypt:conscrypt-openjdk-uber:2.5.2'
     testImplementation 'androidx.compose.ui:ui-test-junit4'
     androidTestImplementation platform('androidx.compose:compose-bom:2025.12.01')
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -314,4 +321,9 @@ dependencies {
     gplayImplementation 'com.google.android.gms:play-services-auth:22.0.0'
     rustoreImplementation 'ru.rustore.sdk:bom:2026.04.01'
     rustoreImplementation 'ru.rustore.sdk:pay:10.3.1'
+}
+
+// Robolectric runs on the host JVM; Android's TLS .so is only loadable on a device.
+configurations.matching { it.name.endsWith('UnitTestRuntimeClasspath') }.configureEach {
+    exclude group: 'org.conscrypt', module: 'conscrypt-android'
 }

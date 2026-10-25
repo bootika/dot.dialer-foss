@@ -18,6 +18,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -664,6 +666,7 @@ private fun ExpressiveCallScreenContent(
                     )
                 }
 
+                if (!showsCircularAvatar) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -753,6 +756,7 @@ private fun ExpressiveCallScreenContent(
                 }
             }
 
+                if (showsCircularAvatar) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
             // --- UI CONTROLS ---
             if (callState != Call.STATE_RINGING && !isEnding) {
                 val controlBtnFg = MaterialTheme.colorScheme.onSurface
@@ -822,7 +826,8 @@ private fun ExpressiveCallScreenContent(
                                         Spacer(modifier = Modifier.height(if (showKeypad) 4.dp else 12.dp))
 
                                         if (showMore) {
-                                            RillExpressiveCard {
+                                            RillExpressiveCard(modifier = Modifier.heightIn(max = 310.dp).verticalScroll(rememberScrollState())) {
+                                                dev.goodwy.rphone.view.screen.recordings.CallCaptureActions(call, contactName) { showMore = false }
                                                 dev.goodwy.rphone.view.screen.recordings.CallRecordingsEntry(call, contactName)
                                                 MoreItem(
                                                     headline = stringResource(R.string.view_contact),

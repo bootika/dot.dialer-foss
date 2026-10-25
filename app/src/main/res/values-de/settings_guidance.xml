@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_more">So funktioniert es</string>
+    <string name="guide_stage">Schritt %1$d von 3</string>
+    <string name="guide_google">Finde schärfere Fotos in Google Kontakte, wenn größere Originale vorhanden sind. Verbinde das Konto mit deinen Kontakten. Google-Zugriff erfolgt nur lesend, nicht auf Google Fotos. Das Speichern im Adressbuch benötigt separaten Kontaktzugriff und folgt deiner Aktualisierungsregel.</string>
+    <string name="guide_whatsapp">Nutze Absenderbilder aus eingehenden WhatsApp-Benachrichtigungen. Fotos erscheinen mit passenden Benachrichtigungen; es werden nicht alle WhatsApp-Fotos geladen. Android gewährt Benachrichtigungszugriff, aber dot.dialer entnimmt nur Identität und Avatar, ohne Nachrichten zu speichern oder zu senden. Die Auflösung hängt von der Benachrichtigung ab.</string>
+    <string name="guide_optimizer">Wähle das zu verbessernde Kontaktkonto. Jedes Konto hat eigene Quellen und Zustimmungen. Suchen erstellt Vorschläge; du prüfst und übernimmst sie. Automatische Änderungen folgen der Fotoregel. Manuelle Fotos bleiben geschützt, bis du automatische Updates fortsetzt. Das Abschalten einer Quelle entfernt keine bereits gespeicherten Kontaktfotos.</string>
+    <string name="guide_recording">Die Aktivierung startet keine Aufnahme. Im verbundenen Anruf: Mehr → Aufnehmen oder Aufnehmen und transkribieren. Stopp, Anrufende oder Halten beenden die Aufnahme. Gespeicherte Dateien bleiben auch bei ausgeschaltetem Modul verfügbar. Der Modulzugriff benötigt verbundenes, lizenziertes dot.dictate und einen API-Schlüssel. Audio wird an den eingerichteten Anbieter gesendet; API-Kosten sind möglich. Verarbeitung benötigt Internet, auch Mobilfunk. Die Eingangssprache wird automatisch erkannt; Übersetzungen behalten das Original.</string>
+    <string name="guide_contacts">Wähle die in dot.dialer sichtbaren Konten. Ausblenden löscht keine Kontakte und stoppt keine Android-Synchronisierung.</string>
+    <string name="guide_format">Formatiert gespeicherte Nummern international, z. B. 0720… → +40 720…. Kann das Adressbuch ändern. Unabhängig von der Formatierung beim Wählen und von Foto-Updates.</string>
+    <string name="guide_auth">Schütze dot.dialer mit der gewählten Authentifizierung. Das Android-Adressbuch in anderen Apps wird nicht verschlüsselt oder gesperrt. Richte die Methode vor dem Aktivieren ein und prüfe sie.</string>
+    <string name="guide_lock">Verlangt Authentifizierung beim Annehmen oder Ablehnen ausgewählter Anrufe. Diese Listen steuern den Zugriff, nicht die Spam-Sperre. Beachte den zusätzlichen Schritt beim schnellen Annehmen.</string>
+    <string name="guide_backup">Sichert übertragbare Einstellungen, Notizen und eigene Hintergründe. Kein Backup von Adressbuch, Aufnahmen, Transkripten, Lizenzen oder Android-Berechtigungen. Datei privat aufbewahren: Notizen können persönliche Daten enthalten.</string>
+    <string name="guide_restore">Ersetzt übertragbare Einstellungen und Notizen mit gleichem Dateinamen. Erteilt keine Berechtigungen, überträgt keine Lizenzen und richtet keine Authentifizierung ein. Aufnahmen und Android-Kontakte werden nicht daraus wiederhergestellt.</string>
+    <string name="guide_history">Diese Grenzen ändern nur die Anzeige der letzten Anrufe; der Android-Verlauf bleibt erhalten. Ausgeblendete Favoriten behalten ihre Reihenfolge.</string>
+    <string name="guide_gesture">Wähle die Tippaktion. Schnellaktionen öffnet vier Optionen; erneutes Tippen schließt sie. Halten und Ziehen ist separat; Loslassen ohne Auswahl bricht ab.</string>
+    <string name="guide_accessibility">Aktiviert folgt der Text nicht mehr der Android-Schriftgröße. Die Telefoneinstellung bleibt unverändert. Prüfe die Lesbarkeit.</string>
+    <string name="guide_names">Sortierung ändert die Listenreihenfolge, Namensformat nur die Anzeige. Kontaktnamen im Adressbuch bleiben unverändert.</string>
+    <string name="guide_sim">Wähle die Standard-SIM. Eine für Nummer oder Kontakt gespeicherte SIM hat Vorrang. Nicht verfügbare SIMs sind nicht nutzbar.</string>
+    <string name="guide_visual">Ändert den angezeigten Effekt, nicht das Foto oder alle Animationen. Nutze die Vorschau.</string>
+    <string name="guide_search_clear">Leert die Suche beim Starten eines Anrufs, nicht am Gesprächsende.</string>
+    <string name="guide_scale">Größere Elemente sind lesbarer, benötigen aber mehr Platz. Oberflächenskalierung und Android-Schriftgröße sind getrennt.</string>
+    <string name="guide_delete">Bei letzten Anrufen löscht Entfernen nur den angezeigten Anruf ohne Bestätigung. Kontakte werden nach einer Bestätigung gelöscht. Andere Anrufe bleiben erhalten.</string>
+    <string name="guide_background">Ändert den Anrufhintergrund ohne Änderung des Kontaktfotos. Ein kontaktspezifischer Hintergrund hat Vorrang.</string>
+    <string name="guide_contacts_actions">Prüfe die Auswahl vor dem Anwenden. Nummernformatierung schreibt ins Adressbuch. Zusammenführen verknüpft Kontaktinformationen; Trennen zeigt ihre Quellkontakte separat. Trennen macht nicht alle früheren Änderungen rückgängig.</string>
+</resources>

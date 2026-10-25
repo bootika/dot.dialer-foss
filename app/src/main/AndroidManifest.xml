@@ -27,6 +27,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
@@ -130,6 +131,12 @@
         tools:ignore="UnusedTranslation"
         android:theme="@style/Theme.RillPhone">
 
+        <activity android:name=".view.screen.recordings.CaptureSetupActivity" android:exported="false" android:directBootAware="false" />
+        <service android:name=".recordings.CapturePairingService" android:exported="false" android:directBootAware="false" android:foregroundServiceType="dataSync" />
+        <receiver android:name=".recordings.CapturePairingReceiver" android:exported="false" android:directBootAware="false" />
+        <receiver android:name=".recordings.CaptureRestartReceiver" android:exported="false" android:directBootAware="false">
+            <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED" /><action android:name="android.intent.action.MY_PACKAGE_REPLACED" /></intent-filter>
+        </receiver>
         <!-- AppTelemetry initializes Sentry explicitly so a missing DSN fails closed. -->
         <meta-data
             android:name="io.sentry.auto-init"

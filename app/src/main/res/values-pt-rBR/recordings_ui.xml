@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Ative a gravação de chamadas e as ferramentas de transcrição.</string>
+    <string name="rec_ui_ready">Pronto para gravar</string>
+    <string name="rec_ui_activation">Ativação necessária</string>
+    <string name="rec_ui_capture_hint">Durante uma chamada conectada: Mais → Gravar ou Gravar e transcrever.</string>
+    <string name="rec_ui_processing">Transcrição e tradução</string>
+    <string name="rec_ui_connection_ready">dot.dictate está conectado</string>
+    <string name="rec_ui_api_hint">Conexão e requisitos verificados. O processamento da API é verificado ao processar o áudio.</string>
+    <string name="rec_ui_output_hint">Usado por Gravar e transcrever. O idioma falado é detectado automaticamente.</string>
+    <string name="rec_ui_translation_hint">Traduza automaticamente novas transcrições. Escolha o idioma ao ativar esta opção.</string>
+    <string name="rec_ui_automatic_hint">Transcreva automaticamente as gravações recém-salvas.</string>
+    <string name="rec_ui_more">Opções adicionais</string>
+    <string name="rec_ui_translation_title">Idioma da tradução automática</string>
+</resources>

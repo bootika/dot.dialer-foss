@@ -119,7 +119,11 @@ fun makeCall(
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, preferredHandle)
     }
 
+    io.github.bootika.dotdialer.diagnostics.recordDialNumber(
+        io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.BEFORE_NORMALIZATION, number)
     val outgoingNumber = normalizeOutgoingNumber(context, number, preferredHandle, prefs)
+    io.github.bootika.dotdialer.diagnostics.recordDialNumber(
+        io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.AFTER_NORMALIZATION, outgoingNumber, number != outgoingNumber)
     val uri = if (outgoingNumber.startsWith("voicemail:")) {
         outgoingNumber.toUri()
     } else {
@@ -130,6 +134,7 @@ fun makeCall(
         context.startActivity(Intent(context, dev.goodwy.rphone.MainActivity::class.java).apply {
             action = Intent.ACTION_DIAL
             data = uri
+            putExtra(EXTRA_PREPARED_TEL_NUMBER, true)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         })
     }

@@ -174,6 +174,7 @@ fun ContactUnmergeDuplicatesScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+            item { SettingsHelpText(R.string.guide_contacts_actions) }
                 val mergedToShow = mergedContacts.filter { it.isMerged }
                 if (mergedToShow.isEmpty()) {
                     item {

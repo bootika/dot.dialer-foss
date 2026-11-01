@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_backend_required">Aktifkan perekaman panggilan dengan panduan. Tidak perlu komputer atau aplikasi tambahan.</string>
+    <string name="capture_configure">Siapkan</string>
+    <string name="capture_dictate_required">Hubungkan dot.dictate di Rekaman dan transkrip, lalu periksa lisensi dan kunci API sebelum merekam.</string>
+    <string name="capture_dictate_update">Perbarui dot.dictate untuk mentranskripsikan kedua pihak percakapan secara terpisah.</string>
+    <string name="capture_enter_code">Masukkan kode</string>
+    <string name="capture_failed">Perekaman terputus. Audio yang telah direkam tetap disimpan di Rekaman dan transkrip.</string>
+    <string name="capture_original_language">Bahasa asli (deteksi otomatis)</string>
+    <string name="capture_output_language">Bahasa keluaran transkrip</string>
+    <string name="capture_pair_notification">Biarkan dialog penyandingan Android terbuka. Ketuk Masukkan kode dan masukkan kode enam digitnya.</string>
+    <string name="capture_reactivate_notification">Ponsel dimulai ulang atau modul berhenti. Ketuk untuk mengaktifkan kembali akses perekaman.</string>
+    <string name="capture_record">Rekam</string>
+    <string name="capture_recording">Merekam</string>
+    <string name="capture_saving">Menyimpan rekaman…</string>
+    <string name="capture_starting">Memulai…</string>
+    <string name="capture_stop">Hentikan</string>
+    <string name="capture_transcribe">Rekam dan transkripsikan</string>
+    <string name="capture_transcript_limit">Audio disimpan. Rekaman ini melebihi batas pemrosesan yang didukung dot.dictate.</string>
+    <string name="contact_photos_title">Pengoptimal kontak</string>
+    <string name="plan_interface_magic">Antarmuka ajaib</string>
+    <string name="recordings_audio">Audio</string>
+    <string name="recordings_check_failed">Tidak dapat memeriksa dot.dictate. Kami akan mencoba lagi secara otomatis.</string>
+    <string name="recordings_checking">Memeriksa koneksi, lisensi, dan konfigurasi API…</string>
+    <string name="recordings_hide_history">Sembunyikan riwayat pemrosesan</string>
+    <string name="recordings_history">Riwayat pemrosesan</string>
+    <string name="recordings_master_off_summary">Nonaktif · Rekaman tersimpan tetap disimpan.</string>
+    <string name="recordings_module_off">Perekaman dan transkripsi nonaktif. Audio dan teks tersimpan tetap tersedia.</string>
+    <string name="recordings_no_number">Tidak ada nomor telepon tersimpan</string>
+    <string name="recordings_ready">Siap mentranskripsikan</string>
+    <string name="recordings_saved">Rekaman tersimpan</string>
+    <string name="recordings_translation_unavailable">Terjemahan tidak tersedia dengan konfigurasi dot.dictate saat ini.</string>
+    <string name="recordings_wireless_off_needed">Modul nonaktif. Nonaktifkan proses debug nirkabel di Opsi pengembang untuk menghentikan pertanyaan jaringan Android.</string>
+    <plurals name="recordings_translations">
+        <item quantity="other">%1$d terjemahan</item>
+    </plurals>
+</resources>

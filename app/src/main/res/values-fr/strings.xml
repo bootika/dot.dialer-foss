@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Afficher la première lettre dans l\'avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Affiche la lettre lorsque l\'image est manquante</string>
     <string name="show_picture_in_avatar">Afficher l\'image dans l\'avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Affiche la photo du contact si disponible</string>
     <string name="call_settings">Appels</string>
     <string name="default_sim">SIM par défaut</string>
     <string name="ask_first">Demander d\'abord</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Appel flottant</string>
     <string name="floating_ongoing_call_subtitle">Afficher une bulle flottante pendant les appels. Nécessite l\'autorisation \"Afficher par-dessus les autres applications\"</string>
     <string name="fullscreen_calls">Appels en plein écran</string>
-    <string name="fullscreen_calls_subtitle">Les appels entrants sont toujours affichés en mode plein écran</string>
     <string name="quick_response">Réponse rapide</string>
     <string name="quick_responses">Réponses rapides</string>
     <string name="quick_responses_subtitle">Gérer les réponses SMS prédéfinies de refus pour les appels entrants</string>
@@ -604,7 +602,7 @@
     <string name="sentry_connected">L\'écrasement de Sentry et les rapports ANR sont connectés pour cette construction.</string>
     <string name="sentry_not_configured">Sentry n\'est pas disponible dans cette construction.</string>
     <string name="send_sentry_test">Envoyer l\'événement d\'essai Sentry</string>
-    <string name="sentry_test_sent">Événement de test de Sentry envoyé: %1$s</string>
+    <string name="sentry_test_sent">Test en file locale ; réception serveur non confirmée. ID : %1$s</string>
     <string name="sentry_test_failed">Sentry n\'est pas disponible dans cette construction</string>
     <string name="show_recents_favorites">Afficher la section Favoris</string>
     <string name="swipe_right_action">Tourner à droite</string>

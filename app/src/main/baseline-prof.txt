@@ -1,0 +1,8 @@
+# Manually curated from the real startup/list trace; not an exhaustive generated profile.
+# AGP rewrites these rules through R8 and merges the AndroidX library profiles.
+HSPLdev/goodwy/rphone/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLdev/goodwy/rphone/view/screen/UnifiedHomeScreenKt;->UnifiedHomeScreen(**)**
+HPLdev/goodwy/rphone/view/screen/UnifiedHomeScreenKt;->HomeResultRow(**)**
+HPLdev/goodwy/rphone/view/screen/HomeResultTextKt;->**(**)**
+HPLdev/goodwy/rphone/view/components/RillAvatarKt;->RillAvatar(**)**
+HPLandroidx/compose/ui/platform/AndroidComposeViewAccessibilityDelegateCompat;->getAllUncoveredSemanticsNodesToIntObjectMap(**)**

@@ -4,7 +4,7 @@ import android.telephony.PhoneNumberUtils
 import java.util.Locale
 
 fun formatPhoneNumber(number: String): String {
-    return PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) ?: number
+    return PhoneNumberDisplay.format(number, Locale.getDefault().country)
 }
 
 fun normalizePhoneNumber(number: String): String {

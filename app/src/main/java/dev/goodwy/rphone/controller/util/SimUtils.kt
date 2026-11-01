@@ -16,18 +16,20 @@ import androidx.core.content.ContextCompat
 
 private const val SIM_UTILS_LOG_TAG = "SimUtils"
 
-/** Returns true if the device currently has 2 or more call-capable SIMs (dual/multi-SIM). */
-fun hasDualSim(context: Context): Boolean {
+/** Active subscriptions, not physical slots, saved eSIM profiles or third-party calling accounts. */
+fun activeSimCount(context: Context): Int {
     return try {
         val hasPhoneState = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-        if (!hasPhoneState) return false
-        val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager ?: return false
-        telecomManager.callCapablePhoneAccounts.size >= 2
+        if (!hasPhoneState) return 0
+        context.getSystemService(android.telephony.SubscriptionManager::class.java)
+            ?.activeSubscriptionInfoList.orEmpty().map { it.subscriptionId }.distinct().size
     } catch (error: Exception) {
-        Log.w(SIM_UTILS_LOG_TAG, "Unable to inspect call-capable accounts", error)
-        false
+        Log.w(SIM_UTILS_LOG_TAG, "Unable to inspect active subscriptions", error)
+        0
     }
 }
+
+fun hasDualSim(context: Context): Boolean = activeSimCount(context) >= 2
 
 fun isAirplaneModeOn(context: Context): Boolean {
     return try {

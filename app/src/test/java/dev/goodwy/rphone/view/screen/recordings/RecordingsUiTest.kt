@@ -88,7 +88,7 @@ class RecordingsUiTest {
             DotDialerTheme(systemDark=dark){Surface(Modifier.fillMaxSize()){RecordingsContent()}}
         }}
         rule.waitUntil(10000){rule.onAllNodesWithTag("recording-${newest.id}").fetchSemanticsNodes().isNotEmpty()}
-        rule.onNodeWithText("+40720000001").assertIsDisplayed()
+        rule.onNodeWithText("+40 720 000 001").assertIsDisplayed()
         rule.onNodeWithText("Audio · Original transcript · 1 translation").assertIsDisplayed()
         captureNormalAccess("grouped-library-light")
         rule.runOnIdle {dark=true;scale=1.5f}

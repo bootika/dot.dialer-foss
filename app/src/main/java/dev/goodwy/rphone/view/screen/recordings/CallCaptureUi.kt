@@ -37,7 +37,7 @@ import kotlinx.coroutines.isActive
 
 @Composable
 internal fun CallCaptureActions(call: Call,title: String,onStarted: ()->Unit) {
-    if(!BuildConfig.DEBUG || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
+    if(!BuildConfig.TEST_DISTRIBUTION || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
     val context=LocalContext.current;val capture=remember(context){AdbCallCapture.get(context)}
     val optedIn by remember(context){IntegratedCallCapture.get(context)}.optedIn.collectAsState()
     if(!optedIn)return
@@ -70,7 +70,7 @@ internal fun CallCaptureActions(call: Call,title: String,onStarted: ()->Unit) {
 
 @Composable
 internal fun CallCaptureIndicator(call: Call) {
-    if(!BuildConfig.DEBUG || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
+    if(!BuildConfig.TEST_DISTRIBUTION || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
     LocalCallCapturePresentation.current?.let {RecordingCaptureShield(it.first,it.second);return}
     val context=LocalContext.current
     val enabled by remember(context){IntegratedCallCapture.get(context)}.optedIn.collectAsState()

@@ -16,6 +16,7 @@ import org.robolectric.shadows.ShadowContentResolver
 class CallCaptureIdentityTest {
     @Test fun ambiguousContactAndSuffixOnlyMatchRemainNumberOnly() {
         val context=ApplicationProvider.getApplicationContext<Application>()
+        var failure: RuntimeException?=null
         var rows=listOf(arrayOf("+40720000001","person-a","Test Alexandru Butica"),arrayOf("+40720000001","person-b","Test Alexandru Butica"))
         ShadowContentResolver.registerProviderInternal(ContactsContract.AUTHORITY,object:android.content.ContentProvider() {
             override fun onCreate()=true
@@ -24,6 +25,7 @@ class CallCaptureIdentityTest {
             override fun delete(uri:android.net.Uri,selection:String?,selectionArgs:Array<out String>?)=error("Read only")
             override fun update(uri:android.net.Uri,values:android.content.ContentValues?,selection:String?,selectionArgs:Array<out String>?)=error("Read only")
             override fun query(uri:android.net.Uri,projection:Array<out String>?,selection:String?,selectionArgs:Array<out String>?,sortOrder:String?):android.database.Cursor {
+                failure?.let{throw it}
                 return MatrixCursor(arrayOf(ContactsContract.PhoneLookup.NUMBER,ContactsContract.PhoneLookup.LOOKUP_KEY,ContactsContract.PhoneLookup.DISPLAY_NAME)).apply {rows.forEach {addRow(it)}}
             }
         })
@@ -33,5 +35,12 @@ class CallCaptureIdentityTest {
         rows=listOf(arrayOf("+40720000001","person-a","Test Alexandru Butica"))
         assertEquals("person-a",recordingContactIdentity(context,"+40 720 000 001").key)
         assertEquals("",recordingContactIdentity(context,"person@example.com").number)
+        failure=SecurityException("private provider account")
+        val fallback=recordingContactIdentity(context,"+40720000001")
+        assertEquals("+40720000001",fallback.number)
+        assertEquals("",fallback.key)
+        failure=kotlinx.coroutines.CancellationException("cancel lookup")
+        assertThrows(kotlinx.coroutines.CancellationException::class.java){recordingContactIdentity(context,"+40720000001")}
+
     }
 }

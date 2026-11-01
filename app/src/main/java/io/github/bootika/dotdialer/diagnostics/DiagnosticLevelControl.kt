@@ -32,7 +32,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun DiagnosticLevelControl(testBuild: Boolean = BuildConfig.DEBUG) {
+internal fun DiagnosticLevelControl(testBuild: Boolean = BuildConfig.TEST_DISTRIBUTION) {
     if (!testBuild) return
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

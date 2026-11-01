@@ -80,7 +80,6 @@ import dev.goodwy.rphone.controller.util.NoteManager
 import dev.goodwy.rphone.controller.util.AndroidHaptics
 import dev.goodwy.rphone.controller.util.CallBackReminderScheduler
 import dev.goodwy.rphone.controller.util.currentTelecomState
-import dev.goodwy.rphone.controller.util.loadPhoneAccount
 import dev.goodwy.rphone.controller.util.isTelecomConference
 import dev.goodwy.rphone.controller.util.supportedCallAudioRoutes
 import dev.goodwy.rphone.modal.data.getDisplayName
@@ -118,7 +117,7 @@ private const val CALL_SCREEN_LOG_TAG = "CallScreen"
 
 @Composable
 fun ExpressiveCallScreen(
-    call: Call,
+    call: Call?,
     callState: Int,
     contactName: String,
     companyName: String?,
@@ -131,10 +130,12 @@ fun ExpressiveCallScreen(
     liquidGlassBackdrop: LayerBackdrop,
     frostedWindow: Boolean = false,
     photoLookupComplete: Boolean = true,
+    awaitingTelecomAccount: android.telecom.PhoneAccountHandle? = null,
+    onCancelAwaitingTelecom: () -> Unit = {},
 ) {
     val snapshot by rememberTelecomCallSnapshot(call)
     val participants = rememberConferenceParticipantIdentities(if (snapshot.isConference) snapshot.children else emptyList())
-    val reportedSingle = singleConferencePresentationCall(call, participants.map { it.call })
+    val reportedSingle = call?.let { singleConferencePresentationCall(it, participants.map { identity -> identity.call }) }
     var lastSingle by remember(call) { mutableStateOf<Call?>(null) }
     val ending = callState == Call.STATE_DISCONNECTING || callState == Call.STATE_DISCONNECTED
     SideEffect { if (!ending) lastSingle = reportedSingle }
@@ -164,12 +165,13 @@ fun ExpressiveCallScreen(
         photoLookupComplete = identity?.photoLookupComplete ?: photoLookupComplete,
         isConferencePresentation = snapshot.isConference && single == null,
         conferenceIdentities = participants,
+        awaitingTelecomAccount = awaitingTelecomAccount, onCancelAwaitingTelecom = onCancelAwaitingTelecom,
     )
 }
 
 @Composable
 private fun ExpressiveCallScreenContent(
-    call: Call,
+    call: Call?,
     callState: Int,
     contactName: String,
     companyName: String?,
@@ -184,6 +186,8 @@ private fun ExpressiveCallScreenContent(
     photoLookupComplete: Boolean = true,
     isConferencePresentation: Boolean,
     conferenceIdentities: List<ConferenceParticipantIdentity>,
+    awaitingTelecomAccount: android.telecom.PhoneAccountHandle?,
+    onCancelAwaitingTelecom: () -> Unit,
 ) {
     val view = LocalView.current
     val context = LocalContext.current
@@ -196,10 +200,7 @@ private fun ExpressiveCallScreenContent(
     val contactsRepo = koinInject<IContactsRepository>()
     val callViewModel = koinInject<CallViewModel>()
     val primarySnapshot by rememberTelecomCallSnapshot(call)
-    val phoneAccount = remember(call, call.details?.accountHandle) {
-        val handle = call.details?.accountHandle
-        if (handle == null) null else loadPhoneAccount(context, handle)
-    }
+    val phoneAccount = rememberCallScreenPhoneAccount(call, awaitingTelecomAccount, preferenceManager)
 
     val allCalls by callViewModel.allCalls.collectAsStateWithLifecycle()
     val callerPhotos by callViewModel.callerMetadataMap.collectAsStateWithLifecycle()
@@ -261,13 +262,13 @@ private fun ExpressiveCallScreenContent(
     val supportedAudioRoutes = remember(screenAudio.supportedRouteMask) {
         supportedCallAudioRoutes(screenAudio.supportedRouteMask)
     }
-    val callCapabilities = call.details?.callCapabilities ?: 0
+    val callCapabilities = call?.details?.callCapabilities ?: 0
     val controls = callControlAvailability(
         callState = callState,
         canHold = callCapabilities and Call.Details.CAPABILITY_HOLD != 0,
         canMute = callCapabilities and Call.Details.CAPABILITY_MUTE != 0,
-        isConference = call.isTelecomConference(),
-        supportedAudioRouteCount = supportedAudioRoutes.size,
+        isConference = call?.isTelecomConference() == true,
+        supportedAudioRouteCount = if (call == null) 0 else supportedAudioRoutes.size,
         hasOtherCall = otherCall != null,
     )
 
@@ -299,6 +300,7 @@ private fun ExpressiveCallScreenContent(
     }
 
     fun callDisconnect(isIncoming: Boolean = false) {
+        if (call == null) { onCancelAwaitingTelecom(); return }
         if (isIncoming) isEnding = true
         try {
             call.disconnect()
@@ -308,6 +310,7 @@ private fun ExpressiveCallScreenContent(
     }
 
     fun rejectIncomingCall() {
+        if (call == null) return
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 call.reject(Call.REJECT_REASON_DECLINED)
@@ -320,6 +323,7 @@ private fun ExpressiveCallScreenContent(
     }
 
     fun answerAudioCall() {
+        if (call == null) return
         try {
             call.answer(VideoProfile.STATE_AUDIO_ONLY)
         } catch (error: Exception) {
@@ -328,6 +332,7 @@ private fun ExpressiveCallScreenContent(
     }
 
     fun holdExistingAndAnswer() {
+        if (call == null) return
         otherCall?.let { existingCall ->
             if (existingCall.currentTelecomState() == Call.STATE_ACTIVE) {
                 runCatching { existingCall.hold() }
@@ -351,12 +356,14 @@ private fun ExpressiveCallScreenContent(
     }
 
     fun swapWithOtherCall() {
+        if (call == null) return
         val secondaryCall = otherCall ?: return
         callViewModel.setPreferredCall(secondaryCall)
         swapTelecomCalls(call, secondaryCall)
     }
 
     fun mergeWithOtherCall() {
+        if (call == null) return
         val secondaryCall = otherCall ?: return
         if (mergeTelecomCalls(call, secondaryCall)) {
             callViewModel.setPreferredCall(call)
@@ -402,8 +409,8 @@ private fun ExpressiveCallScreenContent(
     val ambientDroplets = remember(settingsState) { preferenceManager.ambientDropletRenderConfig() }
     val useLgCallScreen = lgCallScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && globalBackdrop != null && view.isHardwareAccelerated
     val useBlurCallScreen = blurCallScreen && !useLgCallScreen && Build.VERSION.SDK_INT >= 31 && globalBackdrop != null && view.isHardwareAccelerated
-    val callConnectionInfo = remember(call, call.details) {
-        call.details?.let(::resolveCallConnectionInfo)
+    val callConnectionInfo = remember(call, call?.details) {
+        call?.details?.let(::resolveCallConnectionInfo)
     }
 
     val localDensity = LocalDensity.current
@@ -463,8 +470,8 @@ private fun ExpressiveCallScreenContent(
 
     val onSendQuickResponse: (String) -> Unit = { message ->
         val canRespondViaText =
-            (call.details?.callCapabilities ?: 0) and Call.Details.CAPABILITY_RESPOND_VIA_TEXT != 0
-        if (canRespondViaText && call.currentTelecomState() == Call.STATE_RINGING) {
+            (call?.details?.callCapabilities ?: 0) and Call.Details.CAPABILITY_RESPOND_VIA_TEXT != 0
+        if (canRespondViaText && call?.currentTelecomState() == Call.STATE_RINGING) {
             try {
                 @Suppress("DEPRECATION")
                 call.reject(true, message)
@@ -474,14 +481,14 @@ private fun ExpressiveCallScreenContent(
                 openQuickResponseComposer(context, phoneNumber, message)
             }
         } else {
-            if (call.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
+            if (call?.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
             openQuickResponseComposer(context, phoneNumber, message)
         }
         showQuickResponsesSheet = false
     }
 
     val sendCallMessage = rememberCallMessageAction(preferenceManager, phoneNumber, onSendQuickResponse) {
-        if (call.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
+        if (call?.currentTelecomState() == Call.STATE_RINGING) rejectIncomingCall()
     }
 
     fun scheduleCallBackReminder(triggerAtMillis: Long) {
@@ -666,7 +673,7 @@ private fun ExpressiveCallScreenContent(
                     )
                 }
 
-                if (!showsCircularAvatar) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
+                if (!showsCircularAvatar && call != null) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -705,7 +712,7 @@ private fun ExpressiveCallScreenContent(
                             availableWidthDp = maxWidth.value.toInt(),
                             availableHeightDp = maxHeight.value.toInt(),
                         ).dp
-                        if (isConferencePresentation) {
+                        if (isConferencePresentation && call != null) {
                             ConferenceParticipants(parent = call, identities = conferenceIdentities, parentState = primarySnapshot.state)
                         } else if (photoUri.isNullOrEmpty()) {
                             CalmCallAvatar(
@@ -756,7 +763,7 @@ private fun ExpressiveCallScreenContent(
                 }
             }
 
-                if (showsCircularAvatar) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
+                if (showsCircularAvatar && call != null) dev.goodwy.rphone.view.screen.recordings.CallCaptureIndicator(call)
             // --- UI CONTROLS ---
             if (callState != Call.STATE_RINGING && !isEnding) {
                 val controlBtnFg = MaterialTheme.colorScheme.onSurface
@@ -827,8 +834,10 @@ private fun ExpressiveCallScreenContent(
 
                                         if (showMore) {
                                             RillExpressiveCard(modifier = Modifier.heightIn(max = 310.dp).verticalScroll(rememberScrollState())) {
-                                                dev.goodwy.rphone.view.screen.recordings.CallCaptureActions(call, contactName) { showMore = false }
-                                                dev.goodwy.rphone.view.screen.recordings.CallRecordingsEntry(call, contactName)
+                                                if (call != null) {
+                                                    dev.goodwy.rphone.view.screen.recordings.CallCaptureActions(call, contactName) { showMore = false }
+                                                    dev.goodwy.rphone.view.screen.recordings.CallRecordingsEntry(call, contactName)
+                                                }
                                                 MoreItem(
                                                     headline = stringResource(R.string.view_contact),
                                                     leadingIcon = Icons.Rounded.PersonOutline,
@@ -843,7 +852,7 @@ private fun ExpressiveCallScreenContent(
                                                         sendCallMessage(null, false)
                                                     }
                                                 )
-                                                if (otherCall == null) {
+                                                if (call != null && otherCall == null) {
                                                     MoreItem(
                                                         headline = if (callState == Call.STATE_HOLDING) {
                                                             stringResource(R.string.resume)
@@ -864,12 +873,12 @@ private fun ExpressiveCallScreenContent(
                                             }
                                         }
 
-                                        if (showNoteWindow) CallNoteHistoryPanel(contactName, phoneNumber, noteText, { noteText = it }, controls.notes, dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle)) {
+                                        if (showNoteWindow) CallNoteHistoryPanel(contactName, phoneNumber, noteText, { noteText = it }, controls.notes, dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call?.details?.accountHandle ?: awaitingTelecomAccount)) {
                                             if (phoneNumber.isNotEmpty()) NoteManager.writeNote(context, contactName, phoneNumber, noteText)
                                             showNoteWindow = false; showKeypad = false; showMore = true
                                         }
 
-                                        if (showKeypad) {
+                                        if (showKeypad && call != null) {
                                             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                                                 InCallKeypad(
                                                     call = call,
@@ -928,7 +937,7 @@ private fun ExpressiveCallScreenContent(
                                             useBlur = useBlurCallScreen,
                                             blurIntensity = blurIntensity,
                                         ) {
-                                            performAddCallOrResume(
+                                            if (call != null) performAddCallOrResume(
                                                     context = context,
                                                     call = call,
                                                     callState = callState,
@@ -1216,7 +1225,8 @@ private fun ExpressiveCallScreenContent(
                 },
                 onOpenSmsApp = {
                     try {
-                        if (call.currentTelecomState() == Call.STATE_RINGING) {
+                        if (call == null) onCancelAwaitingTelecom()
+                        else if (call.currentTelecomState() == Call.STATE_RINGING) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                 call.reject(Call.REJECT_REASON_DECLINED)
                             } else {
@@ -1237,7 +1247,7 @@ private fun ExpressiveCallScreenContent(
             )
         }
 
-        IncomingCallTransientDialogs(
+        if (call != null) IncomingCallTransientDialogs(
             showReminderSheet = showReminderSheet,
             showUnknownCallerActions = showUnknownCallerActions,
             showBlockAndReportConfirmation = showBlockAndReportConfirmation,
@@ -1257,12 +1267,12 @@ private fun ExpressiveCallScreenContent(
         )
     }
 
-    if (showTimerReminder) CallTimerReminderSheet(call) { showTimerReminder = false }
+    if (showTimerReminder && call != null) CallTimerReminderSheet(call) { showTimerReminder = false }
     if (showCallConnectionDetails) {
         CallConnectionDetailsSheet(
             info = callConnectionInfo,
             onDismiss = { showCallConnectionDetails = false },
-            extraContent = { SimRedialActions(call) { showCallConnectionDetails = false } },
+            extraContent = { if (call != null) SimRedialActions(call) { showCallConnectionDetails = false } },
         )
     }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_backend_required">Activa la grabación de llamadas con la guía. No necesitas ordenador ni otra aplicación.</string>
+    <string name="capture_configure">Configurar</string>
+    <string name="capture_dictate_required">Conecta dot.dictate en Grabaciones y transcripciones y comprueba su licencia y clave API antes de grabar.</string>
+    <string name="capture_dictate_update">Actualiza dot.dictate para transcribir por separado ambos lados de la conversación.</string>
+    <string name="capture_enter_code">Introducir código</string>
+    <string name="capture_failed">Grabación interrumpida. El audio capturado se conserva en Grabaciones y transcripciones.</string>
+    <string name="capture_original_language">Idioma original (detección automática)</string>
+    <string name="capture_output_language">Idioma de salida de la transcripción</string>
+    <string name="capture_pair_notification">Mantén abierto el diálogo de vinculación de Android. Pulsa Introducir código e introduce sus seis dígitos.</string>
+    <string name="capture_reactivate_notification">El teléfono se ha reiniciado o el módulo se ha detenido. Pulsa para reactivar el acceso a la grabación.</string>
+    <string name="capture_record">Grabar</string>
+    <string name="capture_recording">Grabando</string>
+    <string name="capture_saving">Guardando grabación…</string>
+    <string name="capture_starting">Iniciando…</string>
+    <string name="capture_stop">Detener</string>
+    <string name="capture_transcribe">Grabar y transcribir</string>
+    <string name="capture_transcript_limit">Audio guardado. Esta grabación supera el límite de procesamiento de dot.dictate.</string>
+    <string name="contact_photos_title">Optimizador de contactos</string>
+    <string name="plan_interface_magic">Magia de interfaz</string>
+    <string name="recordings_audio">Audio</string>
+    <string name="recordings_check_failed">No se pudo comprobar dot.dictate. Lo reintentaremos automáticamente.</string>
+    <string name="recordings_checking">Comprobando conexión, licencia y configuración API…</string>
+    <string name="recordings_hide_history">Ocultar historial de procesamiento</string>
+    <string name="recordings_history">Historial de procesamiento</string>
+    <string name="recordings_master_off_summary">Desactivado · Las grabaciones guardadas se conservan.</string>
+    <string name="recordings_module_off">Grabación y transcripción desactivadas. El audio y los textos guardados siguen disponibles.</string>
+    <string name="recordings_no_number">Sin número de teléfono guardado</string>
+    <string name="recordings_ready">Listo para transcribir</string>
+    <string name="recordings_saved">Grabaciones guardadas</string>
+    <string name="recordings_translation_unavailable">La traducción no está disponible con la configuración actual de dot.dictate.</string>
+    <string name="recordings_wireless_off_needed">Módulo desactivado. Desactiva la depuración inalámbrica en Opciones de desarrollador para detener los avisos de red de Android.</string>
+    <plurals name="recordings_translations">
+        <item quantity="one">%1$d traducción</item>
+        <item quantity="other">%1$d traducciones</item>
+        <item quantity="many">%1$d traducciones</item>
+    </plurals>
+</resources>

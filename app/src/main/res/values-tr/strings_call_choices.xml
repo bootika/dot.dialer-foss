@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">Yalnızca bu arama</string>
+    <string name="sim_scope_number">Bu numara için hatırla</string>
+    <string name="sim_scope_all">Tüm numaralar için kullan</string>
+    <string name="outgoing_sim_ask">Her seferinde sor</string>
+</resources>

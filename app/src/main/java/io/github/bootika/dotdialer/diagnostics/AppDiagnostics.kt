@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object AppDiagnostics {
     private const val FILE_NAME = "dot_dialer_diagnostics.log"
-    private val MAX_FILE_BYTES = if (BuildConfig.DEBUG) 8 * 1024 * 1024L else 256 * 1024L
+    private val MAX_FILE_BYTES = if (BuildConfig.TEST_DISTRIBUTION) 8 * 1024 * 1024L else 256 * 1024L
     private var bluetoothMonitor: BluetoothDiagnosticMonitor? = null
 
     private val initialized = AtomicBoolean(false)
@@ -60,7 +60,7 @@ object AppDiagnostics {
     }
 
     internal fun allows(level: io.github.bootika.dotdialer.core.diagnostics.DiagnosticLevel): Boolean =
-        initialized.get() && BuildConfig.DEBUG && detailSettings.current().ordinal >= level.ordinal
+        initialized.get() && BuildConfig.TEST_DISTRIBUTION && detailSettings.current().ordinal >= level.ordinal
 
     internal fun levels(): kotlinx.coroutines.flow.Flow<io.github.bootika.dotdialer.core.diagnostics.DiagnosticLevel> =
         if (initialized.get()) detailSettings.level else kotlinx.coroutines.flow.flowOf(io.github.bootika.dotdialer.core.diagnostics.DiagnosticLevel.NORMAL)
@@ -155,7 +155,7 @@ object AppDiagnostics {
             appendLine("full_screen_intent_allowed=$canUseFullScreenIntent")
             appendLine("missing_permissions=${missingPermissions.ifEmpty { listOf("none") }.joinToString(",")}")
             appendLine("journal_write_error=${lastWriteError ?: "none"}")
-            if (BuildConfig.DEBUG) appendLine("log_level=${detailSettings.current()} | extended_scope=local_telecom_photo_audio_bluetooth_state_not_hci | extended_duration=${detailSettings.duration()}")
+            if (BuildConfig.TEST_DISTRIBUTION) appendLine("log_level=${detailSettings.current()} | extended_scope=local_telecom_photo_audio_bluetooth_state_not_hci | extended_duration=${detailSettings.duration()}")
             appendLine("journal_max_bytes=$MAX_FILE_BYTES")
             appendLine("monotonic_ms=${android.os.SystemClock.elapsedRealtime()}")
             appendLine("bluetooth_packets=not_captured_by_app | system_capture=full_hci_snoop_and_bugreport")

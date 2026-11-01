@@ -25,7 +25,7 @@
     <string name="capture_wizard_developer_title">Prepara il telefono</string>
     <string name="capture_wizard_pair_title">Attiva la registrazione</string>
     <string name="capture_wizard_ready_title">Completa l’attivazione</string>
-    <string name="capture_wizard_intro">Questa configurazione avanzata usa temporaneamente Debug wireless. Non è un normale permesso Android di registrazione chiamate. Ti guidiamo passo passo.</string>
+    <string name="capture_wizard_intro">Questa configurazione avanzata usa temporaneamente Debug wireless. Non è un normale permesso Android di registrazione chiamate. Ti guidiamo passo dopo passo.</string>
     <string name="capture_wizard_privacy">Niente root, cavo o altre app. L’associazione resta su questo telefono. L’attivazione non avvia registrazioni.</string>
     <string name="capture_wizard_developer">Connetti il Wi-Fi. Se necessario: Informazioni sul telefono → Informazioni software (Samsung) → tocca sette volte Numero build e conferma il PIN.\n\nIn Opzioni sviluppatore attiva Debug wireless. Se Android chiede, tocca Consenti prima di uscire; Consenti sempre non è necessario. Torna a dot.dialer.</string>
     <string name="capture_wizard_pair">Apri associazione e concedi i permessi richiesti. In Android: Debug wireless → Associa tramite codice.\n\nLascia aperto il codice. Apri le notifiche, espandi dot.dialer e inserisci e invia le sei cifre nella notifica. Torna e tocca Attiva se proposto.</string>

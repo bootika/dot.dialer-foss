@@ -55,7 +55,7 @@ fun CallingAccountPreferenceDialog(
                         color = account.highlightColor
                             .takeIf { Color(it).alpha > 0f }
                             ?.let(::Color)
-                            ?: MaterialTheme.colorScheme.primary,
+                            ?: MaterialTheme.colorScheme.onSurfaceVariant,
                         selected = selectedKey == account.key || selectedKey == account.handle.id,
                         onClick = { onSelected(account.key) },
                     )

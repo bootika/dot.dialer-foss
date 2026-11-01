@@ -153,7 +153,6 @@
     <string name="show_first_letter_in_avatar">Tampilkan Huruf Pertama dalam Avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Tampilkan surat ketika gambar hilang</string>
     <string name="show_picture_in_avatar">Tampilkan Gambar dalam Avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Tampilkan gambar kontak bila tersedia</string>
     <string name="call_settings">Panggilan</string>
     <string name="default_sim">SIM Baku</string>
     <string name="ask_first">Tanya dulu.</string>
@@ -167,7 +166,6 @@
     <string name="floating_ongoing_call">Panggilan Mengambang Terus</string>
     <string name="floating_ongoing_call_subtitle">Tampilkan gelembung mengambang yang dapat diseret selama panggilan. Membutuhkan \'Display atas izin aplikasi lain\'</string>
     <string name="fullscreen_calls">Panggilan layar penuh</string>
-    <string name="fullscreen_calls_subtitle">Panggilan masuk selalu ditampilkan dalam mode layar penuh</string>
     <string name="quick_response">Tanggapan Cepat</string>
     <string name="quick_responses">Tanggapan Cepat</string>
     <string name="quick_responses_subtitle">MMS kalengan menjawab penolakan untuk panggilan masuk</string>
@@ -590,7 +588,7 @@
     <string name="sentry_connected">Kecelakaan Sentry dan laporan ANR terhubung untuk membangun ini.</string>
     <string name="sentry_not_configured">Sentry tidak tersedia dalam bentuk ini.</string>
     <string name="send_sentry_test">Kirim acara tes Sentry</string>
-    <string name="sentry_test_sent">Acara tes Sentry dikirim: %1$s</string>
+    <string name="sentry_test_sent">Tes masuk antrean lokal; penerimaan server belum dikonfirmasi. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry tidak tersedia dalam build ini</string>
     <string name="show_recents_favorites">Tampilkan daerah Favorit</string>
     <string name="swipe_right_action">Swipe kanan</string>

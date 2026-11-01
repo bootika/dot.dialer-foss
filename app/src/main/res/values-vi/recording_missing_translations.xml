@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_backend_required">Bật ghi âm cuộc gọi theo hướng dẫn. Không cần máy tính hay ứng dụng bổ sung.</string>
+    <string name="capture_configure">Thiết lập</string>
+    <string name="capture_dictate_required">Kết nối dot.dictate trong Bản ghi và bản chép lời, kiểm tra giấy phép và khóa API trước khi ghi âm.</string>
+    <string name="capture_dictate_update">Cập nhật dot.dictate để chép lời riêng từng bên trong cuộc trò chuyện.</string>
+    <string name="capture_enter_code">Nhập mã</string>
+    <string name="capture_failed">Ghi âm bị gián đoạn. Âm thanh đã thu được giữ trong Bản ghi và bản chép lời.</string>
+    <string name="capture_original_language">Ngôn ngữ gốc (tự động phát hiện)</string>
+    <string name="capture_output_language">Ngôn ngữ đầu ra của bản chép lời</string>
+    <string name="capture_pair_notification">Giữ hộp thoại ghép nối Android mở. Nhấn Nhập mã rồi nhập mã gồm sáu chữ số.</string>
+    <string name="capture_reactivate_notification">Điện thoại đã khởi động lại hoặc mô-đun đã dừng. Nhấn để kích hoạt lại quyền ghi âm.</string>
+    <string name="capture_record">Ghi âm</string>
+    <string name="capture_recording">Đang ghi âm</string>
+    <string name="capture_saving">Đang lưu bản ghi…</string>
+    <string name="capture_starting">Đang bắt đầu…</string>
+    <string name="capture_stop">Dừng</string>
+    <string name="capture_transcribe">Ghi âm và chép lời</string>
+    <string name="capture_transcript_limit">Đã lưu âm thanh. Bản ghi này vượt giới hạn xử lý của dot.dictate.</string>
+    <string name="contact_photos_title">Tối ưu danh bạ</string>
+    <string name="plan_interface_magic">Giao diện kỳ diệu</string>
+    <string name="recordings_audio">Âm thanh</string>
+    <string name="recordings_check_failed">Không thể kiểm tra dot.dictate. Sẽ tự động thử lại.</string>
+    <string name="recordings_checking">Đang kiểm tra kết nối, giấy phép và cấu hình API…</string>
+    <string name="recordings_hide_history">Ẩn lịch sử xử lý</string>
+    <string name="recordings_history">Lịch sử xử lý</string>
+    <string name="recordings_master_off_summary">Đã tắt · Các bản ghi đã lưu được giữ lại.</string>
+    <string name="recordings_module_off">Ghi âm và chép lời đã tắt. Âm thanh và văn bản đã lưu vẫn có sẵn.</string>
+    <string name="recordings_no_number">Chưa lưu số điện thoại</string>
+    <string name="recordings_ready">Sẵn sàng chép lời</string>
+    <string name="recordings_saved">Bản ghi đã lưu</string>
+    <string name="recordings_translation_unavailable">Không thể dịch với cấu hình dot.dictate hiện tại.</string>
+    <string name="recordings_wireless_off_needed">Mô-đun đã tắt. Tắt Gỡ lỗi không dây trong Tùy chọn nhà phát triển để dừng thông báo mạng của Android.</string>
+    <plurals name="recordings_translations">
+        <item quantity="other">%1$d bản dịch</item>
+    </plurals>
+</resources>

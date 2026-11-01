@@ -39,7 +39,6 @@ import io.github.bootika.dotdialer.core.diagnostics.DiagnosticEvent
 import io.github.bootika.dotdialer.diagnostics.AppDiagnostics
 import dev.goodwy.rphone.liquidglass.LocalLiquidGlassBackdrop
 import dev.goodwy.rphone.liquidglass.backdrops.rememberLayerBackdrop
-import dev.goodwy.rphone.modal.`interface`.CallSession
 import dev.goodwy.rphone.modal.`interface`.IContactsRepository
 import dev.goodwy.rphone.view.screen.ExpressiveCallScreen
 import dev.goodwy.rphone.view.screen.callSystemBarUsesLightIcons
@@ -114,22 +113,18 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
             DotDialerAppTheme {
                 dev.goodwy.rphone.view.screen.settings.PlanUpgradeHost()
                 val session by callViewModel.currentCallSession.collectAsStateWithLifecycle()
+                fun cancelDirect() {
+                    if (!DirectCallWindow.requestCancellation()) return
+                    outgoingLaunch.consume()
+                    CallUiHandoff.controller.contentReady()
+                    dismissCallScreen()
+                }
+                val pendingDirect = rememberDirectCallRequest(::hasManagedCall, ::cancelDirect)
                 val audioState by callViewModel.audioState.collectAsStateWithLifecycle()
                 val callerMetadata by callViewModel.callerMetadataMap.collectAsStateWithLifecycle()
                 val settingsState by preferenceManager.settingsChanged.collectAsStateWithLifecycle()
-                var retainedSession by remember { mutableStateOf<CallSession?>(null) }
                 val awaitingOutgoingSession = pendingOutgoingLaunch
-                LaunchedEffect(outgoingLaunch.deadlineMillis) {
-                    if (outgoingLaunch.awaitExpiry()) dismissCallScreen()
-                }
-                LaunchedEffect(session, outgoingLaunch.deadlineMillis) {
-                    session?.let {
-                        retainedSession = it
-                        outgoingLaunch.consume()
-                    }
-                }
-
-                val displaySession = session ?: retainedSession
+                val displaySession = rememberPresentedCallSession(session, outgoingLaunch, ::dismissCallScreen)
                 val displayCall = displaySession?.call
                 val callState = session?.state
                 LaunchedEffect(displayCall) {
@@ -141,8 +136,8 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                 }
 
                 val identityVersion = rememberPhotoHydrationIdentityVersion(settingsState)
-                val identity = if (displayCall != null) {
-                    identityResolver.rememberIdentity(displayCall, identityVersion, callerMetadata[eligibleCallPhotoNumber(displayCall)])
+                val identity = if (displayCall != null || pendingDirect != null) {
+                    identityResolver.rememberIdentity(displayCall, identityVersion, displayCall?.let { callerMetadata[eligibleCallPhotoNumber(it)] }, pendingDirect)
                 } else {
                     null
                 }
@@ -223,10 +218,10 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                     }
                 }
 
-                CallSurfaceTransition(displayCall) { targetCall ->
+                CallSurfaceTransition(displayCall, pendingDirect != null) { targetCall ->
                         val answeredFromNotification = intent?.getBooleanExtra("ANSWERED_FROM_NOTIFICATION", false) ?: false
 
-                        if (targetCall == null) {
+                        if (targetCall == null && pendingDirect == null) {
                             Box(modifier = Modifier.fillMaxSize())
                         } else {
                             val isDisplayed = targetCall === displayCall
@@ -234,17 +229,17 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                                 if (isDisplayed && identity != null) {
                                     identity
                                 } else {
-                                    identityResolver.rememberIdentity(targetCall, identityVersion, callerMetadata[eligibleCallPhotoNumber(targetCall)])
+                                    identityResolver.rememberIdentity(targetCall, identityVersion, targetCall?.let { callerMetadata[eligibleCallPhotoNumber(it)] }, pendingDirect)
                                 }
                             val targetState = if (isDisplayed) {
-                                checkNotNull(displaySession).state
+                                displaySession?.state ?: Call.STATE_CONNECTING
                             } else {
-                                targetCall.currentTelecomState()
+                                targetCall?.currentTelecomState() ?: Call.STATE_CONNECTING
                             }
                             val connectTime = if (isDisplayed) {
-                                checkNotNull(displaySession).connectTimeMillis
+                                displaySession?.connectTimeMillis ?: 0L
                             } else {
-                                targetCall.details?.connectTimeMillis ?: 0L
+                                targetCall?.details?.connectTimeMillis ?: 0L
                             }
 
                             val liquidGlassBackdrop = rememberLayerBackdrop()
@@ -253,6 +248,8 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                                 dev.goodwy.rphone.view.components.LocalCallTapHapticsEnabled provides preferenceManager.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
                                 ExpressiveCallScreen(
                                     call = targetCall,
+                                    awaitingTelecomAccount = dev.goodwy.rphone.controller.util.callingAccountHandleFromKey(pendingDirect?.accountKey),
+                                    onCancelAwaitingTelecom = ::cancelDirect,
                                     callState = targetState,
                                     contactName = targetIdentity.name,
                                     companyName = targetIdentity.company,
@@ -457,6 +454,11 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
 
     override fun onStop() {
         super.onStop()
+        if (!isChangingConfigurations && DirectCallWindow.state.value?.submitted == false) {
+            DirectCallWindow.cancel()
+            outgoingLaunch.consume()
+            dismissCallScreen()
+        }
         AppDiagnostics.record(
             DiagnosticEvent.CallActivityLifecycle(
                 stage = ActivityStage.STOPPED,

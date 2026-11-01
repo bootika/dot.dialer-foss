@@ -43,17 +43,19 @@ internal object CaptureSetupNotifications {
         val manager=context.getSystemService(NotificationManager::class.java)
         if(manager.activeNotifications.any {it.id==RESTART && it.notification.channelId==CHANNEL})manager.cancel(RESTART)
         reminder.reconcile(
-            eligible={BuildConfig.DEBUG && BuildConfig.DICTATE_INTEGRATION_ENABLED && backend.enabled() && backend.previouslyActivated()},
+            eligible={BuildConfig.TEST_DISTRIBUTION && BuildConfig.DICTATE_INTEGRATION_ENABLED && backend.enabled() && backend.previouslyActivated()},
             settingUp={backend.state.value.phase in setOf("pairing","paired","starting","finishing")},
             ready={backend.available()},
             post={post(context)},clear={clear(context)})
     }
     private fun post(context: Context) {
-        val delivery=CaptureReminderDelivery(context.getSharedPreferences("capture_reminder_delivery",Context.MODE_PRIVATE))
+        val delivery=CaptureReminderDelivery(java.io.File(context.noBackupFilesDir,"capture-reminder/receipt")) {
+            context.getSharedPreferences("capture_reminder_delivery",Context.MODE_PRIVATE).getString("last_activation",null)
+        }
         delivery.postOnce(IntegratedCallCapture.get(context).reminderSession()) {
             if(!NotificationManagerCompat.from(context).areNotificationsEnabled())return@postOnce false
             try {NotificationManagerCompat.from(context).notify(RESTART,reactivationNotification(context));true}
-            catch(_: SecurityException){false}
+            catch(error: SecurityException){captureFailures.report(CaptureFailureStage.NOTIFICATION_PERMISSION,error);false}
         }
     }
     internal fun reactivationNotification(context: Context): Notification {
@@ -76,7 +78,7 @@ class CapturePairingService: Service() {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main.immediate)
     override fun onBind(intent: Intent?): IBinder?=null
     override fun onStartCommand(intent: Intent?,flags: Int,startId: Int): Int {
-        if(!BuildConfig.DEBUG || !BuildConfig.DICTATE_INTEGRATION_ENABLED){stopSelf();return START_NOT_STICKY}
+        if(!BuildConfig.TEST_DISTRIBUTION || !BuildConfig.DICTATE_INTEGRATION_ENABLED){stopSelf();return START_NOT_STICKY}
         val backend=IntegratedCallCapture.get(this)
         if(!backend.accepts(intent?.getLongExtra("capture_generation",-1) ?: -1)){stopSelf();return START_NOT_STICKY}
         startForeground(CaptureSetupNotifications.PAIR,CaptureSetupNotifications.pairing(this))
@@ -96,7 +98,7 @@ class CapturePairingService: Service() {
 
 class CapturePairingReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context,intent: Intent) {
-        if(!BuildConfig.DEBUG || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
+        if(!BuildConfig.TEST_DISTRIBUTION || !BuildConfig.DICTATE_INTEGRATION_ENABLED)return
         if(!IntegratedCallCapture.get(context).accepts(intent.getLongExtra("capture_generation",-1)))return
         val code=RemoteInput.getResultsFromIntent(intent)?.getCharSequence("pair_code")?.toString()?.trim() ?: return
         if(code.matches(Regex("[0-9]{6}")))context.startForegroundService(Intent(context,CapturePairingService::class.java).putExtra("pair_code",code).putExtra("capture_generation",intent.getLongExtra("capture_generation",-1)))

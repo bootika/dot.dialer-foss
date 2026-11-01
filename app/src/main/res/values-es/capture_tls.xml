@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">El servicio local de grabación ha cambiado de identidad. Pulsa Vincular este teléfono de nuevo y activa el acceso a la grabación.</string>
+</resources>

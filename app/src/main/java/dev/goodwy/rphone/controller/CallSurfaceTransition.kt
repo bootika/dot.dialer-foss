@@ -15,15 +15,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-internal fun CallSurfaceTransition(call: Call?, content: @Composable (Call?) -> Unit) {
+internal fun CallSurfaceTransition(call: Call?, hasDeferredPresentation: Boolean = false, content: @Composable (Call?) -> Unit) {
+    val initialKey = androidx.compose.runtime.remember { Any() }
+    var firstCall by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<Call?>(null) }
+    androidx.compose.runtime.SideEffect { if (firstCall == null && call != null) firstCall = call }
     // A translucent starting window must not reveal Home while Telecom supplies its first call.
-    Box(Modifier.fillMaxSize().background(if (call == null) MaterialTheme.colorScheme.surface else Color.Transparent)) {
+    Box(Modifier.fillMaxSize().background(if (call == null && !hasDeferredPresentation) MaterialTheme.colorScheme.surface else Color.Transparent)) {
         AnimatedContent(
             targetState = call,
+            contentKey = { if (firstCall == null || it == null || it === firstCall) initialKey else it },
             modifier = Modifier.fillMaxSize(),
             transitionSpec = {
                 if (initialState != null && targetState != null) {

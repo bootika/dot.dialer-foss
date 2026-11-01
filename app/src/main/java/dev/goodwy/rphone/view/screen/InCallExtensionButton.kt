@@ -53,7 +53,7 @@ internal fun InCallExtensionButton(call: Call, callState: Int, onDigit: (Char) -
         Text(stringResource(R.string.send_phone_extension, extension.digits) + extension.label.takeIf { it.isNotBlank() }?.let { " · $it" }.orEmpty(),
             style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f).padding(end = 10.dp))
         Box(Modifier.size(30.dp).background(MaterialTheme.colorScheme.primary, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, tint = androidx.compose.ui.graphics.Color.White, modifier = Modifier.size(18.dp))
+            Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
         }
     }
 }

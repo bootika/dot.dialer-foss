@@ -15,7 +15,7 @@ internal object RecordingSyncEngine {
         if(!repo.moduleEnabled())return@withLock false
         repo.awaitReady()
         if(!repo.moduleEnabled())return@withLock false
-        val jobs=repo.catalog.jobs().filter {it.state in setOf("queued","running","cancelling")}
+        val jobs=repo.catalog.jobs().filter {it.state in setOf("queued","running","cancelling") || it.state=="failed" && it.accepted && it.error=="PROVIDER_ERROR"}
         for(job in jobs) {
             if(!repo.moduleEnabled())return@withLock false
             try {
@@ -93,7 +93,8 @@ internal object RecordingSyncEngine {
                 it in repo.bridge.capabilities.value.targetLanguages && repo.plan()==AppPlan.PREMIUM && repo.allowed(true)==RecordingAccess.READY
             }.orEmpty()
             repo.catalog.complete(job.copy(completedParts=done,totalParts=total),result.text,result.language,language)
-        } else repo.catalog.update(job.id,state,true,done,total,if(state=="failed")"PROVIDER_ERROR" else "")
+        } else repo.catalog.update(job.id,state,true,done,total,if(state=="failed")RecordingProviderFailure.code(reply.getString("errorCode")) else "")
+        if(state=="failed")android.util.Log.w("RecordingIntegration", "bridge_job_failed: ${RecordingProviderFailure.code(reply.getString("errorCode"))}")
         repo.changed()
     }
 }

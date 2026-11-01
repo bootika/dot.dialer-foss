@@ -42,7 +42,7 @@ public final class IntegratedCaptureServer {
         ServerSocket server=new ServerSocket(port,4,InetAddress.getByName("127.0.0.1"));
         ScheduledExecutorService deadlines=Executors.newSingleThreadScheduledExecutor();
         ThreadPoolExecutor workers=new ThreadPoolExecutor(2,2,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(2));
-        deadlines.scheduleAtFixedRate(()->{if(busy.get() && SystemClock.elapsedRealtime()-heartbeat>10000)halt();
+        deadlines.scheduleWithFixedDelay(()->{if(busy.get() && SystemClock.elapsedRealtime()-heartbeat>10000)halt();
             if(!new File(args[2]).exists()){halt();try{server.close();}catch(Exception ignored){}}},2,2,TimeUnit.SECONDS);
         System.out.println("READY integrated=true stereo=2 loopbackEncrypted=true");System.out.flush();
         android.util.Log.i("CallCaptureWorker","started");
@@ -98,7 +98,8 @@ public final class IntegratedCaptureServer {
                     frames.send(stereo);bytes+=stereo.length;
                 }
                 frames.send(new byte[0]);
-            }finally{if(deadline!=null)deadline.cancel(false);active=new AudioRecord[0];audioClient=null;
+            }catch(SecurityException denied){throw new IOException("Voice capture access denied",denied);}
+            finally{if(deadline!=null)deadline.cancel(false);active=new AudioRecord[0];audioClient=null;
                 for(AudioRecord r:new AudioRecord[]{up,down})if(r!=null){try{r.stop();}catch(Exception ignored){}r.release();}busy.set(false);}
 
         }catch(Exception ignored){/* EOF/error aborts capture; client retains committed frames */}

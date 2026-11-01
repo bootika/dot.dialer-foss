@@ -36,7 +36,7 @@ import kotlinx.coroutines.*
 class CaptureSetupActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!BuildConfig.DEBUG || !BuildConfig.DICTATE_INTEGRATION_ENABLED || !IntegratedCallCapture.get(this).enabled()){finish();return}
+        if(!BuildConfig.TEST_DISTRIBUTION || !BuildConfig.DICTATE_INTEGRATION_ENABLED || !IntegratedCallCapture.get(this).enabled()){finish();return}
         setContent {DotDialerAppTheme {Surface(color=MaterialTheme.colorScheme.background){CaptureSetupWizard(::finish)}}}
     }
 }
@@ -69,7 +69,7 @@ internal fun CaptureSetupWizard(onClose: ()->Unit,previewStep: Int?=null) {
         backend.discover()
         context.startForegroundService(Intent(context,CapturePairingService::class.java).putExtra("capture_generation",backend.generation()))
         try {context.startActivity(Intent("android.settings.WIRELESS_DEBUGGING_SETTINGS"))}
-        catch(_: Exception){context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))}
+        catch(error: Exception){captureFailures.report(CaptureFailureStage.SETUP_SETTINGS,error);context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))}
     }
     val notification=rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()){granted ->if(backend.accepts(requestedGeneration)){if(granted)openPairing()else advanced=true}}
     fun beginPairing(){
@@ -83,7 +83,7 @@ internal fun CaptureSetupWizard(onClose: ()->Unit,previewStep: Int?=null) {
     val working=state.phase in setOf("pairing","starting","finishing")
     LaunchedEffect(Unit){if(previewStep==null){if(!backend.available())backend.discover();while(isActive){ready=backend.available();if(ready)step=4;else if(backend.state.value.phase=="paired")step=3;delay(2000)}}}
     DisposableEffect(Unit){onDispose{if(previewStep==null)backend.endDiscovery()}}
-    fun settings(action: String) {try{context.startActivity(Intent(action))}catch(_: Exception){context.startActivity(Intent(if(action=="android.settings.WIRELESS_DEBUGGING_SETTINGS")Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS else Settings.ACTION_SETTINGS))}}
+    fun settings(action: String) {try{context.startActivity(Intent(action))}catch(error: Exception){captureFailures.report(CaptureFailureStage.SETUP_SETTINGS,error);context.startActivity(Intent(if(action=="android.settings.WIRELESS_DEBUGGING_SETTINGS")Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS else Settings.ACTION_SETTINGS))}}
     if(exitCleanup) AlertDialog(onDismissRequest={exitCleanup=false},
         title={Text(stringResource(R.string.capture_wizard_ready_title))},
         text={Text(stringResource(R.string.capture_wireless_pending))},
@@ -150,7 +150,7 @@ internal fun CaptureSetupWizard(onClose: ()->Unit,previewStep: Int?=null) {
             }
             if(state.error=="wireless" && !ready)OutlinedButton(onClick={settings("android.settings.WIRELESS_DEBUGGING_SETTINGS")},modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.capture_open_wireless))}
             if(working)LinearProgressIndicator(Modifier.fillMaxWidth())
-            if(state.error.isNotEmpty() && !ready)Text(stringResource(when(state.error){"code"->R.string.capture_code_error;"pair"->R.string.capture_pair_error;"wireless"->R.string.capture_wireless_pending;"network"->R.string.capture_network_required;else->R.string.capture_start_error}),color=MaterialTheme.colorScheme.error,style=MaterialTheme.typography.bodyLarge)
+            if(state.error.isNotEmpty() && !ready)Text(stringResource(when(state.error){"tls_identity"->R.string.capture_tls_identity_changed;"code"->R.string.capture_code_error;"pair"->R.string.capture_pair_error;"wireless"->R.string.capture_wireless_pending;"network"->R.string.capture_network_required;else->R.string.capture_start_error}),color=MaterialTheme.colorScheme.error,style=MaterialTheme.typography.bodyLarge)
             Spacer(Modifier.height(16.dp))
         }
         Row(Modifier.fillMaxWidth().padding(vertical=14.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.SpaceBetween) {

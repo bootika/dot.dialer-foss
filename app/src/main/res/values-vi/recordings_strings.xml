@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recordings_title">Bản ghi và bản chép lời</string>
-    <string name="recordings_requirements">Cần giấy phép dot.dictate và khóa API của bạn.</string>
     <string name="recordings_connect">Kết nối dot.dictate</string>
     <string name="recordings_open_dictate">Mở dot.dictate</string>
     <string name="recordings_disconnect">Ngắt kết nối</string>
-    <string name="recordings_connected">Đã kết nối với dot.dictate</string>
     <string name="recordings_disconnected">Kết nối dot.dictate để xử lý bản ghi.</string>
     <string name="recordings_license_required">Kích hoạt giấy phép dot.dictate của bạn.</string>
     <string name="recordings_license_unavailable">Không thể xác minh giấy phép dot.dictate.</string>
@@ -20,9 +18,7 @@
     <string name="recordings_translation">Bản dịch · %1$s</string>
     <string name="recordings_language">Ngôn ngữ dịch</string>
     <string name="recordings_auto_transcribe">Chép lời tự động</string>
-    <string name="recordings_auto_transcribe_summary">Gửi bản ghi mới đến nhà cung cấp đã cấu hình. Complete.</string>
     <string name="recordings_auto_translate">Dịch tự động</string>
-    <string name="recordings_auto_translate_summary">Dịch bản chép lời mới sang ngôn ngữ bạn chọn. Complete.</string>
     <string name="recordings_export_audio">Xuất âm thanh</string>
     <string name="recordings_export_text">Xuất văn bản</string>
     <string name="recordings_delete">Xóa bản ghi</string>

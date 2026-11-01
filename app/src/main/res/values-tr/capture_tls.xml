@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Yerel kayıt hizmetinin kimliği değişti. Bu telefonu yeniden eşleştir seçeneğine dokunun, ardından kayıt erişimini etkinleştirin.</string>
+</resources>

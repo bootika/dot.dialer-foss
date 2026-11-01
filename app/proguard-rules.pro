@@ -22,6 +22,21 @@
 
 
 # Room persistence library
+# Preserve the narrowly scoped, mandatory compiled Telecom null-guard checks.
+-keepattributes MethodParameters,LocalVariableTable,LocalVariableTypeTable,SourceFile,LineNumberTable
+-keep class dev.goodwy.rphone.view.screen.CallCompanyNameKt { *; }
+-keep class dev.goodwy.rphone.view.screen.CallScreenAudioSnapshotKt { *; }
+-keep class dev.goodwy.rphone.view.screen.CallScreenAudioSnapshot { *; }
+-keep class dev.goodwy.rphone.view.screen.CallScreenKt {
+    public static *** ExpressiveCallScreen(...);
+    private static *** ExpressiveCallScreenContent(...);
+}
+
+# This entry point is launched by Android app_process using its stable class name.
+-keep,allowoptimization class dev.goodwy.rphone.recordings.IntegratedCaptureServer {
+    public static void main(java.lang.String[]);
+}
+
 -keep class * extends androidx.room.RoomDatabase
 -keep @androidx.room.Database class * { *; }
 -keep @androidx.room.Entity class * { *; }

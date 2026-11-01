@@ -973,7 +973,7 @@ private fun ContactPickerDialog(
                                         )
                                         if (contact.phoneNumbers.isNotEmpty()) {
                                             Text(
-                                                text = contact.phoneNumbers.joinToString(", "),
+                                                text = dev.goodwy.rphone.view.components.phoneDisplayNumbers(contact.phoneNumbers),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 maxLines = if (dev.goodwy.rphone.view.components.rememberExpandedListDetails()) Int.MAX_VALUE else 1

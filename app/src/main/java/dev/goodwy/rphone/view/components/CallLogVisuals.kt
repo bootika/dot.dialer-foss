@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.components
 
+import dev.goodwy.rphone.view.theme.CallActionColors
+
 import android.provider.CallLog
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -78,7 +80,7 @@ fun missedCallRowColor(): Color =
 fun callStatusColor(status: CallLogVisualStatus): Color = when (status) {
     CallLogVisualStatus.INCOMING,
     CallLogVisualStatus.OUTGOING,
-    -> MaterialTheme.colorScheme.primary
+    -> CallActionColors.answerCommitted
     CallLogVisualStatus.MISSED -> missedCallRowColor()
     CallLogVisualStatus.REJECTED,
     CallLogVisualStatus.BLOCKED,

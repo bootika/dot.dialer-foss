@@ -59,7 +59,7 @@ class CallService : InCallService() {
             isPresent = { callSessionIds[it]?.let(lifecycleCoordinator.state.value.sessions::containsKey) == true && it.currentTelecomState() !in
                 listOf(Call.STATE_DISCONNECTED, Call.STATE_DISCONNECTING) },
             regionForCall = { dev.goodwy.rphone.controller.util.resolveContactLookupRegion(this, it.details?.accountHandle) },
-            diagnostics = if (dev.goodwy.rphone.BuildConfig.DEBUG) io.github.bootika.dotdialer.diagnostics.CallPhotoDiagnostics(this, serviceScope, callStateManager) { callSessionIds[it] } else null)
+            diagnostics = if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) io.github.bootika.dotdialer.diagnostics.CallPhotoDiagnostics(this, serviceScope, callStateManager) { callSessionIds[it] } else null)
     }
     private var redialCount = 0
     private val callStartTimes = mutableMapOf<Call, Long>()
@@ -167,6 +167,7 @@ class CallService : InCallService() {
 
         override fun onDetailsChanged(call: Call, details: Call.Details) {
             super.onDetailsChanged(call, details)
+            bindDirectTelecomCall(call)
             photoSessions.update(call)
             updateCallState()
             updateNotification(call)
@@ -449,7 +450,7 @@ class CallService : InCallService() {
                 pendingFullScreenLaunchSessionIds += sessionId
             }
         }
-        registerCallCallback(call)
+        registerDirectTelecomCall(registeredCalls, call, callCallback)
         if (isUssd) return
         photoSessions.update(call)
         // Update call state synchronously so CallActivity sees active calls immediately
@@ -586,12 +587,6 @@ class CallService : InCallService() {
         val id = "call-${nextCallSessionId++}"
         callSessionIds[call] = id
         id
-    }
-
-    private fun registerCallCallback(call: Call) {
-        if (registeredCalls.add(call)) {
-            call.registerCallback(callCallback)
-        }
     }
 
     private fun unregisterCallCallback(call: Call) {

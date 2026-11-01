@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="call_screen_always_show_sim">Always show SIM</string>
+    <string name="call_screen_always_show_sim_summary">Show the SIM name even when only one SIM is active.</string>
+</resources>

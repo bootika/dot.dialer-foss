@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_backend_required">Arama kaydını rehberle etkinleştirin. Bilgisayar veya ek uygulama gerekmez.</string>
+    <string name="capture_configure">Kur</string>
+    <string name="capture_dictate_required">Kayıtlar ve dökümler bölümünde dot.dictate bağlantısını kurun, kaydetmeden önce lisansını ve API anahtarını kontrol edin.</string>
+    <string name="capture_dictate_update">Konuşmanın iki tarafını bağımsız olarak yazıya dökmek için dot.dictate uygulamasını güncelleyin.</string>
+    <string name="capture_enter_code">Kodu gir</string>
+    <string name="capture_failed">Kayıt kesildi. Alınan ses Kayıtlar ve dökümler bölümünde saklanır.</string>
+    <string name="capture_original_language">Özgün dil (otomatik algılama)</string>
+    <string name="capture_output_language">Döküm çıktı dili</string>
+    <string name="capture_pair_notification">Android eşleştirme penceresini açık tutun. Kodu gir seçeneğine dokunup altı haneli kodu girin.</string>
+    <string name="capture_reactivate_notification">Telefon yeniden başlatıldı veya modül durdu. Kayıt erişimini yeniden etkinleştirmek için dokunun.</string>
+    <string name="capture_record">Kaydet</string>
+    <string name="capture_recording">Kaydediliyor</string>
+    <string name="capture_saving">Kayıt saklanıyor…</string>
+    <string name="capture_starting">Başlatılıyor…</string>
+    <string name="capture_stop">Durdur</string>
+    <string name="capture_transcribe">Kaydet ve yazıya dök</string>
+    <string name="capture_transcript_limit">Ses kaydedildi. Bu kayıt dot.dictate işleme sınırını aşıyor.</string>
+    <string name="contact_photos_title">Kişi iyileştirici</string>
+    <string name="plan_interface_magic">Sihirli arayüz</string>
+    <string name="recordings_audio">Ses</string>
+    <string name="recordings_check_failed">dot.dictate kontrol edilemedi. Otomatik olarak yeniden denenecek.</string>
+    <string name="recordings_checking">Bağlantı, lisans ve API yapılandırması kontrol ediliyor…</string>
+    <string name="recordings_hide_history">İşleme geçmişini gizle</string>
+    <string name="recordings_history">İşleme geçmişi</string>
+    <string name="recordings_master_off_summary">Kapalı · Kaydedilen kayıtlar korunur.</string>
+    <string name="recordings_module_off">Kayıt ve yazıya dökme kapalı. Kaydedilen ses ve metinler kullanılabilir kalır.</string>
+    <string name="recordings_no_number">Kayıtlı telefon numarası yok</string>
+    <string name="recordings_ready">Yazıya dökmeye hazır</string>
+    <string name="recordings_saved">Kaydedilen kayıtlar</string>
+    <string name="recordings_translation_unavailable">Geçerli dot.dictate yapılandırmasında çeviri kullanılamıyor.</string>
+    <string name="recordings_wireless_off_needed">Modül kapalı. Android ağ sorularını durdurmak için Geliştirici seçeneklerinde Kablosuz hata ayıklamayı kapatın.</string>
+    <plurals name="recordings_translations">
+        <item quantity="one">%1$d çeviri</item>
+        <item quantity="other">%1$d çeviri</item>
+    </plurals>
+</resources>

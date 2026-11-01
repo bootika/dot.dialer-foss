@@ -87,7 +87,7 @@ internal fun settingsFocusIndex(id: String, editor: SettingsEditor): Int = when 
     SettingsEditor.AVATARS -> 1
     SettingsEditor.HOME -> when (id) { "H09" -> 1; "H01", "H02", "H03" -> 2; "H05", "H06", "H07", "I12" -> 3; else -> 0 }
     SettingsEditor.ADVANCED -> if (id == "K02" || id == "K03") 2 else 1
-    SettingsEditor.CALL_UI -> when (id) { "K08", "K09" -> 4; "C01", "C09" -> 1; "A05", "C03", "C04" -> 2; "C07" -> 3; else -> 0 }
+    SettingsEditor.CALL_UI -> when (id) { "K08", "K09" -> 4; "C01", "C09", "C10" -> 1; "A05", "C03", "C04" -> 2; "C07" -> 3; else -> 0 }
     SettingsEditor.CALLS -> when (id) {
         "K04" -> 1
         "K02", "K03" -> if (dev.goodwy.rphone.auto.AndroidAutoIntegration.isAvailable()) 3 else 2

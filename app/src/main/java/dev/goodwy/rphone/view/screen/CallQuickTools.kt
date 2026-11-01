@@ -29,8 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 internal fun SimRedialActions(call: Call, onDismiss: () -> Unit) {
     val context = LocalContext.current
+    val activeSimCount = dev.goodwy.rphone.view.components.rememberActiveSimCount()
     val accounts = getCallingAccounts(context).filter { it.isSim }
-    if (accounts.size < 2) return
+    if (activeSimCount < 2 || accounts.size < 2) return
     val redial = koinInject<SimRedialCoordinator>()
     val busy by redial.busy.collectAsStateWithLifecycle()
     val enabled = !busy && redial.canSwitch(call)

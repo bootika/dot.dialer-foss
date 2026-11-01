@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Danh tính của dịch vụ ghi âm cục bộ đã thay đổi. Nhấn Ghép nối lại điện thoại này, rồi kích hoạt quyền truy cập ghi âm.</string>
+</resources>

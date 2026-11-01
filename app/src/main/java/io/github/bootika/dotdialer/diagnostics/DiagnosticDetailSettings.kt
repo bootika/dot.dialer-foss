@@ -13,7 +13,7 @@ import java.io.File
 /** Device-local debug configuration: manual stop for new selections, legacy deadlines retained. */
 internal class DiagnosticDetailSettings(
     context: Context,
-    private val testBuild: Boolean = BuildConfig.DEBUG,
+    private val testBuild: Boolean = BuildConfig.TEST_DISTRIBUTION,
     private val now: () -> Long = System::currentTimeMillis,
 ) {
     private val file = AtomicFile(File(context.noBackupFilesDir, "diagnostic_detail_level"))

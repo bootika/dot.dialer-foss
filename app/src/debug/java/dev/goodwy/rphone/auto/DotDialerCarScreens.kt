@@ -227,14 +227,14 @@ internal class AndroidAutoHomeScreen(
     }
 
     private fun AndroidAutoContact.callRow(): Row = Row.Builder()
-        .setTitle(displayName)
-        .addText(number)
+        .setTitle(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(displayName, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
+        .addText(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(number, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
         .setOnClickListener { call(number) }
         .build()
 
     private fun AndroidAutoRecent.callRow(): Row = Row.Builder()
-        .setTitle(displayName)
-        .addText(number)
+        .setTitle(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(displayName, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
+        .addText(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(number, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
         .addText(
             DateUtils.getRelativeTimeSpanString(
                 date,
@@ -285,8 +285,8 @@ private class AndroidAutoSearchScreen(
         results.take(limit).forEach { contact ->
             list.addItem(
                 Row.Builder()
-                    .setTitle(contact.displayName)
-                    .addText(contact.number)
+                    .setTitle(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(contact.displayName, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
+                    .addText(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(contact.number, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
                     .setOnClickListener {
                         carContext.startCarApp(
                             Intent(Intent.ACTION_CALL).setData(
@@ -332,8 +332,8 @@ private class AndroidAutoContactsScreen(
         contacts.forEach { contact ->
             list.addItem(
                 Row.Builder()
-                    .setTitle(contact.displayName)
-                    .addText(contact.number)
+                    .setTitle(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(contact.displayName, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
+                    .addText(dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(contact.number, dev.goodwy.rphone.controller.util.contactNumberRegion(carContext)))
                     .setOnClickListener { call(contact.number) }
                     .build(),
             )

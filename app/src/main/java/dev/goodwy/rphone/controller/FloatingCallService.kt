@@ -315,7 +315,7 @@ class FloatingCallService : Service() {
                 }
             }
 
-            // Dynamic-color active-call dot
+            // Semantic active-call dot, independent of the interaction accent
             Box(
                 modifier = Modifier
                     .size(14.dp)
@@ -324,7 +324,7 @@ class FloatingCallService : Service() {
             ) {
                 Surface(
                     shape           = CircleShape,
-                    color           = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                    color           = color_call_button.copy(alpha = 0.35f),
                     tonalElevation  = 0.dp,
                     shadowElevation = 0.dp,
                     modifier        = Modifier
@@ -333,7 +333,7 @@ class FloatingCallService : Service() {
                 ) {}
                 Surface(
                     shape           = CircleShape,
-                    color           = MaterialTheme.colorScheme.primary,
+                    color           = color_call_button,
                     tonalElevation  = 0.dp,
                     shadowElevation = 0.dp,
                     modifier        = Modifier.size(11.dp).align(Alignment.Center)

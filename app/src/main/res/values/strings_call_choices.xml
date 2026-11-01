@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">This call only</string>
+    <string name="sim_scope_number">Remember for this number</string>
+    <string name="sim_scope_all">Use for all numbers</string>
+    <string name="outgoing_sim_ask">Ask each time</string>
+</resources>

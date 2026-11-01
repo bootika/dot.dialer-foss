@@ -57,8 +57,8 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
         dismissButton={TextButton(onClick={delete=false}) {Text(stringResource(R.string.cancel))}})
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         TextButton(onClick=onBack) {Text(stringResource(R.string.recordings_back))}
-        Text(asset.title,style=MaterialTheme.typography.headlineSmall)
-        if(asset.phoneNumber.isNotEmpty())Text(asset.phoneNumber,style=MaterialTheme.typography.bodyLarge,color=MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(dev.goodwy.rphone.view.components.phoneDisplayText(asset.title),style=MaterialTheme.typography.headlineSmall)
+        if(asset.phoneNumber.isNotEmpty())Text(dev.goodwy.rphone.view.components.phoneDisplayText(asset.phoneNumber),style=MaterialTheme.typography.bodyLarge,color=MaterialTheme.colorScheme.onSurfaceVariant)
         RillExpressiveCard {
             Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
                 Text(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM,java.text.DateFormat.SHORT).format(java.util.Date(asset.createdAt)),style=MaterialTheme.typography.titleMedium)

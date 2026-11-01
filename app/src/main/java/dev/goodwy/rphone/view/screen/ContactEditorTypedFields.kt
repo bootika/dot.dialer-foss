@@ -36,7 +36,8 @@ fun EditPhoneField(
         icon = DotDialerHandsetIcon,
         onDelete = onDelete,
         onLabelChange = onLabelChange,
-        availableLabels = phoneTypes
+        availableLabels = phoneTypes,
+        visualTransformation = dev.goodwy.rphone.view.components.rememberPhoneNumberTransformation()
     )
 }
 

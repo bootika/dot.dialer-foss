@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen.recordings
 
+import dev.goodwy.rphone.view.theme.semanticSuccess
+
 import android.content.Intent
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
@@ -34,7 +36,7 @@ internal fun IntegratedCaptureSettings() {
         Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.capture_setup),style=MaterialTheme.typography.titleMedium)
             Text(stringResource(if(!allowed)R.string.recordings_plan_required else when(ready){true->R.string.rec_ui_ready;false->R.string.rec_ui_activation;null->R.string.recordings_checking}),
-                style=MaterialTheme.typography.bodyLarge,color=if(ready==true && allowed)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                style=MaterialTheme.typography.bodyLarge,color=if(ready==true && allowed)MaterialTheme.colorScheme.semanticSuccess else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier=Modifier.testTag("capture-readiness"))
             Text(stringResource(R.string.rec_ui_capture_hint),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
             Text(stringResource(R.string.capture_preconnect_help),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)

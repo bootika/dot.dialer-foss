@@ -262,12 +262,14 @@ class LocalizationContractTest {
         )
         private val INTENTIONAL_IDENTICAL_TRANSLATIONS = mapOf(
             "ro" to sortedSetOf(
+                "capture_stop", "recordings_audio", // Native Romanian cognates: Stop, Audio.
                 "contact_action",
                 "accent_coral", "accent_violet", "audio_route_bluetooth", "avatar_palette_google",
                 "avatar_palette_multicolor", "avatar_palette_pastel", "email", "pager", "prefix", "recent_number",
                 "suffix_description", "video",
             ),
             "es" to sortedSetOf(
+                "recordings_audio", // Native Audio label, deliberately identical.
                 "accent_coral", "accent_jade", "accent_violet", "audio_route_bluetooth",
                 "avatar_palette_google", "avatar_palette_jade", "avatar_palette_pastel",
                 "avatar_palette_vibrant", "suffix_description",
@@ -278,6 +280,7 @@ class LocalizationContractTest {
                 "pager", "suffix_description",
             ),
             "fr" to sortedSetOf(
+                "recordings_audio", // Native Audio label, deliberately identical.
                 "recordings_pause", // "Pause" is also the native French label.
                 "conference_participant_count",
                 "contact_action",
@@ -287,6 +290,7 @@ class LocalizationContractTest {
                 "notes", "notif_via_sim", "suffix_description", "theme_auto",
             ),
             "de" to sortedSetOf(
+                "recordings_audio", // Native Audio label, deliberately identical.
                 "recordings_pause", // "Pause" is also the native German label.
                 "rating_okay",
                 "accent_jade", "audio_route_bluetooth", "audio_route_headset", "avatar_palette_google",
@@ -294,10 +298,12 @@ class LocalizationContractTest {
                 "suffix", "suffix_description", "theme_auto", "theme_system", "video",
             ),
             "it" to sortedSetOf(
+                "recordings_audio", // Native Audio label, deliberately identical.
                 "accent_jade", "audio_route_bluetooth", "avatar_palette_jade", "email", "home_tab",
                 "password", "theme_auto", "video",
             ),
             "id" to sortedSetOf(
+                "recordings_audio", // Native Audio label, deliberately identical.
                 "accent_coral", "accent_jade", "accent_violet", "audio_route_bluetooth",
                 "audio_route_headset", "audio_route_speaker", "avatar_palette_google",
                 "avatar_palette_jade", "avatar_palette_pastel", "avatar_palette_vibrant", "pager", "video",

@@ -58,9 +58,9 @@ internal fun RecordingsModuleSwitch(onOpenLibrary: (() -> Unit)? = null) {
                     if(!busy)if(value && !allowed)plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_MANUAL)
                     else scope.launch {
                         busy=true;error=false
-                        try{if(value){backend.enable();RecordingSyncJob.schedule(context);if(dev.goodwy.rphone.BuildConfig.DEBUG && !backend.available())context.startActivity(android.content.Intent(context,CaptureSetupActivity::class.java))}else backend.disable(stopWireless=true)}
+                        try{if(value){backend.enable();RecordingSyncJob.schedule(context);if(dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION && !backend.available())context.startActivity(android.content.Intent(context,CaptureSetupActivity::class.java))}else backend.disable(stopWireless=true)}
                         catch(cancelled: kotlinx.coroutines.CancellationException){throw cancelled}
-                        catch(_: Exception){error=true}finally{busy=false}
+                        catch(failure: Exception){dev.goodwy.rphone.recordings.captureFailures.report(dev.goodwy.rphone.recordings.CaptureFailureStage.MODULE_SWITCH,failure);error=true}finally{busy=false}
                     }
                 },enabled=!busy)
             }
@@ -78,7 +78,7 @@ internal fun RecordingsModuleSwitch(onOpenLibrary: (() -> Unit)? = null) {
             Text(stringResource(R.string.recordings_wireless_off_needed),style=MaterialTheme.typography.bodyMedium)
             TextButton(onClick={
             try{context.startActivity(android.content.Intent("android.settings.WIRELESS_DEBUGGING_SETTINGS"))}
-            catch(_: Exception){context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))}
+            catch(failure: Exception){dev.goodwy.rphone.recordings.captureFailures.report(dev.goodwy.rphone.recordings.CaptureFailureStage.SETUP_SETTINGS,failure);context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))}
         },modifier=Modifier.testTag("recordings-wireless-off")){Text(stringResource(R.string.capture_open_wireless))}
         }
     }

@@ -68,9 +68,9 @@ internal val settingExplanations = listOf(
 @Composable
 internal fun SettingsExplanation(title: String) {
     if (!LocalSettingsExplanations.current) return
-    val context=LocalContext.current
+    val resources=androidx.compose.ui.platform.LocalResources.current
     val locale=androidx.compose.ui.platform.LocalConfiguration.current.locales.toLanguageTags()
-    val index=remember(context,locale) { settingExplanations.associateBy { context.getString(it.label) } }
+    val index=remember(resources,locale) { settingExplanations.associateBy { resources.getString(it.label) } }
     val explanation=index[title] ?: return
     if(explanation.detailed) SettingsHelpText(explanation.text)
     else Text(stringResource(explanation.text),modifier=Modifier.padding(horizontal=16.dp,vertical=8.dp),

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Il servizio locale di registrazione ha cambiato identità. Tocca Associa di nuovo questo telefono, poi attiva l’accesso alla registrazione.</string>
+</resources>

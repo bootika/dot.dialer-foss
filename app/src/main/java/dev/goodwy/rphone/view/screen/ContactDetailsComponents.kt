@@ -426,7 +426,7 @@ internal fun SourcesDialog(
                                         if (contactData.phoneDetails.isNotEmpty()) {
                                             Text(
                                                 modifier = Modifier.padding(start = 2.dp),
-                                                text = contactData.phoneDetails.joinToString(", ") { it.number },
+                                                text = dev.goodwy.rphone.view.components.phoneDisplayNumbers(contactData.phoneDetails.map { it.number }),
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,

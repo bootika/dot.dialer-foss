@@ -4,14 +4,8 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.AtomicFile
-import org.bouncycastle.asn1.x500.X500Name
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
 import org.json.JSONObject
 import java.io.File
-import java.math.BigInteger
 import java.security.*
 import java.security.cert.CertificateFactory
 import java.security.spec.PKCS8EncodedKeySpec
@@ -41,11 +35,7 @@ internal class CaptureIdentity(context: Context) {
             certificate=CertificateFactory.getInstance("X.509").generateCertificate(Base64.getDecoder().decode(data.getString("cert")).inputStream())
         } else {
             val keys=KeyPairGenerator.getInstance("RSA").apply{initialize(2048)}.generateKeyPair()
-            val name=X500Name("CN=dot.dialer local recording")
-            val provider=BouncyCastleProvider()
-            val builder=JcaX509v3CertificateBuilder(name,BigInteger(128,SecureRandom()).abs(),Date(System.currentTimeMillis()-86400000),
-                Date(System.currentTimeMillis()+10L*365*86400000),name,keys.public)
-            certificate=JcaX509CertificateConverter().setProvider(provider).getCertificate(builder.build(JcaContentSignerBuilder("SHA256withRSA").setProvider(provider).build(keys.private)))
+            certificate=captureCertificate(keys)
             privateKey=keys.private
             val data=JSONObject().put("key",Base64.getEncoder().encodeToString(privateKey.encoded)).put("cert",Base64.getEncoder().encodeToString(certificate.encoded)).toString().toByteArray()
             val cipher=Cipher.getInstance("AES/GCM/NoPadding").apply{init(Cipher.ENCRYPT_MODE,wrapping)}

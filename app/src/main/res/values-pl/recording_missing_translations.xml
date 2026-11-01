@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_backend_required">Włącz nagrywanie rozmów, korzystając z przewodnika. Nie potrzebujesz komputera ani dodatkowej aplikacji.</string>
+    <string name="capture_configure">Skonfiguruj</string>
+    <string name="capture_dictate_required">Połącz dot.dictate w sekcji Nagrania i transkrypcje i sprawdź licencję oraz klucz API przed nagrywaniem.</string>
+    <string name="capture_dictate_update">Zaktualizuj dot.dictate, aby osobno transkrybować obie strony rozmowy.</string>
+    <string name="capture_enter_code">Wpisz kod</string>
+    <string name="capture_failed">Nagrywanie przerwane. Zarejestrowany dźwięk pozostaje w sekcji Nagrania i transkrypcje.</string>
+    <string name="capture_original_language">Język oryginału (wykrywanie automatyczne)</string>
+    <string name="capture_output_language">Język wyjściowy transkrypcji</string>
+    <string name="capture_pair_notification">Pozostaw otwarte okno parowania Androida. Dotknij Wpisz kod i wprowadź sześciocyfrowy kod.</string>
+    <string name="capture_reactivate_notification">Telefon uruchomił się ponownie lub moduł został zatrzymany. Dotknij, aby ponownie włączyć dostęp do nagrywania.</string>
+    <string name="capture_record">Nagraj</string>
+    <string name="capture_recording">Nagrywanie</string>
+    <string name="capture_saving">Zapisywanie nagrania…</string>
+    <string name="capture_starting">Uruchamianie…</string>
+    <string name="capture_stop">Zatrzymaj</string>
+    <string name="capture_transcribe">Nagraj i transkrybuj</string>
+    <string name="capture_transcript_limit">Dźwięk zapisany. Nagranie przekracza limit przetwarzania obsługiwany przez dot.dictate.</string>
+    <string name="contact_photos_title">Optymalizacja kontaktów</string>
+    <string name="plan_interface_magic">Magiczny interfejs</string>
+    <string name="recordings_audio">Dźwięk</string>
+    <string name="recordings_check_failed">Nie udało się sprawdzić dot.dictate. Automatycznie spróbujemy ponownie.</string>
+    <string name="recordings_checking">Sprawdzanie połączenia, licencji i konfiguracji API…</string>
+    <string name="recordings_hide_history">Ukryj historię przetwarzania</string>
+    <string name="recordings_history">Historia przetwarzania</string>
+    <string name="recordings_master_off_summary">Wyłączone · Zapisane nagrania pozostają zachowane.</string>
+    <string name="recordings_module_off">Nagrywanie i transkrypcja są wyłączone. Zapisane nagrania i teksty pozostają dostępne.</string>
+    <string name="recordings_no_number">Brak zapisanego numeru telefonu</string>
+    <string name="recordings_ready">Gotowe do transkrypcji</string>
+    <string name="recordings_saved">Zapisane nagrania</string>
+    <string name="recordings_translation_unavailable">Tłumaczenie jest niedostępne przy obecnej konfiguracji dot.dictate.</string>
+    <string name="recordings_wireless_off_needed">Moduł wyłączony. Wyłącz debugowanie bezprzewodowe w Opcjach programisty, aby zatrzymać pytania Androida o sieć.</string>
+    <plurals name="recordings_translations">
+        <item quantity="one">%1$d tłumaczenie</item>
+        <item quantity="other">%1$d tłumaczeń</item>
+        <item quantity="many">%1$d tłumaczeń</item>
+        <item quantity="few">%1$d tłumaczenia</item>
+    </plurals>
+</resources>

@@ -34,34 +34,41 @@ internal class CallIdentityResolver(
     private data class CacheEntry(val identity: CallIdentity, val settingsVersion: Int)
 
     private val cache = mutableMapOf<Pair<String, android.telecom.PhoneAccountHandle?>, CacheEntry>()
+    private var deferredSeed: Pair<String, CacheEntry>? = null
 
     @Composable
     fun rememberIdentity(
-        call: Call, settingsVersion: Int,
+        call: Call?, settingsVersion: Int,
         metadata: dev.goodwy.rphone.domain.model.CallerMetadata? = null,
+        awaiting: DirectCallWindow.Request? = null,
     ): CallIdentity {
         val context = LocalContext.current
         val unknownLabel = stringResource(R.string.label_unknown)
         val conferenceLabel = stringResource(R.string.conference_call)
-        val isConference = call.isTelecomConference()
-        val number = remember(call, call.details?.handle, call.details?.handlePresentation, isConference) {
-            android.net.Uri.decode(notificationCallerNumber(call))
+        val isConference = call?.isTelecomConference() == true
+        val account = call?.details?.accountHandle ?: dev.goodwy.rphone.controller.util.callingAccountHandleFromKey(awaiting?.accountKey)
+        val number = remember(call, awaiting?.id, call?.details?.handle, call?.details?.handlePresentation, isConference) {
+            if (call == null) awaiting?.number.orEmpty() else android.net.Uri.decode(notificationCallerNumber(call))
         }
         val cnam = remember(
-            call.details?.callerDisplayName,
-            call.details?.callerDisplayNamePresentation,
+            call?.details?.callerDisplayName,
+            call?.details?.callerDisplayNamePresentation,
         ) {
-            call.details?.callerDisplayName
+            call?.details?.callerDisplayName
                 ?.takeIf {
                     call.details?.callerDisplayNamePresentation == TelecomManager.PRESENTATION_ALLOWED
                 }
                 ?.takeIf(String::isNotBlank)
         }
 
-        val lookupKey = number to call.details?.accountHandle
+        val lookupKey = number to account
         val matchingMetadata = metadata?.forLookupRegion(
-            dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle))?.takeIf { !isConference && number.isNotBlank() && it.number == number }
-        val immediatePhoto = matchingMetadata?.photoUri?.takeIf(String::isNotBlank) ?: telecomCallerPhotoUri(call)
+            dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, account))?.takeIf { !isConference && number.isNotBlank() && it.number == number }
+        val immediatePhoto = matchingMetadata?.photoUri?.takeIf(String::isNotBlank) ?: call?.let(::telecomCallerPhotoUri)
+        val handedOffIdentity = call?.takeIf { !isConference && number.isNotBlank() }?.let {
+            deferredSeed?.takeIf { seed -> seed.first == directCallRequestId(it) && seed.second.settingsVersion == settingsVersion }
+                ?.second?.identity?.copy(number = number)
+        }
         // Revisions refresh data, but must not erase a photograph already shown for this call.
         var identity by remember(call, lookupKey, isConference, unknownLabel, conferenceLabel) {
             val base = if (isConference) {
@@ -73,7 +80,7 @@ internal class CallIdentityResolver(
                     backgroundUri = null,
                 )
             } else {
-                cached(lookupKey, settingsVersion) ?: CallIdentity(
+                handedOffIdentity ?: cached(lookupKey, settingsVersion) ?: CallIdentity(
                     number = number,
                     name = baseCallIdentityName(
                         isConference = false,
@@ -98,6 +105,7 @@ internal class CallIdentityResolver(
 
         // Service metadata can disappear before the Activity's final frame. Retain accepted imagery.
         SideEffect {
+            if (call == null && awaiting != null) deferredSeed = awaiting.id to CacheEntry(identity, settingsVersion)
             matchingMetadata?.photoUri?.takeIf(String::isNotBlank)?.let { photo ->
                 if (identity.photoUri != photo || !identity.photoLookupComplete) {
                     identity = identity.copy(name = matchingMetadata.name, photoUri = photo, photoLookupComplete = true)
@@ -106,7 +114,7 @@ internal class CallIdentityResolver(
             }
         }
         LaunchedEffect(call, lookupKey, cnam, isConference, conferenceLabel, settingsVersion, matchingMetadata) {
-            if (call.currentTelecomState() in listOf(Call.STATE_DISCONNECTING, Call.STATE_DISCONNECTED)) return@LaunchedEffect
+            if (call?.currentTelecomState() in listOf(Call.STATE_DISCONNECTING, Call.STATE_DISCONNECTED)) return@LaunchedEffect
             if (isConference) {
                 identity = CallIdentity(
                     number = number,
@@ -127,8 +135,10 @@ internal class CallIdentityResolver(
 
             val lookup = handle?.let {
                 withContext(Dispatchers.IO) {
-                    runCatching { contactsRepository.getContactByNumberInRegion(number,
-                        dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, call.details?.accountHandle)) }
+                    try { Result.success(contactsRepository.getContactByNumberInRegion(number,
+                        dev.goodwy.rphone.controller.util.resolveContactLookupRegion(context, account))) }
+                    catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+                    catch (failure: RuntimeException) { Result.failure(failure) }
                 }
             }
             val contact = lookup?.getOrNull()
@@ -156,7 +166,7 @@ internal class CallIdentityResolver(
                     ?: identity.company.takeIf { contact == null },
                 photoUri = matchingMetadata?.photoUri?.takeIf(String::isNotBlank) ?:
                     dev.goodwy.rphone.controller.util.ReadableCallPhotoResolver(context).resolve(
-                        contact?.photoUri ?: identity.photoUri, telecomCallerPhotoUri(call)) ?:
+                        contact?.photoUri ?: identity.photoUri, call?.let(::telecomCallerPhotoUri)) ?:
                     if (contact == null && !contactFailed) dev.goodwy.rphone.controller.util.UnsavedNumberAvatars.resolve(context, number) else null,
                 backgroundUri = background,
             )

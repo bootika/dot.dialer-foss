@@ -7,7 +7,7 @@ import dev.goodwy.rphone.BuildConfig
 
 /** Runtime gate for the opt-in Android Auto surface in test builds. */
 internal object AndroidAutoIntegration {
-    fun isAvailable(): Boolean = BuildConfig.DEBUG
+    fun isAvailable(): Boolean = BuildConfig.TEST_DISTRIBUTION
 
     fun isEnabled(context: Context): Boolean {
         if (!isAvailable()) return false

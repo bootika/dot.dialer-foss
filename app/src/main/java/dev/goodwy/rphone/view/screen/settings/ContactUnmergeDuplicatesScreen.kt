@@ -360,7 +360,7 @@ fun MergedContactCard(
 
                         if (sourceContact.phoneDetails.isNotEmpty()) {
                             Text(
-                                text = sourceContact.phoneDetails.joinToString(", ") { it.number },
+                                text = dev.goodwy.rphone.view.components.phoneDisplayNumbers(sourceContact.phoneDetails.map { it.number }),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,

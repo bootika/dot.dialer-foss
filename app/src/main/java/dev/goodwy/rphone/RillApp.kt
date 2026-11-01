@@ -18,6 +18,15 @@ class RillApp : Application() {
         super.onCreate()
         dev.goodwy.rphone.controller.license.TestAccessManager.get(this)
         AppDiagnostics.initialize(this)
+        val koinApplication = startKoin {
+            androidContext(this@RillApp)
+            modules(appModule)
+        }
+        val preferences = koinApplication.koin.get<PreferenceManager>()
+        val plans = dev.goodwy.rphone.controller.license.PlanAccessManager.get(this)
+        plans.attach(koinApplication.koin.get<dev.goodwy.rphone.controller.PurchaseHelper>())
+        observePlanChanges(plans, preferences)
+        AppTelemetry.initialize(this, preferences)
         AppDiagnostics.record(
             DiagnosticEvent.AppStarted(
                 versionName = BuildConfig.VERSION_NAME,
@@ -28,15 +37,6 @@ class RillApp : Application() {
                 model = Build.MODEL,
             )
         )
-        val koinApplication = startKoin {
-            androidContext(this@RillApp)
-            modules(appModule)
-        }
-        val preferences = koinApplication.koin.get<PreferenceManager>()
-        val plans = dev.goodwy.rphone.controller.license.PlanAccessManager.get(this)
-        plans.attach(koinApplication.koin.get<dev.goodwy.rphone.controller.PurchaseHelper>())
-        observePlanChanges(plans, preferences)
-        AppTelemetry.initialize(this, preferences)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO).launch {
             dev.goodwy.rphone.controller.util.CallBackReminderScheduler.recover(this@RillApp)
         }

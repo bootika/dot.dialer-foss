@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 internal enum class RecordingBridgeCheck { IDLE, CHECKING, FAILED }
 
 @Composable
-internal fun RecordingsBridgeLifecycle(repo: RecordingsRepository, poll: Boolean=false): RecordingBridgeCheck {
+internal fun recordingsBridgeLifecycle(repo: RecordingsRepository, poll: Boolean=false): RecordingBridgeCheck {
     var check by remember(repo) {mutableStateOf(RecordingBridgeCheck.IDLE)}
     val lifecycle=LocalLifecycleOwner.current.lifecycle
     val enabled by repo.moduleState.collectAsState()

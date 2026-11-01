@@ -1,0 +1,21 @@
+// Test functionality is a distribution policy, independent of VM debugging/optimization.
+tasks.register('verifyTestDeliveryVariants') {
+    group = 'verification'
+    doLast {
+        def debug = android.buildTypes.debug
+        def optimized = android.buildTypes.optimized
+        def release = android.buildTypes.release
+        assert android.defaultConfig.buildConfigFields.TEST_DISTRIBUTION.value == 'false'
+        assert debug.buildConfigFields.TEST_DISTRIBUTION.value == 'true'
+        assert optimized.buildConfigFields.TEST_DISTRIBUTION.value == 'true'
+        assert !release.buildConfigFields.containsKey('TEST_DISTRIBUTION')
+        assert debug.debuggable && !optimized.debuggable && !release.debuggable
+        assert optimized.minifyEnabled && optimized.shrinkResources
+        assert optimized.applicationIdSuffix == '.test'
+        assert optimized.versionNameSuffix == '-test'
+        assert optimized.signingConfig == debug.signingConfig
+        assert optimized.buildConfigFields.DICTATE_INTEGRATION_ENABLED.value == 'true'
+        assert !release.buildConfigFields.containsKey('DICTATE_INTEGRATION_ENABLED')
+        println 'Developer debug, optimized test and production release policy verified.'
+    }
+}

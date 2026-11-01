@@ -91,7 +91,7 @@ private fun ConnectionDetailRow(icon: ImageVector, label: String, value: String)
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(22.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.width(14.dp))
         ConnectionTextDetail(label, value)

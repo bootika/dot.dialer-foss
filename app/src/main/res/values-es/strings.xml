@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Mostrar primera letra en el avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Muestra la letra cuando falta la imagen</string>
     <string name="show_picture_in_avatar">Mostrar imagen en el avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Muestra la foto del contacto si está disponible</string>
     <string name="call_settings">Llamadas</string>
     <string name="default_sim">SIM predeterminada</string>
     <string name="ask_first">Preguntar primero</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Llamada flotante</string>
     <string name="floating_ongoing_call_subtitle">Mostrar una burbuja flotante durante las llamadas. Requiere permiso \"Mostrar sobre otras aplicaciones\"</string>
     <string name="fullscreen_calls">Llamadas a pantalla completa</string>
-    <string name="fullscreen_calls_subtitle">Las llamadas entrantes siempre se muestran en modo de pantalla completa</string>
     <string name="quick_response">Respuesta rápida</string>
     <string name="quick_responses">Respuestas rápidas</string>
     <string name="quick_responses_subtitle">Gestionar respuestas SMS predefinidas de rechazo para llamadas entrantes</string>
@@ -604,7 +602,7 @@
     <string name="sentry_connected">El accidente de centinela y el reporte de ANR está conectado para esta construcción.</string>
     <string name="sentry_not_configured">Sentry no está disponible en esta construcción.</string>
     <string name="send_sentry_test">Enviar evento de prueba a Sentry</string>
-    <string name="sentry_test_sent">Evento de prueba enviado: %1$s</string>
+    <string name="sentry_test_sent">Prueba en la cola local; recepción del servidor sin confirmar. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry no está disponible en esta construcción</string>
     <string name="show_recents_favorites">Mostrar la sección Favoritos</string>
     <string name="swipe_right_action">Girar bien.</string>

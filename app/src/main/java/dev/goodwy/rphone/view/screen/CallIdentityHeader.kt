@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -67,7 +68,7 @@ internal fun CallIdentityHeader(
         modifier = Modifier.absorbSupplementalIdentityHeight(identityVerticalCompensationDp).testTag("callIdentityHeader"),
     ) {
         Text(
-            text = contactName,
+            text = dev.goodwy.rphone.view.components.phoneDisplayText(contactName),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -122,7 +123,7 @@ private fun CallMetadataRegion(
     onConnectionDetailsClick: () -> Unit,
     onTimerClick: (() -> Unit)? = null,
 ) {
-    var lastNonEndingState by remember { mutableStateOf(Call.STATE_DISCONNECTED) }
+    var lastNonEndingState by remember { mutableIntStateOf(Call.STATE_DISCONNECTED) }
     var lastNonEndingDuration by remember { mutableStateOf(duration) }
     SideEffect {
         if (callState != Call.STATE_DISCONNECTING && callState != Call.STATE_DISCONNECTED) {

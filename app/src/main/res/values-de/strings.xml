@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Ersten Buchstaben im Avatar anzeigen</string>
     <string name="show_first_letter_in_avatar_subtitle">Zeigt einen Buchstaben an, wenn kein Bild vorhanden ist</string>
     <string name="show_picture_in_avatar">Bild im Avatar anzeigen</string>
-    <string name="show_picture_in_avatar_subtitle">Zeigt das Kontaktbild an, falls verfügbar</string>
     <string name="call_settings">Anrufe</string>
     <string name="default_sim">Standard-SIM</string>
     <string name="ask_first">Zuerst fragen</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Schwebender Anruf</string>
     <string name="floating_ongoing_call_subtitle">Zeigt eine schwebende Blase während Anrufen an. Benötigt die Berechtigung \"Über anderen Apps anzeigen\"</string>
     <string name="fullscreen_calls">Vollbild-Anrufe</string>
-    <string name="fullscreen_calls_subtitle">Eingehende Anrufe werden immer im Vollbildmodus angezeigt</string>
     <string name="quick_response">Schnellantwort</string>
     <string name="quick_responses">Schnellantworten</string>
     <string name="quick_responses_subtitle">Vorlagen für SMS-Ablehnungsantworten auf eingehende Anrufe verwalten</string>
@@ -600,7 +598,7 @@
     <string name="sentry_connected">Sentry Crash und ANR Reporting sind für diesen Build verbunden.</string>
     <string name="sentry_not_configured">Sentry ist in diesem Build nicht verfügbar.</string>
     <string name="send_sentry_test">Send Sentry Testereignis</string>
-    <string name="sentry_test_sent">Sentry Test Event gesendet: %1$s</string>
+    <string name="sentry_test_sent">Test lokal eingereiht; Serverempfang nicht bestätigt. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry ist in diesem Build nicht verfügbar</string>
     <string name="show_recents_favorites">Abschnitt Favoriten anzeigen</string>
     <string name="swipe_right_action">Rechtsschwenken</string>

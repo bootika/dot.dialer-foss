@@ -170,15 +170,18 @@ class SettingsReorganizationTest {
         for (oldRoot in listOf(R.string.calls, R.string.home_and_gestures, R.string.accessibility, R.string.advanced_settings))
             rule.onAllNodesWithText(rule.activity.getString(oldRoot)).assertCountEquals(0)
         rule.runOnIdle { scene = "interface" }; settled()
-        for (label in listOf(R.string.call_screen, R.string.home_and_gestures, R.string.accessibility))
-            rule.onNodeWithText(rule.activity.getString(label)).performScrollTo().performClick()
+        for (label in listOf(R.string.call_screen, R.string.home_and_gestures, R.string.accessibility)) {
+            rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(rule.activity.getString(label)))
+            rule.onNodeWithText(rule.activity.getString(label)).assertIsDisplayed().performClick()
+        }
         capture("function-interface-links")
         assertTrue(routes.any { it.contains("accessibility=true") })
         rule.runOnIdle { scene = "calls" }; settled()
         for (label in listOf(R.string.call_screen, R.string.fullscreen_calls, R.string.floating_ongoing_call,
             R.string.incoming_call_ui, R.string.liquid_glass_call_screen))
             rule.onAllNodesWithText(rule.activity.getString(label)).assertCountEquals(0)
-        rule.onNodeWithText(rule.activity.getString(R.string.add_country_code_automatically)).performScrollTo().assertIsDisplayed()
+        rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(rule.activity.getString(R.string.add_country_code_automatically)))
+        rule.onNodeWithText(rule.activity.getString(R.string.add_country_code_automatically)).assertIsDisplayed()
         rule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(rule.activity.getString(R.string.proximity_sensor)))
         rule.onNodeWithText(rule.activity.getString(R.string.proximity_sensor)).assertIsDisplayed()
         assertEquals(before, runBlocking { prefs.getPersistedPreferences() })

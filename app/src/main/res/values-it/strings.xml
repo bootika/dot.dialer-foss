@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Mostra prima lettera nell\'avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Mostra la lettera quando manca l\'immagine</string>
     <string name="show_picture_in_avatar">Mostra immagine nell\'avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Mostra la foto del contatto se disponibile</string>
     <string name="call_settings">Chiamate</string>
     <string name="default_sim">SIM predefinita</string>
     <string name="ask_first">Chiedi prima</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Chiamata fluttuante in corso</string>
     <string name="floating_ongoing_call_subtitle">Mostra una bolla fluttuante trascinabile durante le chiamate. Richiede l\'autorizzazione \"Visualizza sopra altre app\"</string>
     <string name="fullscreen_calls">Chiamate a schermo intero</string>
-    <string name="fullscreen_calls_subtitle">Le chiamate in entrata vengono sempre visualizzate a schermo intero</string>
     <string name="quick_response">Risposta rapida</string>
     <string name="quick_responses">Risposte rapide</string>
     <string name="quick_responses_subtitle">Gestisci le risposte SMS predefinite di rifiuto per le chiamate in entrata</string>
@@ -604,7 +602,7 @@
     <string name="sentry_connected">L\'incidente di Sentry e il reporting ANR sono collegati per questa costruzione.</string>
     <string name="sentry_not_configured">Sentry non è disponibile in questa costruzione.</string>
     <string name="send_sentry_test">Invia l\'evento di prova Sentry</string>
-    <string name="sentry_test_sent">Evento test Sentry inviato: %1$s</string>
+    <string name="sentry_test_sent">Test nella coda locale; ricezione sul server non confermata. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry non è disponibile in questa costruzione</string>
     <string name="show_recents_favorites">Mostra la sezione Preferiti</string>
     <string name="swipe_right_action">Scorri a destra</string>

@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.controller.util.PhoneNumberDisplay
+import dev.goodwy.rphone.controller.util.contactNumberRegion
 import dev.goodwy.rphone.controller.util.forceLtr
 import dev.goodwy.rphone.controller.util.formatDate
 import dev.goodwy.rphone.controller.util.formatSecondsToShortTimeString
@@ -78,7 +80,7 @@ fun CallLogTileSimple(
         CallLog.Calls.BLOCKED_TYPE  -> stringResource(R.string.blocked)
         else                        -> stringResource(R.string.call)
     }
-    val headlineText = if (showNumber) log.number.forceLtr() + "  •  " + typeText else typeText
+    val headlineText = if (showNumber) PhoneNumberDisplay.format(log.number, contactNumberRegion(context)).forceLtr() + "  •  " + typeText else typeText
     val simLabel = if (showSimLabel && log.simLabel != null) " • " + log.simLabel else ""
     CallLogListItemSimple(
         headline = headlineText,
@@ -112,7 +114,7 @@ fun CallLogTile(
 
     Box(modifier = Modifier.fillMaxWidth()) {
         val simLabel = if (showSimLabel && log.simLabel != null) " • " + log.simLabel else ""
-        val displayName = if (log.name == log.number) log.number.forceLtr() else log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" }
+        val displayName = if (log.name == log.number) PhoneNumberDisplay.format(log.number, contactNumberRegion(context)).forceLtr() else log.name?.ifEmpty { log.number } ?: log.number.ifEmpty { "Unknown" }
         CallLogListItem(
             headline = buildString {
                 append(displayName)

@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import dev.goodwy.rphone.view.theme.semanticSuccess
+
 import dev.goodwy.rphone.view.theme.accentText
 
 import android.net.Uri
@@ -126,8 +128,8 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 }
             }
         }
-        is BackupDialogState.BackupSuccess -> AlertDialog(onDismissRequest = { backupState = BackupDialogState.Idle }, icon = { Icon(Icons.Rounded.CheckCircle, null, tint = MaterialTheme.colorScheme.primary) }, title = { Text(stringResource(R.string.backup_created)) }, text = { Text(stringResource(R.string.backup_created_description, state.path)) }, confirmButton = { TextButton(onClick = { backupState = BackupDialogState.Idle }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.ok)) } })
-        is BackupDialogState.RestoreSuccess -> AlertDialog(onDismissRequest = { backupState = BackupDialogState.Idle }, icon = { Icon(Icons.Rounded.CheckCircle, null, tint = MaterialTheme.colorScheme.primary) }, title = { Text(stringResource(R.string.restore_complete)) }, text = { Text(stringResource(R.string.restore_complete_description)) }, confirmButton = { TextButton(onClick = { backupState = BackupDialogState.Idle }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.ok)) } })
+        is BackupDialogState.BackupSuccess -> AlertDialog(onDismissRequest = { backupState = BackupDialogState.Idle }, icon = { Icon(Icons.Rounded.CheckCircle, null, tint = MaterialTheme.colorScheme.semanticSuccess) }, title = { Text(stringResource(R.string.backup_created)) }, text = { Text(stringResource(R.string.backup_created_description, state.path)) }, confirmButton = { TextButton(onClick = { backupState = BackupDialogState.Idle }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.ok)) } })
+        is BackupDialogState.RestoreSuccess -> AlertDialog(onDismissRequest = { backupState = BackupDialogState.Idle }, icon = { Icon(Icons.Rounded.CheckCircle, null, tint = MaterialTheme.colorScheme.semanticSuccess) }, title = { Text(stringResource(R.string.restore_complete)) }, text = { Text(stringResource(R.string.restore_complete_description)) }, confirmButton = { TextButton(onClick = { backupState = BackupDialogState.Idle }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.ok)) } })
         is BackupDialogState.Error -> AlertDialog(onDismissRequest = { backupState = BackupDialogState.Idle }, icon = { Icon(Icons.Rounded.Error, null, tint = MaterialTheme.colorScheme.error) }, title = { Text(stringResource(R.string.operation_failed)) }, text = { Text(state.message) }, confirmButton = { TextButton(onClick = { backupState = BackupDialogState.Idle }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.ok)) } })
         else -> {}
     }

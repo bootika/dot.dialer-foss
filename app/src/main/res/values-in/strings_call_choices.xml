@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">Hanya panggilan ini</string>
+    <string name="sim_scope_number">Ingat untuk nomor ini</string>
+    <string name="sim_scope_all">Gunakan untuk semua nomor</string>
+    <string name="outgoing_sim_ask">Selalu tanyakan</string>
+</resources>

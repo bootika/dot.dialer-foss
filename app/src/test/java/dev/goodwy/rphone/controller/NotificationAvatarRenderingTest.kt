@@ -51,10 +51,35 @@ class NotificationAvatarRenderingTest {
         rendered.recycle(); photo.recycle()
     }
 
+    @Test fun `photo thumbnails have antialiased circular edges and centered crop in both orientations`() {
+        val output = File("build/reports/visual/notification-avatar-circular").apply { mkdirs() }
+        for ((width, height) in listOf(384 to 192, 192 to 384)) {
+            val photo = createBitmap(width, height).apply { eraseColor(Color.RED) }
+            val canvas = android.graphics.Canvas(photo)
+            val paint = android.graphics.Paint().apply { color = Color.BLUE }
+            if (width > height) canvas.drawRect(96f, 0f, 288f, 192f, paint)
+            else canvas.drawRect(0f, 96f, 192f, 288f, paint)
+            val rendered = notificationAvatar(photo, "A")
+            for ((x, y) in listOf(0 to 0, 191 to 0, 0 to 191, 191 to 191)) {
+                assertEquals(0, Color.alpha(rendered.getPixel(x, y)))
+            }
+            assertEquals(Color.BLUE, rendered.getPixel(96, 96))
+            assertEquals(Color.BLUE, rendered.getPixel(20, 96))
+            assertEquals(Color.BLUE, rendered.getPixel(96, 20))
+            val pixels = IntArray(192 * 192)
+            rendered.getPixels(pixels, 0, 192, 0, 0, 192, 192)
+            assertTrue(pixels.any { Color.alpha(it) in 1..254 })
+            assertEquals(Color.RED, photo.getPixel(0, 0))
+            File(output, "$width-$height.png").outputStream().use {
+                rendered.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
+            }
+        }
+    }
+
     @Test fun `valid photos retain center crop and recycled photos receive fallback`() {
         val photo = createBitmap(320, 160).apply { eraseColor(Color.RED) }
         val rendered = notificationAvatar(photo, "A")
-        assertEquals(Color.RED, rendered.getPixel(0, 0))
+        assertEquals(0, Color.alpha(rendered.getPixel(0, 0)))
         assertEquals(Color.RED, rendered.getPixel(96, 96))
         photo.recycle()
         assertEquals(0, Color.alpha(notificationAvatar(photo, "A").getPixel(0, 0)))

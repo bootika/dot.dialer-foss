@@ -31,6 +31,7 @@ class BackupCompletenessTest {
     private val fields = listOf(
         field("K14", dev.goodwy.rphone.recordings.RecordingsRepository.AUTO_TRANSCRIBE, false, true),
         field("K15", dev.goodwy.rphone.recordings.RecordingsRepository.AUTO_TRANSLATE, "", "ro", "en"),
+        field("K16", dev.goodwy.rphone.recordings.RecordingsRepository.OUTPUT_LANGUAGE, "", "ro", "en"),
         field("K12", P.KEY_SELECTED_TEXT_DIALER, false, true),
         field("K11", P.KEY_CALL_MESSAGE_CHANNEL, 0, 1, 2),
         field("T11", WhatsAppAvatarSyncPreferences.ENABLED, false, true),
@@ -66,6 +67,7 @@ class BackupCompletenessTest {
         field("H11", HOME_QUICK_ACTION_GESTURE, false, true),
         field("C01", P.KEY_CALL_SCREEN_APPEARANCE, "circular_avatar", "full_photo"),
         field("C09", SmallCallPhotoPreference.KEY, false, true),
+        field("C10", CallSimIdentityPreference.KEY, false, true),
         field("C02", P.KEY_FROSTED_CALL_BACKGROUND, false, true),
         field("C03", AmbientDropletPreference.ENABLED_KEY, false, true),
         field("C04", AmbientDropletPreference.BRIGHTNESS_KEY, 10, 100, 200),

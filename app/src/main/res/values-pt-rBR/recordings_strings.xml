@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recordings_title">Gravações e transcrições</string>
-    <string name="recordings_requirements">Requer uma licença do dot.dictate e sua chave de API.</string>
     <string name="recordings_connect">Conectar dot.dictate</string>
     <string name="recordings_open_dictate">Abrir dot.dictate</string>
     <string name="recordings_disconnect">Desconectar</string>
-    <string name="recordings_connected">Conectado ao dot.dictate</string>
     <string name="recordings_disconnected">Conecte o dot.dictate para processar gravações.</string>
     <string name="recordings_license_required">Ative sua licença do dot.dictate.</string>
     <string name="recordings_license_unavailable">Não foi possível verificar a licença do dot.dictate.</string>
@@ -20,9 +18,7 @@
     <string name="recordings_translation">Tradução · %1$s</string>
     <string name="recordings_language">Idioma da tradução</string>
     <string name="recordings_auto_transcribe">Transcrição automática</string>
-    <string name="recordings_auto_transcribe_summary">Envie novas gravações ao provedor configurado. Complete.</string>
     <string name="recordings_auto_translate">Tradução automática</string>
-    <string name="recordings_auto_translate_summary">Traduza novas transcrições para o idioma escolhido. Complete.</string>
     <string name="recordings_export_audio">Exportar áudio</string>
     <string name="recordings_export_text">Exportar texto</string>
     <string name="recordings_delete">Excluir gravação</string>

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recordings_title">Kayıtlar ve dökümler</string>
-    <string name="recordings_requirements">dot.dictate lisansı ve API anahtarınız gerekir.</string>
     <string name="recordings_connect">dot.dictate uygulamasını bağla</string>
     <string name="recordings_open_dictate">dot.dictate uygulamasını aç</string>
     <string name="recordings_disconnect">Bağlantıyı kes</string>
-    <string name="recordings_connected">dot.dictate bağlı</string>
     <string name="recordings_disconnected">Kayıtları işlemek için dot.dictate uygulamasını bağlayın.</string>
     <string name="recordings_license_required">dot.dictate lisansınızı etkinleştirin.</string>
     <string name="recordings_license_unavailable">dot.dictate lisansı doğrulanamadı.</string>
@@ -20,9 +18,7 @@
     <string name="recordings_translation">Çeviri · %1$s</string>
     <string name="recordings_language">Çeviri dili</string>
     <string name="recordings_auto_transcribe">Otomatik döküm</string>
-    <string name="recordings_auto_transcribe_summary">Yeni kayıtları yapılandırılmış sağlayıcınıza gönderin. Complete.</string>
     <string name="recordings_auto_translate">Otomatik çeviri</string>
-    <string name="recordings_auto_translate_summary">Yeni dökümleri seçtiğiniz dile çevirin. Complete.</string>
     <string name="recordings_export_audio">Sesi dışa aktar</string>
     <string name="recordings_export_text">Metni dışa aktar</string>
     <string name="recordings_delete">Kaydı sil</string>

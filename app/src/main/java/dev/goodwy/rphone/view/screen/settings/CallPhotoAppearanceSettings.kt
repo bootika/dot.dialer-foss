@@ -20,5 +20,10 @@ internal fun CallPhotoAppearanceSettings(
         DotSettingsDivider()
         SettingsPreferenceSwitch(prefs, SmallCallPhotoPreference.KEY, SmallCallPhotoPreference.DEFAULT,
             R.string.small_call_photos_in_circle, stringResource(R.string.small_call_photos_in_circle_summary))
+        DotSettingsDivider()
+        SettingsPreferenceSwitch(prefs,
+            dev.goodwy.rphone.controller.util.CallSimIdentityPreference.KEY,
+            dev.goodwy.rphone.controller.util.CallSimIdentityPreference.DEFAULT,
+            R.string.call_screen_always_show_sim, stringResource(R.string.call_screen_always_show_sim_summary))
     }
 }

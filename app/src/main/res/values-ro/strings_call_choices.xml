@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">Doar acest apel</string>
+    <string name="sim_scope_number">Reține pentru acest număr</string>
+    <string name="sim_scope_all">Folosește pentru toate numerele</string>
+    <string name="outgoing_sim_ask">Întreabă de fiecare dată</string>
+</resources>

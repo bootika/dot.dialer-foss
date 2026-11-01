@@ -109,7 +109,7 @@ class TestAccessManager internal constructor(
         }
         private fun create(context: Context): TestAccessManager {
             val storage = GiftLicenseStorage(context, "dot.dialer.test-access.v1", "test-access-v1.bin")
-            return TestAccessManager(BuildConfig.DEBUG && context.packageName == "dot.dialer.test", {
+            return TestAccessManager(BuildConfig.TEST_DISTRIBUTION && context.packageName == "dot.dialer.test", {
                 scopedInstallationId(context)
             }, storage::read, storage::write,
                 GiftGrantVerifier(entitlement = "test_access", maxSeconds = 86400),

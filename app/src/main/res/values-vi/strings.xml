@@ -155,7 +155,6 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="show_first_letter_in_avatar">Hiện chữ đầu trong ảnh Avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Hiển thị thư khi còn thiếu ảnh</string>
     <string name="show_picture_in_avatar">Hiện ảnh trong ảnh</string>
-    <string name="show_picture_in_avatar_subtitle">Hiện ảnh liên lạc nếu có</string>
     <string name="call_settings">Cuộc gọi</string>
     <string name="default_sim">SIM mặc định</string>
     <string name="ask_first">Hỏi trước đi.</string>
@@ -169,7 +168,6 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="floating_ongoing_call">Cuộc gọi tiếp tục nổi</string>
     <string name="floating_ongoing_call_subtitle">Hiển thị một bong bóng nổi khi gọi điện. Cần thiết « Chơi trên sự cho phép của ứng dụng khác »</string>
     <string name="fullscreen_calls">Cuộc gọi toàn màn hình</string>
-    <string name="fullscreen_calls_subtitle">Các cuộc gọi đến luôn được hiển thị trong chế độ toàn màn hình</string>
     <string name="quick_response">Đáp ứng nhanh</string>
     <string name="quick_responses">Phản ứng nhanh</string>
     <string name="quick_responses_subtitle">Quản lý tin nhắn SMS trả lời nhanh khi từ chối cuộc gọi đến</string>
@@ -592,7 +590,7 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="sentry_connected">Máy bay rơi và AOR đã kết nối với tòa nhà này.</string>
     <string name="sentry_not_configured">Khu nhà này không có người.</string>
     <string name="send_sentry_test">Gửi sự kiện thử nghiệm Sentry</string>
-    <string name="sentry_test_sent">Sự kiện thử nghiệm bộ nhớ gửi: %1$s</string>
+    <string name="sentry_test_sent">Đã xếp hàng kiểm tra cục bộ; chưa xác nhận máy chủ nhận được. ID: %1$s</string>
     <string name="sentry_test_failed">Khu nhà này không có.</string>
     <string name="show_recents_favorites">Hiện phần yêu thích</string>
     <string name="swipe_right_action">Xoay phải</string>

@@ -108,12 +108,13 @@ class SmallCallPhotoSettingTest {
             output.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG,100,it) }
             bitmap.recycle()
         }
-        rule.onNode(isToggleable()).assertIsOn()
+        val smallPhotoSwitch = rule.onNode(isToggleable() and hasAnyAncestor(hasText(title)))
+        smallPhotoSwitch.assertIsOn()
         rule.onNodeWithText(title).performClick()
         rule.waitUntil(5_000) { full == true && !prefs.getBoolean(SmallCallPhotoPreference.KEY, true) }
         assertEquals(fullStyle, prefs.getString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, null))
         assertEquals(false, runBlocking { prefs.getPersistedPreferences() }[SmallCallPhotoPreference.KEY])
-        rule.onNode(isToggleable()).assertIsOff()
+        smallPhotoSwitch.assertIsOff()
         rule.onNodeWithText(title).performClick()
         rule.waitUntil(5_000) { full == false }
         replacePhoto(512)

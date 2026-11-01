@@ -40,7 +40,7 @@ internal data class SettingsOption(
         SettingsEditor.SUPPORT, SettingsEditor.DIAGNOSTICS, SettingsEditor.ADVANCED,
         SettingsEditor.CONTEXT, SettingsEditor.LEGACY -> SettingsFunction.HELP
     }
-    fun isAvailable(flavor: String, autoAvailable: Boolean, testBuild: Boolean = dev.goodwy.rphone.BuildConfig.DEBUG): Boolean = when (id) {
+    fun isAvailable(flavor: String, autoAvailable: Boolean, testBuild: Boolean = dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION): Boolean = when (id) {
         "K13", "K14", "K15", "K16" -> dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED
         "O02" -> testBuild
         "T09", "T10" -> flavor == "gplay"
@@ -80,6 +80,7 @@ internal val settingsOptions = listOf(
     SettingsOption("C06", R.string.incoming_answer_placement, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C01", R.string.call_appearance, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C09", R.string.small_call_photos_in_circle, SettingsEditor.CALL_UI, false, R.string.call_screen),
+    SettingsOption("C10", R.string.call_screen_always_show_sim, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C07", R.string.settings_call_default_background, SettingsEditor.CALL_UI, false, R.string.call_screen),
     SettingsOption("C02", R.string.frosted_call_background, SettingsEditor.CALL_EFFECTS, true, R.string.call_screen),
     SettingsOption("A05", R.string.liquid_glass_call_screen, SettingsEditor.CALL_UI, false, R.string.call_screen),

@@ -30,17 +30,15 @@ internal class AdbCallCapture private constructor(context: Context) {
     private val stopping=AtomicBoolean(false)
     private var stream: CaptureChannel?=null
     private var operation: Job?=null
-    private var lastProbeFailure=""
     suspend fun available(): Boolean=withContext(Dispatchers.IO) {
-        try {BuildConfig.DEBUG && repo.integrationEnabled() && backend.available()}catch(error: Exception){
-            val code=error.javaClass.simpleName
-            if(code!=lastProbeFailure){lastProbeFailure=code;android.util.Log.w("AdbCallCapture",code)}
+        try {BuildConfig.TEST_DISTRIBUTION && repo.integrationEnabled() && backend.available()}catch(error: Exception){
+            captureFailures.report(CaptureFailureStage.AVAILABILITY,error)
             false
         }
     }
     fun recover() {
         if(operation?.isActive==true)return
-        operation=scope.launch {try {withContext(Dispatchers.IO){store.recover()}}catch(_: Exception){stateValue.value=stateValue.value.copy(error=true)}}
+        operation=scope.launch {try {withContext(Dispatchers.IO){store.recover()}}catch(error: Exception){captureFailures.report(CaptureFailureStage.RECOVER,error);stateValue.value=stateValue.value.copy(error=true)}}
     }
     fun start(call: Call,title: String,key: String,transcribe: Boolean) {
         if(!backend.enabled() || operation?.isActive==true || stateValue.value.busy)return
@@ -53,7 +51,7 @@ internal class AdbCallCapture private constructor(context: Context) {
             var failed=false
             var wake: android.os.PowerManager.WakeLock?=null
             try {
-                check(BuildConfig.DEBUG && repo.integrationEnabled() && backend.enabled())
+                check(BuildConfig.TEST_DISTRIBUTION && repo.integrationEnabled() && backend.enabled())
                 repo.awaitReady();withContext(Dispatchers.IO){store.recover()}
                 require(repo.captureAllowed(transcribe))
                 val calls=GlobalContext.get().get<ICallRepository>()
@@ -73,11 +71,11 @@ internal class AdbCallCapture private constructor(context: Context) {
                 call.registerCallback(callback)
                 guard=launch {var beat=0;while(isActive){
                     if(!valid())stop()
-                    if(beat++%10==0)try{backend.heartbeat()}catch(_: Exception){failed=true;stop()}
+                    if(beat++%10==0)try{backend.heartbeat()}catch(error: Exception){captureFailures.report(CaptureFailureStage.HEARTBEAT,error);failed=true;stop()}
                     delay(200)
                 }}
                 wake=repo.context.getSystemService(android.os.PowerManager::class.java).newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK,"dot.dialer:call-capture")
-                wake.acquire()
+                wake.acquire(CallCaptureStore.MAX_BYTES * 1000L / 64000L + 300_000L)
                 withContext(Dispatchers.IO) {
                     val number=details?.handle?.takeIf{it.scheme=="tel"}?.schemeSpecificPart.orEmpty()
                     val recordingIdentity=recordingContactIdentity(repo.context,number)
@@ -98,37 +96,40 @@ internal class AdbCallCapture private constructor(context: Context) {
                                     out=RandomAccessFile(file,"rw").apply {seek(44)}
                                 }
                                 val target=checkNotNull(out);val now=SystemClock.elapsedRealtime()
-                                if(now-lastSpace>=1000){CallCaptureStore.requireStorage(checkNotNull(file).usableSpace);lastSpace=now}
+                                if(now-lastSpace>=1000){CallCaptureStore.requireStorage(captureWritableBytes(repo.context,checkNotNull(file)));lastSpace=now}
                                 target.write(buffer);bytes+=buffer.size
                                 CallCaptureStore.writeHeader(target,bytes);target.seek(44+bytes)
                                 if(now-lastSync>=5000){target.fd.sync();lastSync=now}
                                 stateValue.value=CallCaptureState(key,"recording",bytes*1000/64000)
                             },
-                            closeAttempt={stream?.close();stream=null;try{backend.stop()}catch(_: Exception){}}
+                            closeAttempt={stream?.close();stream=null;try{backend.stop()}catch(error: Exception){captureFailures.report(CaptureFailureStage.STOP_ATTEMPT,error,cleanup=true)}}
                         )
                     } finally {
                         out?.let {target->try{CallCaptureStore.writeHeader(target,bytes);target.fd.sync()}finally{target.close()}}
                     }
                 }
             }catch(e: CancellationException){throw e}
-            catch(_: Exception){failed=failed || !stopping.get()}
+            catch(error: Exception){captureFailures.report(CaptureFailureStage.CAPTURE,error);failed=failed || !stopping.get()}
             finally {
+                try {
                 guard?.cancel();callback?.let {call.unregisterCallback(it)}
                 withContext(NonCancellable+Dispatchers.IO) {
                     stream?.close();stream=null
                     // Also stop on local storage failure: never leave a server recorder running.
-                    try {backend.stop()}catch(_: Exception){}
+                    try {backend.stop()}catch(error: Exception){captureFailures.report(CaptureFailureStage.STOP_FINAL,error,cleanup=true)}
                     stateValue.value=stateValue.value.copy(phase="saving")
-                    try {store.recover()}catch(_: Exception){failed=true}
+                    try {store.recover()}catch(error: Exception){captureFailures.report(CaptureFailureStage.FINALIZE,error,cleanup=true);failed=true}
                 }
-                if(wake?.isHeld==true)wake.release()
-                stateValue.value=stateValue.value.copy(phase="idle",error=failed)
+                } finally {
+                    if(wake?.isHeld==true)wake.release()
+                    stateValue.value=stateValue.value.copy(phase="idle",error=failed)
+                }
             }
         }
     }
     fun stop() {
         if(!stateValue.value.busy || !stopping.compareAndSet(false,true))return
-        scope.launch(Dispatchers.IO){try {backend.stop()}catch(_: Exception){}finally{stream?.close()}}
+        scope.launch(Dispatchers.IO){try {backend.stop()}catch(error: Exception){captureFailures.report(CaptureFailureStage.STOP_REQUEST,error,cleanup=true)}finally{stream?.close()}}
     }
     companion object {
         fun stopIfRunning(){instance?.stop()}

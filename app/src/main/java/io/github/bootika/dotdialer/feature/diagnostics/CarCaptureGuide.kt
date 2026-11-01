@@ -21,7 +21,7 @@ internal fun openCarCaptureDeveloperOptions(context: Context): Boolean = try {
 } catch(failure: RuntimeException) { false }
 
 @Composable
-internal fun CarCaptureGuide(testBuild: Boolean = BuildConfig.DEBUG) {
+internal fun CarCaptureGuide(testBuild: Boolean = BuildConfig.TEST_DISTRIBUTION) {
     if(!testBuild) return
     val context = LocalContext.current
     val failure = stringResource(R.string.car_capture_settings_failed)

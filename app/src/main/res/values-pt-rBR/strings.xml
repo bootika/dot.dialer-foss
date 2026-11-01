@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Mostrar primeira letra no avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Mostra a letra quando a imagem está faltando</string>
     <string name="show_picture_in_avatar">Mostrar imagem no avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Mostra a foto do contato se disponível</string>
     <string name="call_settings">Chamadas</string>
     <string name="default_sim">SIM padrão</string>
     <string name="ask_first">Perguntar primeiro</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Chamada flutuante</string>
     <string name="floating_ongoing_call_subtitle">Mostrar uma bolha flutuante durante chamadas. Requer permissão \"Mostrar sobre outros aplicativos\"</string>
     <string name="fullscreen_calls">Chamadas em tela cheia</string>
-    <string name="fullscreen_calls_subtitle">As chamadas recebidas são sempre exibidas no modo de tela cheia</string>
     <string name="quick_response">Resposta rápida</string>
     <string name="quick_responses">Respostas rápidas</string>
     <string name="quick_responses_subtitle">Gerenciar respostas SMS predefinidas de recusa para chamadas recebidas</string>
@@ -604,7 +602,7 @@
     <string name="sentry_connected">O acidente de sentinela e o relatório da ANR estão ligados para esta construção.</string>
     <string name="sentry_not_configured">O sentinela não está disponível nesta compilação.</string>
     <string name="send_sentry_test">Enviar o evento de teste Sentry</string>
-    <string name="sentry_test_sent">Evento de teste de sentinela enviado: %1$s</string>
+    <string name="sentry_test_sent">Teste na fila local; recebimento no servidor não confirmado. ID: %1$s</string>
     <string name="sentry_test_failed">O sentinela não está disponível nesta compilação</string>
     <string name="show_recents_favorites">Mostrar seção de favoritos</string>
     <string name="swipe_right_action">Deslizar para a direita</string>

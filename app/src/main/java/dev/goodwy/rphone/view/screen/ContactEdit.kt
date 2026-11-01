@@ -2286,7 +2286,8 @@ fun EditField(
     icon: ImageVector,
     onDelete: (() -> Unit)? = null,
     onLabelChange: ((String, Int?) -> Unit)? = null, // label, type
-    availableLabels: List<Pair<Int, String>> = emptyList() // (type, displayName)
+    availableLabels: List<Pair<Int, String>> = emptyList(), // (type, displayName)
+    visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
 ) {
     var appeared by remember { mutableStateOf(false) }
     var showLabelEditor by remember { mutableStateOf(false) }
@@ -2333,6 +2334,7 @@ fun EditField(
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
+                visualTransformation = visualTransformation,
                 label = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

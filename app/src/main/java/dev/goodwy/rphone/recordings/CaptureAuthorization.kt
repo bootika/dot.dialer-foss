@@ -21,13 +21,19 @@ internal class CaptureAuthorization(context: Context) {
         val out=file.startWrite()
         try{out.write(evidence.toString().toByteArray());file.finishWrite(out)}catch(e: Exception){file.failWrite(out);throw e}
     }
-    @Synchronized fun valid(separateSpeakers: Boolean=false): Boolean = try {
+    @Synchronized fun valid(separateSpeakers: Boolean=false): Boolean {
+        return try {
         val saved=file.openRead().use{require(it.available()<=1024);JSONObject(it.readBytes().toString(Charsets.UTF_8))}
         val wallAge=System.currentTimeMillis()-saved.getLong("wall")
         val sameBoot=saved.getInt("boot")==Settings.Global.getInt(app.contentResolver,Settings.Global.BOOT_COUNT,-2)
         val elapsedAge=if(sameBoot)SystemClock.elapsedRealtime()-saved.getLong("elapsed")else wallAge
         fresh(wallAge,elapsedAge) && (!separateSpeakers || saved.getBoolean("speakers"))
-    }catch(_: Exception){false}
+    }catch(missing: java.io.FileNotFoundException){
+        // No saved grant is a normal, fail-closed state; openRead still recovers AtomicFile backups.
+        if(file.baseFile.exists())captureFailures.report(CaptureFailureStage.AUTHORIZATION,missing)
+        false
+    }catch(error: Exception){captureFailures.report(CaptureFailureStage.AUTHORIZATION,error);false}
+    }
     fun clear(){file.delete()}
     companion object {
         const val MAX_AGE=10L*24*60*60*1000

@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen
 
+import dev.goodwy.rphone.view.theme.CallActionColors
+
 import dev.goodwy.rphone.modal.data.ContactSource
 import dev.goodwy.rphone.view.theme.accentText
 
@@ -346,15 +348,14 @@ fun ContactDetailsScreen(
 
     val initiateCall = { number: String ->
         val contactKey = contact?.id
-        val contactAccount = contactKey?.let(prefs::getFavoriteSim)
-            ?: prefs.getFavoriteSimForNumber(number)
-        val appAccount = prefs.getString(PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT, null)
         val accounts = getCallingAccounts(context)
-        if (accounts.size > 1 && contactAccount == null && appAccount == null && simPref == 0) {
+        val selected = dev.goodwy.rphone.controller.util.preferredOutgoingAccount(
+            context, prefs, number, contactKey, accounts)
+        if (accounts.size > 1 && selected == null) {
             pendingNumber = number
             showSimPicker = true
         } else {
-            makeCall(context, number, contactId = contactKey)
+            makeCall(context, number, selected, contactKey)
         }
     }
 
@@ -384,7 +385,7 @@ fun ContactDetailsScreen(
         }
     }
 
-    val showSimLabel = hasDualSim(context)
+    val showSimLabel = dev.goodwy.rphone.view.components.rememberActiveSimCount() >= 2
 
     val openWhatsApp = { num: String -> SocialUtils.openWhatsApp(context, num) }
     val openTelegram = { num: String -> SocialUtils.openTelegram(context, num) }
@@ -423,7 +424,7 @@ fun ContactDetailsScreen(
     }
     val currentPendingNumber = pendingNumber
     if (showSimPicker && currentPendingNumber != null) {
-        SimPickerDialog(onDismissRequest = { showSimPicker = false }, onSimSelected = { handle -> makeCall(context, currentPendingNumber, handle, contact?.id); showSimPicker = false })
+        SimPickerDialog(number = currentPendingNumber, onDismissRequest = { showSimPicker = false }, onSimSelected = { handle -> makeCall(context, currentPendingNumber, handle, contact?.id); showSimPicker = false })
     }
     if (showCallingAccountDialog && currentContact != null) {
         CallingAccountPreferenceDialog(
@@ -718,7 +719,7 @@ fun ContactDetailsScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = displayName,
+                                        text = dev.goodwy.rphone.view.components.phoneDisplayText(displayName),
                                         style = MaterialTheme.typography.headlineLarge,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center
@@ -754,8 +755,8 @@ fun ContactDetailsScreen(
                                         modifier = Modifier.weight(1f),
                                         icon = DotDialerHandsetIcon,
                                         label = stringResource(R.string.call),
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                                        containerColor = CallActionColors.answerCommitted,
+                                        contentColor = CallActionColors.onAction,
                                         enabled = currentContact?.phoneNumbers?.isNotEmpty() == true || displayPhone != unknownLabel,
                                         onClick = {
                                             if (defaultPhone != null) initiateCall(
@@ -818,6 +819,7 @@ fun ContactDetailsScreen(
                                                 var showOverflowMenu by remember { mutableStateOf(false) }
                                                 RillListItem(
                                                     headline = phoneDetail.number.forceLtr(),
+                                                    headlineLeading = { dev.goodwy.rphone.view.components.OutgoingSimBadge(phoneDetail.number, contactId = contact?.id) },
                                                     expandText = expandedListDetails,
                                                     supportingContent = {
                                                         ContactPhoneMetadata(
@@ -1493,7 +1495,7 @@ fun ContactDetailsScreen(
                                 }
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Text(
-                                    text = displayName,
+                                    text = dev.goodwy.rphone.view.components.phoneDisplayText(displayName),
                                     style = MaterialTheme.typography.headlineLarge,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center
@@ -1531,8 +1533,8 @@ fun ContactDetailsScreen(
                                     modifier = Modifier.weight(1f),
                                     icon = DotDialerHandsetIcon,
                                     label = stringResource(R.string.call),
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    containerColor = CallActionColors.answerCommitted,
+                                    contentColor = CallActionColors.onAction,
                                     enabled = currentContact?.phoneNumbers?.isNotEmpty() == true || displayPhone != unknownLabel,
                                     onClick = {
                                         if (defaultPhone != null) initiateCall(
@@ -1605,6 +1607,7 @@ fun ContactDetailsScreen(
                                             }
                                             RillListItem(
                                                 headline = phoneDetail.number.forceLtr(),
+                                                    headlineLeading = { dev.goodwy.rphone.view.components.OutgoingSimBadge(phoneDetail.number, contactId = contact?.id) },
                                                 expandText = expandedListDetails,
                                                 supportingContent = {
                                                     ContactPhoneMetadata(

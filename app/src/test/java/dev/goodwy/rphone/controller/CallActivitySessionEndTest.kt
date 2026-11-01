@@ -8,6 +8,11 @@ import android.os.Bundle
 import android.telecom.Call
 import android.telecom.TelecomManager
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import dev.goodwy.rphone.controller.util.currentTelecomState
@@ -52,6 +57,7 @@ class CallActivitySessionEndTest {
     private val repository = CallRepositoryImpl()
     private var scenario: ActivityScenario<CallActivity>? = null
     private lateinit var host: CallActivity
+    private var contactFixture: Contact? = null
     private val activityObserver = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, state: Bundle?) {
             if (activity is CallActivity) host = activity
@@ -74,9 +80,12 @@ class CallActivitySessionEndTest {
         runBlocking { prefs.getPersistedPreferences() }
         val contacts = Proxy.newProxyInstance(
             IContactsRepository::class.java.classLoader, arrayOf(IContactsRepository::class.java),
-        ) { _, method, _ ->
+        ) { proxy, method, args ->
             when (method.name) {
+                "equals" -> proxy === args?.firstOrNull()
+                "hashCode" -> System.identityHashCode(proxy)
                 "getChanges" -> kotlinx.coroutines.flow.emptyFlow<Unit>()
+                "getContactByNumber", "getContactByNumberInRegion" -> contactFixture
                 "toString" -> "Local contact fixture"
                 else -> null
             }
@@ -93,6 +102,7 @@ class CallActivitySessionEndTest {
     }
 
     @After fun cleanup() {
+        DirectCallWindow.cancel()
         scenario?.close()
         context.unregisterActivityLifecycleCallbacks(activityObserver)
         stopKoin()
@@ -211,6 +221,177 @@ class CallActivitySessionEndTest {
         launch()
         advance(600)
         assertFalse(host.isFinishing)
+    }
+
+    @Test fun directTapCanBeCancelledBeforeTelecomSubmission() {
+        var submissions = 0
+        DirectCallWindow.begin("0700000011", null) { submissions++ }
+        launch(outgoing = true)
+        advance(300)
+        rule.onNodeWithContentDescription(context.getString(dev.goodwy.rphone.R.string.end_call)).performClick()
+        advance(1_300)
+        org.junit.Assert.assertEquals(0, submissions)
+        assertTrue(host.isFinishing)
+    }
+
+    @Test fun directTapSubmitsOnlyAfterTheVisibleCancellationWindow() {
+        var submissions = 0
+        DirectCallWindow.begin("0700000011", null) { submissions++ }
+        launch(outgoing = true)
+        advance(700)
+        org.junit.Assert.assertEquals(0, submissions)
+        advance(500)
+        org.junit.Assert.assertEquals(1, submissions)
+        advance(400)
+        org.junit.Assert.assertEquals(1, submissions)
+    }
+
+    @Test fun backCancelsTheUnsubmittedCallFromTheNormalScreen() {
+        var submissions = 0
+        DirectCallWindow.begin("0700000011", null) { submissions++ }
+        launch(outgoing = true)
+        advance(300)
+        rule.runOnIdle { host.onBackPressedDispatcher.onBackPressed() }
+        advance(1_200)
+        org.junit.Assert.assertEquals(0, submissions)
+        assertTrue(host.isFinishing)
+    }
+
+    @Test fun directTapIsCancelledWhenTheActivityLeavesForeground() {
+        var submissions = 0
+        DirectCallWindow.begin("0700000011", null) { submissions++ }
+        launch(outgoing = true)
+        scenario!!.moveToState(Lifecycle.State.CREATED)
+        advance(1_300)
+        org.junit.Assert.assertEquals(0, submissions)
+        org.junit.Assert.assertNull(DirectCallWindow.state.value)
+    }
+
+    @Test fun incomingSessionCancelsTheUnsubmittedDirectCall() {
+        var submissions = 0
+        DirectCallWindow.begin("0700000011", null) { submissions++ }
+        launch(outgoing = true)
+        val incoming = call(Call.STATE_RINGING)
+        rule.runOnIdle { publish(listOf(incoming), incoming) }
+        advance(1_300)
+        org.junit.Assert.assertEquals(0, submissions)
+        assertFalse(host.isFinishing)
+    }
+
+    @Test fun deferredCallUsesOneNormalSurfaceLightCircle() = assertSingleSurface("light", "circular_avatar")
+    @Test fun deferredCallUsesOneNormalSurfaceDarkCircle() = assertSingleSurface("dark", "circular_avatar")
+    @Test fun deferredCallUsesOneNormalSurfaceLightFull() = assertSingleSurface("light", "full_photo")
+    @Test fun deferredCallUsesOneNormalSurfaceDarkFull() = assertSingleSurface("dark", "full_photo")
+
+    @Test fun singleActiveSimCanBeKeptVisibleOnTheActualCallScreenAndToggledLive() {
+        shadowOf(context).grantPermissions(android.Manifest.permission.READ_PHONE_STATE)
+        val subscriptions = shadowOf(context.getSystemService(android.telephony.SubscriptionManager::class.java))
+        subscriptions.setActiveSubscriptionInfoList(listOf(
+            org.robolectric.shadows.ShadowSubscriptionManager.SubscriptionInfoBuilder.newBuilder()
+                .setId(1).setSimSlotIndex(0).buildSubscriptionInfo()))
+        val handle = android.telecom.PhoneAccountHandle(android.content.ComponentName("example.phone", "Calls"), "A")
+        telecom.registerPhoneAccount(android.telecom.PhoneAccount.builder(handle, "Network A")
+            .setCapabilities(android.telecom.PhoneAccount.CAPABILITY_SIM_SUBSCRIPTION).build())
+        val call = call(Call.STATE_ACTIVE)
+        ReflectionHelpers.setField(call.details, "mAccountHandle", handle)
+        publish(listOf(call), call)
+        launch(outgoing = true)
+        rule.onNodeWithText("Network A").assertDoesNotExist()
+        fun capture(stage: String) = rule.runOnIdle {
+            val view = host.window.decorView
+            val bitmap = android.graphics.Bitmap.createBitmap(view.width, view.height, android.graphics.Bitmap.Config.ARGB_8888)
+            view.draw(android.graphics.Canvas(bitmap))
+            val folder = java.io.File("build/reports/visual/call-sim-screen").apply { mkdirs() }
+            java.io.File(folder, "$stage.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+            bitmap.recycle()
+        }
+        capture("single-default-off")
+        val prefs = org.koin.java.KoinJavaComponent.get<PreferenceManager>(PreferenceManager::class.java)
+        prefs.setBoolean(dev.goodwy.rphone.controller.util.CallSimIdentityPreference.KEY, true)
+        runBlocking { prefs.getPersistedPreferences() }
+        advance(1_000)
+        rule.onNodeWithText("Network A").assertExists()
+        capture("single-on")
+        prefs.setBoolean(dev.goodwy.rphone.controller.util.CallSimIdentityPreference.KEY, false)
+        runBlocking { prefs.getPersistedPreferences() }
+        advance(1_000)
+        rule.onNodeWithText("Network A").assertDoesNotExist()
+    }
+
+    private fun assertSingleSurface(theme: String, appearance: String) {
+        val prefs = org.koin.java.KoinJavaComponent.get<PreferenceManager>(PreferenceManager::class.java)
+        prefs.setString(PreferenceManager.KEY_THEME_MODE, theme)
+        prefs.setString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, appearance)
+        prefs.setBoolean(PreferenceManager.KEY_SHOW_CALL_SCREEN_AVATAR, true)
+        val photo = java.io.File(context.filesDir, "test-call-photo.png")
+        android.graphics.Bitmap.createBitmap(640, 640, android.graphics.Bitmap.Config.ARGB_8888).also { bitmap ->
+            bitmap.eraseColor(android.graphics.Color.rgb(70, 130, 90))
+            photo.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+            bitmap.recycle()
+        }
+        contactFixture = Contact(id = "test-contact", givenName = "Test Alexandru", familyName = "Butica",
+            company = "Atelier local", photoUri = Uri.fromFile(photo).toString())
+        DirectCallWindow.begin("0700000011", null) { }
+        val id = checkNotNull(DirectCallWindow.state.value).id
+        launch(outgoing = true)
+        rule.waitUntil(5_000) {
+            rule.mainClock.advanceTimeByFrame()
+            rule.onAllNodesWithText("Atelier local").fetchSemanticsNodes().isNotEmpty()
+        }
+        val tags = listOf("callActionControls", "callHangupSurface", "callPhotoZoneStart")
+        fun bounds() = tags.map { rule.onNodeWithTag(it, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot }
+        val before = bounds()
+        fun capture(stage: String) {
+            val folder = java.io.File("evidence/local-verification/single-call-surface-20261030").apply { mkdirs() }
+            rule.runOnIdle {
+                val view = host.window.decorView
+                val bitmap = android.graphics.Bitmap.createBitmap(view.width, view.height, android.graphics.Bitmap.Config.ARGB_8888)
+                view.draw(android.graphics.Canvas(bitmap))
+                java.io.File(folder, "$theme-$appearance-$stage.png").outputStream().use {
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
+                }
+                bitmap.recycle()
+            }
+        }
+        capture("pending")
+        advance(1_200)
+        org.junit.Assert.assertEquals(before, bounds())
+        val outgoing = call(Call.STATE_DIALING)
+        ReflectionHelpers.setField(outgoing.details, "mHandle", Uri.fromParts("tel", "+40700000011", null))
+        ReflectionHelpers.setField(outgoing.details, "mIntentExtras", Bundle().apply {
+            putString(DirectCallWindow.REQUEST_EXTRA, id)
+        })
+        rule.runOnIdle { publish(listOf(outgoing), outgoing) }
+        advance(48)
+        org.junit.Assert.assertEquals("Handoff must retain normal geometry", before, bounds())
+        rule.runOnIdle {
+            ReflectionHelpers.setField(outgoing, "mState", Call.STATE_ACTIVE)
+            ReflectionHelpers.setField(outgoing.details, "mState", Call.STATE_ACTIVE)
+            ReflectionHelpers.setField(outgoing.details, "mConnectTimeMillis", System.currentTimeMillis())
+            publish(listOf(outgoing), outgoing)
+        }
+        advance(400)
+        rule.onNodeWithTag("callPrimaryTimer", useUnmergedTree = true).assertExists()
+        org.junit.Assert.assertEquals("Connection must retain normal geometry", before, bounds())
+        capture("active")
+    }
+
+    @Test fun moreStaysOpenAcrossDeferredTelecomHandoff() {
+        DirectCallWindow.begin("0700000011", null) { }
+        val id = checkNotNull(DirectCallWindow.state.value).id
+        launch(outgoing = true)
+        rule.onNodeWithContentDescription(context.getString(dev.goodwy.rphone.R.string.more)).performClick()
+        advance(400)
+        rule.onNodeWithText(context.getString(dev.goodwy.rphone.R.string.view_contact)).assertExists()
+        advance(800)
+        val outgoing = call(Call.STATE_DIALING)
+        ReflectionHelpers.setField(outgoing.details, "mIntentExtras", Bundle().apply {
+            putString(DirectCallWindow.REQUEST_EXTRA, id)
+        })
+        rule.runOnIdle { publish(listOf(outgoing), outgoing) }
+        advance(100)
+        rule.onNodeWithText(context.getString(dev.goodwy.rphone.R.string.view_contact)).assertExists()
+        org.junit.Assert.assertNull(DirectCallWindow.state.value)
     }
 
     private fun launch(outgoing: Boolean = false) {

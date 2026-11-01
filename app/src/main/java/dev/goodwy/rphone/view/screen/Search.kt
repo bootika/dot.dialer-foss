@@ -167,6 +167,7 @@ fun ContactSearchContent(
 
     if (showSimPicker && pendingNumber != null) {
         SimPickerDialog(
+            number = pendingNumber,
             onDismissRequest = {
                 showSimPicker = false
                 pendingNumber = null

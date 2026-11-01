@@ -81,7 +81,7 @@ fun NumberPickerDialog(
                             Spacer(modifier = Modifier.width(16.dp))
 
                             Text(
-                                text = number,
+                                text = dev.goodwy.rphone.view.components.phoneDisplayText(number),
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Medium

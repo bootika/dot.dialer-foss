@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Le service local d’enregistrement a changé d’identité. Appuyez sur Associer à nouveau ce téléphone, puis activez l’accès à l’enregistrement.</string>
+</resources>

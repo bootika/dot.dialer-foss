@@ -79,6 +79,13 @@ fun loadPhoneAccount(context: Context, handle: PhoneAccountHandle): PhoneAccount
     return telecom.loadPhoneAccount(handle)
 }
 
+/** Call status surfaces show a SIM label only when another active SIM makes it meaningful. */
+fun callingAccountLabelForDisplay(context: Context, handle: PhoneAccountHandle): String? {
+    val account = loadPhoneAccount(context, handle) ?: return null
+    if (account.hasCapabilities(PhoneAccount.CAPABILITY_SIM_SUBSCRIPTION) && !hasDualSim(context)) return null
+    return account.label?.toString()
+}
+
 fun loadCallingAccountIcon(context: Context, icon: Icon?): Drawable? = try {
     icon?.loadDrawable(context)
 } catch (error: RuntimeException) {

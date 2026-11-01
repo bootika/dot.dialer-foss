@@ -138,8 +138,8 @@ fun SpamScreen(navigator: DestinationsNavigator) {
                                             RillAvatar(name = name, photoUri = photoUri, modifier = Modifier.size(46.dp))
                                             Spacer(Modifier.width(12.dp))
                                             Column(modifier = Modifier.weight(1f)) {
-                                                Text(name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, maxLines = 1)
-                                                if (name != number) Text(number, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                                                Text(dev.goodwy.rphone.view.components.phoneDisplayText(name), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                                if (name != number) Text(dev.goodwy.rphone.view.components.phoneDisplayText(number), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                                             }
                                             IconButton(onClick = {
                                                 val updated = blockedContactsList.toMutableList().also { it.removeAt(index) }
@@ -290,8 +290,8 @@ fun SpamScreen(navigator: DestinationsNavigator) {
                                                         RillAvatar(name = name, photoUri = photoUri, modifier = Modifier.size(38.dp))
                                                         Spacer(Modifier.width(10.dp))
                                                         Column(modifier = Modifier.weight(1f)) {
-                                                            Text(name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
-                                                            if (name != number) Text(number, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                                                            Text(dev.goodwy.rphone.view.components.phoneDisplayText(name), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
+                                                            if (name != number) Text(dev.goodwy.rphone.view.components.phoneDisplayText(number), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                                                         }
                                                         TextButton(onClick = { blockNumber(number) }, enabled = !alreadyBlocked, contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp), colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
                                                             Text(if (alreadyBlocked) "Blocked" else "Block", style = MaterialTheme.typography.labelSmall, color = if (alreadyBlocked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.accentText)
@@ -323,8 +323,8 @@ fun SpamScreen(navigator: DestinationsNavigator) {
                                                         RillAvatar(name = name, photoUri = photoUri, modifier = Modifier.size(38.dp))
                                                         Spacer(Modifier.width(10.dp))
                                                         Column(modifier = Modifier.weight(1f)) {
-                                                            Text(name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
-                                                            if (name != number) Text(number, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                                                            Text(dev.goodwy.rphone.view.components.phoneDisplayText(name), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
+                                                            if (name != number) Text(dev.goodwy.rphone.view.components.phoneDisplayText(number), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                                                         }
                                                         TextButton(onClick = { blockNumber(number) }, enabled = !alreadyBlocked, contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp), colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) {
                                                             Text(if (alreadyBlocked) "Blocked" else "Block", style = MaterialTheme.typography.labelSmall, color = if (alreadyBlocked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.accentText)

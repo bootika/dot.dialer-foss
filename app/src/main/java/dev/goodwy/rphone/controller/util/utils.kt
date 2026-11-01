@@ -49,8 +49,11 @@ fun makeCall(
     accountHandle: PhoneAccountHandle? = null,
     contactId: String? = null,
     launchCallUi: Boolean = true,
+    directTap: Boolean = false,
+    deferredRequestId: String? = null,
 ) {
     if (!dev.goodwy.rphone.controller.license.TestAccessManager.get(context).allowed) {
+        dev.goodwy.rphone.controller.DirectCallWindow.fail(deferredRequestId)
         val telecom = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
         // The legacy local classifier does not require a READ_PHONE_STATE permission grant.
         @Suppress("DEPRECATION")
@@ -73,47 +76,43 @@ fun makeCall(
         } else context.startActivity(Intent(context, dev.goodwy.rphone.MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         return
     }
+    @Suppress("DEPRECATION")
+    val emergencyNumber = android.telephony.PhoneNumberUtils.isEmergencyNumber(number)
     val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-
+    if (directTap && !emergencyNumber && launchCallUi &&
+        context.findActivity() != null &&
+        ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+        val existingCall = try { telecomManager.isInCall }
+            catch (unavailable: SecurityException) { true }
+        if (existingCall) {
+            makeCall(context, number, accountHandle, contactId, launchCallUi)
+            return
+        }
+        val requestedHandle = accountHandle ?: preferredOutgoingAccount(
+            context, PreferenceManager(context), number, contactId, getCallingAccounts(context))
+        if (dev.goodwy.rphone.controller.DirectCallWindow.begin(number, contactId, requestedHandle?.toPreferenceKey()) { requestId ->
+                makeCall(context, number, requestedHandle, contactId, launchCallUi, deferredRequestId = requestId)
+            }) {
+            dev.goodwy.rphone.controller.CallUiHandoff.controller.beginOutgoing()
+            if (!context.launchCallActivitySafely(outgoing = true)) {
+                dev.goodwy.rphone.controller.DirectCallWindow.cancel()
+                dev.goodwy.rphone.controller.CallUiHandoff.controller.contentReady()
+            }
+        }
+        return
+    }
     val extras = Bundle()
+    if (deferredRequestId != null) extras.putBundle(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS,
+        Bundle().apply { putString(dev.goodwy.rphone.controller.DirectCallWindow.REQUEST_EXTRA, deferredRequestId) })
 
     val prefs = PreferenceManager(context)
     if (contactId != null) {
         prefs.setLastUsedNumber(contactId, number)
     }
 
-    var preferredHandle = accountHandle
-    if (preferredHandle == null) {
-        val accountInfos = getCallingAccounts(context)
-        val accounts = accountInfos.map { it.handle }
-
-        val favSim = contactId?.let { prefs.getFavoriteSim(it) }
-            ?: prefs.getFavoriteSimForNumber(number)
-        val favNum = contactId?.let { prefs.getFavoriteNumber(it) }
-
-        preferredHandle = if (favSim != null && (favNum == null || areNumbersEqual(number, favNum))) {
-            resolveCallingAccount(context, favSim, accountInfos)
-        } else null
-
-        if (preferredHandle == null) {
-            preferredHandle = resolveCallingAccount(
-                context,
-                prefs.getString(PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT, null),
-                accountInfos,
-            )
-            // One-time compatibility with builds that persisted SIM 1/SIM 2 as a list index.
-            if (preferredHandle == null) {
-                val defaultSim = prefs.getInt(PreferenceManager.KEY_DEFAULT_SIM, 0)
-                if (defaultSim > 0 && accounts.size >= defaultSim) {
-                    preferredHandle = accounts[defaultSim - 1]
-                    prefs.setString(
-                        PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT,
-                        accountInfos[defaultSim - 1].key,
-                    )
-                }
-            }
-        }
-    }
+    val preferredHandle = accountHandle ?: preferredOutgoingAccount(
+        context, prefs, number, contactId, getCallingAccounts(context),
+    )
 
     if (preferredHandle != null) {
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, preferredHandle)
@@ -131,6 +130,7 @@ fun makeCall(
     }
 
     fun openDotDialpad() {
+        dev.goodwy.rphone.controller.DirectCallWindow.fail(deferredRequestId)
         context.startActivity(Intent(context, dev.goodwy.rphone.MainActivity::class.java).apply {
             action = Intent.ACTION_DIAL
             data = uri
@@ -185,33 +185,16 @@ fun placeCallWithSimPreference(
     context: Context,
     number: String,
     simPref: Int,
+    directTap: Boolean = false,
     onShowSimPicker: () -> Unit
 ): Boolean {
-    val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-    val hasPhoneState = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-    return if (hasPhoneState) {
-        val accounts = telecomManager.callCapablePhoneAccounts
-        if (accounts.size > 1) {
-            when (simPref) {
-                1 -> {
-                    makeCall(context, number, accounts[0])
-                    true
-                }
-                2 -> {
-                    makeCall(context, number, accounts[1])
-                    true
-                }
-                else -> {
-                    onShowSimPicker()
-                    false
-                }
-            }
-        } else {
-            makeCall(context, number)
-            true
-        }
+    val accounts = getCallingAccounts(context)
+    val selected = preferredOutgoingAccount(context, PreferenceManager(context), number, null, accounts)
+    return if (accounts.size > 1 && selected == null) {
+        onShowSimPicker()
+        false
     } else {
-        makeCall(context, number)
+        makeCall(context, number, selected, directTap = directTap)
         true
     }
 }

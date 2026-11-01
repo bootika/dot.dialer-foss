@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Serviciul local de înregistrare și-a schimbat identitatea. Apasă Asociază din nou acest telefon, apoi activează accesul la înregistrare.</string>
+</resources>

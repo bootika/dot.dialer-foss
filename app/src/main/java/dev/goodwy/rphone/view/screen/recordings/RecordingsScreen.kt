@@ -57,7 +57,7 @@ internal fun RecordingsSettingsEntry(onOpen: ()->Unit) {
     val repo=rememberRecordingsRepository()
     val existing by produceState(false,repo) {value=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {repo.catalog.recordings().isNotEmpty()}}
     if(!repo.integrationEnabled() && !existing)return
-    RecordingsBridgeLifecycle(repo)
+    recordingsBridgeLifecycle(repo)
     SettingsHomeListItem(headline=stringResource(R.string.recordings_title),
         leadingIcon=Icons.Rounded.GraphicEq,onClick=onOpen,trailingContent={Icon(Icons.Default.ChevronRight,null)})
 }
@@ -69,7 +69,7 @@ internal fun CallRecordingsEntry(call: Call,title: String) {
     val repo=rememberRecordingsRepository()
     val enabled by repo.moduleState.collectAsState()
     if(!repo.integrationEnabled() || !enabled)return
-    RecordingsBridgeLifecycle(repo);val plans=rememberPlanAccessManager()
+    recordingsBridgeLifecycle(repo);val plans=rememberPlanAccessManager()
     val capabilities by repo.bridge.capabilities.collectAsState();val rights by plans.state.collectAsState()
     var open by remember {mutableStateOf(false)}
     val callKey=remember(call) {RecordingCallKeys.key(call)}

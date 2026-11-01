@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Tożsamość lokalnej usługi nagrywania uległa zmianie. Dotknij Sparuj ten telefon ponownie, a następnie aktywuj dostęp do nagrywania.</string>
+</resources>

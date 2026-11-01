@@ -149,7 +149,7 @@ class RecentCallsFactory(
         val views = RemoteViews(context.packageName, R.layout.widget_call_item)
 
         views.setTextViewText(R.id.tv_initials, getInitials(entry.name, entry.number))
-        views.setTextViewText(R.id.tv_name, entry.name)
+        views.setTextViewText(R.id.tv_name, dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(entry.name, dev.goodwy.rphone.controller.util.contactNumberRegion(context)))
         views.setTextViewText(R.id.tv_time, formatRelativeTime(entry.date))
 
         val iconRes = when (entry.type) {

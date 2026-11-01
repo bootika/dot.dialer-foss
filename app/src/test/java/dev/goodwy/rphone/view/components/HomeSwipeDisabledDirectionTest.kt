@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.SemanticsActions
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import dev.goodwy.rphone.view.theme.DotDialerTheme
 import org.junit.Assert.assertEquals
@@ -70,6 +71,14 @@ class HomeSwipeDisabledDirectionTest {
         assertEquals(0f, homeSwipeOffset(30f, -100f, 85f, true, false, false))
         assertEquals(-85f, homeSwipeOffset(0f, -500f, 85f, true, false, true))
         assertEquals(0f, homeSwipeOffset(-30f, 100f, 85f, true, false, true))
+    }
+
+    @Test fun `named accessibility actions remain callable without decorative icon labels`() {
+        render(right = PreferenceManager.SWIPE_ACTION_CALL, left = PreferenceManager.SWIPE_ACTION_MESSAGE)
+        val custom = rule.onNodeWithTag("gesture").fetchSemanticsNode().config[SemanticsActions.CustomActions]
+        assertEquals(listOf("Call", "SMS"), custom.map { it.label })
+        rule.runOnIdle { custom[1].action() }
+        assertEquals(listOf(PreferenceManager.SWIPE_ACTION_MESSAGE), actions)
     }
 
     private fun render(right: Int, left: Int, rtl: Boolean = false) {

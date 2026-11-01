@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen.settings
 
+import dev.goodwy.rphone.view.theme.semanticSuccess
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -102,8 +104,9 @@ private fun FindProgress(source: String, progress: ContactPhotoScanProgress?, re
         Text(stringResource(status), style = MaterialTheme.typography.labelLarge,
             color = when {
                 phase == ContactPhotoScanPhase.Failed -> MaterialTheme.colorScheme.error
+                phase == ContactPhotoScanPhase.Complete -> MaterialTheme.colorScheme.semanticSuccess
                 active -> MaterialTheme.colorScheme.onPrimaryContainer
-                else -> MaterialTheme.colorScheme.primary
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
             })
         val total = progress?.total
         val checked = progress?.checked ?: 0

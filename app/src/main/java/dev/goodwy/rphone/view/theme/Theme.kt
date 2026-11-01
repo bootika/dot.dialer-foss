@@ -192,7 +192,7 @@ fun DotDialerTheme(
                 DotDialerTypography.scaled(interfaceScale.coerceIn(0.9f, 1.2f))
             },
             shapes = rillShapes(RillShapeDefaults.DefaultRoundness),
-            content = content,
+            content = { dev.goodwy.rphone.view.components.ProvidePhoneDisplayRegion(content) },
         )
     }
 }
@@ -232,7 +232,7 @@ fun DotDialerAppTheme(content: @Composable () -> Unit) {
         interfaceScale = interfaceScale,
         highContrast = highContrast,
         ignoreSystemFontScale = ignoreSystemFontScale,
-        content = content,
+        content = { dev.goodwy.rphone.view.components.ProvidePhoneDisplayRegion(content) },
     )
 }
 

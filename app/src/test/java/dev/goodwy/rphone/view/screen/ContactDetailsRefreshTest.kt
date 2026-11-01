@@ -176,17 +176,17 @@ class ContactDetailsRefreshTest {
         rule.runOnIdle { requested.value=null to unknown }
         rule.waitUntil(10000) { rule.waitForIdle();memory.reads.get()>second }
         release.complete(Unit);memory.release=null
-        rule.waitUntil(10000) { rule.waitForIdle();rule.onAllNodes(hasText(unknown,substring=true) and SemanticsMatcher("Detail body") { it.positionInRoot.y>100f }).fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(10000) { rule.waitForIdle();rule.onAllNodes(hasText("+40 700 000 033",substring=true) and SemanticsMatcher("Detail body") { it.positionInRoot.y>100f }).fetchSemanticsNodes().isNotEmpty() }
         rule.onAllNodesWithText("Test Studio").assertCountEquals(0)
-        val unknownId=rule.onNode(hasText(unknown,substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id
+        val unknownId=rule.onNode(hasText("+40 700 000 033",substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id
         val again=refreshHeld()
-        assertEquals(unknownId,rule.onNode(hasText(unknown,substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id)
+        assertEquals(unknownId,rule.onNode(hasText("+40 700 000 033",substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id)
         again.complete(Unit);memory.release=null;rule.waitForIdle()
         val resumed=CompletableDeferred<Unit>();val resumeBefore=memory.reads.get();memory.release=resumed
         rule.activityRule.scenario.moveToState(androidx.lifecycle.Lifecycle.State.CREATED)
         rule.activityRule.scenario.moveToState(androidx.lifecycle.Lifecycle.State.RESUMED)
         rule.waitUntil(10000) { rule.waitForIdle();memory.reads.get()>resumeBefore }
-        assertEquals(unknownId,rule.onNode(hasText(unknown,substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id)
+        assertEquals(unknownId,rule.onNode(hasText("+40 700 000 033",substring=true) and SemanticsMatcher("Detail header") { it.positionInRoot.y in 100f..400f }).fetchSemanticsNode().id)
         resumed.complete(Unit);memory.release=null;rule.waitForIdle();capture("unsaved-after-resume")
         assertEquals(0,navigations)
     }

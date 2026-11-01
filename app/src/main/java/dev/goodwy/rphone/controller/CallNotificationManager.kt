@@ -112,7 +112,7 @@ class CallNotificationManager(
         // Removed contactPhoto = getContactBitmap(photoUri) - handled via parameter
 
         val accountHandle = call.details.accountHandle
-        val simLabel = accountHandle?.let { loadPhoneAccount(context, it)?.label?.toString() }
+        val simLabel = accountHandle?.let { dev.goodwy.rphone.controller.util.callingAccountLabelForDisplay(context, it) }
 
         val fullScreenIntent = Intent(context, CallActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -310,7 +310,7 @@ class CallNotificationManager(
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_LOW)
             .setSmallIcon(R.drawable.ic_close)
             .setContentTitle(context.getString(R.string.notif_blocked_call_title))
-            .setContentText(context.getString(R.string.notif_blocked_call_text, number))
+            .setContentText(context.getString(R.string.notif_blocked_call_text, dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(number, dev.goodwy.rphone.controller.util.contactNumberRegion(context))))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setAutoCancel(true)
 

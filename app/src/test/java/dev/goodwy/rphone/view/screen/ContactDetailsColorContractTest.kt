@@ -9,13 +9,14 @@ import org.junit.Test
 class ContactDetailsColorContractTest {
 
     @Test
-    fun `contact actions use solid accent once and neutral supporting surfaces`() {
+    fun `contact call actions use semantic green and neutral supporting surfaces`() {
         val source = repoFile(
             "app/src/main/java/dev/goodwy/rphone/view/screen/ContactDetails.kt",
         ).readText()
 
-        assertTrue(source.contains("containerColor = MaterialTheme.colorScheme.primary"))
-        assertTrue(source.contains("contentColor = MaterialTheme.colorScheme.onPrimary"))
+        assertEquals(2, Regex("containerColor = CallActionColors.answerCommitted").findAll(source).count())
+        assertEquals(2, Regex("contentColor = CallActionColors.onAction").findAll(source).count())
+        assertFalse(source.contains("containerColor = MaterialTheme.colorScheme.primary,"))
         assertTrue(source.contains("containerColor = MaterialTheme.colorScheme.surfaceContainerHigh"))
         assertFalse(source.contains("containerColor = MaterialTheme.colorScheme.primaryContainer"))
         assertFalse(source.contains("containerColor = MaterialTheme.colorScheme.secondaryContainer"))

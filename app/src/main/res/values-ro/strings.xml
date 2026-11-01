@@ -153,7 +153,6 @@
     <string name="show_first_letter_in_avatar">Arată inițiala în avatar</string>
     <string name="show_first_letter_in_avatar_subtitle">Afișează inițiala atunci când lipsește fotografia</string>
     <string name="show_picture_in_avatar">Afișează fotografia în avatar</string>
-    <string name="show_picture_in_avatar_subtitle">Arată imaginea de contact dacă este disponibilă</string>
     <string name="call_settings">Apeluri</string>
     <string name="default_sim">SIM implicit</string>
     <string name="ask_first">Întreabă de fiecare dată</string>
@@ -167,7 +166,6 @@
     <string name="floating_ongoing_call">Bulă pentru apelul în curs</string>
     <string name="floating_ongoing_call_subtitle">Afișează o bulă pe care o poți muta în timpul apelurilor. Necesită permisiunea de afișare peste alte aplicații.</string>
     <string name="fullscreen_calls">Apeluri pe tot ecranul</string>
-    <string name="fullscreen_calls_subtitle">Apelurile primite sunt întotdeauna afișate în modul ecran complet</string>
     <string name="quick_response">Răspuns rapid</string>
     <string name="quick_responses">Răspunsuri rapide</string>
     <string name="quick_responses_subtitle">Gestionează răspunsurile SMS presetate pentru respingerea apelurilor primite</string>
@@ -615,7 +613,7 @@
     <string name="sentry_connected">Raportarea erorilor și ANR prin Sentry este conectată pentru această versiune.</string>
     <string name="sentry_not_configured">Sentry nu este configurat pentru această versiune.</string>
     <string name="send_sentry_test">Trimite evenimentul de încercare Sentry</string>
-    <string name="sentry_test_sent">Eveniment de test Sentry trimis: %1$s</string>
+    <string name="sentry_test_sent">Test pus în coada locală; primirea pe server nu este confirmată. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry nu este disponibil în această versiune</string>
     <string name="show_recents_favorites">Arată secțiunea Favorite</string>
     <string name="swipe_right_action">Glisare spre dreapta</string>
@@ -767,15 +765,12 @@
     <string name="capture_output_language">Limba transcrierii</string>
     <string name="capture_original_language">Limba originală (detectare automată)</string>
     <string name="capture_dictate_update">Actualizează dot.dictate pentru transcrierea separată a ambelor voci.</string>
-    <string name="capture_ready_summary">Pregătit · pornește înregistrarea din Mai multe, în timpul apelului</string>
-    <string name="capture_disable">Dezactivează accesul la înregistrare</string>
     <string name="capture_reactivate">Reactivează înregistrarea apelurilor</string>
     <string name="capture_reactivate_notification">Telefonul a repornit sau modulul s-a oprit. Apasă pentru reactivarea accesului.</string>
     <string name="capture_pair_title">Asociază dot.dialer</string>
     <string name="capture_pair_notification">Lasă deschis dialogul Android de asociere. Apasă Introdu codul și scrie cele șase cifre.</string>
     <string name="capture_enter_code">Introdu codul</string>
     <string name="capture_pair_code">Codul de asociere din șase cifre</string>
-    <string name="capture_wizard_intro_title">Apelurile tale, înregistrate în dot.dialer</string>
     <string name="capture_wizard_intro">Înregistrarea apelurilor necesită acces special. Folosim funcția Android Depanare wireless pentru a activa modulul. Este o configurare avansată, nu o permisiune Android obișnuită pentru înregistrarea apelurilor. Știm că pașii în plus sunt un inconvenient; te ghidăm pe rând.</string>
     <string name="capture_wizard_privacy">Fără root, cablu sau altă aplicație. Asocierea rămâne pe acest telefon. Activarea nu pornește înregistrarea: tu alegi Înregistrează sau Înregistrează și transcrie în timpul apelului.</string>
     <string name="capture_wizard_developer_title">Pregătește telefonul</string>
@@ -806,7 +801,6 @@
     <string name="capture_network_recovery_title">A dispărut dialogul Permite?</string>
     <string name="capture_network_recovery">1. Deschide Depanare wireless în Android. Pe Samsung: Opțiuni dezvoltator → Depanare wireless.\n\n2. Oprește Depanare wireless, apoi pornește-o din nou. Când apare dialogul rețelei, apasă Permite înainte să schimbi aplicația. Bifa Permite întotdeauna este opțională.\n\n3. Revino în dot.dialer și apasă Activează. Dacă telefonul nu este încă asociat, parcurge mai întâi pasul de asociere.</string>
     <string name="recordings_saved">Înregistrări salvate</string>
-    <string name="capture_activation_finishing">Se finalizează activarea</string>
     <string name="capture_quiet_ready">Depanarea wireless este oprită. Înregistrarea funcționează local până la reactivarea modulului. Transcrierea necesită internet.</string>
     <string name="capture_wireless_pending">Oprește depanarea wireless pentru a finaliza activarea. Revino aici pentru verificarea modulului.</string>
 </resources>

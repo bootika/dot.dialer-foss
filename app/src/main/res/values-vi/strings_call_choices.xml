@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">Chỉ cuộc gọi này</string>
+    <string name="sim_scope_number">Ghi nhớ cho số này</string>
+    <string name="sim_scope_all">Dùng cho tất cả các số</string>
+    <string name="outgoing_sim_ask">Luôn hỏi</string>
+</resources>

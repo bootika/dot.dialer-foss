@@ -75,7 +75,7 @@ class ContactSwipeDeletionTest {
         val copy=rule.onNodeWithText("Copy").fetchSemanticsNode().boundsInRoot.center
         rule.onRoot().performTouchInput {moveTo(copy);up()}
         rule.onNodeWithText("Copy").assertDoesNotExist()
-        rule.onNodeWithText("+40722000001").performClick()
+        rule.onNodeWithText("+40 722 000 001").performClick()
         val clipboard = RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
         val text = clipboard.primaryClip!!.getItemAt(0).text.toString()
         assertTrue(text.contains("Test Alexandru Butica")); assertTrue(text.contains("+40722000001"))
@@ -88,7 +88,7 @@ class ContactSwipeDeletionTest {
         row.performClick();rule.onNodeWithText("Copy").assertIsDisplayed()
         row.performClick();rule.onNodeWithText("Copy").assertDoesNotExist()
         row.performClick();rule.onNodeWithText("Copy").performClick()
-        rule.onNodeWithText("+40722000001").performClick()
+        rule.onNodeWithText("+40 722 000 001").performClick()
         val clip=RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
         assertTrue(clip.primaryClip!!.getItemAt(0).text.toString().contains("+40722000001"))
         assertEquals(emptyList<String>(),deleted)

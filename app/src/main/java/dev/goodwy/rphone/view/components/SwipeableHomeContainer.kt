@@ -167,7 +167,7 @@ private fun HomeSwipeAction(visual: HomeSwipeVisual, progress: Float) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = visual.icon,
-                contentDescription = visual.label,
+                contentDescription = null, // Decorative; the row exposes the named custom actions.
                 tint = visual.foreground,
                 modifier = Modifier.size(22.dp),
             )

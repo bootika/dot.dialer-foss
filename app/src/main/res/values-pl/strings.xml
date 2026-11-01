@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Pokaż pierwszą literę w awatarze</string>
     <string name="show_first_letter_in_avatar_subtitle">Wyświetla literę, gdy brakuje obrazka</string>
     <string name="show_picture_in_avatar">Pokaż zdjęcie w awatarze</string>
-    <string name="show_picture_in_avatar_subtitle">Wyświetla zdjęcie kontaktu, jeśli jest dostępne</string>
     <string name="call_settings">Połączenia</string>
     <string name="default_sim">Domyślna karta SIM</string>
     <string name="ask_first">Zapytaj najpierw</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Pływające połączenie</string>
     <string name="floating_ongoing_call_subtitle">Pokaż pływającą bańkę podczas połączeń. Wymaga uprawnienia \"Wyświetlanie na innych aplikacjach\"</string>
     <string name="fullscreen_calls">Połączenia na pełnym ekranie</string>
-    <string name="fullscreen_calls_subtitle">Połączenia przychodzące są zawsze wyświetlane w trybie pełnoekranowym</string>
     <string name="quick_response">Szybka odpowiedź</string>
     <string name="quick_responses">Szybkie odpowiedzi</string>
     <string name="quick_responses_subtitle">Zarządzaj szablonowymi odpowiedziami SMS odmowy dla połączeń przychodzących</string>
@@ -608,7 +606,7 @@
     <string name="sentry_connected">Do tej budowy podłączony jest alarm i raportowanie ANR.</string>
     <string name="sentry_not_configured">Strażnik jest niedostępny w tej konstrukcji.</string>
     <string name="send_sentry_test">Wyślij zdarzenie testowe</string>
-    <string name="sentry_test_sent">Sentry test event sended: %1$s</string>
+    <string name="sentry_test_sent">Test w kolejce lokalnej; odbiór przez serwer niepotwierdzony. ID: %1$s</string>
     <string name="sentry_test_failed">Sentry nie jest dostępna w tej budowie</string>
     <string name="show_recents_favorites">Pokaż sekcję Ulubione</string>
     <string name="swipe_right_action">Przesuń w prawo</string>

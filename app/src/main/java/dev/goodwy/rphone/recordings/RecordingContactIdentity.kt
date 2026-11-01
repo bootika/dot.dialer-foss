@@ -28,7 +28,7 @@ internal fun recordingContactIdentity(context: Context,raw: String): RecordingCo
         }.orEmpty()
         val keys=matches.map {it.first}.distinct()
         if(keys.size==1)RecordingContactIdentity(number,keys.single(),matches.first().second)else RecordingContactIdentity(number)
-    }catch(_: RuntimeException){RecordingContactIdentity(number)}
+    }catch(error: RuntimeException){captureFailures.report(CaptureFailureStage.CONTACT_LOOKUP,error);RecordingContactIdentity(number)}
 }
 
 internal data class RecordingNumberGroup(val number: String,val assets: List<SavedRecording>)

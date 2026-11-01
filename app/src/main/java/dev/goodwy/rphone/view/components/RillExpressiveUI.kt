@@ -627,7 +627,7 @@ fun CallLogListItem(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = headline,
+                    text = dev.goodwy.rphone.view.components.phoneDisplayText(headline),
                     style = MaterialTheme.typography.controlLabel,
 //                    fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -646,7 +646,7 @@ fun CallLogListItem(
 
                         if (supporting != null) {
                             Text(
-                                text = supporting,
+                                text = dev.goodwy.rphone.view.components.phoneDisplayText(supporting),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = supportingColor,
                                 maxLines = 1,
@@ -795,6 +795,7 @@ fun RillListItem(
     trailingContent: (@Composable RowScope.() -> Unit)? = null,
     supportingContent: (@Composable ColumnScope.() -> Unit)? = null,
     expandText: Boolean = false,
+    headlineLeading: (@Composable () -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val prefs = koinInject<PreferenceManager>()
@@ -867,8 +868,10 @@ fun RillListItem(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (headline != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    headlineLeading?.invoke()
                     Text(
-                        text = headline,
+                        text = dev.goodwy.rphone.view.components.phoneDisplayText(headline),
                         style = MaterialTheme.typography.controlLabel,
 //                    fontWeight = FontWeight.SemiBold,
                         lineHeight = if (expandText) MaterialTheme.typography.bodyLarge.lineHeight else MaterialTheme.typography.bodySmall.lineHeight,
@@ -876,11 +879,12 @@ fun RillListItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+                }
                 if (supportingContent != null) {
                     supportingContent()
                 } else if (supporting != null) {
                     Text(
-                        text = supporting,
+                        text = dev.goodwy.rphone.view.components.phoneDisplayText(supporting),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
@@ -977,14 +981,14 @@ fun RillSwitchListItem(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = headline,
+                    text = dev.goodwy.rphone.view.components.phoneDisplayText(headline),
                     style = MaterialTheme.typography.controlLabel,
                     lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
                 )
                 if (supporting != null) {
                     Text(
-                        text = supporting,
+                        text = dev.goodwy.rphone.view.components.phoneDisplayText(supporting),
                         style = MaterialTheme.typography.bodyMedium,
                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1072,7 +1076,7 @@ fun RillSelectListItem(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = headline,
+                    text = dev.goodwy.rphone.view.components.phoneDisplayText(headline),
                     style = MaterialTheme.typography.controlLabel,
                     lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
@@ -1158,14 +1162,14 @@ fun RillSliderListItem(
             ) {
                 Row {
                     Text(
-                        text = headline,
+                        text = dev.goodwy.rphone.view.components.phoneDisplayText(headline),
                         style = MaterialTheme.typography.controlLabel,
                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
 //                    fontWeight = FontWeight.SemiBold
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = supporting,
+                        text = dev.goodwy.rphone.view.components.phoneDisplayText(supporting),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.accentText,
                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,

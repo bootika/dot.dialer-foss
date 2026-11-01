@@ -1,0 +1,54 @@
+// Reproducible local security patch of the pinned upstream AAR. This is a runtime
+// implementation replacement, not a lint exclusion: all TLS trust code is compiled
+// from app/src/main/java and remains subject to the unchanged analyzers.
+configurations.create('upstreamAdb') { transitive = false }
+dependencies.add('upstreamAdb', 'com.github.MuntashirAkon:libadb-android:3.1.1@aar')
+def patchedAdb = layout.buildDirectory.file('security/libadb-local-3.1.1.aar')
+def replacementClasses = [
+    'io/github/muntashirakon/adb/SslUtils.class',
+    'io/github/muntashirakon/adb/SslUtils$1.class',
+    'io/github/muntashirakon/adb/SslUtils$2.class'
+] as Set
+
+def prepareAdb = tasks.register('prepareLocalAdb') {
+    inputs.files(configurations.upstreamAdb)
+    inputs.property('upstreamSha256', 'e6fcb495a20a507ca4a125afc9c554e838a84b3a15fbcc29f7deafd0f88bbb58')
+    inputs.property('replacementClasses', replacementClasses.toList().sort())
+    outputs.file(patchedAdb)
+    doLast {
+        File input = configurations.upstreamAdb.singleFile
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(input.bytes).encodeHex().toString()
+        if (digest != inputs.properties.upstreamSha256) throw new GradleException('Unreviewed upstream ADB artifact')
+        File output = patchedAdb.get().asFile
+        output.parentFile.mkdirs()
+        def removed = [] as Set
+        new java.util.zip.ZipFile(input).withCloseable { aar ->
+            new java.util.zip.ZipOutputStream(new FileOutputStream(output)).withCloseable { out ->
+                aar.entries().toList().sort { it.name }.each { entry ->
+                    byte[] bytes = aar.getInputStream(entry).withCloseable { it.bytes }
+                    if (entry.name == 'classes.jar') {
+                        def buffer = new ByteArrayOutputStream()
+                        new java.util.zip.ZipInputStream(new ByteArrayInputStream(bytes)).withCloseable { jar ->
+                            new java.util.zip.ZipOutputStream(buffer).withCloseable { target ->
+                                java.util.zip.ZipEntry item
+                                while ((item = jar.nextEntry) != null) {
+                                    if (replacementClasses.contains(item.name)) { removed.add(item.name); continue }
+                                    def copy = new java.util.zip.ZipEntry(item.name); copy.time = 0
+                                    target.putNextEntry(copy); target.write(jar.readAllBytes()); target.closeEntry()
+                                }
+                            }
+                        }
+                        bytes = buffer.toByteArray()
+                    }
+                    def copy = new java.util.zip.ZipEntry(entry.name); copy.time = 0
+                    out.putNextEntry(copy); out.write(bytes); out.closeEntry()
+                }
+            }
+        }
+        if (removed != replacementClasses) { output.delete(); throw new GradleException('ADB security patch did not replace the expected implementation') }
+    }
+}
+dependencies.add('implementation', files(patchedAdb).builtBy(prepareAdb))
+// Explicit upstream runtime dependencies retained when using the patched local AAR.
+dependencies.add('implementation', 'org.bouncycastle:bcprov-jdk15to18:1.81')
+dependencies.add('implementation', 'com.github.MuntashirAkon.spake2-java:spake2-android:2.2.1')

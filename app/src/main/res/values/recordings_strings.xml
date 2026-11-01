@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recordings_title">Recordings &amp; transcripts</string>
-    <string name="recordings_requirements">Requires a dot.dictate license and your API key.</string>
     <string name="recordings_connect">Connect dot.dictate</string>
     <string name="recordings_open_dictate">Open dot.dictate</string>
     <string name="recordings_disconnect">Disconnect</string>
-    <string name="recordings_connected">Connected to dot.dictate</string>
     <string name="recordings_disconnected">Connect dot.dictate to process recordings.</string>
     <string name="recordings_license_required">Activate your dot.dictate license.</string>
     <string name="recordings_license_unavailable">The dot.dictate license could not be verified.</string>
@@ -20,9 +18,7 @@
     <string name="recordings_translation">Translation · %1$s</string>
     <string name="recordings_language">Translation language</string>
     <string name="recordings_auto_transcribe">Automatic transcription</string>
-    <string name="recordings_auto_transcribe_summary">Send new recordings to your configured provider. Complete.</string>
     <string name="recordings_auto_translate">Automatic translation</string>
-    <string name="recordings_auto_translate_summary">Translate new transcripts into your chosen language. Complete.</string>
     <string name="recordings_export_audio">Export audio</string>
     <string name="recordings_export_text">Export text</string>
     <string name="recordings_delete">Delete recording</string>
@@ -48,18 +44,13 @@
     <string name="recordings_checking">Checking the connection, license and API configuration…</string>
     <string name="recordings_check_failed">Could not check dot.dictate. We will retry automatically.</string>
     <string name="recordings_ready">Ready to transcribe</string>
-    <string name="recordings_api_check_on_use">API access is confirmed when you process audio.</string>
     <string name="recordings_translation_unavailable">Translation is not available with the current dot.dictate configuration.</string>
-    <string name="recordings_settings">Recording settings</string>
     <string name="recordings_audio">Audio</string>
     <string name="recordings_no_number">No phone number saved</string>
     <plurals name="recordings_translations"><item quantity="one">%1$d translation</item><item quantity="other">%1$d translations</item></plurals>
     <string name="recordings_history">Processing history</string>
     <string name="recordings_hide_history">Hide processing history</string>
-    <string name="capture_off_summary">Off. No recording controls or reactivation reminders. Saved recordings and transcripts remain available.</string>
-    <string name="recordings_master_summary">Audio, transcripts and automation.</string>
     <string name="recordings_module_off">Recordings and transcription are off. Your saved audio and text remain available.</string>
     <string name="recordings_wireless_off_needed">Module off. Turn off Wireless debugging in Developer options to stop Android network prompts.</string>
     <string name="recordings_master_off_summary">Off · Saved recordings are kept.</string>
-    <string name="recordings_wireless_off_effect">Turning this module off also stops Android wireless debugging when access is available. Otherwise, Settings shows the remaining manual step.</string>
 </resources>

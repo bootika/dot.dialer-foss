@@ -1,5 +1,7 @@
 package dev.goodwy.rphone.view.screen
 
+import dev.goodwy.rphone.view.theme.semanticSuccess
+
 import dev.goodwy.rphone.view.theme.accentText
 
 import android.Manifest
@@ -293,38 +295,15 @@ fun DialPadContent(
 
         // Helper: place a call respecting the default SIM preference
         fun placeCallWithSimPreference(num: String) {
-            val accountInfos = getCallingAccounts(context)
-            val accounts = accountInfos.map { it.handle }
-            if (accounts.size > 1) {
-                val stableAccount = resolveCallingAccount(
-                    context,
-                    prefs.getString(PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT, null),
-                    accountInfos,
-                )
-                val simPref = prefs.getInt(PreferenceManager.KEY_DEFAULT_SIM, prefs.getDefaultSimIndexDefault())
-                when {
-                    stableAccount != null -> {
-                        replaceNumber("")
-                        makeCall(context, num, stableAccount)
-                    }
-                    simPref == 1 && accounts.isNotEmpty() -> {
-                        replaceNumber("")
-                        makeCall(context, num, accounts[0])
-                    }
-
-                    simPref == 2 && accounts.size >= 2 -> {
-                        replaceNumber("")
-                        makeCall(context, num, accounts[1])
-                    }
-
-                    else -> {
-                        pendingSearchCallNumber = num
-                        showSimPicker = true
-                    }
-                }
+            val accounts = getCallingAccounts(context)
+            val selected = dev.goodwy.rphone.controller.util.preferredOutgoingAccount(
+                context, prefs, num, null, accounts)
+            if (accounts.size > 1 && selected == null) {
+                pendingSearchCallNumber = num
+                showSimPicker = true
             } else {
                 replaceNumber("")
-                makeCall(context, num)
+                makeCall(context, num, selected)
             }
         }
 
@@ -465,6 +444,7 @@ fun DialPadContent(
 
         if (showSimPicker) {
             SimPickerDialog(
+            number = pendingSearchCallNumber ?: number,
                 onDismissRequest = { showSimPicker = false },
                 onSimSelected = { handle ->
                     replaceNumber("")
@@ -623,7 +603,7 @@ fun DialPadContent(
                                                 trailingContent = {
                                                     if (defaultOrFirstPhone != null) {
                                                         IconButton(onClick = { initiateCall(defaultOrFirstPhone) }) {
-                                                            Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.primary)
+                                                            Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.semanticSuccess)
                                                         }
                                                     }
                                                 },
@@ -686,7 +666,7 @@ fun DialPadContent(
                                                 phoneNumber = log.number,
                                                 trailingContent = {
                                                     IconButton(onClick = { initiateCall(log.number) }) {
-                                                        Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.primary)
+                                                        Icon(DotDialerHandsetIcon, contentDescription = stringResource(R.string.call), tint = MaterialTheme.colorScheme.semanticSuccess)
                                                     }
                                                 },
                                                 onCall = { initiateCall(log.number) },
@@ -1213,7 +1193,7 @@ fun DialPadContent(
                                                                         contentDescription = stringResource(
                                                                             R.string.call
                                                                         ),
-                                                                        tint = MaterialTheme.colorScheme.primary
+                                                                        tint = MaterialTheme.colorScheme.semanticSuccess
                                                                     )
                                                                 }
                                                             }
@@ -1301,7 +1281,7 @@ fun DialPadContent(
                                                                     contentDescription = stringResource(
                                                                         R.string.call
                                                                     ),
-                                                                    tint = MaterialTheme.colorScheme.primary
+                                                                    tint = MaterialTheme.colorScheme.semanticSuccess
                                                                 )
                                                             }
                                                         },
@@ -2071,7 +2051,7 @@ fun DialPadKey(
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun DialpadNumberDisplay(
+internal fun DialpadNumberDisplay(
     number: String,
     fontSize: Int,
     cursorPosition: Int = number.length,
@@ -2135,6 +2115,16 @@ private fun DialpadNumberDisplay(
         label = "cursorAlpha"
     )
 
+    val displayRegion = dev.goodwy.rphone.view.components.phoneDisplayRegion()
+    val displayedRaw = stableChars.map { it.second }.joinToString("")
+    val groupBoundaries = remember(displayedRaw, displayRegion) {
+        dev.goodwy.rphone.controller.util.PhoneNumberDisplay.boundaries(displayedRaw, displayRegion)
+    }
+    val spaceMeasurer = androidx.compose.ui.text.rememberTextMeasurer()
+    val groupGap = with(LocalDensity.current) {
+        (spaceMeasurer.measure(" ", textStyle).size.width *
+            dev.goodwy.rphone.controller.util.PhoneNumberDisplay.GROUP_SPACE_SCALE).toDp()
+    }
     val clampedCursor = cursorPosition.coerceIn(0, stableChars.size)
 
     LazyRow(
@@ -2153,6 +2143,7 @@ private fun DialpadNumberDisplay(
             items = stableChars,
             key = { _, pair -> pair.first }
         ) { index, pair ->
+            if (index in groupBoundaries) Spacer(Modifier.width(groupGap))
             // If animations are disabled, display it straight away
             var appeared by remember { mutableStateOf(!enableAnimations) }
             LaunchedEffect(Unit) {

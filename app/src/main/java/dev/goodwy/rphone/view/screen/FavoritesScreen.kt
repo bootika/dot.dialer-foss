@@ -163,7 +163,7 @@ fun FavoritesScreen(navController: NavController, navigator: DestinationsNavigat
     ) { permissions ->
         if (permissions[Manifest.permission.CALL_PHONE] == true) {
             pendingCallNumber?.let { num ->
-                placeCallWithSimPreference(context, num, simPref) {
+                placeCallWithSimPreference(context, num, simPref, directTap = true) {
                     showSimPicker = true
                 }
             }
@@ -171,8 +171,8 @@ fun FavoritesScreen(navController: NavController, navigator: DestinationsNavigat
     }
 
     if (showSimPicker && pendingCallNumber != null) {
-        val telecomManager = remember { context.getSystemService(android.content.Context.TELECOM_SERVICE) as TelecomManager }
         SimPickerDialog(
+            number = pendingCallNumber,
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
                 pendingCallNumber?.let { makeCall(context, it, handle) }
@@ -426,7 +426,7 @@ fun FavoritesScreen(navController: NavController, navigator: DestinationsNavigat
                                     val phoneNumber = contact.phoneNumbers.firstOrNull()
                                     if (/*directCall &&*/ phoneNumber != null) {
                                         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                                            placeCallWithSimPreference(context, phoneNumber, simPref) {
+                                            placeCallWithSimPreference(context, phoneNumber, simPref, directTap = true) {
                                                 pendingCallNumber = phoneNumber
                                                 showSimPicker = true
                                             }

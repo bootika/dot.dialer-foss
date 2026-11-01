@@ -99,7 +99,7 @@ object AppTelemetry {
             if (!isConfigured || !queueReady) return
             SentryAndroid.init(appContext) { options ->
                 options.dsn = BuildConfig.SENTRY_DSN
-                options.environment = if (BuildConfig.DEBUG) "test" else "production"
+                options.environment = if (BuildConfig.TEST_DISTRIBUTION) "test" else "production"
                 options.release = buildReleaseName()
                 options.dist = BuildConfig.VERSION_CODE.toString()
                 options.cacheDirPath = java.io.File(appContext.noBackupFilesDir,
@@ -134,6 +134,13 @@ object AppTelemetry {
             queueReady = false
             Log.e("AppTelemetry", "Telemetry initialization failed; reporting stays disabled", error)
         }
+    }
+
+    internal fun operationalFailure(stage: String, code: String) {
+        if (mode != ReportingMode.Automatic || !isEnabled) return
+        try {
+            OperationalFailures.event(stage, code, android.os.SystemClock.elapsedRealtime())?.let { Sentry.captureEvent(it) }
+        } catch (error: Exception) { Log.w("AppTelemetry", "Handled report unavailable: ${error.javaClass.simpleName}") }
     }
 
     fun addBreadcrumb(event: DiagnosticEvent) {

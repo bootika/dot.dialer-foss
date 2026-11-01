@@ -124,7 +124,7 @@ class MainActivity : FragmentActivity() {
         const val EXTRA_RETURN_TO_CALL_ON_BACK = "return_to_call_on_back"
     }
 
-    private var defaultDialerRevision by mutableStateOf(0)
+    private var defaultDialerRevision by mutableIntStateOf(0)
     private var intentState by mutableStateOf<Intent?>(null)
     private var invitationLink by mutableStateOf<String?>(null)
     private var returnToCallOnBack by mutableStateOf(false)
@@ -613,9 +613,7 @@ class MainActivity : FragmentActivity() {
                                                     }
                                                 )
                                         ) {
-                                            CompositionLocalProvider(
-                                                LocalRillNeutralSettingsIcons provides useNeutralSettingsIcons
-                                            ) {
+                                            dev.goodwy.rphone.view.components.NavigationPresentation(useNeutralSettingsIcons) {
                                                 DestinationsNavHost(
                                                     navGraph = NavGraphs.root,
                                                     navController = navController,
@@ -649,9 +647,7 @@ class MainActivity : FragmentActivity() {
                                                         Modifier
                                                 )
                                         ) {
-                                            CompositionLocalProvider(
-                                                LocalRillNeutralSettingsIcons provides useNeutralSettingsIcons
-                                            ) {
+                                            dev.goodwy.rphone.view.components.NavigationPresentation(useNeutralSettingsIcons) {
                                                 DestinationsNavHost(
                                                     navGraph = NavGraphs.root,
                                                     navController = navController,

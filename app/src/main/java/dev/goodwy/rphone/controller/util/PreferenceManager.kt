@@ -177,15 +177,12 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         return getString("favorite_sim_$contactId", null)
     }
 
-    fun setFavoriteSimForNumber(number: String, simHandle: String?) {
-        val key = number.filter(Char::isDigit).takeLast(12)
-        if (key.isNotBlank()) setString("favorite_sim_number_$key", simHandle)
+    private val numberSims by lazy {
+        NumberSimPreferences(dataStore, { _prefsCache.value }, { contactNumberRegion(appContext, this) }, { _settingsChanged.value })
     }
-
-    fun getFavoriteSimForNumber(number: String): String? {
-        val key = number.filter(Char::isDigit).takeLast(12)
-        return if (key.isBlank()) null else getString("favorite_sim_number_$key", null)
-    }
+    internal fun refreshNumberSimRegion() = numberSims.refreshRegion()
+    fun setFavoriteSimForNumber(number: String, simHandle: String?) = numberSims.set(number, simHandle)
+    fun getFavoriteSimForNumber(number: String): String? = numberSims.get(number)
 
     fun setFavoriteEmail(contactId: String, email: String?) {
         setString("favorite_email_$contactId", email)

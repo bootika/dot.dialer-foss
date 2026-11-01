@@ -442,6 +442,7 @@ internal fun ContactListItem(
             subtitle = contactInfo,
             photoUri = contact.photoUri,
             phoneNumber = phoneNumber,
+            simContactId = contact.id,
             swipeEnabled = resolvedRowPreferences.swipeEnabled && !selectionMode,
             swipeRightAction = dev.goodwy.rphone.controller.util.contactSwipeAction(resolvedRowPreferences.swipeRightAction, phoneNumber != null),
             swipeLeftAction = dev.goodwy.rphone.controller.util.contactSwipeAction(resolvedRowPreferences.swipeLeftAction, phoneNumber != null),

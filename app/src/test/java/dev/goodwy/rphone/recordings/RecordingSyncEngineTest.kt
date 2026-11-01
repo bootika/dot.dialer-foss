@@ -139,10 +139,28 @@ class RecordingSyncEngineTest {
         master.value=true;RecordingSyncEngine.synchronize(repo)
         assertTrue(bridge.calls.contains(DictateProtocol.SUBMIT));assertTrue(bridge.refreshCalls>0)
     }
+    @Test fun failedReplyPreservesBoundedProviderCodeAndLegacyRecoveryOnlyPolls()=runBlocking {
+        val bridge=FixtureBridge();val repo=repo(AppPlan.PLUS,bridge);val asset=asset(repo)
+        val id=repo.catalog.enqueue(asset.id,"transcribe");repo.catalog.update(id,"failed",true,error="PROVIDER_ERROR")
+        bridge.replyState="failed";bridge.replyCode="empty_transcript"
+        assertFalse(RecordingSyncEngine.synchronize(repo))
+        assertEquals(listOf(DictateProtocol.STATUS),bridge.calls)
+        assertEquals("EMPTY_TRANSCRIPT",repo.catalog.job(id)?.error)
+        RecordingSyncEngine.synchronize(repo);assertEquals(1,bridge.calls.size)
+        assertTrue(repo.files.audio(asset).exists())
+    }
+    @Test fun legacyFailureRecoveryHonorsMasterOffAndRejectsUnboundedText()=runBlocking {
+        val bridge=FixtureBridge();val repo=repo(AppPlan.PLUS,bridge);val asset=asset(repo)
+        val id=repo.catalog.enqueue(asset.id,"transcribe");repo.catalog.update(id,"failed",true,error="PROVIDER_ERROR")
+        (repo.moduleState as MutableStateFlow<Boolean>).value=false
+        assertFalse(RecordingSyncEngine.synchronize(repo));assertTrue(bridge.calls.isEmpty())
+        assertEquals("UNKNOWN_PROVIDER_ERROR",RecordingProviderFailure.code("private provider body"))
+    }
     class FixtureBridge : DictateBridge {
         val state=MutableStateFlow(DictateCapabilities(true,"valid",true,true,true,268435456,14400,maxChunkBytes=8388608,maxChunkSeconds=300))
         override val capabilities=state.asStateFlow()
         val calls=mutableListOf<Int>();var wrongJob=false;var failure: String?=null
+        var replyState="queued"; var replyCode: String?=null
         var lastSubmit: Bundle?=null
         override fun installed()=true
         override fun setupIntent()=Intent()
@@ -157,7 +175,7 @@ class RecordingSyncEngineTest {
             failure?.let {throw DictateFailure(it)}
             return Bundle().apply {putInt("protocolVersion",1);putBoolean("ok",true)
                 putString("jobId",if(wrongJob)UUID.randomUUID().toString()else extras.getString("jobId"))
-                putString("state",if(what==DictateProtocol.CANCEL)"cancelled"else"queued");putInt("completedParts",0);putInt("totalParts",1)}
+                putString("state",if(what==DictateProtocol.CANCEL)"cancelled"else replyState);putString("errorCode",replyCode);putInt("completedParts",0);putInt("totalParts",1)}
         }
     }
 }

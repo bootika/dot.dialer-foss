@@ -165,6 +165,7 @@ class SettingsOrganizationRenderTest {
     @Test fun `all contracted options are unique and platform conditions stay explicit`() {
         val contractedIds = File("../config/quality/settings-option-ids.txt").readLines()
             .map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
+        assertFalse(settingsOptions.any { it.id == "H12" })
         assertEquals(contractedIds.size, contractedIds.toSet().size)
         assertEquals(contractedIds.toSet(), settingsOptions.map { it.id }.toSet())
         assertEquals(settingsOptions.size, settingsOptions.map { it.id }.toSet().size)

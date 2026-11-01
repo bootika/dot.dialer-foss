@@ -21,19 +21,20 @@ internal data class TelecomCallSnapshot(
     val conferenceableCalls: List<Call>,
 )
 
-private fun Call.snapshot() = TelecomCallSnapshot(
-    state = currentTelecomState(),
-    details = details,
-    children = children.toList(),
-    isConference = isTelecomConference(),
-    conferenceableCalls = conferenceableCalls.toList(),
+private fun Call?.snapshot() = TelecomCallSnapshot(
+    state = this?.currentTelecomState() ?: Call.STATE_CONNECTING,
+    details = this?.details,
+    children = this?.children?.toList().orEmpty(),
+    isConference = this?.isTelecomConference() == true,
+    conferenceableCalls = this?.conferenceableCalls?.toList().orEmpty(),
 )
 
 /** Call objects mutate in place: equal repository lists must not suppress participant updates. */
 @Composable
-internal fun rememberTelecomCallSnapshot(call: Call): State<TelecomCallSnapshot> {
+internal fun rememberTelecomCallSnapshot(call: Call?): State<TelecomCallSnapshot> {
     val snapshot = remember(call) { mutableStateOf(call.snapshot(), neverEqualPolicy()) }
     DisposableEffect(call) {
+        if (call == null) return@DisposableEffect onDispose { }
         val callback = object : Call.Callback() {
             private fun refresh() { snapshot.value = call.snapshot() }
             override fun onStateChanged(call: Call, state: Int) = refresh()
@@ -52,11 +53,12 @@ internal fun rememberTelecomCallSnapshot(call: Call): State<TelecomCallSnapshot>
 
 /** Parent/state changes can invalidate the secondary call without a new allCalls list. */
 @Composable
-internal fun rememberOtherLogicalTelecomCall(calls: List<Call>, current: Call): State<Call?> {
+internal fun rememberOtherLogicalTelecomCall(calls: List<Call>, current: Call?): State<Call?> {
     val selected = remember(calls, current) {
-        mutableStateOf(selectOtherLogicalTelecomCall(calls, current), neverEqualPolicy())
+        mutableStateOf(current?.let { selectOtherLogicalTelecomCall(calls, it) }, neverEqualPolicy())
     }
     DisposableEffect(calls, current) {
+        if (current == null) return@DisposableEffect onDispose { }
         val observed = (calls + current).distinct()
         val callback = object : Call.Callback() {
             private fun refresh() { selected.value = selectOtherLogicalTelecomCall(calls, current) }

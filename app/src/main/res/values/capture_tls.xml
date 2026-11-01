@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">The local recording service changed its identity. Tap Pair this phone again, then activate recording access.</string>
+</resources>

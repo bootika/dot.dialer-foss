@@ -322,7 +322,7 @@ fun IPhoneFavoritesRow(
                             }
                             val displayName = getDisplayName(contact, displayOrder)
                             Text(
-                                text = displayName, //contact.displayName,
+                                text = dev.goodwy.rphone.view.components.phoneDisplayText(displayName), //contact.displayName,
                                 modifier = Modifier
                                     .heightIn(min = 30.dp)
                                     .padding(horizontal = 1.dp, vertical = 3.dp),

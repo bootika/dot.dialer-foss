@@ -3,6 +3,9 @@ package dev.goodwy.rphone.controller
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Matrix
+import android.graphics.Shader
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -80,13 +83,14 @@ internal fun notificationCallerIdentity(
     }
     val initial = if (conference) "∴" else if (!allowed || name == number) "?" else name.take(1).uppercase()
     val avatar = notificationAvatar(if (allowed) contactPhoto else null, initial, name)
-    val person = Person.Builder().setName(name).setIcon(IconCompat.createWithBitmap(avatar)).apply {
+    val presentationName = dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(name, dev.goodwy.rphone.controller.util.contactNumberRegion(context))
+    val person = Person.Builder().setName(presentationName).setIcon(IconCompat.createWithBitmap(avatar)).apply {
         if (number.isNotBlank()) {
             setKey(callConversationKey(number))
             setUri("tel:$number")
         }
     }.build()
-    return CallNotificationIdentity(name, number, avatar, person)
+    return CallNotificationIdentity(presentationName, number, avatar, person)
 }
 
 internal fun callConversationKey(number: String): String {
@@ -102,11 +106,18 @@ internal fun notificationAvatar(photo: Bitmap?, label: String, colorSeed: String
     val canvas = Canvas(bitmap)
     val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     if (photo != null && !photo.isRecycled && photo.width > 0 && photo.height > 0) {
-        canvas.drawColor(android.graphics.Color.WHITE)
-        val side = minOf(photo.width, photo.height)
-        val left = (photo.width - side) / 2
-        val top = (photo.height - side) / 2
-        canvas.drawBitmap(photo, android.graphics.Rect(left, top, left + side, top + side), android.graphics.Rect(0, 0, size, size), paint)
+        // OEM call templates may display the bitmap without applying their own avatar mask.
+        val radius = size / 2f
+        paint.color = android.graphics.Color.WHITE
+        canvas.drawCircle(radius, radius, radius, paint)
+        val scale = maxOf(size.toFloat() / photo.width, size.toFloat() / photo.height)
+        paint.shader = BitmapShader(photo, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP).apply {
+            setLocalMatrix(Matrix().apply {
+                setScale(scale, scale)
+                postTranslate((size - photo.width * scale) / 2f, (size - photo.height * scale) / 2f)
+            })
+        }
+        canvas.drawCircle(radius, radius, radius, paint)
     } else {
         val (background, foreground) = modernPastelAvatarColor(colorSeed)
         paint.color = background.toArgb()

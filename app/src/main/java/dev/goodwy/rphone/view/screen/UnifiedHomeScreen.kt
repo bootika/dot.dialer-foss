@@ -417,22 +417,21 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
     }
     val visibleContacts = sections.contacts
     val avatarColorPlan = remember(recentRows, visibleContacts, displayOrder) { buildHomeAvatarColorPlan(recentRows.map { (it.contact?.displayName ?: it.title) to it.call.number }, visibleContacts.map { (it.payload as DotDialerSearchPayload.ContactResult).contact.displayName }) }
-    fun call(number: String) {
+    fun call(number: String, directTap: Boolean = false) {
         val normalized = number.filter(Char::isDigit).takeLast(10)
         val contactId = allContacts.firstOrNull { contact ->
             contact.phoneNumbers.any { it.filter(Char::isDigit).takeLast(10) == normalized }
         }?.id
-        val contactAccount = contactId?.let(prefs::getFavoriteSim)
-            ?: prefs.getFavoriteSimForNumber(number)
-        val appAccount = prefs.getString(PreferenceManager.KEY_DEFAULT_CALLING_ACCOUNT, null)
-        val shouldAsk = getCallingAccounts(context).size > 1 &&
-            contactAccount == null && appAccount == null && simPreference == 0
+        val accounts = getCallingAccounts(context)
+        val selectedAccount = dev.goodwy.rphone.controller.util.preferredOutgoingAccount(
+            context, prefs, number, contactId, accounts)
+        val shouldAsk = accounts.size > 1 && selectedAccount == null
         if (shouldAsk) {
             pendingNumber = number
             pendingContactId = contactId
             showSimPicker = true
         } else {
-            makeCall(context, number, contactId = contactId)
+            makeCall(context, number, selectedAccount, contactId, directTap = directTap)
         }
         if (!shouldAsk && clearSearchAfterCall) {
             query = ""
@@ -443,7 +442,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
     fun runContactNumberAction(action: ContactNumberMenuAction, number: String, name: String? = null) {
         when (action) {
             ContactNumberMenuAction.WhatsApp -> performHomeAction(
-                PreferenceManager.SWIPE_ACTION_WHATSAPP, context, number, onCall = ::call, onContact = {})
+                PreferenceManager.SWIPE_ACTION_WHATSAPP, context, number, onCall = { call(it) }, onContact = {})
             ContactNumberMenuAction.Call -> call(number)
             ContactNumberMenuAction.Message -> context.startActivity(
                 Intent(Intent.ACTION_VIEW, "sms:$number".toUri())
@@ -543,6 +542,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
 
     if (showSimPicker && pendingNumber != null) {
         SimPickerDialog(
+            number = pendingNumber,
             onDismissRequest = {
                 showSimPicker = false
                 pendingNumber = null
@@ -778,7 +778,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                 HomeMenuAction(
                                     label = stringResource(R.string.favorite_call_number),
                                     icon = Icons.Default.CheckCircle,
-                                    subtitle = stringResource(R.string.favorite_call_number_value, number.forceLtr()),
+                                    subtitle = stringResource(R.string.favorite_call_number_value, dev.goodwy.rphone.controller.util.PhoneNumberDisplay.format(number, dev.goodwy.rphone.view.components.phoneDisplayRegion()).forceLtr()),
                                 ) {
                                     contextTarget = null
                                     favoriteNumberTarget = contact
@@ -985,7 +985,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             onSaveOrder = prefs::setFavoritesOrder,
                             onClick = { contact ->
                                 statistics.record(io.github.bootika.dotdialer.observability.ProductStatistics.Event.Favorite)
-                                favoriteCallNumber(contact, prefs.getFavoriteNumber(contact.id))?.let(::call)
+                                favoriteCallNumber(contact, prefs.getFavoriteNumber(contact.id))?.let { call(it, directTap = true) }
                                     ?: navigator.navigate(
                                         ContactDetailsScreenDestination(contactId = contact.id),
                                     )
@@ -1035,6 +1035,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             subtitle = callEntry.number.takeUnless { it == row.title },
                             photoUri = callEntry.photoUri,
                             phoneNumber = callEntry.number,
+                            simContactId = contact?.id,
                             avatarColorIndex = avatarColorPlan.recentIndices[index],
                             avatarColorSeed = row.contact?.displayName ?: row.title,
                             callVisual = row.visual,
@@ -1052,7 +1053,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                     context = context,
                                     number = callEntry.number,
                                     onDeleteEntry = { callLogViewModel.deleteCallLogsByIds(listOf(callEntry.id)) },
-                                    onCall = ::call,
+                                    onCall = { call(it) },
                                     onContact = {
                                         navigator.navigate(ContactDetailsScreenDestination(
                                             contactId = contact?.id ?: "null",
@@ -1084,7 +1085,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                     action = recentTapAction,
                                     context = context,
                                     number = callEntry.number,
-                                    onCall = ::call,
+                                    onCall = { call(it, directTap = true) },
                                     onContact = {
                                         navigator.navigate(ContactDetailsScreenDestination(
                                             contactId = contact?.id ?: "null",
@@ -1148,6 +1149,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             subtitle = getDisplayContactInfo(contact),
                             photoUri = canonicalContactPhotoUri(contact, contactsByPhone),
                             phoneNumber = phoneNumber,
+                            simContactId = contact.id,
                             avatarColorIndex = avatarColorPlan.contactIndices[index],
                             avatarColorSeed = contact.displayName,
                             swipeEnabled = swipeEnabled && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
@@ -1164,7 +1166,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                         action = action,
                                         context = context,
                                         number = number,
-                                        onCall = ::call,
+                                        onCall = { call(it) },
                                         onContact = {
                                             navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
                                         },
@@ -1188,7 +1190,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                                     action = recentTapAction,
                                     context = context,
                                     number = phoneNumber,
-                                    onCall = ::call,
+                                    onCall = { call(it, directTap = true) },
                                     onContact = {
                                         navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
                                     },
@@ -1379,6 +1381,7 @@ internal fun HomeResultRow(
     subtitle: String?,
     photoUri: String?,
     phoneNumber: String?,
+    simContactId: String? = null,
     avatarColorIndex: Int? = null,
     avatarColorSeed: String? = null,
     callVisual: dev.goodwy.rphone.view.components.CallLogVisual? = null,
@@ -1478,6 +1481,7 @@ internal fun HomeResultRow(
                         subtitle = subtitle,
                         callVisual = callVisual,
                         callTime = callTime,
+                        simNumber = phoneNumber, simContactId = simContactId,
                         contactNameSize = contactNameSize,
                         metadataColor = rowTextColor,
                         expandedDetails = expandedListDetails,

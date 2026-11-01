@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sim_scope_once">Cet appel uniquement</string>
+    <string name="sim_scope_number">Mémoriser pour ce numéro</string>
+    <string name="sim_scope_all">Utiliser pour tous les numéros</string>
+    <string name="outgoing_sim_ask">Toujours demander</string>
+</resources>

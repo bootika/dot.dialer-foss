@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_tls_identity_changed">Die Identität des lokalen Aufnahmedienstes hat sich geändert. Tippe auf Dieses Telefon erneut koppeln und aktiviere dann den Aufnahmezugriff.</string>
+</resources>

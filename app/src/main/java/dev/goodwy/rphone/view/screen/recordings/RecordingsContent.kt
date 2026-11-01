@@ -41,6 +41,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
     val plans=rememberPlanAccessManager()
     val rights by plans.state.collectAsState()
     val capabilities by repo.bridge.capabilities.collectAsState()
+    val displayLocale=androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val revision by repo.revision.collectAsState()
     val preferences by repo.preferencesRevision.collectAsState()
     val scope=rememberCoroutineScope()
@@ -70,7 +71,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
     var outputPicker by remember {mutableStateOf(false)}
     val moduleEnabled by repo.moduleState.collectAsState()
     val injectedRepository=LocalRecordingsRepository.current
-    LaunchedEffect(repo,moduleEnabled) {if(injectedRepository==null && dev.goodwy.rphone.BuildConfig.DEBUG)AdbCallCapture.get(context).recover()}
+    LaunchedEffect(repo,moduleEnabled) {if(injectedRepository==null && dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION)AdbCallCapture.get(context).recover()}
     val access=remember(rights,capabilities) {RecordingPolicy.processing(plans.effective,capabilities)}
     val complete=remember(rights) {plans.allows(PlanFeature.RECORDINGS_AUTOMATIC)}
     fun run(action: suspend () -> Unit) {scope.launch {busy=true;error=false;try {action()} catch(e: CancellationException) {throw e} catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure);errorText=if(failure is DictateFailure && failure.code=="UNSUPPORTED_AUDIO")R.string.recordings_audio_format else R.string.recordings_error;error=true} finally {busy=false}}}
@@ -88,7 +89,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
     val import=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {uri ->
         if(uri!=null)run {val asset=repo.import(uri,callerTitle,callKey,callerNumber);selected=asset.id}
     }
-    val check=RecordingsBridgeLifecycle(repo,poll=true)
+    val check=recordingsBridgeLifecycle(repo,poll=true)
     LaunchedEffect(revision,callKey) {
         try {
             val data=withContext(Dispatchers.IO) {Triple(repo.catalog.recordings(),repo.catalog.jobs(),repo.catalog.textCounts())}
@@ -118,10 +119,10 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
         items(if(settingsOnly)emptyList() else groups,key={it.key}) {group ->
             RillExpressiveCard {
                 Column(Modifier.padding(18.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-                    Text(group.title,style=MaterialTheme.typography.titleLarge)
+                    Text(dev.goodwy.rphone.view.components.phoneDisplayText(group.title),style=MaterialTheme.typography.titleLarge)
                     for(number in group.numbers) {
                         if(number.number.isEmpty())Text(stringResource(R.string.recordings_no_number),style=MaterialTheme.typography.bodyMedium)
-                        else if(number.number!=group.title)Text(number.number,style=MaterialTheme.typography.titleMedium)
+                        else if(number.number!=group.title)Text(dev.goodwy.rphone.view.components.phoneDisplayText(number.number),style=MaterialTheme.typography.titleMedium)
                         for(recording in number.assets) {
                             Card(onClick={selected=recording.id},modifier=Modifier.fillMaxWidth().testTag("recording-${recording.id}")) {
                                 Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
@@ -146,7 +147,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
             Column(verticalArrangement=Arrangement.spacedBy(16.dp)) {
                 if(!moduleEnabled)Text(stringResource(R.string.recordings_module_off),style=MaterialTheme.typography.bodyLarge)
                 else {
-                    if(repo.integrationEnabled() && dev.goodwy.rphone.BuildConfig.DEBUG && injectedRepository==null)IntegratedCaptureSettings()
+                    if(repo.integrationEnabled() && dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION && injectedRepository==null)IntegratedCaptureSettings()
                     if(repo.integrationEnabled())DotSettingsCard {
                         Text(stringResource(R.string.rec_ui_processing),Modifier.padding(16.dp),style=MaterialTheme.typography.titleMedium)
                         DotSettingsNavigationRow(stringResource(if(capabilities.connected)R.string.rec_ui_connection_ready else R.string.recordings_connect),
@@ -161,7 +162,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
                         DotSettingsDivider()
                         val output=remember(preferences) {repo.outputLanguage()}
                         DotSettingsNavigationRow(stringResource(R.string.capture_output_language),
-                            supporting=if(output.isEmpty())stringResource(R.string.capture_original_language)else java.util.Locale.forLanguageTag(output).getDisplayName(java.util.Locale.getDefault()),
+                            supporting=if(output.isEmpty())stringResource(R.string.capture_original_language)else java.util.Locale.forLanguageTag(output).getDisplayName(displayLocale),
                             contentActive=access==RecordingAccess.READY,onClick={if(access==RecordingAccess.READY)outputPicker=true else configure()})
                         Text(stringResource(R.string.rec_ui_output_hint),Modifier.padding(horizontal=16.dp).padding(bottom=12.dp),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
                         DotSettingsDivider()
@@ -174,7 +175,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
                         DotSettingsSwitchRow(stringResource(R.string.recordings_auto_translate),supporting=stringResource(R.string.rec_ui_translation_hint),
                             checked=translation.isNotEmpty(),onCheckedChange={value ->if(!complete)plans.requestUpgrade(PlanFeature.RECORDINGS_AUTOMATIC)else if(value && RecordingPolicy.processing(plans.effective,capabilities,true)!=RecordingAccess.READY)configure()else if(value)languagePicker=true else run {repo.setTranslation("")}},contentActive=complete && RecordingPolicy.processing(plans.effective,capabilities,true)==RecordingAccess.READY)
                         if(translation.isNotEmpty())DotSettingsNavigationRow(stringResource(R.string.rec_ui_translation_title),
-                            supporting=java.util.Locale.forLanguageTag(translation).getDisplayName(java.util.Locale.getDefault()),contentActive=complete && access==RecordingAccess.READY,
+                            supporting=java.util.Locale.forLanguageTag(translation).getDisplayName(displayLocale),contentActive=complete && access==RecordingAccess.READY,
                             onClick={if(!complete)plans.requestUpgrade(PlanFeature.RECORDINGS_AUTOMATIC)else if(RecordingPolicy.processing(plans.effective,capabilities,true)!=RecordingAccess.READY)configure()else languagePicker=true})
                     }
                     if(repo.integrationEnabled())DotSettingsCard {

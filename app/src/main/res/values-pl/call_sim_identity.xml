@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="call_screen_always_show_sim">Zawsze pokazuj kartę SIM</string>
+    <string name="call_screen_always_show_sim_summary">Pokazuj nazwę karty SIM także wtedy, gdy aktywna jest tylko jedna karta SIM.</string>
+</resources>

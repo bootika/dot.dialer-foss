@@ -159,7 +159,6 @@
     <string name="show_first_letter_in_avatar">Avatarda İlk Harfi Göster</string>
     <string name="show_first_letter_in_avatar_subtitle">Resim eksik olduğunda harfi gösterir</string>
     <string name="show_picture_in_avatar">Avatarda Resmi Göster</string>
-    <string name="show_picture_in_avatar_subtitle">Mevcutsa kişi fotoğrafını gösterir</string>
     <string name="call_settings">Aramalar</string>
     <string name="default_sim">Varsayılan SIM</string>
     <string name="ask_first">Önce Sor</string>
@@ -173,7 +172,6 @@
     <string name="floating_ongoing_call">Devam Eden Arama Baloncuğu</string>
     <string name="floating_ongoing_call_subtitle">Aramalar sırasında sürüklenebilir bir baloncuk göster. \'Diğer uygulamaların üzerinde göster\' izni gerektirir</string>
     <string name="fullscreen_calls">Tam ekran aramalar</string>
-    <string name="fullscreen_calls_subtitle">Gelen aramalar her zaman tam ekran modunda gösterilir</string>
     <string name="quick_response">Hızlı yanıt</string>
     <string name="quick_responses">Hızlı yanıtlar</string>
     <string name="quick_responses_subtitle">Gelen aramalar için hazır SMS reddetme yanıtlarını yönetin</string>
@@ -600,7 +598,7 @@
     <string name="sentry_connected">Bu derlemede Sentry çökme ve ANR raporlaması etkin.</string>
     <string name="sentry_not_configured">Sentry bu derlemede kullanılamıyor.</string>
     <string name="send_sentry_test">Sentry test olayı gönder</string>
-    <string name="sentry_test_sent">Sentry test olayı gönderildi: %1$s</string>
+    <string name="sentry_test_sent">Test yerel kuyruğa alındı; sunucu alımı doğrulanmadı. Kimlik: %1$s</string>
     <string name="sentry_test_failed">Sentry bu derlemede kullanılamıyor.</string>
     <string name="show_recents_favorites">Favoriler bölümünü göster</string>
     <string name="swipe_right_action">Sağa kaydır</string>

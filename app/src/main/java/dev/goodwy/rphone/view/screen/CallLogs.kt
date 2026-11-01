@@ -148,6 +148,7 @@ fun CallLogFullScreen(
 
     if (showSimPicker && pendingNumber != null) {
         SimPickerDialog(
+            number = pendingNumber,
             onDismissRequest = { showSimPicker = false },
             onSimSelected = { handle ->
                 pendingNumber?.let { makeCall(context, it, handle) }
@@ -251,7 +252,7 @@ fun CallLogFullScreen(
                         Text(stringResource(R.string.no_call_history_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 } else {
-                    val showSimLabel = hasDualSim(context)
+                    val showSimLabel = dev.goodwy.rphone.view.components.rememberActiveSimCount() >= 2
                     val groupedLogs = remember(finalFilteredLogs) {
                         finalFilteredLogs.groupBy { context.formatDateHeader(it.date) }
                     }

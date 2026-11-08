@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Hangisini tercih edersin?</string>
+    <string name="setup_call_style_subtitle">Dokun veya kaydır. Seçim senin.</string>
+    <string name="setup_call_style_tap">Aramak için dokunurum</string>
+    <string name="setup_call_style_swipe">Aramak için kaydırırım</string>
+    <string name="setup_call_style_tap_body">Tek dokunuş. Doğrudan arama.</string>
+    <string name="setup_call_style_swipe_body">Ayrıntılar için dokun. Aramak için kaydır.</string>
+    <string name="setup_call_style_selected">Seçildi</string>
+    <string name="setup_call_style_later">Fikrini mi değiştirdin? Ayarlar’dan istediğin zaman değiştir.</string>
+    <string name="setup_call_style_save_failed">Seçimin kaydedilemedi. Tekrar dene.</string>
+    <string name="setup_call_style_tap_gesture">Dokun</string>
+    <string name="setup_call_style_right_gesture">Sağa kaydır</string>
+    <string name="setup_call_style_left_gesture">Sola kaydır</string>
+    <string name="setup_call_style_continue">Devam et</string>
+</resources>

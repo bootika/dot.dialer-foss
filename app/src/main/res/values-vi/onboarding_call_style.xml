@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Bạn thích cách nào?</string>
+    <string name="setup_call_style_subtitle">Chạm hay vuốt. Bạn chọn.</string>
+    <string name="setup_call_style_tap">Chạm để gọi</string>
+    <string name="setup_call_style_swipe">Vuốt để gọi</string>
+    <string name="setup_call_style_tap_body">Một chạm nhanh. Gọi ngay.</string>
+    <string name="setup_call_style_swipe_body">Chạm để xem chi tiết. Vuốt để gọi.</string>
+    <string name="setup_call_style_selected">Đã chọn</string>
+    <string name="setup_call_style_later">Đổi ý? Bạn có thể đổi trong Cài đặt bất cứ lúc nào.</string>
+    <string name="setup_call_style_save_failed">Không thể lưu lựa chọn. Vui lòng thử lại.</string>
+    <string name="setup_call_style_tap_gesture">Chạm</string>
+    <string name="setup_call_style_right_gesture">Vuốt sang phải</string>
+    <string name="setup_call_style_left_gesture">Vuốt sang trái</string>
+    <string name="setup_call_style_continue">Tiếp tục</string>
+</resources>

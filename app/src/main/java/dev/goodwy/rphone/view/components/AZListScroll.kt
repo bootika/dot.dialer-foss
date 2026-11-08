@@ -423,7 +423,11 @@ internal fun ContactListItem(
     val onClick: () -> Unit = {
         if (selectionMode && onSelectToggle != null) {
             onSelectToggle()
-        } else {
+        } else if (phoneNumber != null) {
+            dev.goodwy.rphone.view.screen.performHomeAction(resolvedRowPreferences.tapAction, context, phoneNumber,
+                onCall = { makeCall(context, it, contactId = contact.id, directTap = true) },
+                onContact = { navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id)) })
+        } else if (resolvedRowPreferences.tapAction != PreferenceManager.SWIPE_ACTION_NONE) {
             navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
         }
     }
@@ -463,7 +467,10 @@ internal fun ContactListItem(
                     PreferenceManager.SWIPE_ACTION_COPY_NUMBER -> context.copyToClipboard(number)
                 }
             },
-            onAvatarClick = onClick,
+            onAvatarClick = {
+                if (selectionMode && onSelectToggle != null) onSelectToggle()
+                else navigator.navigate(ContactDetailsScreenDestination(contactId = contact.id))
+            },
             onClick = onClick,
             onLongClick = { showMenu = true },
             selected = isSelected,

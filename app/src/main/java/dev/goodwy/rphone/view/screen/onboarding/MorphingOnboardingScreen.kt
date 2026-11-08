@@ -87,21 +87,33 @@ data class MorphingPage(
 
 @Composable
 fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.license.AppPlan) -> Unit = {}, onFinished: () -> Unit) {
-    var essentialFinished by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    var setupStage by androidx.compose.runtime.saveable.rememberSaveable { mutableIntStateOf(0) }
     val prefs = koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
+    var swipeToCall by androidx.compose.runtime.saveable.rememberSaveable {
+        androidx.compose.runtime.mutableStateOf(prefs.getInt(dev.goodwy.rphone.controller.util.PreferenceManager.KEY_RECENT_TAP_ACTION, -1) == dev.goodwy.rphone.controller.util.PreferenceManager.SWIPE_ACTION_CONTACT)
+    }
+    if (setupStage == 1) {
+        CallStyleSetup(prefs, swipeToCall, { swipeToCall = it }, onBack = { setupStage = 0 },
+            onFinished = { setupStage = 2 })
+        return
+    }
     val plans = dev.goodwy.rphone.view.screen.settings.rememberPlanAccessManager()
     val planState by plans.state.collectAsState()
     val revision by prefs.settingsChanged.collectAsState()
     val acknowledged = remember(revision) {io.github.bootika.dotdialer.core.license.AppPlan.entries.getOrElse(prefs.getInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,0)) {io.github.bootika.dotdialer.core.license.AppPlan.FREE}}
     val pending = remember(planState,acknowledged) {io.github.bootika.dotdialer.core.license.PlanGuidePolicy.pending(plans.effective,acknowledged)}
-    if(essentialFinished && pending.isNotEmpty()) {
+    if (setupStage == 2 && pending.isEmpty()) {
+        androidx.compose.runtime.LaunchedEffect(Unit) { onFinished() }
+        return
+    }
+    if(setupStage == 2 && pending.isNotEmpty()) {
         dev.goodwy.rphone.view.screen.settings.PlanGuideSequenceContent(pending, onFinished={
             prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,maxOf(acknowledged,pending.last()).ordinal)
             onFinished()
         },onMore={ tier ->
             prefs.setInt(dev.goodwy.rphone.view.screen.settings.PLAN_GUIDE_ACK,maxOf(acknowledged,tier).ordinal)
             onPlanSettings(tier); onFinished()
-        },onBackAtStart={essentialFinished=false}, welcomePlan=plans.effective)
+        },onBackAtStart={setupStage=1}, welcomePlan=plans.effective)
         return
     }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -185,8 +197,7 @@ fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.l
                         color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(24.dp))
                 }
-                GuideNavigationControls(isLast = pending.isEmpty(),
-                    onNext = {if(pending.isEmpty()) onFinished() else essentialFinished=true})
+                GuideNavigationControls(isLast = false, onNext = { setupStage = 1 })
             }
         }
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Co wolisz?</string>
+    <string name="setup_call_style_subtitle">Dotknij lub przesuń. Ty wybierasz.</string>
+    <string name="setup_call_style_tap">Dotykam, żeby zadzwonić</string>
+    <string name="setup_call_style_swipe">Przesuwam, żeby zadzwonić</string>
+    <string name="setup_call_style_tap_body">Jedno dotknięcie. Od razu dzwonisz.</string>
+    <string name="setup_call_style_swipe_body">Dotknij, by zobaczyć szczegóły. Przesuń, by zadzwonić.</string>
+    <string name="setup_call_style_selected">Wybrano</string>
+    <string name="setup_call_style_later">Zmiana zdania? Możesz to zmienić w Ustawieniach.</string>
+    <string name="setup_call_style_save_failed">Nie udało się zapisać wyboru. Spróbuj ponownie.</string>
+    <string name="setup_call_style_tap_gesture">Dotknięcie</string>
+    <string name="setup_call_style_right_gesture">Przesuń w prawo</string>
+    <string name="setup_call_style_left_gesture">Przesuń w lewo</string>
+    <string name="setup_call_style_continue">Dalej</string>
+</resources>

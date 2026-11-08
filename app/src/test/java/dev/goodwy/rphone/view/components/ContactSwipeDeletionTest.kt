@@ -33,6 +33,7 @@ import org.robolectric.annotation.GraphicsMode
 class ContactSwipeDeletionTest {
     @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
     private val deleted = mutableListOf<String>()
+    private var navigated = 0
     @After fun cleanup() { stopKoin() }
 
     @Test fun `contact swipe asks once Cancel is inert and Confirm deletes only that contact`() {
@@ -94,6 +95,26 @@ class ContactSwipeDeletionTest {
         assertEquals(emptyList<String>(),deleted)
     }
 
+    @Test fun directoryTapHonorsExplicitCopyAction() {
+        render(hasNumber = true, tapAction = PreferenceManager.SWIPE_ACTION_COPY_NUMBER)
+        rule.onNodeWithText("Test Alexandru Butica").performClick()
+        val clipboard = RuntimeEnvironment.getApplication().getSystemService(android.content.ClipboardManager::class.java)
+        assertEquals("+40722000000", clipboard.primaryClip!!.getItemAt(0).text.toString())
+        assertEquals(0, navigated)
+    }
+
+    @Test fun directoryContactModeOpensDetails() {
+        render(hasNumber = true, tapAction = PreferenceManager.SWIPE_ACTION_CONTACT)
+        rule.onNodeWithText("Test Alexandru Butica").performClick()
+        assertEquals(1, navigated)
+    }
+
+    @Test fun numberlessContactInCallModeStillOpensDetails() {
+        render(hasNumber = false, tapAction = PreferenceManager.SWIPE_ACTION_CALL)
+        rule.onNodeWithText("Test Alexandru Butica").performClick()
+        assertEquals(1, navigated)
+    }
+
     private fun captureConfirmation() = rule.runOnIdle {
         val view = rule.activity.window.decorView
         val bitmap = android.graphics.Bitmap.createBitmap(view.width, view.height, android.graphics.Bitmap.Config.ARGB_8888)
@@ -108,7 +129,7 @@ class ContactSwipeDeletionTest {
         file.parentFile!!.mkdirs(); file.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
         bitmap.recycle()
     }
-    private fun render(hasNumber: Boolean, selectionMode: Boolean = false, quickGesture: Boolean = false, multiple: Boolean = false, quickTap: Boolean = false) {
+    private fun render(hasNumber: Boolean, selectionMode: Boolean = false, quickGesture: Boolean = false, multiple: Boolean = false, quickTap: Boolean = false, tapAction: Int = PreferenceManager.SWIPE_ACTION_CONTACT) {
         val context = RuntimeEnvironment.getApplication()
         val prefs = PreferenceManager(context)
         val contact = Contact("contact-42", givenName = "Test Alexandru Butica",
@@ -124,13 +145,14 @@ class ContactSwipeDeletionTest {
         startKoin { modules(module { single { prefs }; viewModel { ContactsViewModel(context, repo, prefs) } }) }
         val navigator = Proxy.newProxyInstance(DestinationsNavigator::class.java.classLoader,
             arrayOf(DestinationsNavigator::class.java)) { _, method, _ ->
+                if (method.name == "navigate") navigated++
                 if (method.returnType == Boolean::class.javaPrimitiveType) true else null
             } as DestinationsNavigator
         rule.setContent {
             DotDialerTheme(systemDark = false) {
                 Box(Modifier.fillMaxWidth().testTag("contact-row")) {
                     ContactListItem(contact, navigator, selectionMode = selectionMode, displayOrder = 0,
-                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48, quickActionsEnabled = quickGesture, quickActionsOnTap = quickTap))
+                        rowPreferences = ContactListRowPreferences(true, 8, 8, false, "light", 0.5f, 18, 48, quickActionsEnabled = quickGesture, quickActionsOnTap = quickTap, tapAction = tapAction))
                 }
             }
         }

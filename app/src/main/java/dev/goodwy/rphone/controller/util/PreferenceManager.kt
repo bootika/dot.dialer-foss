@@ -128,6 +128,9 @@ class PreferenceManager(context: Context, private val authenticationSecrets: Aut
         PreferenceWriteBarrier.enqueue { dataStore.edit { it[floatPreferencesKey(key)] = value } }
     }
 
+    internal suspend fun saveInitialCallStyle(swipe: Boolean) =
+        saveInitialCallStylePreferences(dataStore, swipe).also { _prefsCache.value = it; _settingsChanged.value += 1 }
+
     /** Returns a map of all preferences in the DataStore for backup purposes. */
     fun getAllPreferences(): Map<String, Any> {
         return _prefsCache.value.asMap().mapKeys { it.key.name }.mapValues { it.value }

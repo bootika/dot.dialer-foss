@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">What is your preference?</string>
+    <string name="setup_call_style_subtitle">A tap or a slide. Your call.</string>
+    <string name="setup_call_style_tap">I tap to call</string>
+    <string name="setup_call_style_swipe">I slide to call</string>
+    <string name="setup_call_style_tap_body">One quick gesture. Straight to the call.</string>
+    <string name="setup_call_style_swipe_body">Tap for details. Slide to call.</string>
+    <string name="setup_call_style_selected">Selected</string>
+    <string name="setup_call_style_later">Changed your mind? Switch anytime in Settings.</string>
+    <string name="setup_call_style_save_failed">Could not save your choice. Try again.</string>
+    <string name="setup_call_style_whatsapp" translatable="false">WhatsApp</string>
+    <string name="setup_call_style_tap_gesture">Tap</string>
+    <string name="setup_call_style_right_gesture">Slide right</string>
+    <string name="setup_call_style_left_gesture">Slide left</string>
+    <string name="setup_call_style_continue">Continue</string>
+</resources>

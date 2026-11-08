@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -53,8 +54,9 @@ class EssentialOnboardingDeviceTest {
             rule.runOnIdle { dark = mode; font = scale }
             rule.mainClock.advanceTimeBy(1200)
             rule.onNodeWithText(context.getString(R.string.onboarding_essential_title)).performScrollTo()
-            rule.onNodeWithText(context.getString(R.string.plan_guide_begin))
-                .assertIsDisplayed().performClick()
+            rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
+            rule.onNodeWithTag("call-style-setup").assertExists()
+            rule.onNodeWithTag("plan-guide-back").performClick()
             rule.onNodeWithText(context.getString(R.string.onboarding_essential_title)).assertIsDisplayed()
             rule.waitForIdle()
             val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
@@ -68,13 +70,13 @@ class EssentialOnboardingDeviceTest {
                 scroller.performTouchInput { swipeUp() }
                 rule.waitForIdle()
                 assertTrue("Gesture must move the body", range.value() > 0f)
-                rule.onNodeWithText(context.getString(R.string.plan_guide_begin)).assertIsDisplayed()
+                rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
                 val scrolled = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
                 File(directory, "intro-${if (mode) "dark" else "light"}-150-scrolled.png")
                     .outputStream().use { scrolled.compress(Bitmap.CompressFormat.PNG, 100, it) }
                 scrolled.recycle()
             }
         }
-        assertEquals(4, completed)
+        assertEquals(0, completed)
     }
 }

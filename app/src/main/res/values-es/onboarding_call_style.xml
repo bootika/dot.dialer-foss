@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">¿Qué prefieres?</string>
+    <string name="setup_call_style_subtitle">Tocar o deslizar. Tú eliges.</string>
+    <string name="setup_call_style_tap">Tocar para llamar</string>
+    <string name="setup_call_style_swipe">Deslizar para llamar</string>
+    <string name="setup_call_style_tap_body">Un toque rápido. Directo a la llamada.</string>
+    <string name="setup_call_style_swipe_body">Toca para ver detalles. Desliza para llamar.</string>
+    <string name="setup_call_style_selected">Seleccionado</string>
+    <string name="setup_call_style_later">¿Cambias de idea? Puedes cambiarlo en Ajustes.</string>
+    <string name="setup_call_style_save_failed">No se pudo guardar tu elección. Inténtalo de nuevo.</string>
+    <string name="setup_call_style_tap_gesture">Tocar</string>
+    <string name="setup_call_style_right_gesture">Deslizar a la derecha</string>
+    <string name="setup_call_style_left_gesture">Deslizar a la izquierda</string>
+    <string name="setup_call_style_continue">Continuar</string>
+</resources>

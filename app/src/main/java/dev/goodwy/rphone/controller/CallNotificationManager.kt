@@ -13,6 +13,8 @@ import android.os.Build
 import android.telecom.Call
 import android.telecom.CallAudioState
 import android.util.Log
+import androidx.compose.ui.graphics.toArgb
+import dev.goodwy.rphone.view.theme.CallActionColors
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -184,11 +186,12 @@ class CallNotificationManager(
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setOnlyAlertOnce(!shouldAlertIncoming)
                 .setStyle(
-                    if (isRinging) {
+                    (if (isRinging) {
                         Notification.CallStyle.forIncomingCall(person, declinePendingIntent, answerPendingIntent)
                     } else {
                         Notification.CallStyle.forOngoingCall(person, declinePendingIntent)
-                    }
+                    }).setAnswerButtonColorHint(CallActionColors.answerCommitted.toArgb())
+                        .setDeclineButtonColorHint(CallActionColors.rejectCommitted.toArgb())
                 )
                 .setColorized(true)
                 .setColor(notificationColor)
@@ -219,14 +222,14 @@ class CallNotificationManager(
                         Icon.createWithResource(context, R.drawable.ic_notif_speaker),
                         audioLabel,
                         speakerPendingIntent
-                    ).build()
+                    ).secondaryCallAction().build()
                 )
                 builder.addAction(
                     Notification.Action.Builder(
                         Icon.createWithResource(context, if (isMuted) R.drawable.ic_notif_mic_off else R.drawable.ic_notif_mic_on),
                         if (isMuted) context.getString(R.string.unmute) else context.getString(R.string.mute),
                         mutePendingIntent
-                    ).build()
+                    ).secondaryCallAction().build()
                 )
             }
             builder.build()
@@ -255,7 +258,7 @@ class CallNotificationManager(
                 .setOnlyAlertOnce(!shouldAlertIncoming)
                 .setDefaults(if (shouldAlertIncoming) NotificationCompat.DEFAULT_ALL else 0)
                 .setStyle(
-                    if (isRinging) {
+                    (if (isRinging) {
                         NotificationCompat.CallStyle.forIncomingCall(
                             person,
                             declinePendingIntent,
@@ -263,7 +266,8 @@ class CallNotificationManager(
                         )
                     } else {
                         NotificationCompat.CallStyle.forOngoingCall(person, declinePendingIntent)
-                    }
+                    }).setAnswerButtonColorHint(CallActionColors.answerCommitted.toArgb())
+                        .setDeclineButtonColorHint(CallActionColors.rejectCommitted.toArgb())
                 )
                 .setColorized(false)
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Quelle est ta préférence ?</string>
+    <string name="setup_call_style_subtitle">Toucher ou glisser. À toi de choisir.</string>
+    <string name="setup_call_style_tap">Toucher pour appeler</string>
+    <string name="setup_call_style_swipe">Glisser pour appeler</string>
+    <string name="setup_call_style_tap_body">Un geste rapide. Directement à l’appel.</string>
+    <string name="setup_call_style_swipe_body">Toucher pour les détails. Glisser pour appeler.</string>
+    <string name="setup_call_style_selected">Sélectionné</string>
+    <string name="setup_call_style_later">Tu changes d’avis ? Modifie ce choix dans les paramètres.</string>
+    <string name="setup_call_style_save_failed">Impossible d’enregistrer ton choix. Réessaie.</string>
+    <string name="setup_call_style_tap_gesture">Toucher</string>
+    <string name="setup_call_style_right_gesture">Glisser à droite</string>
+    <string name="setup_call_style_left_gesture">Glisser à gauche</string>
+    <string name="setup_call_style_continue">Continuer</string>
+</resources>

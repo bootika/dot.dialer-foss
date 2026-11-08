@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Cosa preferisci?</string>
+    <string name="setup_call_style_subtitle">Tocca o scorri. Scegli tu.</string>
+    <string name="setup_call_style_tap">Toccare per chiamare</string>
+    <string name="setup_call_style_swipe">Scorrere per chiamare</string>
+    <string name="setup_call_style_tap_body">Un tocco veloce. Subito alla chiamata.</string>
+    <string name="setup_call_style_swipe_body">Tocca per i dettagli. Scorri per chiamare.</string>
+    <string name="setup_call_style_selected">Selezionato</string>
+    <string name="setup_call_style_later">Hai cambiato idea? Puoi modificarlo nelle Impostazioni.</string>
+    <string name="setup_call_style_save_failed">Impossibile salvare la scelta. Riprova.</string>
+    <string name="setup_call_style_tap_gesture">Tocca</string>
+    <string name="setup_call_style_right_gesture">Scorri a destra</string>
+    <string name="setup_call_style_left_gesture">Scorri a sinistra</string>
+    <string name="setup_call_style_continue">Continua</string>
+</resources>

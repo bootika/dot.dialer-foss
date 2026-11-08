@@ -65,24 +65,32 @@ class PlanGuideJourneyTest {
             DotDialerTheme(systemDark=false) {MorphingOnboardingScreen {completed++}}
         }}}
         rule.onNodeWithTag("plan-guide-back").assertDoesNotExist()
-        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.onNodeWithTag("call-style-setup").assertExists()
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.waitUntil(5_000) { completed == 1 }
         for (tier in listOf(AppPlan.PLUS,AppPlan.PREMIUM)) {
             prefs.setInt(PLAN_GUIDE_ACK,0)
             runBlocking {prefs.getPersistedPreferences()}
             val next=signedManager(tier)
             rule.runOnIdle {manager=next}
-            rule.onNodeWithContentDescription(rule.activity.getString(R.string.next)).performClick()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.onNodeWithTag("call-style-setup").assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.waitUntil(5_000) { rule.onAllNodesWithTag("plan-activation-welcome").fetchSemanticsNodes().isNotEmpty() }
             rule.onNodeWithTag("plan-activation-welcome").assertExists()
             rule.onNodeWithTag("plan-guide-back").performClick()
-            rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
+            rule.onNodeWithTag("call-style-setup").assertExists()
             rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.waitUntil(5_000) { rule.onAllNodesWithTag("plan-activation-welcome").fetchSemanticsNodes().isNotEmpty() }
             rule.onNodeWithTag("plan-guide-next").performClick()
             rule.onNodeWithTag("plan-guide-PLUS").assertExists()
             rule.onNodeWithTag("plan-guide-back").performClick()
             rule.onNodeWithTag("plan-activation-welcome").assertExists()
             rule.onNodeWithTag("plan-guide-back").performClick()
-            rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
+            rule.onNodeWithTag("call-style-setup").assertExists()
             rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.waitUntil(5_000) { rule.onAllNodesWithTag("plan-activation-welcome").fetchSemanticsNodes().isNotEmpty() }
             rule.onNodeWithTag("plan-guide-next").performClick()
             if(tier==AppPlan.PREMIUM) {
                 rule.onNodeWithTag("plan-guide-next").performClick()

@@ -29,6 +29,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -123,6 +125,7 @@ private val blankPhoneDetail = ContactPhoneDetail(Phone.TYPE_MOBILE, null, "")
 private val blankEvent = ContactEvent(Event.TYPE_BIRTHDAY, null, "")
 private val blankAddress = ContactAddress(StructuredPostal.TYPE_HOME, null, "")
 private val blankEmail = ContactEmail(Email.TYPE_HOME, null, "")
+private val contactWordKeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
 private val paddingHorizontal = 48.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -1039,6 +1042,7 @@ fun ContactEditScreen(
                                 ) {
                                     OutlinedTextField(
                                         value = namePrefix,
+                                        keyboardOptions = contactWordKeyboardOptions,
                                         onValueChange = { namePrefix = it },
                                         label = { Text(stringResource(R.string.prefix)) },
                                         modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1067,6 +1071,7 @@ fun ContactEditScreen(
                             }
                             OutlinedTextField(
                                 value = givenName,
+                                keyboardOptions = contactWordKeyboardOptions,
                                 onValueChange = { givenName = it },
                                 label = { Text(stringResource(R.string.first_name)) },
                                 modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1089,6 +1094,7 @@ fun ContactEditScreen(
                                 ) {
                                     OutlinedTextField(
                                         value = middleName,
+                                        keyboardOptions = contactWordKeyboardOptions,
                                         onValueChange = { middleName = it },
                                         label = { Text(stringResource(R.string.middle_name)) },
                                         modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1117,6 +1123,7 @@ fun ContactEditScreen(
                             }
                             OutlinedTextField(
                                 value = familyName,
+                                keyboardOptions = contactWordKeyboardOptions,
                                 onValueChange = { familyName = it },
                                 label = { Text(stringResource(R.string.last_name)) },
                                 modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1139,6 +1146,7 @@ fun ContactEditScreen(
                                 ) {
                                     OutlinedTextField(
                                         value = nameSuffix,
+                                        keyboardOptions = contactWordKeyboardOptions,
                                         onValueChange = { nameSuffix = it },
                                         label = { Text(stringResource(R.string.suffix)) },
                                         modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1176,6 +1184,7 @@ fun ContactEditScreen(
                                 ) {
                                     OutlinedTextField(
                                         value = nickname,
+                                        keyboardOptions = contactWordKeyboardOptions,
                                         onValueChange = { nickname = it },
                                         label = { Text(stringResource(R.string.nickname)) },
                                         modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1233,6 +1242,7 @@ fun ContactEditScreen(
                         ) {
                             OutlinedTextField(
                                 value = company,
+                                keyboardOptions = contactWordKeyboardOptions,
                                 onValueChange = { company = it },
                                 label = { Text(stringResource(R.string.company)) },
                                 modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1255,6 +1265,7 @@ fun ContactEditScreen(
                                 ) {
                                     OutlinedTextField(
                                         value = jobTitle,
+                                        keyboardOptions = contactWordKeyboardOptions,
                                         onValueChange = { jobTitle = it },
                                         label = { Text(stringResource(R.string.job_title)) },
                                         modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1768,6 +1779,7 @@ fun ContactEditScreen(
                             ) {
                                 OutlinedTextField(
                                     value = namePrefix,
+                                    keyboardOptions = contactWordKeyboardOptions,
                                     onValueChange = { namePrefix = it },
                                     label = { Text(stringResource(R.string.prefix)) },
                                     modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1796,6 +1808,7 @@ fun ContactEditScreen(
                         }
                         OutlinedTextField(
                             value = givenName,
+                            keyboardOptions = contactWordKeyboardOptions,
                             onValueChange = { givenName = it },
                             label = { Text(stringResource(R.string.first_name)) },
                             modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1818,6 +1831,7 @@ fun ContactEditScreen(
                             ) {
                                 OutlinedTextField(
                                     value = middleName,
+                                    keyboardOptions = contactWordKeyboardOptions,
                                     onValueChange = { middleName = it },
                                     label = { Text(stringResource(R.string.middle_name)) },
                                     modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1846,6 +1860,7 @@ fun ContactEditScreen(
                         }
                         OutlinedTextField(
                             value = familyName,
+                            keyboardOptions = contactWordKeyboardOptions,
                             onValueChange = { familyName = it },
                             label = { Text(stringResource(R.string.last_name)) },
                             modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1868,6 +1883,7 @@ fun ContactEditScreen(
                             ) {
                                 OutlinedTextField(
                                     value = nameSuffix,
+                                    keyboardOptions = contactWordKeyboardOptions,
                                     onValueChange = { nameSuffix = it },
                                     label = { Text(stringResource(R.string.suffix)) },
                                     modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1905,6 +1921,7 @@ fun ContactEditScreen(
                             ) {
                                 OutlinedTextField(
                                     value = nickname,
+                                    keyboardOptions = contactWordKeyboardOptions,
                                     onValueChange = { nickname = it },
                                     label = { Text(stringResource(R.string.nickname)) },
                                     modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)
@@ -1962,6 +1979,7 @@ fun ContactEditScreen(
                     ) {
                         OutlinedTextField(
                             value = company,
+                            keyboardOptions = contactWordKeyboardOptions,
                             onValueChange = { company = it },
                             label = { Text(stringResource(R.string.company)) },
                             modifier = Modifier.keepFocusedEditorFieldVisible()
@@ -1984,6 +2002,7 @@ fun ContactEditScreen(
                             ) {
                                 OutlinedTextField(
                                     value = jobTitle,
+                                    keyboardOptions = contactWordKeyboardOptions,
                                     onValueChange = { jobTitle = it },
                                     label = { Text(stringResource(R.string.job_title)) },
                                     modifier = Modifier.keepFocusedEditorFieldVisible().weight(1f)

@@ -10,6 +10,8 @@ import android.net.Uri
 import android.os.Build
 import android.telecom.Call
 import android.telecom.TelecomManager
+import androidx.compose.ui.graphics.toArgb
+import dev.goodwy.rphone.view.theme.CallActionColors
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
 import dev.goodwy.rphone.controller.util.PreferenceManager
@@ -170,6 +172,51 @@ class CallNotificationBadgesTest {
         assertEquals(13, active().number)
         assertEquals(1, manager.activeNotifications.size)
         assertEquals(8, active().extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.size)
+    }
+
+    @Test fun `native call style requests the shared base action palette independent of accent`() = runBlocking {
+        val prefs = PreferenceManager(context)
+        prefs.setString(PreferenceManager.KEY_ACCENT_COLOR, "blue")
+        prefs.getPersistedPreferences()
+        val notifications = CallNotificationManager(context, prefs)
+        for (state in listOf(Call.STATE_RINGING, Call.STATE_ACTIVE)) {
+            val notification = notifications.buildCallNotification(call(state = state), "Test Alexandru Butica", null, null)
+            assertEquals(dev.goodwy.rphone.view.theme.DotJade.toArgb(), notification.extras.getInt("android.answerColor"))
+            assertEquals(dev.goodwy.rphone.view.theme.DotError.toArgb(), notification.extras.getInt("android.declineColor"))
+            assertEquals(0, notification.number)
+            val actions = notification.actions.map { org.robolectric.Shadows.shadowOf(it.actionIntent).savedIntent.action }
+            assertTrue(actions.contains("DECLINE_CALL"))
+            assertEquals(state == Call.STATE_RINGING, actions.contains("ANSWER_CALL"))
+            if (Build.VERSION.SDK_INT >= 31 || state == Call.STATE_RINGING) {
+                assertEquals(state != Call.STATE_RINGING, actions.contains("TOGGLE_MUTE"))
+                assertEquals(state != Call.STATE_RINGING, actions.contains("TOGGLE_SPEAKER"))
+            } else {
+                // Pre31 CallStyle itself limits visible custom actions. Compare against the
+                // real, uncolored AndroidX template rather than assuming the API31 layout.
+                val person = androidx.core.app.Person.Builder().setName("Test Alexandru Butica").build()
+                fun intent(action: String, request: Int) = android.app.PendingIntent.getService(context, request,
+                    android.content.Intent(context, CallService::class.java).setAction(action),
+                    android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT)
+                val baseline = NotificationCompat.Builder(context, notification.channelId)
+                    .setSmallIcon(android.R.drawable.sym_action_call)
+                    .setStyle(NotificationCompat.CallStyle.forOngoingCall(person, intent("DECLINE_CALL", 903)))
+                    .addAction(android.R.drawable.sym_action_call, "Handset", intent("TOGGLE_SPEAKER", 904))
+                    .addAction(android.R.drawable.ic_lock_silent_mode, "Mute", intent("TOGGLE_MUTE", 905))
+                    .build()
+                val expected = baseline.actions.map { org.robolectric.Shadows.shadowOf(it.actionIntent).savedIntent.action }
+                assertEquals("Unchanged legacy AndroidX action list", expected, actions)
+            }
+        }
+    }
+
+    @Test fun `secondary native presentation preserves action callbacks below API37`() {
+        if (Build.VERSION.SDK_INT < 31) return
+        val pending = android.app.PendingIntent.getBroadcast(context, 301,
+            android.content.Intent("TEST_AUDIO_ROUTE"), android.app.PendingIntent.FLAG_IMMUTABLE)
+        val action = Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(context,
+            android.R.drawable.sym_action_call), "Handset", pending).secondaryCallAction().build()
+        assertEquals("Handset", action.title.toString())
+        assertEquals(pending, action.actionIntent)
     }
 
     @Test fun `ongoing native call keeps avatar and controls but does not add to missed badge`() {

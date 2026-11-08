@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_call_style_title">Mana yang kamu pilih?</string>
+    <string name="setup_call_style_subtitle">Ketuk atau geser. Kamu yang pilih.</string>
+    <string name="setup_call_style_tap">Ketuk untuk menelepon</string>
+    <string name="setup_call_style_swipe">Geser untuk menelepon</string>
+    <string name="setup_call_style_tap_body">Satu ketukan. Langsung menelepon.</string>
+    <string name="setup_call_style_swipe_body">Ketuk untuk detail. Geser untuk menelepon.</string>
+    <string name="setup_call_style_selected">Dipilih</string>
+    <string name="setup_call_style_later">Berubah pikiran? Ubah kapan saja di Setelan.</string>
+    <string name="setup_call_style_save_failed">Pilihan tidak dapat disimpan. Coba lagi.</string>
+    <string name="setup_call_style_tap_gesture">Ketuk</string>
+    <string name="setup_call_style_right_gesture">Geser ke kanan</string>
+    <string name="setup_call_style_left_gesture">Geser ke kiri</string>
+    <string name="setup_call_style_continue">Lanjutkan</string>
+</resources>

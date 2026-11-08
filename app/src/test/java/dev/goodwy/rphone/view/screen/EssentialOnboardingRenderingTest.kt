@@ -73,16 +73,19 @@ class EssentialOnboardingRenderingTest {
         var dark by mutableStateOf(false)
         var scale by mutableFloatStateOf(1f)
         var completed = 0
+        var iteration by mutableIntStateOf(0)
         rule.setContent {
             CompositionLocalProvider(LocalDensity provides Density(1f, scale)) {
-                DotDialerTheme(systemDark = dark) { MorphingOnboardingScreen { completed++ } }
+                key(iteration) { DotDialerTheme(systemDark = dark) { MorphingOnboardingScreen { completed++ } } }
             }
         }
         for (mode in listOf(false, true)) for (font in listOf(1f, 1.5f)) {
-            rule.runOnIdle { dark = mode; scale = font }
+            rule.runOnIdle { dark = mode; scale = font; iteration++ }
             rule.mainClock.advanceTimeBy(1000)
-            rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
-            rule.onNodeWithText(rule.activity.getString(R.string.onboarding_essential_title)).assertExists()
+            rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
+            rule.onNodeWithTag("call-style-setup").assertExists()
+            rule.onNodeWithTag("plan-guide-next").performClick()
+            rule.waitUntil(5_000) { completed == iteration }
             capture("intro-${if (mode) "dark" else "light"}-${(font * 100).toInt()}")
         }
         assertEquals(4, completed)
@@ -97,7 +100,10 @@ class EssentialOnboardingRenderingTest {
             }
         }
         rule.mainClock.advanceTimeBy(1000)
-        rule.onNodeWithText(rule.activity.getString(R.string.plan_guide_begin)).assertIsDisplayed().performClick()
+        rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
+        rule.onNodeWithTag("call-style-setup").assertExists()
+        rule.onNodeWithTag("plan-guide-next").performClick()
+        rule.waitUntil(5_000) { completed }
         assertTrue(completed)
         capture("intro-landscape-150")
     }

@@ -16,14 +16,14 @@ import kotlinx.coroutines.sync.withLock
 
 /** Explicit, package-specific pairing. Never accepts a signature supplied in Intent extras. */
 internal class DictateBridgeClient(private val context: Context) : DictateBridge {
-    private val pairing = context.getSharedPreferences("dictate_pairing", Context.MODE_PRIVATE)
+    private val pairing = context.getSharedPreferences(DictateProtocol.PAIRING_PREFERENCES, Context.MODE_PRIVATE)
     private val mutable = MutableStateFlow(DictateCapabilities())
     override val capabilities = mutable.asStateFlow()
     private val pending = ConcurrentHashMap<String, Pair<Int, CompletableDeferred<Bundle>>>()
     private val lock = Mutex()
     private var remote: Messenger? = null
     private var connection: ServiceConnection? = null
-    private var setupCertificate: String? = null
+    private var setupPeer: Pair<String, Int>? = null
     private val idleHandler=Handler(Looper.getMainLooper())
     private val idleClose=Runnable {
         if(pending.isEmpty()) {
@@ -53,14 +53,16 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
     })
     override fun installed(): Boolean = certificate() != null
     override fun setupIntent(): Intent {
-        setupCertificate = certificate() ?: throw DictateFailure("NOT_INSTALLED")
+        val signer = certificate() ?: throw DictateFailure("NOT_INSTALLED")
+        val uid = peerUid().takeIf { it >= 0 } ?: throw DictateFailure("NOT_INSTALLED")
+        setupPeer = signer to uid
         return Intent().setComponent(ComponentName(DictateProtocol.PACKAGE, DictateProtocol.SETUP))
     }
     override suspend fun approveSetup() {
-        val expected = setupCertificate ?: throw DictateFailure("PAIR_REQUIRED")
-        setupCertificate = null
-        if (certificate() != expected) throw DictateFailure("CERTIFICATE_CHANGED")
-        persistPairing(expected)
+        val (signer, uid) = setupPeer ?: throw DictateFailure("PAIR_REQUIRED")
+        setupPeer = null
+        if (certificate() != signer || peerUid() != uid) throw DictateFailure("CERTIFICATE_CHANGED")
+        persistPairing(signer)
         refresh()
     }
     // KTX edit(commit=true) discards the Boolean required to verify durable pairing/revocation.

@@ -52,8 +52,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.util.toast
@@ -72,9 +70,9 @@ import dev.goodwy.rphone.view.screen.settings.DotSettingsChoiceRow
 import io.github.bootika.dotdialer.observability.ReportingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<RootGraph>
 @Composable
 fun DiagnosticsScreen(navigator: DestinationsNavigator) {
+    if (!dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) return
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferences = koinInject<PreferenceManager>()

@@ -19,6 +19,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.view.screen.settings.components.SettingsHomeCard
 import dev.goodwy.rphone.view.screen.settings.components.SettingsHomeListItem
+import dev.goodwy.rphone.view.screen.settings.components.helpSettingsTitle
 
 @Destination<RootGraph>
 @Composable
@@ -28,7 +29,7 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
     if (category == "effects" || category == "compatibility") { AdvancedSettingsScreen(navigator); return }
     val prefs = org.koin.compose.koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
     val title = when (category) {
-        "help" -> R.string.help_and_diagnostics
+        "help" -> helpSettingsTitle
         "privacy" -> R.string.privacy_and_blocking
         "effects" -> R.string.appearance_effects
         "compatibility" -> R.string.compatibility
@@ -57,8 +58,10 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
                             }
                         }
                         "help" -> {
-                            SettingsCategoryLink(R.string.diagnostics, Icons.Rounded.BugReport) {
-                                navigator.navigate(DiagnosticsScreenDestination)
+                            if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) {
+                                SettingsCategoryLink(R.string.diagnostics, Icons.Rounded.BugReport) {
+                                    navigator.navigate(SettingsOptionScreenDestination("O02"))
+                                }
                             }
                             SettingsCategoryLink(R.string.plan_guide_title, Icons.Rounded.AutoAwesome) {
                                 navigator.navigate(PlanGuideReplayScreenDestination)

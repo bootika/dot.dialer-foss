@@ -33,4 +33,5 @@
     <string name="settings_alias_tap_haptics">Haptik Tap</string>
     <string name="contacts_and_data">Kontak dan data</string>
     <string name="help_and_diagnostics">Bantuan dan diagnostik</string>
+    <string name="help_settings">Bantuan</string>
 </resources>

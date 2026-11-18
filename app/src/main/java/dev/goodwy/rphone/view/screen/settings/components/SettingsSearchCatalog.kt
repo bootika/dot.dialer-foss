@@ -56,20 +56,22 @@ internal fun createSettingsSearchEntries(
         },
         leadingIcon = Icons.Rounded.Tune, onClick = action,
     )
-    return entries + listOf(
+    return entries + listOfNotNull(
         action(R.string.standardize_phone_numbers, R.string.contact_tools) { navigator.navigate(ContactManagementScreenDestination(toolsOnly = true)) },
         action(R.string.merging_contacts, R.string.contact_tools) { navigator.navigate(ContactMergeDuplicatesScreenDestination) },
         action(R.string.unmerging_contacts, R.string.contact_tools) { navigator.navigate(ContactUnmergeDuplicatesScreenDestination) },
         action(R.string.create_backup, R.string.backup_and_restore, onCreateBackup),
         action(R.string.restore_backup, R.string.backup_and_restore, onRestoreBackup),
-        action(R.string.ui_tour_title, R.string.help_and_diagnostics, onStartUiTour),
-        action(R.string.diagnostics, R.string.help_and_diagnostics) { navigator.navigate(DiagnosticsScreenDestination) },
-        action(if (BuildConfig.FLAVOR == "foss") R.string.continue_support else R.string.plans_title, R.string.help_and_diagnostics) { navigator.navigate(DonateScreenDestination) },
-        action(R.string.about, R.string.help_and_diagnostics) { navigator.navigate(AboutAppScreenDestination) },
-        action(R.string.contributors, R.string.help_and_diagnostics) { navigator.navigate(ContributorsScreenDestination) },
-        action(R.string.source_code, R.string.help_and_diagnostics) { openLink(context, GITHUB_URL) },
-        action(R.string.privacy_policy, R.string.help_and_diagnostics) { openLink(context, privacyPolicyUrl(language)) },
-        action(R.string.terms_and_conditions, R.string.help_and_diagnostics) { openLink(context, termsAndConditionsUrl(language)) },
+        action(R.string.ui_tour_title, helpSettingsTitle, onStartUiTour),
+        if (BuildConfig.TEST_DISTRIBUTION)
+            action(R.string.diagnostics, helpSettingsTitle) { navigator.navigate(SettingsOptionScreenDestination("O02")) }
+        else null,
+        action(if (BuildConfig.FLAVOR == "foss") R.string.continue_support else R.string.plans_title, helpSettingsTitle) { navigator.navigate(DonateScreenDestination) },
+        action(R.string.about, helpSettingsTitle) { navigator.navigate(AboutAppScreenDestination) },
+        action(R.string.contributors, helpSettingsTitle) { navigator.navigate(ContributorsScreenDestination) },
+        action(R.string.source_code, helpSettingsTitle) { openLink(context, GITHUB_URL) },
+        action(R.string.privacy_policy, helpSettingsTitle) { openLink(context, privacyPolicyUrl(language)) },
+        action(R.string.terms_and_conditions, helpSettingsTitle) { openLink(context, termsAndConditionsUrl(language)) },
     )
 }
 
@@ -100,7 +102,7 @@ internal fun DestinationsNavigator.openSettingsEditor(editor: SettingsEditor) {
         SettingsEditor.BLOCKED -> navigate(BlockedNumbersScreenDestination)
         SettingsEditor.AUTH -> navigate(BiometricScreenDestination())
         SettingsEditor.CALL_AUTH -> navigate(BiometricScreenDestination())
-        SettingsEditor.DIAGNOSTICS -> navigate(DiagnosticsScreenDestination)
+        SettingsEditor.DIAGNOSTICS -> if (BuildConfig.TEST_DISTRIBUTION) navigate(SettingsOptionScreenDestination("O02"))
         SettingsEditor.SUPPORT -> navigate(DonateScreenDestination)
         SettingsEditor.CONTEXT, SettingsEditor.LEGACY -> error("Not a global settings editor")
     }

@@ -71,7 +71,7 @@ internal val commonAppModule = module {
     single {
         dev.goodwy.rphone.controller.util.WhatsAppAvatarSyncProcessor(
             androidContext(), get(), get(), get(), get(),
-            featureAllowed = { dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed &&
+            featureAllowed = { (!BuildConfig.TEST_DISTRIBUTION || dev.goodwy.rphone.controller.license.TestAccessManager.get(androidContext()).allowed) &&
                 dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(io.github.bootika.dotdialer.core.license.PlanFeature.MANUAL_OPTIMIZER) },
             automaticAllowed = { dev.goodwy.rphone.controller.license.PlanAccessManager.get(androidContext()).allows(io.github.bootika.dotdialer.core.license.PlanFeature.AUTOMATIC_OPTIMIZER) },
             onUnknownPhoto = { get<IContactsRepository>().invalidateAndNotify() },

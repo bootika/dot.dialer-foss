@@ -1,11 +1,15 @@
 package dev.goodwy.rphone.recordings
 
+import dev.goodwy.rphone.BuildConfig
+
 internal object DictateProtocol {
     const val VERSION = 1
-    const val PACKAGE = "ro.dotdesign.dotdictation"
-    const val SERVICE = "$PACKAGE.integration.DialerBridgeService"
-    const val SETUP = "$PACKAGE.integration.DialerBridgeSetupActivity"
-    const val ACTION = "$PACKAGE.action.DIALER_BRIDGE"
+    private const val COMPONENT_NAMESPACE = "ro.dotdesign.dotdictation"
+    val PACKAGE = if (BuildConfig.DICTATE_PLAY_PROVIDER) "ro.dotdesign.dotdictate" else COMPONENT_NAMESPACE
+    val PAIRING_PREFERENCES = if (BuildConfig.DICTATE_PLAY_PROVIDER) "dictate_play_pairing" else "dictate_pairing"
+    const val SERVICE = "$COMPONENT_NAMESPACE.integration.DialerBridgeService"
+    const val SETUP = "$COMPONENT_NAMESPACE.integration.DialerBridgeSetupActivity"
+    const val ACTION = "$COMPONENT_NAMESPACE.action.DIALER_BRIDGE"
     const val CAPABILITIES = 1
     const val SUBMIT = 2
     const val STATUS = 3

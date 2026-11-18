@@ -121,7 +121,7 @@ fun MorphingOnboardingScreen(onPlanSettings: (io.github.bootika.dotdialer.core.l
         icon = Icons.Default.Dialpad,
         title = stringResource(R.string.onboarding_essential_title),
         description = stringResource(if (dev.goodwy.rphone.BuildConfig.FLAVOR == "gplay") R.string.onboarding_essential_body_gplay else R.string.onboarding_essential_body,
-            stringResource(R.string.advanced_settings), stringResource(R.string.diagnostics)),
+            stringResource(R.string.privacy_and_blocking), stringResource(R.string.settings_reporting)),
         shapeCornerPercent = 40, rotation = 12f, scale = 1f, teethCount = 12,
     ))
     val cornerPercent = 40f

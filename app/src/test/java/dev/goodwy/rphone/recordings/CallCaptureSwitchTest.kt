@@ -41,6 +41,10 @@ class CallCaptureSwitchTest {
         CaptureOptIn(root).set(false);assertEquals("retained audio",saved.readText())
     }
     @Test fun previousExplicitOffStillExposesWirelessCleanupAfterUpgrade() {
+        // An app update starts a new process and rereads the persisted opt-in. Robolectric
+        // can reuse static holders across tests, so discard both process-local caches.
+        org.robolectric.util.ReflectionHelpers.setStaticField(IntegratedCallCapture::class.java, "instance", null)
+        org.robolectric.util.ReflectionHelpers.setStaticField(CaptureOptIn::class.java, "instance", null)
         val context=ApplicationProvider.getApplicationContext<Application>()
         File(context.noBackupFilesDir,"call-capture").apply {mkdirs();File(this,"feature-enabled").writeText("0")}
         android.provider.Settings.Global.putInt(context.contentResolver,"adb_wifi_enabled",1)

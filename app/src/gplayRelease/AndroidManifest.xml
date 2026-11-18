@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        tools:node="remove" />
+
+    <application>
+        <meta-data android:name="ro.dotdesign.dotdialer.BUNDLE_AUDIENCE_PUBLIC" android:value="true" />
+        <meta-data android:name="${playDictateVerification}" android:value="true" />
+        <service
+            android:name=".controller.util.GoogleContactPhotoScanService"
+            tools:node="remove" />
+        <service
+            android:name=".recordings.CapturePairingService"
+            tools:node="remove" />
+    </application>
+</manifest>

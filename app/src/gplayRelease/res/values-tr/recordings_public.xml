@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Ses dosyalarını içe aktarın ve transkriptleri yönetin.</string>
+    <string name="guide_recording">Bir ses dosyasını içe aktarın ve dot.dictate ile yazıya dökün veya çevirin. İşlem için internet, bağlı ve lisanslı dot.dictate ve bir API anahtarı gerekir. Ses, seçilen sağlayıcıya gönderilir. API ücreti uygulanabilir.</string>
+</resources>

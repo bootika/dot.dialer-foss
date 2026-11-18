@@ -33,8 +33,10 @@ object AppDiagnostics {
     private var bluetoothMonitor: BluetoothDiagnosticMonitor? = null
 
     private val initialized = AtomicBoolean(false)
-    private val executor = Executors.newSingleThreadExecutor { runnable ->
-        Thread(runnable, "dot-dialer-diagnostics").apply { isDaemon = true }
+    private val executor by lazy {
+        Executors.newSingleThreadExecutor { runnable ->
+            Thread(runnable, "dot-dialer-diagnostics").apply { isDaemon = true }
+        }
     }
     private val mutableRevision = MutableStateFlow(0L)
 
@@ -48,7 +50,7 @@ object AppDiagnostics {
     val revision: StateFlow<Long> = mutableRevision.asStateFlow()
 
     fun initialize(context: Context) {
-        if (!initialized.compareAndSet(false, true)) return
+        if (!BuildConfig.TEST_DISTRIBUTION || !initialized.compareAndSet(false, true)) return
         bluetoothMonitor?.close()
         appContext = context.applicationContext
         logFile = File(appContext.filesDir, FILE_NAME)
@@ -92,11 +94,10 @@ object AppDiagnostics {
     }
 
     fun record(event: DiagnosticEvent) {
-        if (!initialized.get()) return
+        AppTelemetry.addBreadcrumb(event)
+        if (!BuildConfig.TEST_DISTRIBUTION || !initialized.get()) return
         val timestamp = Instant.now().toString()
         val safeLine = "$timestamp | ${DiagnosticFormatter.format(event)}"
-        AppTelemetry.addBreadcrumb(event)
-
         executor.execute {
             try {
                 logFile.parentFile?.mkdirs()

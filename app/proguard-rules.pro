@@ -33,10 +33,6 @@
 }
 
 # This entry point is launched by Android app_process using its stable class name.
--keep,allowoptimization class dev.goodwy.rphone.recordings.IntegratedCaptureServer {
-    public static void main(java.lang.String[]);
-}
-
 -keep class * extends androidx.room.RoomDatabase
 -keep @androidx.room.Database class * { *; }
 -keep @androidx.room.Entity class * { *; }

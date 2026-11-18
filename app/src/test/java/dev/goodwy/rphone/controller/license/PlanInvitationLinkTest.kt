@@ -19,4 +19,14 @@ class PlanInvitationLinkTest {
             assertNull(link,PlanInvitationLink.token(link,"dot.dialer.test"))
         }
     }
+
+    @org.junit.Test fun playLinksStayBoundToTheirPackage() {
+        val token = "a".repeat(64)
+        val link = "https://dialer.dotdesign.ro/invite/play/#" + token
+        org.junit.Assert.assertEquals(token, PlanInvitationLink.token(link, "ro.dotdesign.dotdialer"))
+        org.junit.Assert.assertNull(PlanInvitationLink.token(link, "dot.dialer"))
+        org.junit.Assert.assertNull(PlanInvitationLink.token(link, "dot.dialer.test"))
+        org.junit.Assert.assertNull(PlanInvitationLink.token(link.replace("/play/", "/app/"), "ro.dotdesign.dotdialer"))
+    }
+
 }

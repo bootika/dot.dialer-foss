@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Importez des fichiers audio et gérez vos transcriptions.</string>
+    <string name="guide_recording">Importez un fichier audio, puis utilisez dot.dictate pour le transcrire ou le traduire. Le traitement nécessite Internet, une application dot.dictate connectée et sous licence, ainsi qu’une clé API. Le fichier audio est transmis au fournisseur sélectionné. Des frais API peuvent s’appliquer.</string>
+</resources>

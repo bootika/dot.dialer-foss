@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.recordings.CaptureOptIn
 import dev.goodwy.rphone.recordings.RecordingsRepository
 import dev.goodwy.rphone.view.screen.MoreItem
 import dev.goodwy.rphone.view.screen.settings.DotSettingsTopBar
@@ -42,12 +44,8 @@ internal fun RecordingsModuleSwitch(onOpenLibrary: (() -> Unit)? = null) {
     val plans=rememberPlanAccessManager();val rights by plans.state.collectAsState()
     val allowed=remember(rights){plans.allows(io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_MANUAL)}
     val enabled by repo.moduleState.collectAsState()
-    val context=LocalContext.current;val backend=remember(context){IntegratedCallCapture.get(context)}
-    val pending by backend.wirelessShutdownPending.collectAsState()
+    val context=LocalContext.current
     val scope=rememberCoroutineScope();var busy by remember{mutableStateOf(false)};var error by remember{mutableStateOf(false)}
-    LaunchedEffect(backend,enabled){backend.refreshWirelessOffStatus()}
-    val owner=androidx.lifecycle.compose.LocalLifecycleOwner.current
-    DisposableEffect(owner){val observer=androidx.lifecycle.LifecycleEventObserver {_,event ->if(event==androidx.lifecycle.Lifecycle.Event.ON_RESUME)backend.refreshWirelessOffStatus()};owner.lifecycle.addObserver(observer);onDispose{owner.lifecycle.removeObserver(observer)}}
     val title=stringResource(R.string.recordings_title)
     Column {
         dev.goodwy.rphone.view.screen.settings.DotSettingsCard {
@@ -58,7 +56,23 @@ internal fun RecordingsModuleSwitch(onOpenLibrary: (() -> Unit)? = null) {
                     if(!busy)if(value && !allowed)plans.requestUpgrade(io.github.bootika.dotdialer.core.license.PlanFeature.RECORDINGS_MANUAL)
                     else scope.launch {
                         busy=true;error=false
-                        try{if(value){backend.enable();RecordingSyncJob.schedule(context);if(dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION && !backend.available())context.startActivity(android.content.Intent(context,CaptureSetupActivity::class.java))}else backend.disable(stopWireless=true)}
+                        try {
+                            if (BuildConfig.TEST_DISTRIBUTION) {
+                                val backend = IntegratedCallCapture.get(context)
+                                if (value) {
+                                    backend.enable()
+                                    RecordingSyncJob.schedule(context)
+                                    if (!backend.available()) {
+                                        context.startActivity(android.content.Intent(context, CaptureSetupActivity::class.java))
+                                    }
+                                } else {
+                                    backend.disable(stopWireless = true)
+                                }
+                            } else {
+                                CaptureOptIn.get(context).set(value)
+                                if (value) RecordingSyncJob.schedule(context) else RecordingSyncJob.cancel(context)
+                            }
+                        }
                         catch(cancelled: kotlinx.coroutines.CancellationException){throw cancelled}
                         catch(failure: Exception){dev.goodwy.rphone.recordings.captureFailures.report(dev.goodwy.rphone.recordings.CaptureFailureStage.MODULE_SWITCH,failure);error=true}finally{busy=false}
                     }
@@ -74,13 +88,29 @@ internal fun RecordingsModuleSwitch(onOpenLibrary: (() -> Unit)? = null) {
         }
         if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
         if(error)Text(stringResource(R.string.recordings_error),color=MaterialTheme.colorScheme.error,modifier=Modifier.padding(16.dp))
-        if(!enabled && pending)Column(Modifier.padding(horizontal=16.dp,vertical=8.dp)) {
+        if (BuildConfig.TEST_DISTRIBUTION) WirelessShutdownHelp(enabled)
+    }
+}
+
+@Composable
+private fun WirelessShutdownHelp(enabled: Boolean) {
+    val context = LocalContext.current
+    val backend = remember(context) { IntegratedCallCapture.get(context) }
+    val pending by backend.wirelessShutdownPending.collectAsState()
+    LaunchedEffect(backend, enabled) { backend.refreshWirelessOffStatus() }
+    val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(owner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) backend.refreshWirelessOffStatus()
+        }
+        owner.lifecycle.addObserver(observer)
+        onDispose { owner.lifecycle.removeObserver(observer) }
+    }
+    if (!enabled && pending) Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Text(stringResource(R.string.recordings_wireless_off_needed),style=MaterialTheme.typography.bodyMedium)
             TextButton(onClick={
             try{context.startActivity(android.content.Intent("android.settings.WIRELESS_DEBUGGING_SETTINGS"))}
             catch(failure: Exception){dev.goodwy.rphone.recordings.captureFailures.report(dev.goodwy.rphone.recordings.CaptureFailureStage.SETUP_SETTINGS,failure);context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))}
         },modifier=Modifier.testTag("recordings-wireless-off")){Text(stringResource(R.string.capture_open_wireless))}
-        }
     }
-
 }

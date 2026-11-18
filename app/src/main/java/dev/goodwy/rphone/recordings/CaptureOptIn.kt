@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.recordings
 
+import android.content.Context
 import android.util.AtomicFile
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,4 +19,13 @@ internal class CaptureOptIn(root: File) {
     }
     @Synchronized fun ticket()=revision
     @Synchronized fun accepts(ticket: Long)=value.value && revision==ticket
+
+    companion object {
+        @Volatile private var instance: CaptureOptIn? = null
+
+        fun get(context: Context): CaptureOptIn = instance ?: synchronized(this) {
+            instance ?: CaptureOptIn(File(context.applicationContext.noBackupFilesDir, "call-capture")
+                .apply { mkdirs() }).also { instance = it }
+        }
+    }
 }

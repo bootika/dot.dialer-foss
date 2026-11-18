@@ -6,7 +6,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not inspect tracked files.' }
 $allowedMarkdown = @('README.md', 'UPSTREAM.md')
 $privateFiles = @($tracked | Where-Object {
     $_ -like 'docs/*' -or $_ -eq 'AGENTS.md' -or
-    ($_ -like '*.md' -and $_ -notin $allowedMarkdown -and $_ -notlike 'LICENSES/*')
+    ($_ -like '*.md' -and $_ -notin $allowedMarkdown -and $_ -notlike 'LICENSES/*' -and
+        $_ -notmatch '^app/src/[^/]+/assets/[^/]+-licenses/NOTICE\.md$')
 })
 if ($privateFiles.Count) {
     $privateFiles | ForEach-Object { Write-Host "Internal documentation must not be tracked: $_" }

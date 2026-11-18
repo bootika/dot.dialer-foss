@@ -30,8 +30,10 @@ fun AdvancedSettingsScreen(navigator: DestinationsNavigator) {
                     onClick = { navigator.navigate(CallSettingScreenDestination()) })
                 DotSettingsNavigationRow(stringResource(R.string.settings_scroll_calibration),
                     onClick = { navigator.navigate(SoundVibrationScreenDestination(advanced = true)) })
-                DotSettingsNavigationRow(stringResource(R.string.diagnostics),
-                    onClick = { navigator.navigate(DiagnosticsScreenDestination) })
+                if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) {
+                    DotSettingsNavigationRow(stringResource(R.string.diagnostics),
+                        onClick = { navigator.navigate(SettingsOptionScreenDestination("O02")) })
+                }
             } }
         }
     }

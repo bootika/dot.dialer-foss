@@ -5,7 +5,8 @@ import androidx.compose.ui.unit.dp
 val GITHUB_DEV = "https://github.com/bootika"
 val GITHUB_URL = "https://github.com/bootika/dot.dialer-foss"
 val SITE_URL = "https://darkedge.ro/"
-val GP_URL = "https://play.google.com/store/apps/details?id=dot.dialer"
+val GP_URL = "https://play.google.com/store/apps/details?id=ro.dotdesign.dotdialer"
+val DOT_DICTATE_PLAY_URL = "https://play.google.com/store/apps/details?id=ro.dotdesign.dotdictate"
 val GP_DEV_URL = "https://play.google.com/store/apps/dev?id=5233015275563872792"
 val DARK_EDGE_RADIO_URL = "https://play.google.com/store/apps/details?id=com.darkedgeradio.darkedgeradio"
 val COFFEE_URL = SITE_URL

@@ -18,7 +18,7 @@ internal fun SettingsHelpText(resource: Int, initiallyExpanded: Boolean = false)
         TextButton(onClick={expanded=!expanded}, contentPadding=PaddingValues(vertical=8.dp)) {
             Text(stringResource(R.string.guide_more))
         }
-        if(expanded) Text(stringResource(resource) + if(resource==R.string.guide_auth) "\n\n"+stringResource(R.string.guide_lock) else if(resource==R.string.guide_recording) "\n\n"+stringResource(R.string.capture_preconnect_help) else "", style=MaterialTheme.typography.bodyMedium,
+        if(expanded) Text(stringResource(resource) + if(resource==R.string.guide_auth) "\n\n"+stringResource(R.string.guide_lock) else if(resource==R.string.guide_recording && dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) "\n\n"+stringResource(R.string.capture_preconnect_help) else "", style=MaterialTheme.typography.bodyMedium,
             color=MaterialTheme.colorScheme.onSurfaceVariant, modifier=Modifier.padding(bottom=12.dp))
     }
 }

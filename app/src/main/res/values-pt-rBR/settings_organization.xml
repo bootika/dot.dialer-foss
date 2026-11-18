@@ -33,4 +33,5 @@
     <string name="settings_alias_tap_haptics">Háptica de toque</string>
     <string name="contacts_and_data">Contatos e dados</string>
     <string name="help_and_diagnostics">Ajuda e diagnóstico</string>
+    <string name="help_settings">Ajuda</string>
 </resources>

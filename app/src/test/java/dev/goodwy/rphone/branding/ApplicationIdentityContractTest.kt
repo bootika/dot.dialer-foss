@@ -24,7 +24,9 @@ class ApplicationIdentityContractTest {
 
         assertTrue(buildScript.contains("applicationId = \"dot.dialer\""))
         assertTrue(buildScript.contains("applicationIdSuffix = \".test\""))
-        assertTrue(constants.contains("details?id=dot.dialer"))
+        assertEquals("dot.dialer.test", BuildConfig.APPLICATION_ID)
+        assertEquals(2, Regex("variant\\.applicationId\\.set\\('ro\\.dotdesign\\.dotdialer'\\)").findAll(buildScript).count())
+        assertTrue(constants.contains("val GP_URL = \"https://play.google.com/store/apps/details?id=ro.dotdesign.dotdialer\""))
         assertTrue(
             repoFile("app/src/main/AndroidManifest.xml")
                 .readText()

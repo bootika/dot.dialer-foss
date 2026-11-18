@@ -33,4 +33,5 @@
     <string name="settings_alias_tap_haptics">Dokunma Haptiği</string>
     <string name="contacts_and_data">Kişiler ve veriler</string>
     <string name="help_and_diagnostics">Yardım ve tanılama</string>
+    <string name="help_settings">Yardım</string>
 </resources>

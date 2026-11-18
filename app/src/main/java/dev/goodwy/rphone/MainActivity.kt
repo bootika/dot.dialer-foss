@@ -2,6 +2,8 @@ package dev.goodwy.rphone
 
 import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
 
+import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.compose.rememberNavController
@@ -124,6 +127,19 @@ class MainActivity : FragmentActivity() {
         const val EXTRA_RETURN_TO_CALL_ON_BACK = "return_to_call_on_back"
     }
 
+    override fun startActivity(intent: Intent) {
+        val target = intent.component
+        // Billing 8.0 can forward a null BUY_INTENT after a successful response code.
+        if (target?.packageName == packageName &&
+            target.className == "com.android.billingclient.api.ProxyBillingActivity" &&
+            intent.hasExtra("BUY_INTENT") &&
+            IntentCompat.getParcelableExtra(intent, "BUY_INTENT", PendingIntent::class.java) == null
+        ) {
+            throw ActivityNotFoundException(getString(R.string.plan_store_unavailable))
+        }
+        super.startActivity(intent)
+    }
+
     private var defaultDialerRevision by mutableIntStateOf(0)
     private var intentState by mutableStateOf<Intent?>(null)
     private var invitationLink by mutableStateOf<String?>(null)
@@ -151,11 +167,13 @@ class MainActivity : FragmentActivity() {
         setContent {
             DotDialerAppTheme {
                 dev.goodwy.rphone.view.screen.settings.PlanUpgradeHost()
-                val testAccess = remember { dev.goodwy.rphone.controller.license.TestAccessManager.get(this@MainActivity) }
-                val accessState by testAccess.state.collectAsStateWithLifecycle()
-                if (accessState != dev.goodwy.rphone.controller.license.TestAccessState.ACTIVE) {
-                    dev.goodwy.rphone.view.components.TestAccessScreen(accessState, testAccess::retry)
-                    return@DotDialerAppTheme
+                if (BuildConfig.TEST_DISTRIBUTION && packageName == "dot.dialer.test") {
+                    val testAccess = remember { dev.goodwy.rphone.controller.license.TestAccessManager.get(this@MainActivity) }
+                    val accessState by testAccess.state.collectAsStateWithLifecycle()
+                    if (accessState != dev.goodwy.rphone.controller.license.TestAccessState.ACTIVE) {
+                        dev.goodwy.rphone.view.components.TestAccessScreen(accessState, testAccess::retry)
+                        return@DotDialerAppTheme
+                    }
                 }
                 val defaultRoleHeld = remember(defaultDialerRevision) { isAlreadyDefaultDialer(this@MainActivity) }
                 val context = LocalContext.current
@@ -170,11 +188,8 @@ class MainActivity : FragmentActivity() {
                 // Dot Dialer has one primary surface. Legacy destinations remain available for
                 // auxiliary/deep-link flows, but they are no longer exposed as root tabs.
                 val showPrimaryNavigation = false
-//                val dialpadEnabled = prefs.getBoolean(PreferenceManager.KEY_TAB_SHOW_DIALPAD, true)
                 val defaultTab = prefs.getString(PreferenceManager.KEY_DEFAULT_TAB, "calls") ?: "calls"
 
-//                val defBar = prefs.getInt(PreferenceManager.KEY_DEFAULT_BOTTOM_NAV, 0)
-//                val transitionStyle = prefs.getInt(PreferenceManager.KEY_TRANSITION_STYLE, 0)
                 val onboardingShown = remember { prefs.getBoolean(PreferenceManager.KEY_ONBOARDING_SHOWN, false) }
                 var showOnboarding by remember { mutableStateOf(!onboardingShown) }
                 var planSettingsRoute by remember { mutableStateOf<String?>(null) }
@@ -437,10 +452,6 @@ class MainActivity : FragmentActivity() {
                                 val rotation = ctx.currentDisplayRotation()
                                 val isRotation90 = rotation == if (isLtr) Surface.ROTATION_90 else Surface.ROTATION_270
                                 val isRotation270 = rotation == if (isLtr) Surface.ROTATION_270 else Surface.ROTATION_90
-//                        val railPaddingStart = if (isRotation270) 10.dp else 0.dp
-//                        val railPaddingEnd   = if (isRotation90)  10.dp else 0.dp
-
-
 
                                 val houseIcon = ImageVector.vectorResource(id = R.drawable.ic_house_fill)
                                 val labelFavorites = stringResource(R.string.favorites)
@@ -700,7 +711,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        dev.goodwy.rphone.recordings.CaptureSetupNotifications.check(applicationContext)
+        if (BuildConfig.TEST_DISTRIBUTION) dev.goodwy.rphone.recordings.CaptureSetupNotifications.check(applicationContext)
         defaultDialerRevision++
         AppDiagnostics.record(DiagnosticEvent.ActivityLifecycle(ActivityStage.RESUMED))
         AppLockManager.onAppForegrounded(prefs)
@@ -764,12 +775,6 @@ class MainActivity : FragmentActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             })
             is NavigationTarget.Search -> navController.navigate(com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination(initialQuery = target.query).route)
-//            is NavigationTarget.Recents -> {
-//                navController.navigate(RecentScreenDestination.route) {
-//                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-//                    launchSingleTop = true
-//                }
-//            }
             is NavigationTarget.Recents -> {
                 navController.navigate(RecentScreenDestination.route) {
                     popUpTo(navController.graph.findStartDestination().id) {

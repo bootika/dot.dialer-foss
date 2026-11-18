@@ -37,7 +37,7 @@ class AboutBrandRenderingTest {
         rule.setContent {
             CompositionLocalProvider(LocalDensity provides Density(1f,font)) {
                 DotDialerTheme(systemDark=dark,accent=accent) {
-                    Surface(Modifier.fillMaxSize(),color=MaterialTheme.colorScheme.surface) { AboutOtherApps("en") }
+                    Surface(Modifier.fillMaxSize(),color=MaterialTheme.colorScheme.surface) { AboutOtherApps() }
                 }
             }
         }

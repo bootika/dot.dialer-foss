@@ -35,6 +35,7 @@
 
     <queries>
         <package android:name="ro.dotdesign.dotdictation" />
+        <package android:name="ro.dotdesign.dotdictate" />
         <intent>
             <action android:name="android.intent.action.DIAL" />
             <data android:scheme="tel" />

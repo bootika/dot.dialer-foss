@@ -19,7 +19,7 @@ class DictateBridgeDeviceTest {
     private val instrumentation=InstrumentationRegistry.getInstrumentation()
     @Before fun optionalIntegration() {
         Assume.assumeTrue(InstrumentationRegistry.getArguments().getString("dictateBridgeIntegration")=="true")
-        instrumentation.targetContext.getSharedPreferences("dictate_pairing",0).edit().clear().commit()
+        instrumentation.targetContext.getSharedPreferences(DictateProtocol.PAIRING_PREFERENCES,0).edit().clear().commit()
         val ui=instrumentation.uiAutomation
         val info=ui.serviceInfo;info.flags=info.flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;ui.serviceInfo=info
     }

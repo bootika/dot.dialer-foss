@@ -6,7 +6,6 @@ import android.provider.Settings
 import dev.goodwy.rphone.BuildConfig
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.MessageDigest
 import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,13 +122,7 @@ class TestAccessManager internal constructor(
             require(!androidId.isNullOrBlank())
             return installationId(androidId, context.packageName)
         }
-        internal fun installationId(androidId: String, packageName: String): String {
-            val bytes = MessageDigest.getInstance("SHA-256").digest("dot-test-access-v1|$packageName|$androidId".toByteArray())
-            bytes[6] = ((bytes[6].toInt() and 15) or 64).toByte()
-            bytes[8] = ((bytes[8].toInt() and 63) or 128).toByte()
-            val buffer = java.nio.ByteBuffer.wrap(bytes)
-            return UUID(buffer.long, buffer.long).toString()
-        }
+        internal fun installationId(androidId: String, packageName: String) = scopedLicenseInstallationId(androidId, packageName)
         private fun request(body: JSONObject): JSONObject {
             val connection = URL("https://dialer.dotdesign.ro/api/v1/test-access").openConnection() as HttpURLConnection
             try {

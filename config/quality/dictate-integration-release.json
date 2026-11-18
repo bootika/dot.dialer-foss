@@ -1,10 +1,13 @@
 {
   "schemaVersion": 1,
   "protocolVersion": 1,
-  "status": "pending_real_provider_verification",
-  "verifiedAt": null,
-  "consumerSourceSha256": null,
-  "providerApkSha256": null,
-  "realProviderTranscriptionCompleted": false,
-  "realProviderTranslationCompleted": false
+  "status": "verified",
+  "verifiedAt": "2026-11-18",
+  "consumerSourceSha256": "feccf89bb3699550c95e4f242daf70b911f8f7a7f902c2c456db290f23a78e3c",
+  "providerApkSha256": "96ae396f39d98ec530faced025fd87d42bcf8b15514ac187a71045a98f0a7163",
+  "realProviderTranscriptionCompleted": true,
+  "realProviderTranslationCompleted": true,
+  "providerPackage": "ro.dotdesign.dotdictate",
+  "providerVersionCode": 84,
+  "evidence": "Observed fresh synthetic WAV import, English transcript and Romanian translation on Play-installed Dialer 335-internal and Dictate 2.81 (84). Provider SHA-256 is the installed Play base APK. Consumer runtime used the exact source digest with the Internal variant, and the release uses that source with ADB and diagnostic tooling excluded."
 }

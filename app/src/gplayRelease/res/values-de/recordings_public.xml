@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rec_ui_master">Audiodateien importieren und Transkripte verwalten.</string>
+    <string name="guide_recording">Importiere eine Audiodatei und transkribiere oder übersetze sie mit dot.dictate. Dafür brauchst du Internet, eine verbundene und lizenzierte dot.dictate-App und einen API-Schlüssel. Die Audiodaten gehen an den ausgewählten Anbieter. API-Kosten können anfallen.</string>
+</resources>

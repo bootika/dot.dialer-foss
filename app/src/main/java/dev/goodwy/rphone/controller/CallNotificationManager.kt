@@ -14,6 +14,7 @@ import android.telecom.Call
 import android.telecom.CallAudioState
 import android.util.Log
 import androidx.compose.ui.graphics.toArgb
+import dev.goodwy.rphone.view.screen.callRouteDisplayName
 import dev.goodwy.rphone.view.theme.CallActionColors
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -144,7 +145,7 @@ class CallNotificationManager(
             CallAudioState.ROUTE_SPEAKER -> context.getString(R.string.audio_route_speaker)
             CallAudioState.ROUTE_BLUETOOTH -> {
                 try {
-                    audioState?.activeBluetoothDevice?.name ?: context.getString(R.string.audio_route_bluetooth)
+                    audioState?.activeBluetoothDevice?.callRouteDisplayName() ?: context.getString(R.string.audio_route_bluetooth)
                 } catch (error: SecurityException) {
                     Log.w("CallNotification", "Permission denied while reading Bluetooth route name", error)
                     context.getString(R.string.audio_route_bluetooth)

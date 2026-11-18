@@ -103,7 +103,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
         try {withContext(Dispatchers.IO) {RecordingSyncEngine.synchronize(repo)}}catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure); }
     }}}
     if(languagePicker)RecordingLanguageDialog(capabilities.targetLanguages,{languagePicker=false}) {language ->languagePicker=false;run {repo.setTranslation(language)}}
-    if(outputPicker)RecordingLanguageDialog(listOf("")+capabilities.targetLanguages,{outputPicker=false}) {language ->outputPicker=false;run {repo.setOutputLanguage(language)}}
+    if(dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION && outputPicker)RecordingLanguageDialog(listOf("")+capabilities.targetLanguages,{outputPicker=false}) {language ->outputPicker=false;run {repo.setOutputLanguage(language)}}
     val asset=assets.firstOrNull {it.id==selected}
     // Do not mount a configuration-only lazy list: it would retain that anchor when groups load above it.
     if(!loaded) {
@@ -160,12 +160,14 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
                         if(access==RecordingAccess.READY && RecordingPolicy.processing(plans.effective,capabilities,true)!=RecordingAccess.READY)
                             Text(stringResource(R.string.recordings_translation_unavailable),Modifier.padding(16.dp),style=MaterialTheme.typography.bodyMedium)
                         DotSettingsDivider()
-                        val output=remember(preferences) {repo.outputLanguage()}
-                        DotSettingsNavigationRow(stringResource(R.string.capture_output_language),
-                            supporting=if(output.isEmpty())stringResource(R.string.capture_original_language)else java.util.Locale.forLanguageTag(output).getDisplayName(displayLocale),
-                            contentActive=access==RecordingAccess.READY,onClick={if(access==RecordingAccess.READY)outputPicker=true else configure()})
-                        Text(stringResource(R.string.rec_ui_output_hint),Modifier.padding(horizontal=16.dp).padding(bottom=12.dp),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
-                        DotSettingsDivider()
+                        if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) {
+                            val output=remember(preferences) {repo.outputLanguage()}
+                            DotSettingsNavigationRow(stringResource(R.string.capture_output_language),
+                                supporting=if(output.isEmpty())stringResource(R.string.capture_original_language)else java.util.Locale.forLanguageTag(output).getDisplayName(displayLocale),
+                                contentActive=access==RecordingAccess.READY,onClick={if(access==RecordingAccess.READY)outputPicker=true else configure()})
+                            Text(stringResource(R.string.rec_ui_output_hint),Modifier.padding(horizontal=16.dp).padding(bottom=12.dp),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                            DotSettingsDivider()
+                        }
                         val auto=remember(preferences) {repo.optedIn()}
                         val translation=remember(preferences) {repo.translationLanguage()}
                         if(!complete)Text(AppPlan.PREMIUM.displayName,Modifier.padding(horizontal=16.dp,vertical=6.dp),style=MaterialTheme.typography.labelMedium,color=MaterialTheme.colorScheme.primary)

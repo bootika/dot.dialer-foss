@@ -25,7 +25,8 @@ $selected = @($paths | Where-Object {
     $_ -notmatch '(^|/)(build|evidence|docs|node_modules|\.git|\.secrets)/' -and
     $_ -notmatch '(^|/)(AGENTS\.md|local\.properties|\.env(?:\..*)?)$' -and
     $_ -notmatch '\.(jks|keystore|p12|pfx|pem|apk|aab)$' -and
-    ($_ -notmatch '\.md$' -or $_ -in @('README.md', 'UPSTREAM.md') -or $_ -like 'LICENSES/*')
+    ($_ -notmatch '\.md$' -or $_ -in @('README.md', 'UPSTREAM.md') -or $_ -like 'LICENSES/*' -or
+        $_ -match '^app/src/[^/]+/assets/[^/]+-licenses/NOTICE\.md$')
 } | Sort-Object -Unique)
 if (!$selected.Count) { throw 'No source files selected.' }
 New-Item -ItemType Directory -Path $targetRoot -Force | Out-Null

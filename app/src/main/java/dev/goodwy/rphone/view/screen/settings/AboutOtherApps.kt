@@ -21,19 +21,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.DARK_EDGE_RADIO_URL
 import dev.goodwy.rphone.R
-import dev.goodwy.rphone.dotDictateUrl
+import dev.goodwy.rphone.DOT_DICTATE_PLAY_URL
 import dev.goodwy.rphone.controller.util.openLink
 import dev.goodwy.rphone.view.components.RillExpressiveCard
 
 @Composable
-internal fun AboutOtherApps(language: String) {
+internal fun AboutOtherApps() {
     Column(Modifier.fillMaxWidth()) {
         SettingsSectionLabel(stringResource(R.string.other_apps))
         RillExpressiveCard {
             OtherAppRow(R.string.dark_edge_radio, R.string.dark_edge_radio_description,
                 R.drawable.ic_dark_edge_radio, DARK_EDGE_RADIO_URL, R.string.open_in_google_play)
             OtherAppRow(R.string.dot_dictate, R.string.dot_dictate_description,
-                R.drawable.ic_dot_dictate_about, dotDictateUrl(language), R.string.open_app_website)
+                R.drawable.ic_dot_dictate_about, DOT_DICTATE_PLAY_URL, R.string.open_in_google_play)
         }
     }
 }

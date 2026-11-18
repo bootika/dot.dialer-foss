@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.first
 internal class RecordingsRepository internal constructor(val context: android.app.Application, planProvider: ()->PlanAccessManager = {PlanAccessManager.get(context)},
     val bridge: DictateBridge = DictateBridgeClient(context),
     val integrationEnabled: ()->Boolean = {dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED},
-    val moduleState: kotlinx.coroutines.flow.StateFlow<Boolean> = IntegratedCallCapture.get(context).optedIn) {
+    val moduleState: kotlinx.coroutines.flow.StateFlow<Boolean> = CaptureOptIn.get(context).state) {
     internal val catalog=RecordingCatalog(context)
     internal val files=RecordingFiles(context)
     private val plans by lazy(planProvider)

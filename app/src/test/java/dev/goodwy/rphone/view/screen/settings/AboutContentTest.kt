@@ -130,7 +130,7 @@ class AboutContentTest {
                 assertEquals(url, requireNotNull(shadow.nextStartedActivity).data.toString())
             }
             open(R.string.dark_edge_radio, DARK_EDGE_RADIO_URL)
-            open(R.string.dot_dictate, dotDictateUrl(lang))
+            open(R.string.dot_dictate, "https://play.google.com/store/apps/details?id=ro.dotdesign.dotdictate")
             val copyright = renderedContext.getString(R.string.about_copyright, Calendar.getInstance().get(Calendar.YEAR))
             assertTrue(copyright.startsWith("© Dot Design"))
             rule.onNodeWithText(copyright).performScrollTo().assertIsDisplayed()

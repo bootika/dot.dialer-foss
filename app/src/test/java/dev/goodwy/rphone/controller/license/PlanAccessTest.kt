@@ -123,6 +123,74 @@ class PlanAccessTest {
             assertEquals(AppPlan.PLUS, m.effective)
         } finally { worker.cancel() }
     }
+    @Test fun `last signed plan terms survive outage and restart without extending dated rights`() = runBlocking {
+        val premiumEnd = clock + 20 * 86400
+        tier = "premium"
+        trial = clock
+        var stored: JSONObject? = null
+        var worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        var response: (JSONObject) -> String = { sign(it) { body ->
+            body.put("v", 2).put("paid_terms", JSONObject().put("plus", JSONObject.NULL).put("premium", premiumEnd))
+        } }
+        suspend fun start(): PlanAccessManager {
+            val manager = PlanAccessManager("dot.dialer.test", { id }, { stored }, { stored = it }, verifier, worker,
+                { JSONObject().put("grant", response(it)) }, { clock }, { elapsed })
+            withTimeout(5000) { while (manager.state.value.revision < 3 || manager.state.value.busy) delay(10) }
+            return manager
+        }
+        try {
+            var manager = start()
+            assertEquals(AppPlan.PREMIUM, manager.paid)
+            val original = stored.toString()
+            response = { throw java.net.SocketTimeoutException() }
+            clock += 11 * 86400
+            elapsed += 11 * 86400_000L
+            assertFalse(manager.refresh(force = true))
+            assertEquals(AppPlan.PREMIUM, manager.paid)
+            assertFalse(manager.state.value.unavailable)
+            assertEquals(original, stored.toString())
+            worker.cancel()
+            worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            elapsed = 0
+            manager = start()
+            assertEquals(AppPlan.PREMIUM, manager.paid)
+            clock = premiumEnd
+            assertEquals(AppPlan.PLUS, manager.paid)
+            assertEquals(AppPlan.PREMIUM, manager.effective)
+            clock = trial + 30 * 86400
+            assertEquals(AppPlan.PLUS, manager.effective)
+            clock += 365 * 86400
+            response = { "invalid" }
+            assertFalse(manager.refresh(force = true))
+            assertEquals(AppPlan.PLUS, manager.state.value.entitlements.paid)
+            tier = "free"
+            response = { sign(it) { body -> body.put("v", 2).put("paid_terms", JSONObject()) } }
+            assertTrue(manager.refresh(force = true))
+            assertEquals(AppPlan.FREE, manager.effective)
+            worker.cancel()
+            worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            response = { throw java.io.IOException() }
+            manager = start()
+            assertEquals(AppPlan.FREE, manager.effective)
+        } finally { worker.cancel() }
+    }
+
+    @Test fun `only cache accepts stale v2 and signed terms must match the tier`() {
+        tier = "premium"
+        val signed = sign(request) {
+            it.put("v", 2).put("paid_terms", JSONObject().put("premium", JSONObject.NULL))
+        }
+        val later = clock + 365 * 86400
+        rejected { verifier.verify(signed, "dot.dialer.test", id, later, request.getString("nonce")) }
+        val cached = verifier.verifyCached(signed, "dot.dialer.test", id, later)
+        assertEquals(AppPlan.PREMIUM, cached.entitlementsAt(later, leaseValid = false, clockTrusted = false).paid)
+        rejected { verifier.verifyCached(signed, "dot.dialer", id, later) }
+        for (terms in listOf(JSONObject(), JSONObject().put("premium", "lifetime"), JSONObject().put("premium", clock))) {
+            val invalid = sign(request) { it.put("v", 2).put("paid_terms", terms) }
+            rejected { verifier.verify(invalid, "dot.dialer.test", id, clock) }
+        }
+    }
+
     @Test fun `six product identifiers independent of locale distinguish plus from legacy premium`() {
         val original=Locale.getDefault()
         try {

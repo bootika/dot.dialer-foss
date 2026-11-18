@@ -22,7 +22,7 @@ internal data class CaptureSetupState(val phase: String="idle",val pairingPort: 
 internal class IntegratedCallCapture private constructor(private val context: android.app.Application) {
     private val root=File(context.noBackupFilesDir,"call-capture").apply{mkdirs()}
     private val config=File(root,"session.json")
-    private val optIn=CaptureOptIn(root)
+    private val optIn=CaptureOptIn.get(context)
     val optedIn=optIn.state
     private val wirelessPendingFile=File(root,"wireless-off-pending")
     private val wirelessPending=MutableStateFlow(wirelessPendingFile.exists() || (!enabled() && File(root,"feature-enabled").exists() && runCatching {Settings.Global.getInt(context.contentResolver,"adb_wifi_enabled",-1)==1}.getOrDefault(false)))

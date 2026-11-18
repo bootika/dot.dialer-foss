@@ -22,7 +22,7 @@ internal data class PlanAccessState(
     val busy: Boolean = false, val unavailable: Boolean = false, val revision: Long = 0,
 )
 
-/** Signed bounded rights; no telephony action waits for these requests. */
+/** Signed plan rights. Telephony actions never wait for verification requests. */
 internal class PlanAccessManager internal constructor(
     private val audience: String, private val identity: () -> String,
     private val read: () -> JSONObject?, private val write: (JSONObject) -> Unit,
@@ -39,19 +39,24 @@ internal class PlanAccessManager internal constructor(
     fun requestUpgrade(feature: PlanFeature) { requests.tryEmit(feature) }
     private var record = JSONObject()
     private var installation = ""
-    private var deadline = 0L
-    private var wallExpiry = 0L
-    private var lastClock = 0L
-    private var verified = PlanEntitlements()
+    private data class CachedPlan(val grant: PlanGrant, val verifiedAt: Long, val wallAtLoad: Long, val elapsedAtLoad: Long) {
+        fun time(wall: Long, elapsed: Long): Long =
+            maxOf(wall, wallAtLoad + (elapsed - elapsedAtLoad).coerceAtLeast(0) / 1000)
+    }
+    @Volatile private var cached: CachedPlan? = null
     private var lastAttempt = Long.MIN_VALUE
     private var purchaseHelper: PurchaseHelper? = null
     val effective: AppPlan get() {
-        val current = if (elapsed() < deadline && now() < wallExpiry && now() >= lastClock - 300) verified else PlanEntitlements()
+        val wall = now()
+        val elapsedNow = elapsed()
+        val snapshot = cached
+        val current = entitlements(snapshot, wall, elapsedNow)
+        val time = snapshot?.time(wall, elapsedNow) ?: wall
         val legacy = if (purchaseHelper?.isPro?.value == true) AppPlan.PREMIUM else AppPlan.FREE
         val purchased = purchaseHelper?.storePlan?.value ?: AppPlan.FREE
-        return maxOf(current.effective(now()), legacy, purchased)
+        return maxOf(current.effective(time), legacy, purchased)
     }
-    val paid: AppPlan get() = maxOf(if(valid()) verified.paid else AppPlan.FREE,
+    val paid: AppPlan get() = maxOf(entitlements(cached, now(), elapsed()).paid,
         if(purchaseHelper?.isPro?.value == true) AppPlan.PREMIUM else AppPlan.FREE,
         purchaseHelper?.storePlan?.value ?: AppPlan.FREE)
     fun allows(feature: PlanFeature): Boolean = PlanEntitlements(effective).allows(feature, now())
@@ -61,24 +66,42 @@ internal class PlanAccessManager internal constructor(
         scope.launch { combine(helper.isPro, helper.storePlan) { _, _ -> Unit }.collect { publish() } }
     }
     private fun publish(busy: Boolean = false, unavailable: Boolean = false) {
-        mutableState.value = PlanAccessState(verified, installation.isNotEmpty(), busy, unavailable, mutableState.value.revision + 1)
+        val snapshot = cached
+        val wall = now()
+        val elapsedNow = elapsed()
+        val current = entitlements(snapshot, wall, elapsedNow)
+        val time = snapshot?.time(wall, elapsedNow) ?: wall
+        val hasOfflineAccess = snapshot?.grant?.paidTerms != null && current.effective(time) != AppPlan.FREE
+        mutableState.value = PlanAccessState(current, installation.isNotEmpty(), busy,
+            unavailable && !hasOfflineAccess, mutableState.value.revision + 1)
     }
     init { scope.launch {
         try {
             installation = identity(); record = read() ?: JSONObject()
             restore(); publish(); refresh()
-            while (isActive) { delay(30_000); publish(unavailable = !valid()); refresh() }
+            while (isActive) { delay(30_000); publish(unavailable = !leaseValid(cached, now(), elapsed())); refresh() }
         } catch (error: CancellationException) { throw error }
         catch (error: Exception) { failure(error); publish(unavailable = true) }
     } }
-    private fun valid() = elapsed() < deadline && now() < wallExpiry && now() >= lastClock - 300
+    private fun leaseValid(snapshot: CachedPlan?, wall: Long, elapsedNow: Long): Boolean =
+        snapshot != null && wall >= snapshot.verifiedAt - 300 && snapshot.time(wall, elapsedNow) < snapshot.grant.expires
+
+    private fun entitlements(snapshot: CachedPlan?, wall: Long, elapsedNow: Long): PlanEntitlements {
+        if (snapshot == null) return PlanEntitlements()
+        return snapshot.grant.entitlementsAt(
+            snapshot.time(wall, elapsedNow), leaseValid(snapshot, wall, elapsedNow), wall >= snapshot.verifiedAt - 300,
+        )
+    }
+
     private fun restore() {
         try {
-            require(now() >= record.optLong("last_clock") - 300)
-            val grant = verifier.verify(record.getString("grant"), audience, installation, now())
-            verified = grant.entitlements; wallExpiry = grant.expires; lastClock = record.optLong("last_clock")
-            deadline = elapsed() + (grant.expires - now()) * 1000
-        } catch (error: Exception) { failure(error);deadline = 0; wallExpiry = 0; verified = PlanEntitlements() }
+            val signed = record.optString("grant")
+            if (signed.isEmpty()) return
+            val wall = now()
+            val verifiedAt = record.getLong("last_clock")
+            val grant = verifier.verifyCached(signed, audience, installation, wall)
+            cached = CachedPlan(grant, verifiedAt, maxOf(wall, verifiedAt), elapsed())
+        } catch (error: Exception) { failure(error) }
     }
     fun retry() { scope.launch { refresh(force = true) } }
     fun startTrial() { scope.launch { refresh(startTrial = true, force = true) } }
@@ -94,11 +117,11 @@ internal class PlanAccessManager internal constructor(
                 .put("start_trial", if (startTrial) "1" else "0")
             if(invitation!=null) {require(invitation.matches(Regex("[a-f0-9]{64}")));body.put("invitation",invitation)}
             val signed = transport(body).getString("grant")
-            val grant = verifier.verify(signed, audience, installation, now(), nonce)
-            val updated = JSONObject().put("grant", signed).put("last_clock", now())
+            val wall = now()
+            val grant = verifier.verify(signed, audience, installation, wall, nonce)
+            val updated = JSONObject().put("grant", signed).put("last_clock", wall)
             write(updated)
-            record = updated; verified = grant.entitlements; wallExpiry = grant.expires; lastClock = now()
-            deadline = elapsed() + (grant.expires - now()) * 1000
+            cached = CachedPlan(grant, wall, wall, elapsed())
             publish()
             true
         } catch (error: CancellationException) { publish(); throw error }
@@ -116,7 +139,7 @@ internal class PlanAccessManager internal constructor(
             return PlanAccessManager(context.packageName, {
                 val id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
                 require(!id.isNullOrBlank())
-                TestAccessManager.installationId(id, context.packageName)
+                scopedLicenseInstallationId(id, context.packageName)
             }, storage::read, storage::write, PlanGrantVerifier(), CoroutineScope(SupervisorJob() + Dispatchers.IO), ::request)
         }
         private fun request(body: JSONObject): JSONObject {
@@ -125,6 +148,7 @@ internal class PlanAccessManager internal constructor(
                 connection.requestMethod = "POST"; connection.connectTimeout = 10_000; connection.readTimeout = 10_000
                 connection.instanceFollowRedirects = false; connection.doOutput = true
                 connection.setRequestProperty("Content-Type", "application/json")
+                connection.setRequestProperty("X-Dot-Plan-Grant", "2")
                 connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
                 require(connection.responseCode == 200)
                 val bytes = connection.inputStream.use { input ->

@@ -1,6 +1,10 @@
 package dev.goodwy.rphone.view.screen.settings.components
 
+import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
+
+internal val helpSettingsTitle: Int
+    get() = if (BuildConfig.TEST_DISTRIBUTION) R.string.help_and_diagnostics else R.string.help_settings
 
 internal enum class SettingsEditor {
     ACCESSIBILITY, ADVANCED, REPORTING, INTERFACE, AVATARS, FONT, HOME, HISTORY, CALL_UI, CALL_EFFECTS, ACCOUNTS, NUMBERS, DEVICE, QUICK, CALLS, SOUND, SCROLL, FRAME, KEYPAD, SOURCES, CONTACTS, BLOCKED, AUTH, CALL_AUTH, SUPPORT, DIAGNOSTICS, CONTEXT, LEGACY, RECORDINGS
@@ -8,7 +12,7 @@ internal enum class SettingsEditor {
 
 internal enum class SettingsFunction(val title: Int) {
     INTERFACE(R.string.interface_settings), CALLS(R.string.call_behavior), CONTACTS(R.string.contacts_and_data),
-    SOUND(R.string.sound_and_vibration), PRIVACY(R.string.privacy_and_blocking), HELP(R.string.help_and_diagnostics)
+    SOUND(R.string.sound_and_vibration), PRIVACY(R.string.privacy_and_blocking), HELP(helpSettingsTitle)
 }
 
 internal data class SettingsOption(
@@ -41,7 +45,8 @@ internal data class SettingsOption(
         SettingsEditor.CONTEXT, SettingsEditor.LEGACY -> SettingsFunction.HELP
     }
     fun isAvailable(flavor: String, autoAvailable: Boolean, testBuild: Boolean = dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION): Boolean = when (id) {
-        "K13", "K14", "K15", "K16" -> dev.goodwy.rphone.BuildConfig.DICTATE_INTEGRATION_ENABLED
+        "K13", "K14", "K15" -> BuildConfig.DICTATE_INTEGRATION_ENABLED
+        "K16" -> BuildConfig.DICTATE_INTEGRATION_ENABLED && testBuild
         "O02" -> testBuild
         "T09", "T10" -> flavor == "gplay"
         "F01" -> flavor == "foss"

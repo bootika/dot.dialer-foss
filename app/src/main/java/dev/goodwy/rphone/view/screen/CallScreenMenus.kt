@@ -53,23 +53,19 @@ internal fun CallAudioRoutePicker(
     onRouteSelected: (Int) -> Unit,
 ) {
     val view = LocalView.current
-    val supported = audioState?.supportedRouteMask ?: 0
+    val audio = callScreenAudioSnapshot(audioState)
+    val supported = audio.supportedRouteMask
     val handsetLabel = stringResource(R.string.audio_route_handset)
     val speakerLabel = stringResource(R.string.audio_route_speaker)
     val headsetLabel = stringResource(R.string.audio_route_headset)
-    val bluetoothLabel = stringResource(R.string.audio_route_bluetooth)
+    val bluetoothLabel = audio.bluetoothDeviceName.ifBlank { stringResource(R.string.audio_route_bluetooth) }
     val options = remember(supported, handsetLabel, speakerLabel, headsetLabel, bluetoothLabel) {
         buildList {
             if ((supported and CallAudioState.ROUTE_EARPIECE) != 0) add(handsetLabel to CallAudioState.ROUTE_EARPIECE)
             if ((supported and CallAudioState.ROUTE_SPEAKER) != 0) add(speakerLabel to CallAudioState.ROUTE_SPEAKER)
             if ((supported and CallAudioState.ROUTE_WIRED_HEADSET) != 0) add(headsetLabel to CallAudioState.ROUTE_WIRED_HEADSET)
             if ((supported and CallAudioState.ROUTE_BLUETOOTH) != 0) {
-                val deviceName = try {
-                    audioState?.activeBluetoothDevice?.name
-                } catch (error: SecurityException) {
-                    null
-                }
-                add((deviceName ?: bluetoothLabel) to CallAudioState.ROUTE_BLUETOOTH)
+                add(bluetoothLabel to CallAudioState.ROUTE_BLUETOOTH)
             }
         }
     }
@@ -83,7 +79,7 @@ internal fun CallAudioRoutePicker(
             view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             onRouteSelected(it.second)
         },
-        isSelected = { it.second == audioState?.route },
+        isSelected = { it.second == audio.route },
         icon = Icons.AutoMirrored.Rounded.VolumeUp,
         itemIcon = { callAudioRouteIcon(it.second) },
     )

@@ -52,7 +52,7 @@ fun makeCall(
     directTap: Boolean = false,
     deferredRequestId: String? = null,
 ) {
-    if (!dev.goodwy.rphone.controller.license.TestAccessManager.get(context).allowed) {
+    if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION && !dev.goodwy.rphone.controller.license.TestAccessManager.get(context).allowed) {
         dev.goodwy.rphone.controller.DirectCallWindow.fail(deferredRequestId)
         val telecom = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
         // The legacy local classifier does not require a READ_PHONE_STATE permission grant.

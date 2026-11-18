@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 class RillApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        dev.goodwy.rphone.controller.license.TestAccessManager.get(this)
+        if (BuildConfig.TEST_DISTRIBUTION && packageName == "dot.dialer.test") {
+            dev.goodwy.rphone.controller.license.TestAccessManager.get(this)
+        }
         AppDiagnostics.initialize(this)
         val koinApplication = startKoin {
             androidContext(this@RillApp)

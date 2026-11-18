@@ -33,4 +33,5 @@
     <string name="settings_alias_tap_haptics">Rung khi chạm</string>
     <string name="contacts_and_data">Danh bạ và dữ liệu</string>
     <string name="help_and_diagnostics">Trợ giúp và chẩn đoán</string>
+    <string name="help_settings">Trợ giúp</string>
 </resources>

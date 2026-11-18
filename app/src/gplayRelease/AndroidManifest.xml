@@ -6,6 +6,9 @@
         android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
         tools:node="remove" />
 
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+
     <application>
         <meta-data android:name="ro.dotdesign.dotdialer.BUNDLE_AUDIENCE_PUBLIC" android:value="true" />
         <meta-data android:name="${playDictateVerification}" android:value="true" />

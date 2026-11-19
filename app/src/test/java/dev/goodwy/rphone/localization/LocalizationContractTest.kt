@@ -126,6 +126,22 @@ class LocalizationContractTest {
         }
     }
 
+    @Test
+    fun `ordinary call status and corrected UI text are translated in every shipped language`() {
+        val keys = listOf("call_voice_quality_unreported_short", "ui_no_valid_app", "ui_contact_qr_code",
+            "game_app_unlocked", "ui_search_unavailable")
+        val base = resourcesInDirectory(repoFile("app/src/main/res/values"))
+        SUPPORTED_LOCALES.forEach { (locale, directory) ->
+            val translated = resourcesInDirectory(repoFile("app/src/main/res/$directory"))
+            keys.forEach { key ->
+                val value = translated.getValue(key)
+                assertTrue("Ordinary UI must be translatable: $locale/$key", value.translatable)
+                assertTrue("Empty translation: $locale/$key", value.values.single().isNotBlank())
+                assertEquals(placeholderSignature(base.getValue(key).values.single()), placeholderSignature(value.values.single()))
+                if (locale != "en") assertFalse("English fallback: $locale/$key", base.getValue(key).values == value.values)
+            }
+        }
+    }
     private data class Resource(
         val values: List<String>,
         val translatable: Boolean,
@@ -166,10 +182,9 @@ class LocalizationContractTest {
     }
 
     @Test
-    fun `voice quality and brand tokens stay invariant and ordinary Unknown is localized`() {
+    fun `HD quality and brand tokens stay invariant and ordinary Unknown is localized`() {
         val base = resourcesInDirectory(repoFile("app/src/main/res/values"))
         val expected = mapOf(
-            "call_voice_quality_unreported_short" to "Voice call",
             "call_voice_quality_hd" to "HD Voice",
             "call_voice_quality_hd_plus" to "HD+ Voice",
             "app_name" to "dot.dialer",

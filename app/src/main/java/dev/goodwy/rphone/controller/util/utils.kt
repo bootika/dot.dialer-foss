@@ -426,7 +426,7 @@ fun Context.launchInternetSearch(query: String) {
         try {
             startActivity(this)
         } catch (_: ActivityNotFoundException) {
-            toast("Unable to open search")
+            toast(getString(dev.goodwy.rphone.R.string.ui_search_unavailable))
         } catch (e: Exception) {
             toast(e.toString())
         }

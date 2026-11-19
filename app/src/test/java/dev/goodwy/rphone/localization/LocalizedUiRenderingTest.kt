@@ -62,7 +62,11 @@ class LocalizedUiRenderingTest {
             val context = localized(tag)
             assertEquals("HD Voice", context.getString(R.string.call_voice_quality_hd))
             assertEquals("HD+ Voice", context.getString(R.string.call_voice_quality_hd_plus))
-            assertEquals("Voice call", context.getString(R.string.call_voice_quality_unreported_short))
+            for (key in listOf(R.string.call_voice_quality_unreported_short, R.string.ui_no_valid_app,
+                R.string.ui_contact_qr_code, R.string.game_app_unlocked, R.string.ui_search_unavailable)) {
+                assertTrue(context.getString(key).isNotBlank())
+                if (tag != "en") assertNotEquals(localized("en").getString(key), context.getString(key))
+            }
             assertTrue(context.getString(R.string.standardize_progress, 42).contains("42%"))
             assertTrue(context.getString(R.string.rating_star, 3).contains("3"))
             val advanced = context.getString(R.string.advanced_settings)
@@ -158,6 +162,35 @@ class LocalizedUiRenderingTest {
         capture("rating-ro-fresh", dialog = true)
     }
 
+    @Test
+    fun `invalid social destination uses the active locale without launching an app`() {
+        for (tag in locales) {
+            val context = localized(tag)
+            val app = org.robolectric.RuntimeEnvironment.getApplication()
+            val shadow = org.robolectric.Shadows.shadowOf(app)
+            while (shadow.nextStartedActivity != null) { /* Drain fixtures without launching anything. */ }
+            org.robolectric.shadows.ShadowToast.reset()
+            with(dev.goodwy.rphone.controller.util.SocialUtils) { context.launchSendWhatsAppIntent("") }
+            assertEquals(context.getString(R.string.ui_no_valid_app), org.robolectric.shadows.ShadowToast.getTextOfLatestToast())
+            assertNull("Empty destination must not start an external app", shadow.nextStartedActivity)
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "ro-w412dp-h915dp")
+    fun `contact QR image has localized Romanian accessibility semantics`() {
+        val context = localized("ro")
+        rule.setContent {
+            CompositionLocalProvider(LocalContext provides context, LocalConfiguration provides context.resources.configuration) {
+                DotDialerTheme(systemDark = false) {
+                    dev.goodwy.rphone.view.screen.QrCodeDialog("Test Alexandru Butica", null, null, {})
+                }
+            }
+        }
+        rule.waitForIdle()
+        rule.onNodeWithContentDescription(context.getString(R.string.ui_contact_qr_code)).assertIsDisplayed()
+        capture("contact-qr-ro", dialog = true)
+    }
     private fun capture(name: String, dialog: Boolean) {
         val output = File(requireNotNull(System.getProperty("user.dir")), "build/reports/visual/localization-d57/$name.png")
         requireNotNull(output.parentFile).mkdirs()

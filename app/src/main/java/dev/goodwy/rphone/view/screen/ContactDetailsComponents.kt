@@ -211,7 +211,7 @@ internal fun QrCodeDialog(name: String, phone: String?, email: String?, onDismis
                 Text(stringResource(R.string.contact_qr), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 qrBitmap?.let {
-                    Image(bitmap = it.asImageBitmap(), contentDescription = "QR Code", modifier = Modifier
+                    Image(bitmap = it.asImageBitmap(), contentDescription = stringResource(R.string.ui_contact_qr_code), modifier = Modifier
                         .size(240.dp)
                         .background(Color.White, MaterialTheme.shapes.medium)
                         .padding(12.dp))

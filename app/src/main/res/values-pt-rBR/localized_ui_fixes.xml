@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Chamada de voz</string>
+    <string name="ui_no_valid_app">Nenhum aplicativo compatível encontrado.</string>
+    <string name="ui_contact_qr_code">Código QR do contato</string>
+    <string name="game_app_unlocked">Aplicativo desbloqueado</string>
+    <string name="ui_search_unavailable">Não foi possível abrir a pesquisa.</string>
+</resources>

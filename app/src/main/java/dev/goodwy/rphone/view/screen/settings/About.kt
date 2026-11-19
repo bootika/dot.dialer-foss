@@ -798,7 +798,7 @@ fun HorseGameContent(
                         }
                         if (finalScore > 9999) {
                             prefs.setBoolean(KEY_IS_PRO_FOSS, true)
-                            context.toast(" App Unlocked")
+                            context.toast(context.getString(R.string.game_app_unlocked))
                         }
                     }
                 }

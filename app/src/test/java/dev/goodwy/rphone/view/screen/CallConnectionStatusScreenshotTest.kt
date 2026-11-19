@@ -1,6 +1,8 @@
 package dev.goodwy.rphone.view.screen
 
 import android.app.Application
+import android.content.res.Configuration
+import android.os.LocaleList
 import android.content.ComponentName
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -20,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Density
@@ -197,6 +201,62 @@ class CallConnectionStatusScreenshotTest {
         capture("call-metadata-wifi-no-sim.png")
     }
 
+    @Test
+    @Config(qualifiers = "w360dp-h915dp")
+    fun `German and Polish neutral voice labels fit measured status geometry at enlarged fonts`() {
+        val locale = mutableStateOf("de")
+        val scale = mutableStateOf(1f)
+        val availableWidth = mutableStateOf(312)
+        composeRule.setContent {
+            val density = LocalDensity.current
+            val configuration = Configuration(composeRule.activity.resources.configuration).apply {
+                setLocales(LocaleList.forLanguageTags(locale.value))
+            }
+            val context = composeRule.activity.createConfigurationContext(configuration)
+            CompositionLocalProvider(
+                LocalContext provides context,
+                LocalConfiguration provides configuration,
+                LocalDensity provides Density(density.density, scale.value),
+            ) {
+                DotDialerTheme(systemDark = false) {
+                    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
+                        CallConnectionStatusRow(
+                            CallConnectionInfo(CallTransportKind.Cellular, null, null, null, null),
+                            "01:34", {}, Modifier.width(availableWidth.value.dp).testTag("localizedStatusAvailable"),
+                            account = vodafoneAccount,
+                        )
+                    }
+                }
+            }
+        }
+        fun bounds(tag: String) = composeRule.onNodeWithTag(tag, useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        for (tag in listOf("de", "pl")) for (width in listOf(312, 280)) for (font in listOf(1f, 1.5f, 2f)) {
+            composeRule.runOnIdle { locale.value = tag; availableWidth.value = width; scale.value = font }
+            composeRule.waitForIdle()
+            val description = "$tag width=$width font=$font"
+            val label = composeRule.onNodeWithTag("callQualityLabel", useUnmergedTree = true)
+            label.assertIsDisplayed()
+            val layouts = mutableListOf<TextLayoutResult>()
+            label.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+            val result = layouts.single()
+            val expected = if (tag == "de") "Sprachanruf" else "Połączenie głosowe"
+            org.junit.Assert.assertEquals(description, expected, result.layoutInput.text.text)
+            org.junit.Assert.assertFalse("Text overflow: $description", result.hasVisualOverflow)
+            val cell = bounds(CALL_CONNECTION_QUALITY_TEST_TAG)
+            for (content in listOf("callQualityLabel", "callQualityGlyph")) {
+                val item = bounds(content)
+                org.junit.Assert.assertTrue("$content outside cell: $description",
+                    item.left >= cell.left - 1f && item.right <= cell.right + 1f &&
+                        item.top >= cell.top - 1f && item.bottom <= cell.bottom + 1f)
+            }
+            val available = bounds("localizedStatusAvailable")
+            val shield = bounds("callConnectionShield")
+            org.junit.Assert.assertTrue("Shield exceeds available width: $description",
+                shield.left >= available.left - 1f && shield.right <= available.right + 1f)
+            if (tag == "pl" && width == 280 && font == 2f) capture("v344-pl280-font200.png")
+        }
+    }
     private fun capture(name: String) {
         val output = File(requireNotNull(System.getProperty("user.dir")), "build/reports/visual/$name")
         requireNotNull(output.parentFile).mkdirs()

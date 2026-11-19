@@ -6,7 +6,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
 import kotlin.math.ceil
 
@@ -74,6 +76,23 @@ internal fun measuredCallConnectionStatusGeometry(
         measurer.measure(AnnotatedString(it.label?.toString().orEmpty()), style, softWrap = false).size
     }
     fun dpCeil(pixels: Int): Int = ceil(with(density) { pixels.toDp().value }).toInt()
+    // The quality cell can occupy the full shield width after its rows wrap.
+    // Measure long translations at that bound so enlarged fonts keep their natural size.
+    val qualityTextWidth = with(density) {
+        (availableWidth - 8.dp - (2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP).dp -
+            CALL_CONNECTION_QUALITY_ICON_DP.dp - CALL_CONNECTION_QUALITY_ICON_GAP_DP.dp - 2.dp)
+            .roundToPx().coerceAtLeast(1)
+    }
+    val wrappedQualitySizes = qualityLabels.mapIndexed { index, label ->
+        qualitySizes[index].takeIf { it.width <= qualityTextWidth } ?: measurer.measure(
+            AnnotatedString(label), style, constraints = Constraints(maxWidth = qualityTextWidth),
+        ).size
+    }
+    val connectingTextWidth = with(density) { (availableWidth - 8.dp - 2.dp).roundToPx().coerceAtLeast(1) }
+    val wrappedConnectingSize = connectingSize.takeIf { it.width <= connectingTextWidth } ?: measurer.measure(
+        AnnotatedString(callConnectingLabel()), style,
+        constraints = Constraints(maxWidth = connectingTextWidth),
+    ).size
     return callConnectionStatusGeometry(
         availableWidthDp = availableWidth.value.toInt(),
         accountContentWidthDp = accountSize?.let { dpCeil(it.width) + 26 },
@@ -83,6 +102,6 @@ internal fun measuredCallConnectionStatusGeometry(
                 CALL_CONNECTION_QUALITY_ICON_GAP_DP + 2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP + 2,
             dpCeil(connectingSize.width) + 2 * CALL_CONNECTION_QUALITY_HORIZONTAL_PADDING_DP + 2,
         ), // Both phases reserve the same measured width, including localized Connecting text.
-        textHeightDp = dpCeil(maxOf(qualitySizes.maxOf { it.height }, connectingSize.height, transportSize.height, accountSize?.height ?: 0)),
+        textHeightDp = dpCeil(maxOf(wrappedQualitySizes.maxOf { it.height }, wrappedConnectingSize.height, transportSize.height, accountSize?.height ?: 0)),
     )
 }

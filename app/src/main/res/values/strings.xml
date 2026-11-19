@@ -396,7 +396,6 @@
     <string name="call_transport_wifi" tools:ignore="MissingTranslation">Wi-Fi Call</string>
     <string name="call_voice_quality" tools:ignore="MissingTranslation">Voice quality</string>
     <string name="call_voice_quality_standard" tools:ignore="MissingTranslation">Standard</string>
-    <string name="call_voice_quality_unreported_short" translatable="false">Voice call</string>
     <string name="call_voice_quality_hd" translatable="false">HD Voice</string>
     <string name="call_voice_quality_hd_plus" translatable="false">HD+ Voice</string>
     <string name="call_codec" tools:ignore="MissingTranslation">Codec</string>

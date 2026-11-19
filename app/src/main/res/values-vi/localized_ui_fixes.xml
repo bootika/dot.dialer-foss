@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Cuộc gọi thoại</string>
+    <string name="ui_no_valid_app">Không tìm thấy ứng dụng tương thích.</string>
+    <string name="ui_contact_qr_code">Mã QR của liên hệ</string>
+    <string name="game_app_unlocked">Đã mở khóa ứng dụng</string>
+    <string name="ui_search_unavailable">Không thể mở tìm kiếm.</string>
+</resources>

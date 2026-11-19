@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Apel vocal</string>
+    <string name="ui_no_valid_app">Nu s-a găsit nicio aplicație compatibilă.</string>
+    <string name="ui_contact_qr_code">Codul QR al contactului</string>
+    <string name="game_app_unlocked">Aplicație deblocată</string>
+    <string name="ui_search_unavailable">Nu se poate deschide căutarea.</string>
+</resources>

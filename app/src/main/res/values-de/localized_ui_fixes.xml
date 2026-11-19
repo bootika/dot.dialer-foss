@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Sprachanruf</string>
+    <string name="ui_no_valid_app">Keine kompatible App gefunden.</string>
+    <string name="ui_contact_qr_code">QR-Code des Kontakts</string>
+    <string name="game_app_unlocked">App freigeschaltet</string>
+    <string name="ui_search_unavailable">Die Suche kann nicht geöffnet werden.</string>
+</resources>

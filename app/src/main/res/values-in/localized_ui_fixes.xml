@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Panggilan suara</string>
+    <string name="ui_no_valid_app">Tidak ada aplikasi yang kompatibel.</string>
+    <string name="ui_contact_qr_code">Kode QR kontak</string>
+    <string name="game_app_unlocked">Aplikasi telah dibuka kuncinya</string>
+    <string name="ui_search_unavailable">Tidak dapat membuka pencarian.</string>
+</resources>

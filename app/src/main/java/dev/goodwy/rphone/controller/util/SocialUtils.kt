@@ -403,7 +403,7 @@ object SocialUtils {
     fun Context.launchSendWhatsAppIntent(phoneNumber: String) {
         val digits = phoneNumber.filter { it.isDigit() }
         if (digits.isEmpty()) {
-            toast("No valid app found")
+            toast(getString(dev.goodwy.rphone.R.string.ui_no_valid_app))
             return
         }
         val pkg = messengerPackages["WhatsApp"]?.let { getInstalledMessenger(it) }
@@ -413,7 +413,7 @@ object SocialUtils {
             startActivity(intent)
         } catch (error: android.content.ActivityNotFoundException) {
             Log.w(LOG_TAG, "Unable to open WhatsApp", error)
-            toast("No valid app found")
+            toast(getString(dev.goodwy.rphone.R.string.ui_no_valid_app))
         }
     }
 

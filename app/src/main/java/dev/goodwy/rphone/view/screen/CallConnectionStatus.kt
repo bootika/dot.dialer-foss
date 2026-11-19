@@ -366,7 +366,7 @@ internal fun VoiceQualityBadge(quality: VoiceQualityTier?, connecting: Boolean =
             modifier = Modifier.width(width.dp).testTag("callConnectingLabel"),
             style = style,
             color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
+            textAlign = TextAlign.Center,
         )
         return
     }
@@ -403,7 +403,7 @@ internal fun VoiceQualityBadge(quality: VoiceQualityTier?, connecting: Boolean =
             style = style,
             modifier = Modifier.width(labelWidthDp.dp).testTag("callQualityLabel"),
             color = foreground,
-            maxLines = 1,
+            textAlign = TextAlign.Center,
         )
     }
 }

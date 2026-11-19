@@ -1,0 +1,7 @@
+<resources>
+    <string name="call_voice_quality_unreported_short">Sesli arama</string>
+    <string name="ui_no_valid_app">Uyumlu uygulama bulunamadı.</string>
+    <string name="ui_contact_qr_code">Kişinin QR kodu</string>
+    <string name="game_app_unlocked">Uygulamanın kilidi açıldı</string>
+    <string name="ui_search_unavailable">Arama açılamıyor.</string>
+</resources>

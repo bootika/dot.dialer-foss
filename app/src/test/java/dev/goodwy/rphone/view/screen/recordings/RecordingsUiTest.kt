@@ -85,6 +85,8 @@ class RecordingsUiTest {
                 DotDialerTheme(systemDark=dark){Surface(Modifier.fillMaxSize()){RecordingsContent(settingsOnly=true,onOpenLibrary={libraryOpens++})}}
             }
         }
+        // Initial catalog loading runs on Dispatchers.IO, outside Compose's idleness tracking.
+        rule.waitUntil(10000) {rule.onAllNodesWithTag("recordings-library").fetchSemanticsNodes().size==1}
         for(locale in listOf("en","ro","de","fr","es","it","pt-BR","pl","tr","id","vi"))for(theme in listOf(false,true)) {
             rule.runOnIdle {language=locale;dark=theme}
             rule.onNodeWithTag("recordings-library").performScrollToIndex(0)

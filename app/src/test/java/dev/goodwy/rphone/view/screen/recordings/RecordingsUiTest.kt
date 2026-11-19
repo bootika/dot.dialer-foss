@@ -47,9 +47,10 @@ class RecordingsUiTest {
         val retry = repo.catalog.enqueue(id, "transcribe")
         assertTrue(repo.catalog.complete(checkNotNull(repo.catalog.job(retry)), "Text de test.", "ro"))
         rule.setContent {
+            val bridgeState by fixture.state.collectAsState()
             CompositionLocalProvider(LocalPlanAccessManager provides manager) {
                 DotDialerTheme {Surface(Modifier.fillMaxSize()) {
-                    RecordingDetails(asset, repo, manager, fixture.state.value, 0, 0, false, {}, {})
+                    RecordingDetails(asset, repo, manager, bridgeState, 0, 0, false, {}, {})
                 }}
             }
         }

@@ -680,6 +680,7 @@ fun HorseGameContent(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val unlockedMessage by rememberUpdatedState(stringResource(R.string.game_app_unlocked))
     var gameState by remember { mutableStateOf(GameState.PLAYING) }
     var score by remember { mutableIntStateOf(0) }
 
@@ -798,7 +799,7 @@ fun HorseGameContent(
                         }
                         if (finalScore > 9999) {
                             prefs.setBoolean(KEY_IS_PRO_FOSS, true)
-                            context.toast(context.getString(R.string.game_app_unlocked))
+                            context.toast(unlockedMessage)
                         }
                     }
                 }

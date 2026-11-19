@@ -74,7 +74,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
     LaunchedEffect(repo,moduleEnabled) {if(injectedRepository==null && dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION)AdbCallCapture.get(context).recover()}
     val access=remember(rights,capabilities) {RecordingPolicy.processing(plans.effective,capabilities)}
     val complete=remember(rights) {plans.allows(PlanFeature.RECORDINGS_AUTOMATIC)}
-    fun run(action: suspend () -> Unit) {scope.launch {busy=true;error=false;try {action()} catch(e: CancellationException) {throw e} catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure);errorText=if(failure is DictateFailure && failure.code=="UNSUPPORTED_AUDIO")R.string.recordings_audio_format else R.string.recordings_error;error=true} finally {busy=false}}}
+    fun run(action: suspend () -> Unit) {scope.launch {busy=true;error=false;try {action()} catch(e: CancellationException) {throw e} catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure);errorText=when((failure as? DictateFailure)?.code){"UNSUPPORTED_AUDIO"->R.string.recordings_audio_format;"BRIDGE_PERMISSION_REQUIRED"->R.string.recordings_bridge_permission_required;else->R.string.recordings_error};error=true} finally {busy=false}}}
     val setup=rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
         if(result.resultCode==Activity.RESULT_OK)run {repo.bridge.approveSetup();repo.changed();RecordingSyncJob.schedule(context)}
     }
@@ -84,7 +84,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
         try {
             if(repo.bridge.installed())setup.launch(repo.bridge.setupIntent())
             else dev.goodwy.rphone.controller.util.openLink(context,dev.goodwy.rphone.dotDictateUrl(java.util.Locale.getDefault().language))
-        } catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure);errorText=if(failure is DictateFailure && failure.code=="UNSUPPORTED_AUDIO")R.string.recordings_audio_format else R.string.recordings_error;error=true}
+        } catch(failure: Exception) {RecordingDiagnostics.failure("RecordingsContent",failure);errorText=when((failure as? DictateFailure)?.code){"UNSUPPORTED_AUDIO"->R.string.recordings_audio_format;"BRIDGE_PERMISSION_REQUIRED"->R.string.recordings_bridge_permission_required;else->R.string.recordings_error};error=true}
     }
     val import=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {uri ->
         if(uri!=null)run {val asset=repo.import(uri,callerTitle,callKey,callerNumber);selected=asset.id}
@@ -154,6 +154,7 @@ private fun RecordingsContentBody(callKey: String,callerTitle: String,callerNumb
                             supporting=stringResource(when(check) {
                                 RecordingBridgeCheck.CHECKING->R.string.recordings_checking
                                 RecordingBridgeCheck.FAILED->R.string.recordings_check_failed
+                                RecordingBridgeCheck.PERMISSION_REQUIRED->R.string.recordings_bridge_permission_required
                                 RecordingBridgeCheck.IDLE->if(access==RecordingAccess.READY)R.string.rec_ui_api_hint else recordingAccessText(access)
                             }),contentActive=access==RecordingAccess.READY && check==RecordingBridgeCheck.IDLE,onClick=::configure)
                         if(check==RecordingBridgeCheck.CHECKING)LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal=16.dp).testTag("recordings-checking"))

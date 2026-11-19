@@ -84,6 +84,9 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
     private suspend fun bind(): Messenger = lock.withLock {
         idleHandler.removeCallbacks(idleClose)
         if (!trusted()) throw DictateFailure("PAIR_REQUIRED")
+        try { DictateBridgePermission.check(context) }
+        catch (error: DictateFailure) { closeBinding(); throw error }
+        catch (error: SecurityException) { closeBinding(); throw DictateFailure("BRIDGE_PERMISSION_REQUIRED") }
         remote?.let { return@withLock it }
         withContext(Dispatchers.Main.immediate) {
             val ready = CompletableDeferred<Messenger>()
@@ -101,6 +104,9 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
                 val intent = Intent(DictateProtocol.ACTION).setComponent(ComponentName(DictateProtocol.PACKAGE, DictateProtocol.SERVICE))
                 if (!context.bindService(intent, link, Context.BIND_AUTO_CREATE)) throw DictateFailure("UNSUPPORTED")
                 bridgeRequestStep(10_000) { ready.await() }
+            } catch (error: SecurityException) {
+                closeBinding()
+                throw DictateFailure("BRIDGE_PERMISSION_REQUIRED")
             } catch (error: Exception) { closeBinding(); throw error }
         }
     }

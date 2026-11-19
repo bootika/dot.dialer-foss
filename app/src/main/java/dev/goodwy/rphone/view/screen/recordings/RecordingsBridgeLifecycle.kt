@@ -10,7 +10,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 
-internal enum class RecordingBridgeCheck { IDLE, CHECKING, FAILED }
+internal enum class RecordingBridgeCheck { IDLE, CHECKING, FAILED, PERMISSION_REQUIRED }
 
 @Composable
 internal fun recordingsBridgeLifecycle(repo: RecordingsRepository, poll: Boolean=false): RecordingBridgeCheck {
@@ -26,7 +26,7 @@ internal fun recordingsBridgeLifecycle(repo: RecordingsRepository, poll: Boolean
                     check=RecordingBridgeCheck.CHECKING
                     try {repo.refreshBridge();check=RecordingBridgeCheck.IDLE}
                     catch(error: CancellationException) {check=RecordingBridgeCheck.IDLE;throw error}
-                    catch(error: Exception) {check=RecordingBridgeCheck.FAILED;RecordingDiagnostics.failure("resume",error)}
+                    catch(error: Exception) {check=if(error is dev.goodwy.rphone.recordings.DictateFailure && error.code=="BRIDGE_PERMISSION_REQUIRED")RecordingBridgeCheck.PERMISSION_REQUIRED else RecordingBridgeCheck.FAILED;RecordingDiagnostics.failure("resume",error)}
                 } else check=RecordingBridgeCheck.IDLE
                 if(poll)delay(30_000)else awaitCancellation()
             } while(true)

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_bridge_permission_required">Aggiorna dot.dialer e dot.dictate, poi collegale di nuovo.</string>
+</resources>

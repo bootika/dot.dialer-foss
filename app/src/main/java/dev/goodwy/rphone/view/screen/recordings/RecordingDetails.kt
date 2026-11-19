@@ -45,6 +45,7 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
     val access=remember(planRevision,capabilities,moduleEnabled) {RecordingPolicy.processing(plans.effective,capabilities)}
     fun run(action: suspend ()->Unit) {scope.launch {busy=true;error=false;try {action()}catch(e: CancellationException) {throw e}catch(failure: Exception) {RecordingDiagnostics.failure("RecordingDetails",failure);error=true}finally {busy=false}}}
     LaunchedEffect(revision,asset.id) {val data=withContext(Dispatchers.IO) {repo.catalog.texts(asset.id) to repo.catalog.jobs().filter {it.recordingId==asset.id}};texts=data.first;jobs=data.second}
+    val presentation=remember(jobs) {recordingJobPresentation(jobs)}
     val audioExport=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(asset.mimeType)) {uri ->if(uri!=null)run {
         withContext(Dispatchers.IO) {requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use {out->repo.files.audio(asset).inputStream().use {it.copyTo(out)}}}
     }}
@@ -71,7 +72,7 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
         if(repo.integrationEnabled() && moduleEnabled && access!=RecordingAccess.READY)Text(stringResource(recordingAccessText(access)),style=MaterialTheme.typography.bodyMedium)
         if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
         if(error)Text(stringResource(R.string.recordings_error),color=MaterialTheme.colorScheme.error)
-        for(job in jobs.filter {it.state !in setOf("completed","cancelled")})RillExpressiveCard {
+        for(job in presentation.current)RillExpressiveCard {
             Column(Modifier.padding(16.dp)) {
                 RecordingJobStatus(job)
                 if(job.state in setOf("queued","running","blocked"))TextButton(onClick={run {repo.cancel(job.id)}}) {Text(stringResource(R.string.cancel))}
@@ -95,7 +96,7 @@ internal fun RecordingDetails(asset: SavedRecording,repo: RecordingsRepository,p
                 }
             }
         }
-        val history=jobs.filter {it.state in setOf("completed","cancelled")}
+        val history=presentation.history
         if(history.isNotEmpty()) {
             TextButton(onClick={showHistory=!showHistory},modifier=Modifier.testTag("recording-history")) {Text(stringResource(if(showHistory)R.string.recordings_hide_history else R.string.recordings_history))}
             if(showHistory)RillExpressiveCard {

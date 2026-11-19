@@ -33,6 +33,38 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk=[36],application=Application::class,qualifiers="w360dp-h800dp-mdpi")
 class RecordingsUiTest {
+    @Test fun successfulRetryRetainsFailureOnlyInHistory() {
+        val context = rule.activity.application as Application
+        context.deleteDatabase("recordings.db")
+        val manager = verifiedPlanFixture(context.packageName, AppPlan.PREMIUM, worker)
+        val fixture = RecordingSyncEngineTest.FixtureBridge()
+        val repo = RecordingsRepository(context, {manager}, fixture, {true}, MutableStateFlow(true))
+        val id = UUID.randomUUID().toString()
+        val asset = SavedRecording(id, "Test Alexandru Butica", 1000, 1000, 44, "$id.wav", "", "audio/wav", "audio/raw")
+        repo.catalog.add(asset)
+        val failed = repo.catalog.enqueue(id, "transcribe")
+        repo.catalog.update(failed, "failed", true, 0, 1, "LICENSE_REQUIRED")
+        val retry = repo.catalog.enqueue(id, "transcribe")
+        assertTrue(repo.catalog.complete(checkNotNull(repo.catalog.job(retry)), "Text de test.", "ro"))
+        rule.setContent {
+            CompositionLocalProvider(LocalPlanAccessManager provides manager) {
+                DotDialerTheme {Surface(Modifier.fillMaxSize()) {
+                    RecordingDetails(asset, repo, manager, fixture.state.value, 0, 0, false, {}, {})
+                }}
+            }
+        }
+        rule.waitUntil(10000) {rule.onAllNodesWithText("Text de test.").fetchSemanticsNodes().isNotEmpty()}
+        rule.onNodeWithText("Processing failed").assertDoesNotExist()
+        rule.onNodeWithText("Retry").assertDoesNotExist()
+        rule.onNodeWithText("Text de test.").assertExists()
+        rule.onNodeWithTag("recording-history").performScrollTo().performClick()
+        rule.onNodeWithText("Processing failed").assertExists()
+        rule.onNodeWithText("Completed", substring=true).assertExists()
+        rule.onNodeWithText("Retry").assertDoesNotExist()
+        assertEquals("failed", repo.catalog.job(failed)?.state)
+        captureNormalAccess("v349-successful-retry-history")
+    }
+
     @Test fun reorganizedSettingsHaveOneHelpAndLocalizedGroupsWithoutChangingPreferences() {
         val context=rule.activity.application as Application
         val manager=verifiedPlanFixture(context.packageName,AppPlan.PREMIUM,worker)

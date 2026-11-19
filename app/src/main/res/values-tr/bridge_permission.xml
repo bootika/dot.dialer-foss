@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordings_bridge_permission_required">dot.dialer ve dot.dictate uygulamalarını güncelleyin, ardından yeniden bağlayın.</string>
+</resources>

@@ -1,0 +1,3 @@
+<resources>
+    <string name="diagnostic_reporting_explanation">Tryb automatyczny włącza raporty techniczne. W trybie na żądanie automatyczne raporty są wyłączone.</string>
+</resources>

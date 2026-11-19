@@ -51,9 +51,9 @@ class PlayStoreBillingContractTest {
             .substringBefore("override fun refreshAllData()")
 
         assertTrue(launch.contains("result.responseCode != BillingClient.BillingResponseCode.OK"))
-        assertTrue(ownership.contains("allSuccessful"))
-        assertTrue(ownership.contains("if (allSuccessful) updateProStatus()"))
-        assertTrue(ownership.contains("remaining == 0"))
+        assertTrue(ownership.contains("PlayStoreOwnershipQuery("))
+        assertTrue(ownership.contains("if (owned != null)"))
+        assertTrue(ownership.contains("ownershipQueryGeneration.get() != generation"))
     }
 
     private fun billingSource(): String = repoFile(

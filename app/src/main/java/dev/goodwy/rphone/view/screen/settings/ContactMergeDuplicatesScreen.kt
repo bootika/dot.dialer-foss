@@ -85,7 +85,7 @@ fun ContactMergeDuplicatesScreen(navigator: DestinationsNavigator) {
             }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.merge_duplicates,group.size)) } },
             dismissButton={ TextButton(enabled=!busy,onClick={selected=null}, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.cancel)) } })
     }
-    copying?.let { group ->
+    if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) copying?.let { group ->
         AlertDialog(onDismissRequest={copying=null},
             title={Text(stringResource(R.string.copy_diagnostics))},
             text={Text(stringResource(R.string.contact_merge_copy_notice))},
@@ -121,7 +121,7 @@ fun ContactMergeDuplicatesScreen(navigator: DestinationsNavigator) {
                     Row(Modifier.fillMaxWidth().padding(start=16.dp),verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
                         Text(stringResource(R.string.contact_merge_same_number),modifier=Modifier.weight(1f),
                             style=MaterialTheme.typography.labelLarge,color=MaterialTheme.colorScheme.onSurfaceVariant)
-                        RillIconButton(onClick={copying=group},imageVector=Icons.Rounded.ContentCopy,
+                        if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) RillIconButton(onClick={copying=group},imageVector=Icons.Rounded.ContentCopy,
                             contentDescription=stringResource(R.string.copy_diagnostics))
                     }
                     for(contact in group) {

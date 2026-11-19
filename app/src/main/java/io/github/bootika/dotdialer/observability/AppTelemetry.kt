@@ -63,13 +63,12 @@ object AppTelemetry {
             Log.e("AppTelemetry", "Unable to read report queue generation; reporting stays disabled", error)
         }
         mode = ReportingMode.parse(preferences.getString(REPORTING_KEY, null))
+        ProductStatistics.setReportingGate(mode)
         if (isConfigured) configure(mode)
-        var observed = mode
         scope.launch {
             preferences.settingsChanged.collect {
                 val selected = ReportingMode.parse(preferences.getString(REPORTING_KEY, null))
-                if (selected != observed) {
-                    observed = selected
+                if (selected != mode) {
                     mode = selected
                     configurationLock.withLock { configure(selected) }
                 }
@@ -81,6 +80,7 @@ object AppTelemetry {
     @android.annotation.SuppressLint("ApplySharedPref", "UseKtx")
     private fun configure(selected: ReportingMode, manual: Boolean = false) {
         if (selected != mode) return
+        ProductStatistics.setReportingGate(selected)
         enabled.set(false)
         try {
             Sentry.close()

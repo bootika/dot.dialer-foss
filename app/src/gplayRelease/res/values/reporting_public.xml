@@ -1,0 +1,3 @@
+<resources>
+    <string name="diagnostic_reporting_explanation">Automatic mode enables technical reporting. In on-demand mode, automatic reporting is disabled.</string>
+</resources>

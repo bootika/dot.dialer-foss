@@ -100,7 +100,7 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
             try {
                 val intent = Intent(DictateProtocol.ACTION).setComponent(ComponentName(DictateProtocol.PACKAGE, DictateProtocol.SERVICE))
                 if (!context.bindService(intent, link, Context.BIND_AUTO_CREATE)) throw DictateFailure("UNSUPPORTED")
-                withTimeout(10_000) { ready.await() }
+                bridgeRequestStep(10_000) { ready.await() }
             } catch (error: Exception) { closeBinding(); throw error }
         }
     }
@@ -126,7 +126,7 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
             val body = Bundle(extras).apply { putInt("protocolVersion", 1); putString("requestId", id) }
             try {messenger.send(Message.obtain(null, what).apply { data = body; replyTo = receiver })}
             catch(error: RemoteException) {RecordingDiagnostics.failure("send_disconnected",error);lost();throw DictateFailure("DISCONNECTED")}
-            val reply = withTimeout(15_000) { result.await() }
+            val reply = bridgeRequestStep(15_000) { result.await() }
             if (!reply.getBoolean("ok")) throw DictateFailure(reply.getString("errorCode")?.uppercase(java.util.Locale.ROOT) ?: "PROVIDER_ERROR")
             return reply
         } finally { pending.remove(id);idleHandler.postDelayed(idleClose,30_000) }
@@ -142,3 +142,8 @@ internal class DictateBridgeClient(private val context: Context) : DictateBridge
         } catch (error: Exception) { mutable.value = DictateCapabilities(); throw error }
     }
 }
+
+internal suspend fun <T : Any> bridgeRequestStep(
+    timeoutMs: Long,
+    block: suspend CoroutineScope.() -> T,
+): T = withTimeoutOrNull(timeoutMs, block) ?: throw DictateFailure("DISCONNECTED")

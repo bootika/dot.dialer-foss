@@ -30,6 +30,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     private val file = AtomicFile(File(app.noBackupFilesDir, "product-statistics-v1.json"))
     private var queued: Job? = null
     private var lastSentDay = ""
+    private var dirty = false
     private fun failure(operation: String, error: Exception) {
         // Never log exception messages, payloads, SIM values or pseudonyms.
         android.util.Log.w("DotStatistics", "$operation: ${error.javaClass.simpleName}")
@@ -37,7 +38,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     init {
         if (BuildConfig.FLAVOR == "gplay") scope.launch {
             prefs.settingsChanged.collect {
-                if (!allowed()) mutex.withLock { queued?.cancel(); queued=null; file.delete(); lastSentDay="" }
+                if (!allowed()) mutex.withLock { queued?.cancel(); queued=null; file.delete(); lastSentDay=""; dirty=false }
             }
         }
     }
@@ -51,12 +52,18 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             try { mutex.withLock {
                 if (!allowed()) return@withLock
                 val state = read()
-                if (event != null) state.getJSONObject("counts").apply { put(event.key,(optInt(event.key)+1).coerceAtMost(10000)) }
+                if (event != null) {
+                    state.getJSONObject("counts").apply { put(event.key,(optInt(event.key)+1).coerceAtMost(10000)) }
+                    dirty = true
+                }
                 write(state)
-                if (event == null && lastSentDay != state.getString("day")) send(state)
+                if (event == null && needsSend(state)) {
+                    send(state)
+                    if (!needsSend(state)) { queued?.cancel(); queued=null }
+                }
                 else if (event != null && queued?.isActive != true) queued = scope.launch {
                     delay(60_000)
-                    try { mutex.withLock { if (allowed()) send(read()) } }
+                    try { mutex.withLock { if (allowed()) read().let { if (needsSend(it)) send(it) } } }
                     catch (error: CancellationException) { throw error }
                     catch (error: Exception) { failure("queued", error) }
                 }
@@ -64,6 +71,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             catch (error: Exception) { failure("update", error) }
         }
     }
+    private fun needsSend(state: JSONObject) = dirty || lastSentDay != state.getString("day")
     private fun read(): JSONObject {
         val old = if (!file.baseFile.exists()) JSONObject() else try { JSONObject(String(file.readFully(),Charsets.UTF_8)) }
             catch (error: Exception) { failure("read", error); JSONObject() }
@@ -108,14 +116,14 @@ class ProductStatistics internal constructor(context: Context, private val prefs
         var connection: HttpURLConnection? = null
         try {
             if (!allowed()) return
-            transport?.let { if (it(body)) lastSentDay=day; return }
+            transport?.let { if (it(body)) { lastSentDay=day; dirty=false }; return }
             connection=URL("https://dialer.dotdesign.ro/api/v1/statistics").openConnection() as HttpURLConnection
             connection.requestMethod="POST"; connection.connectTimeout=10_000; connection.readTimeout=10_000
             connection.instanceFollowRedirects=false; connection.doOutput=true; connection.setRequestProperty("Content-Type","application/json")
             // Re-check just before transport; an already dispatched request cannot be withdrawn.
             if (!allowed()) return
             connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
-            if (connection.responseCode == 200) lastSentDay=day
+            if (connection.responseCode == 200) { lastSentDay=day; dirty=false }
         } catch (error: Exception) { failure("send", error) /* retry at next Home visit/event */ }
         finally { connection?.disconnect() }
     }

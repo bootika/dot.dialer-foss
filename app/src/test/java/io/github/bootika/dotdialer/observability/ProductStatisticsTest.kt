@@ -48,4 +48,166 @@ class ProductStatisticsTest {
             assertFalse(java.io.File(app.noBackupFilesDir,"product-statistics-v1.json").exists())
         } finally { worker.cancel();ProductStatistics.setReportingGate(ReportingMode.Automatic);java.io.File(app.noBackupFilesDir,"product-statistics-v1.json").delete() }
     }
+
+    @Test
+    fun `backup restoring automatic reporting reopens statistics after opting out`() = runBlocking {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        val worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val delivered = CompletableDeferred<JSONObject>()
+        val statisticsFile = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        statisticsFile.delete()
+        try {
+            AppTelemetry.initialize(app, prefs)
+            AppTelemetry.setReportingMode(prefs, ReportingMode.OnDemand)
+            prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+            val statistics = ProductStatistics(app, prefs, worker) {
+                delivered.complete(JSONObject(it.toString()))
+                true
+            }
+            val snapshot = withTimeout(5_000) {
+                while (!delivered.isCompleted) {
+                    statistics.homeVisible()
+                    delay(25)
+                }
+                delivered.await()
+            }
+            assertEquals(app.packageName, snapshot.getString("package"))
+            assertEquals(0, snapshot.getJSONObject("counts").getInt("dialpad"))
+        } finally {
+            worker.cancel()
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            statisticsFile.delete()
+            io.sentry.Sentry.close()
+        }
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `home retries unsent counts after a successful snapshot earlier the same day`() = runTest {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+        ProductStatistics.setReportingGate(ReportingMode.Automatic)
+        val statisticsFile = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        statisticsFile.delete()
+        val worker = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        var online = true
+        val attempts = mutableListOf<JSONObject>()
+        try {
+            val stats = ProductStatistics(app, prefs, worker) {
+                attempts += JSONObject(it.toString())
+                online
+            }
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            assertEquals(1, attempts.size)
+            assertEquals(0, attempts[0].getJSONObject("counts").getInt("dialpad"))
+            online = false
+            stats.record(ProductStatistics.Event.Dialpad)
+            testScheduler.runCurrent()
+            testScheduler.advanceTimeBy(60_000)
+            testScheduler.runCurrent()
+            assertEquals(2, attempts.size)
+            assertEquals(1, attempts[1].getJSONObject("counts").getInt("dialpad"))
+            assertEquals(1, JSONObject(statisticsFile.readText()).getJSONObject("counts").getInt("dialpad"))
+            online = true
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            assertEquals("Returning Home online must retry the failed newer counts", 3, attempts.size)
+            assertEquals(1, attempts[2].getJSONObject("counts").getInt("dialpad"))
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            assertEquals("An unchanged successfully sent snapshot must not be resent", 3, attempts.size)
+        } finally {
+            worker.cancel()
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            statisticsFile.delete()
+        }
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `successful home flush cancels stale queue and next event schedules normally`() = runTest {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+        ProductStatistics.setReportingGate(ReportingMode.Automatic)
+        val file = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        file.delete()
+        val worker = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        val delivered = mutableListOf<JSONObject>()
+        try {
+            val stats = ProductStatistics(app, prefs, worker) { delivered += JSONObject(it.toString()); true }
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            stats.record(ProductStatistics.Event.Dialpad)
+            testScheduler.runCurrent()
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            assertEquals(2, delivered.size)
+            assertEquals(1, delivered.last().getJSONObject("counts").getInt("dialpad"))
+            testScheduler.advanceTimeBy(60_000)
+            testScheduler.runCurrent()
+            assertEquals("Already delivered counts must not be sent by stale queue", 2, delivered.size)
+            stats.record(ProductStatistics.Event.Dialpad)
+            testScheduler.runCurrent()
+            testScheduler.advanceTimeBy(60_000)
+            testScheduler.runCurrent()
+            assertEquals(3, delivered.size)
+            assertEquals(2, delivered.last().getJSONObject("counts").getInt("dialpad"))
+        } finally {
+            worker.cancel()
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            file.delete()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `opting out deletes dirty counts and cancels retries without network`() = runTest {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+        ProductStatistics.setReportingGate(ReportingMode.Automatic)
+        val file = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        file.delete()
+        val worker = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        val attempts = mutableListOf<JSONObject>()
+        try {
+            val stats = ProductStatistics(app, prefs, worker) { attempts += JSONObject(it.toString()); attempts.size == 1 }
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            stats.record(ProductStatistics.Event.Favorite)
+            testScheduler.runCurrent()
+            testScheduler.advanceTimeBy(60_000)
+            testScheduler.runCurrent()
+            assertEquals(2, attempts.size)
+            stats.record(ProductStatistics.Event.Dialpad)
+            testScheduler.runCurrent()
+            ProductStatistics.setReportingGate(ReportingMode.OnDemand)
+            runBlocking { prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.OnDemand.value)) }
+            testScheduler.runCurrent()
+            stats.homeVisible()
+            stats.record(ProductStatistics.Event.Swipe)
+            testScheduler.advanceTimeBy(60_000)
+            testScheduler.runCurrent()
+            assertEquals(2, attempts.size)
+            assertFalse(file.exists())
+            runBlocking { prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value)) }
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            stats.homeVisible()
+            testScheduler.runCurrent()
+            assertEquals(3, attempts.size)
+            assertEquals(0, attempts.last().getJSONObject("counts").getInt("favorites"))
+            assertEquals(0, attempts.last().getJSONObject("counts").getInt("dialpad"))
+            assertEquals(0, attempts.last().getJSONObject("counts").getInt("swipes"))
+        } finally {
+            worker.cancel()
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            file.delete()
+        }
+    }
 }

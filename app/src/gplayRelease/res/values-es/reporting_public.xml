@@ -1,0 +1,3 @@
+<resources>
+    <string name="diagnostic_reporting_explanation">El modo automático activa los informes técnicos. En el modo a petición, los informes automáticos están desactivados.</string>
+</resources>

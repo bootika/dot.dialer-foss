@@ -26,14 +26,18 @@ import kotlinx.coroutines.flow.SharingStarted
 import androidx.lifecycle.viewModelScope
 import dev.goodwy.rphone.controller.license.GiftLicenseManager
 
-class PlayStoreViewModel(
+class PlayStoreViewModel internal constructor(
     application: Application,
     private val preferenceManager: PreferenceManager,
     override val giftLicenses: GiftLicenseManager? = null,
+    private val ownershipCache: PlayStoreOwnershipCache = PlayStoreOwnershipCache(application),
 ) : AndroidViewModel(application), PurchaseHelper {
 
     private var billingClient: BillingClient? = null
     private var connectionInProgress = false
+    private val cachedOwnership = ownershipCache.restore()
+    private var ownershipKnown = cachedOwnership != null
+    private val ownershipQueryGeneration = java.util.concurrent.atomic.AtomicLong()
     private val readyActions = mutableListOf<() -> Unit>()
 
     private val _iapSkuDetails = MutableStateFlow<List<ProductDetails>>(emptyList())
@@ -45,8 +49,8 @@ class PlayStoreViewModel(
     override val subSkuDetailsInitialized: StateFlow<Boolean> =
         _subSkuDetailsInitialized.asStateFlow()
 
-    private val iapPurchased = MutableStateFlow<Set<String>>(emptySet())
-    private val subPurchased = MutableStateFlow<Set<String>>(emptySet())
+    private val iapPurchased = MutableStateFlow(cachedOwnership?.inApps.orEmpty())
+    private val subPurchased = MutableStateFlow(cachedOwnership?.subscriptions.orEmpty())
     private val _purchaseSuccess = MutableStateFlow(false)
     override val purchaseSuccess: StateFlow<Boolean> = _purchaseSuccess.asStateFlow()
     private val _isLoading = MutableStateFlow(false)
@@ -55,8 +59,8 @@ class PlayStoreViewModel(
     override val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
     private val _isBillingReady = MutableStateFlow(false)
     override val isBillingReady: StateFlow<Boolean> = _isBillingReady.asStateFlow()
-    private val _isPro = MutableStateFlow(false)
-    private val mutableStorePlan = MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
+    private val _isPro = MutableStateFlow(cachedOwnership?.isPro ?: false)
+    private val mutableStorePlan = MutableStateFlow(cachedOwnership?.plan ?: io.github.bootika.dotdialer.core.license.AppPlan.FREE)
     override val storePlan = mutableStorePlan.asStateFlow()
     override fun productAvailable(product: String, subscription: Boolean): Boolean = if (subscription)
         _subSkuDetails.value.any { it.productId == product && it.subscriptionOfferDetails?.isNotEmpty() == true }
@@ -272,33 +276,32 @@ class PlayStoreViewModel(
             return
         }
 
-        var remaining = 2
-        var allSuccessful = true
-        fun complete(type: String, result: BillingResult, purchases: List<Purchase>) {
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                val owned = purchases
-                    .filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
-                    .flatMap(Purchase::getProducts)
-                    .toSet()
-                if (type == BillingClient.ProductType.INAPP) {
-                    iapPurchased.value = owned
-                } else {
-                    subPurchased.value = owned
+        val generation = ownershipQueryGeneration.incrementAndGet()
+        val query = PlayStoreOwnershipQuery(
+            isCurrent = { ownershipQueryGeneration.get() == generation },
+            onComplete = { owned ->
+                if (owned != null) {
+                    iapPurchased.value = owned.inApps
+                    subPurchased.value = owned.subscriptions
+                    updateProStatus()
                 }
-            } else {
-                allSuccessful = false
-                _errorMessage.value = billingError("Unable to restore purchases", result)
-            }
-
-            remaining--
-            if (remaining == 0) {
-                if (allSuccessful) updateProStatus()
                 _proCheckDone.value = true
                 _isLoading.value = false
                 onComplete()
+            },
+        )
+        fun complete(type: String, result: BillingResult, purchases: List<Purchase>) {
+            if (ownershipQueryGeneration.get() != generation) return
+            if (result.responseCode != BillingClient.BillingResponseCode.OK) {
+                _errorMessage.value = billingError("Unable to restore purchases", result)
+                query.accept(type == BillingClient.ProductType.SUBS, null)
+                return
+            }
+            PlayStoreRestoredPurchases(client) { ownershipQueryGeneration.get() == generation }.collect(purchases) { owned ->
+                if (owned == null) _errorMessage.value = "Unable to confirm restored purchase"
+                query.accept(type == BillingClient.ProductType.SUBS, owned)
             }
         }
-
         queryPurchases(client, BillingClient.ProductType.INAPP, ::complete)
         queryPurchases(client, BillingClient.ProductType.SUBS, ::complete)
     }
@@ -424,23 +427,32 @@ class PlayStoreViewModel(
     }
 
     override fun checkProStatus() {
-        _isPro.value = preferenceManager.getBoolean(PreferenceManager.KEY_IS_PRO_IAP, false) ||
-            preferenceManager.getBoolean(PreferenceManager.KEY_IS_PRO_SUB, false)
+        _isPro.value = if (ownershipKnown) {
+            PlayStoreOwnership(iapPurchased.value, subPurchased.value).isPro
+        } else {
+            preferenceManager.getBoolean(PreferenceManager.KEY_IS_PRO_IAP, false) ||
+                preferenceManager.getBoolean(PreferenceManager.KEY_IS_PRO_SUB, false)
+        }
         _proCheckDone.value = false
         runWhenBillingReady { queryPurchases() }
     }
 
     private fun updateProStatus() {
-        mutableStorePlan.value = dev.goodwy.rphone.controller.license.PlanProducts.purchased(iapPurchased.value + subPurchased.value)
-        val iapPro = BuildConfig.PRODUCT_ID_X1 in iapPurchased.value
-        val subscriptionPro = BuildConfig.SUBSCRIPTION_ID_X1 in subPurchased.value ||
-            BuildConfig.SUBSCRIPTION_YEAR_ID_X1 in subPurchased.value
-        val pro = iapPro || subscriptionPro || mutableStorePlan.value == io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM
-
+        ownershipKnown = true
+        val owned = PlayStoreOwnership(iapPurchased.value, subPurchased.value)
+        mutableStorePlan.value = owned.plan
+        val iapPro = owned.legacyInApp
+        val subscriptionPro = owned.legacySubscription
+        val pro = owned.isPro
         if (_isPro.value && !pro) clearProPrefsIfNeeded()
         _isPro.value = pro
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_IAP, iapPro)
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_SUB, subscriptionPro)
+        try {
+            ownershipCache.save(owned)
+        } catch (error: Exception) {
+            android.util.Log.w("PlayOwnership", "save: ${error.javaClass.simpleName}")
+        }
     }
 
     override fun clearProPrefsIfNeeded() {

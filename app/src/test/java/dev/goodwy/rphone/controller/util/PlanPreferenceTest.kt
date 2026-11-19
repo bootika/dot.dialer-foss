@@ -3,6 +3,8 @@ package dev.goodwy.rphone.controller.util
 import android.app.Application
 import io.github.bootika.dotdialer.core.license.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.flow.first
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
@@ -34,6 +36,10 @@ class PlanPreferenceTest {
         assertTrue(prefs.updateContactBackgroundEntriesSuspend(mapOf(key to "/private/retained.jpg")))
         allowed=false
         assertFalse(prefs.updateContactBackgroundEntriesSuspend(mapOf(key to "/private/new.jpg"),requireAppearance=true))
+        assertEquals("/private/retained.jpg", prefs.getPersistedPreferences()[key])
+        withTimeout(5_000) {
+            prefs.settingsChanged.first { prefs.getContactBackground("123") == "/private/retained.jpg" }
+        }
         assertEquals("/private/retained.jpg",prefs.getContactBackground("123"))
         allowed=true
         assertEquals("/private/retained.jpg",prefs.getContactBackground("123"))

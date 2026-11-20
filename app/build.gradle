@@ -27,7 +27,7 @@ def gplayNotificationAvatars = providers.gradleProperty('dotDialerGplayNotificat
 if (!(gplayNotificationAvatars in ['true', 'false'])) {
     throw new GradleException('dotDialerGplayNotificationAvatars must be true or false')
 }
-def baseVersionCode = 349
+def baseVersionCode = 351
 def requestedVersionCode = providers.gradleProperty('dotDialerVersionCode').orNull
 def effectiveVersionCode = requestedVersionCode != null ? requestedVersionCode.toInteger() : baseVersionCode
 def effectiveVersionName = "${effectiveVersionCode.intdiv(100)}.${effectiveVersionCode.intdiv(10) % 10}.${effectiveVersionCode % 10}"
@@ -419,6 +419,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     // Goodwy
+    gplayImplementation 'com.google.android.play:app-update:2.1.0'
     gplayImplementation 'com.android.billingclient:billing:8.0.0'
     // Incremental, user-consented read-only access to Google Contacts. The FOSS and
     // RuStore variants use a no-op implementation and do not bundle Google Play services.

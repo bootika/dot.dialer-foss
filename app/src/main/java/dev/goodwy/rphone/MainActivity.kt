@@ -123,6 +123,7 @@ import io.github.bootika.dotdialer.core.diagnostics.DiagnosticEvent
 import io.github.bootika.dotdialer.diagnostics.AppDiagnostics
 
 class MainActivity : FragmentActivity() {
+    private val appUpdates by lazy { AppUpdates.create(this) }
     companion object {
         const val EXTRA_RETURN_TO_CALL_ON_BACK = "return_to_call_on_back"
     }
@@ -711,6 +712,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
+        appUpdates.onResume()
         if (BuildConfig.TEST_DISTRIBUTION) dev.goodwy.rphone.recordings.CaptureSetupNotifications.check(applicationContext)
         defaultDialerRevision++
         AppDiagnostics.record(DiagnosticEvent.ActivityLifecycle(ActivityStage.RESUMED))
@@ -742,7 +744,19 @@ class MainActivity : FragmentActivity() {
         purchaseHelper.handleNewIntent(intent, this)
     }
 
+    override fun onPause() {
+        appUpdates.onPause()
+        super.onPause()
+    }
+
+    @Deprecated("Activity result compatibility for native Play updates")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        appUpdates.onActivityResult(requestCode, resultCode)
+    }
+
     override fun onDestroy() {
+        appUpdates.onDestroy()
         AppDiagnostics.record(
             DiagnosticEvent.ActivityLifecycle(
                 stage = ActivityStage.DESTROYED,

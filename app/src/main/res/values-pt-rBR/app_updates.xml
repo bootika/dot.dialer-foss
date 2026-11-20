@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">Uma pequena atualização.\nUm passo em frente.</string>
+    <string name="app_update_required">Há uma atualização importante. Instale-a para continuar.</string>
+    <string name="app_update_now">Atualizar agora</string>
+    <string name="app_update_later">Mais tarde, obrigado</string>
+    <string name="app_update_close">Abrir teclado de chamadas</string>
+    <string name="app_update_ready">A atualização está pronta. Reinicie quando preferir.</string>
+    <string name="app_update_restart">Reiniciar agora</string>
+    <string name="app_update_optional">Algumas melhorias para facilitar o seu dia.</string>
+    <string name="app_update_news">Novidades</string>
+</resources>

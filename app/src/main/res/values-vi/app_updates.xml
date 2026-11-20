@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">Một bản cập nhật nhỏ.\nMột bước tiến mới.</string>
+    <string name="app_update_required">Có bản cập nhật quan trọng. Hãy cài đặt để tiếp tục.</string>
+    <string name="app_update_now">Cập nhật ngay</string>
+    <string name="app_update_later">Để sau, cảm ơn</string>
+    <string name="app_update_close">Mở bàn phím gọi điện</string>
+    <string name="app_update_ready">Bản cập nhật đã sẵn sàng. Khởi động lại khi thuận tiện.</string>
+    <string name="app_update_restart">Khởi động lại ngay</string>
+    <string name="app_update_optional">Một vài cải tiến giúp mọi thứ dễ dàng hơn.</string>
+    <string name="app_update_news">Có gì mới</string>
+</resources>

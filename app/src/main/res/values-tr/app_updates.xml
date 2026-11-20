@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">Küçük bir güncelleme.\nİleriye bir adım.</string>
+    <string name="app_update_required">Önemli bir güncelleme var. Devam etmek için yükleyin.</string>
+    <string name="app_update_now">Şimdi güncelle</string>
+    <string name="app_update_later">Daha sonra, teşekkürler</string>
+    <string name="app_update_close">Telefon tuş takımını aç</string>
+    <string name="app_update_ready">Güncelleme hazır. Uygun olduğunda yeniden başlatın.</string>
+    <string name="app_update_restart">Şimdi yeniden başlat</string>
+    <string name="app_update_optional">İşleri kolaylaştıracak birkaç iyileştirme.</string>
+    <string name="app_update_news">Yenilikler</string>
+</resources>

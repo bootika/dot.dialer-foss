@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">Un mic update.\nUn pas înainte.</string>
+    <string name="app_update_required">Avem o actualizare importantă. Instaleaz-o ca să continui.</string>
+    <string name="app_update_now">Actualizează acum</string>
+    <string name="app_update_later">Mai târziu, mulțumesc</string>
+    <string name="app_update_close">Deschide tastatura de apel</string>
+    <string name="app_update_ready">Actualizarea este pregătită. Repornește când îți este comod.</string>
+    <string name="app_update_restart">Repornește acum</string>
+    <string name="app_update_optional">Câteva lucruri noi, ca să-ți fie și mai ușor.</string>
+    <string name="app_update_news">Ce e nou</string>
+</resources>

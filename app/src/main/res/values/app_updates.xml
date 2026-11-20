@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">A little update.\nA step forward.</string>
+    <string name="app_update_required">We have an important update. Install it to continue.</string>
+    <string name="app_update_now">Update now</string>
+    <string name="app_update_later">Later, thank you</string>
+    <string name="app_update_close">Open phone dialpad</string>
+    <string name="app_update_ready">Your update is ready. Restart when it suits you.</string>
+    <string name="app_update_restart">Restart now</string>
+    <string name="app_update_optional">A few improvements to make things easier.</string>
+    <string name="app_update_news">What’s new</string>
+</resources>

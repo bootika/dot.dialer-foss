@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Application Téléphone</string>
+    <string name="welcome_reporting">Rapports techniques</string>
+    <string name="welcome_reporting_summary">Actifs par défaut. Passez aux rapports à la demande dans les paramètres.</string>
+    <string name="welcome_data_details">Quelles données sont envoyées ?</string>
+    <string name="tour_avatar_short">Touchez l’avatar pour ouvrir le contact. Maintenez-le pour sélectionner la ligne.</string>
+    <string name="tour_search_short">Saisissez un nom ou un numéro pour filtrer les contacts et les appels.</string>
+    <string name="tour_favorites_short">Touchez pour appeler le numéro choisi. Maintenez pour voir les options.</string>
+    <string name="welcome_privacy_summary">Tes contacts et ton historique restent sur ton téléphone, pas sur nos serveurs.</string>
+    <string name="welcome_phone_summary">Android demandera de choisir l’application de téléphone par défaut et les autorisations nécessaires.</string>
+</resources>

@@ -9,8 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -19,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -33,11 +39,12 @@ import dev.goodwy.rphone.R
 @Composable
 internal fun EssentialOnboardingPage(onNext: () -> Unit) {
     val colors = MaterialTheme.colorScheme
-    val introduction = stringResource(
+    var showDataDetails by rememberSaveable { mutableStateOf(false) }
+    val reportingDetails = stringResource(
         if (BuildConfig.FLAVOR == "gplay") R.string.onboarding_essential_body_gplay else R.string.onboarding_essential_body,
         stringResource(R.string.privacy_and_blocking),
         stringResource(R.string.settings_reporting),
-    )
+    ).substringAfter("\n\n")
     Surface(Modifier.fillMaxSize(), color = colors.background) {
         BoxWithConstraints(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing), contentAlignment = Alignment.Center) {
             val compact = maxHeight < 580.dp
@@ -52,13 +59,20 @@ internal fun EssentialOnboardingPage(onNext: () -> Unit) {
                     Text(stringResource(R.string.onboarding_essential_title),
                         Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    Surface(shape = RoundedCornerShape(22.dp), color = colors.primaryContainer.copy(alpha = 0.48f)) {
+                    Text(stringResource(R.string.welcome_privacy_summary), style = MaterialTheme.typography.bodyMedium,
+                        color = colors.onSurfaceVariant, textAlign = TextAlign.Center)
+                    Surface(shape = RoundedCornerShape(22.dp), color = colors.primary.copy(alpha = 0.07f)) {
                         Column(Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Text(introduction.substringBefore("\n\n"), style = MaterialTheme.typography.bodyMedium)
-                            val reporting = introduction.substringAfter("\n\n", "")
-                            if (reporting.isNotBlank()) {
-                                HorizontalDivider(color = colors.outlineVariant)
-                                Text(reporting, style = MaterialTheme.typography.bodyMedium)
+                            WelcomeInformationRow(Icons.Rounded.Call, R.string.welcome_phone, R.string.welcome_phone_summary)
+                            HorizontalDivider(color = colors.primary.copy(alpha = 0.17f))
+                            WelcomeInformationRow(Icons.Rounded.Description, R.string.welcome_reporting, R.string.welcome_reporting_summary) {
+                                TextButton(onClick = { showDataDetails = !showDataDetails }) {
+                                    Text(stringResource(R.string.welcome_data_details))
+                                }
+                                if (showDataDetails) {
+                                    Text(reportingDetails, style = MaterialTheme.typography.bodyMedium,
+                                        color = colors.onSurfaceVariant)
+                                }
                             }
                         }
                     }
@@ -69,6 +83,29 @@ internal fun EssentialOnboardingPage(onNext: () -> Unit) {
                     Text(stringResource(R.string.setup_call_style_continue))
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun WelcomeInformationRow(
+    icon: ImageVector,
+    title: Int,
+    summary: Int,
+    details: @Composable () -> Unit = {},
+) {
+    val colors = MaterialTheme.colorScheme
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Box(
+            Modifier.size(40.dp).background(colors.primary.copy(alpha = 0.11f), RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(22.dp), tint = colors.primary)
+        }
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Text(stringResource(title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(summary), style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+            details()
         }
     }
 }

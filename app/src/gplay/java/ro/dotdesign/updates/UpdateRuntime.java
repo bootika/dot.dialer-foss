@@ -42,6 +42,7 @@ public final class UpdateRuntime {
     private long lastAttempt;
     private long installed;
     private Snapshot snapshot;
+    private int flexibleInstallBuild;
     public static final class Snapshot {
         final AppUpdateInfo info;
         final boolean requiredBuild;
@@ -78,6 +79,9 @@ public final class UpdateRuntime {
     public boolean available() {return mode()!=UpdateDecision.Mode.NONE;}
     public boolean enabled() {return context.getPackageName().equals(audience);}
     Snapshot snapshot() {return snapshot;}
+    void acceptFlexibleInstall(int build) {flexibleInstallBuild=build;}
+    boolean matchesFlexibleInstall(int build) {return flexibleInstallBuild==build;}
+    void clearFlexibleInstall() {flexibleInstallBuild=0;}
     void unavailable() {snapshot=null;}
     public void refresh() {refresh(false);}
     void refresh(boolean userRequested) {

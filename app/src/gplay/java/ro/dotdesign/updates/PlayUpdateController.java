@@ -29,7 +29,7 @@ public final class PlayUpdateController implements UpdateHandle {
     private final Activity activity;
     private final UpdateRuntime runtime;
     private final BooleanSupplier busy;
-    private final int title,body,update,later,ready,restart,optional,accent,newsLabel;
+    private final int title,body,update,later,optional,accent,newsLabel;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private boolean resumed,destroyed,inFlow,downloaded,launching,resumeImmediate;
     private AlertDialog dialog;
@@ -37,13 +37,17 @@ public final class PlayUpdateController implements UpdateHandle {
     private final InstallStateUpdatedListener listener=this::installState;
     private void installState(com.google.android.play.core.install.InstallState state) {
         if(state.installStatus()==InstallStatus.DOWNLOADED)downloaded=true;
-        if(state.installStatus()==InstallStatus.FAILED){inFlow=false;runtime.unavailable();}
-        if(state.installStatus()==InstallStatus.CANCELED)inFlow=false;
+        if(state.installStatus()==InstallStatus.FAILED||state.installStatus()==InstallStatus.CANCELED){
+            inFlow=false;
+            downloaded=false;
+            runtime.clearFlexibleInstall();
+            if(state.installStatus()==InstallStatus.FAILED)runtime.unavailable();
+        }
     }
     public PlayUpdateController(Activity activity,UpdateRuntime runtime,BooleanSupplier busy,
-            int title,int body,int update,int later,int ready,int restart,int optional,int accent,int newsLabel) {
+            int title,int body,int update,int later,int optional,int accent,int newsLabel) {
         this.activity=activity;this.runtime=runtime;this.busy=busy;
-        this.title=title;this.body=body;this.update=update;this.later=later;this.ready=ready;this.restart=restart;this.optional=optional;this.accent=accent;this.newsLabel=newsLabel;
+        this.title=title;this.body=body;this.update=update;this.later=later;this.optional=optional;this.accent=accent;this.newsLabel=newsLabel;
         runtime.manager.registerListener(listener);
     }
     private final Runnable tick=new Runnable(){@Override public void run(){
@@ -53,16 +57,12 @@ public final class PlayUpdateController implements UpdateHandle {
         UpdateDecision.Mode mode=runtime.mode();
         if(unsafe||!runtime.online()){dismiss();}
         else if(resumeImmediate&&!inFlow&&!launching&&dialog==null)resumeUpdate();
-        else if(downloaded){
-            boolean required=mode==UpdateDecision.Mode.REQUIRED;
-            if(!inFlow&&!launching&&(dialog==null||requiredCard!=required)){
-                dismiss();
-                showDownloaded(required);
-            }
-        }
         else if(mode==UpdateDecision.Mode.NONE){dismiss();}
         else if(!inFlow&&!launching) {
-            if(mode==UpdateDecision.Mode.REQUIRED && !requiredCard) {
+            UpdateRuntime.Snapshot snapshot=runtime.snapshot();
+            if(downloaded && snapshot!=null && runtime.matchesFlexibleInstall(snapshot.info.availableVersionCode())) {
+                start(snapshot.info.availableVersionCode());
+            } else if(mode==UpdateDecision.Mode.REQUIRED && !requiredCard) {
                 dismiss();
                 showCard(true);
             } else if(mode==UpdateDecision.Mode.OPTIONAL && (dialog==null || requiredCard)) {
@@ -88,6 +88,7 @@ public final class PlayUpdateController implements UpdateHandle {
         if(requestCode!=REQUEST)return false;
         inFlow=false;
         resumeImmediate=false;
+        if(resultCode!=Activity.RESULT_OK)runtime.clearFlexibleInstall();
         if(resultCode!=Activity.RESULT_OK && resultCode!=Activity.RESULT_CANCELED)runtime.unavailable();
         return true;
     }
@@ -147,7 +148,12 @@ public final class PlayUpdateController implements UpdateHandle {
         dialog=new AlertDialog.Builder(activity).setView(root).setCancelable(!required).create();
         requiredCard=required;
         dialog.setOnCancelListener(d->dialog=null);
-        primary.setOnClickListener(v->{dismiss();start(required?AppUpdateType.IMMEDIATE:AppUpdateType.FLEXIBLE);});
+        primary.setOnClickListener(v->{
+            UpdateRuntime.Snapshot snapshot=runtime.snapshot();
+            if(snapshot==null)return;
+            dismiss();
+            start(snapshot.info.availableVersionCode());
+        });
         if(!required){
             Button secondary=new Button(activity);secondary.setText(later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));
             root.addView(secondary,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -170,18 +176,6 @@ public final class PlayUpdateController implements UpdateHandle {
             super.onMeasure(widthSpec,MeasureSpec.makeMeasureSpec(height,MeasureSpec.AT_MOST));
         }
     }
-    private void showDownloaded(boolean required){
-        AlertDialog.Builder builder=new AlertDialog.Builder(activity).setMessage(ready).setCancelable(!required)
-                .setPositiveButton(restart,(d,w)->{
-                    dialog=null;
-                    requiredCard=false;
-                    if(resumed&&!busy.getAsBoolean())runtime.manager.completeUpdate().addOnFailureListener(e->runtime.unavailable());
-                });
-        if(!required)builder.setNegativeButton(later,(d,w)->{dialog=null;downloaded=false;});
-        dialog=builder.create();
-        requiredCard=required;
-        dialog.setOnCancelListener(d->{dialog=null;downloaded=false;});dialog.show();
-    }
     @SuppressWarnings("deprecation")
     private void resumeUpdate(){
         launching=true;
@@ -195,19 +189,36 @@ public final class PlayUpdateController implements UpdateHandle {
         }).addOnFailureListener(error->{launching=false;resumeImmediate=false;runtime.unavailable();});
     }
     @SuppressWarnings("deprecation")
-    private void start(int type){
+    private void start(int target){
         if(launching||!resumed||busy.getAsBoolean()||runtime.mode()==UpdateDecision.Mode.NONE)return;
         launching=true;
         // AppUpdateInfo is single-use. Always obtain a fresh instance for retries/resume.
         runtime.manager.getAppUpdateInfo().addOnSuccessListener(info->{
             launching=false;
             if(destroyed||!resumed||busy.getAsBoolean()||!runtime.online())return;
-            if(info.installStatus()==InstallStatus.DOWNLOADED){downloaded=true;return;}
+            UpdateDecision.Mode mode=runtime.mode();
+            UpdateRuntime.Snapshot snapshot=runtime.snapshot();
+            if (mode==UpdateDecision.Mode.NONE||snapshot==null||snapshot.info.availableVersionCode()!=target
+                    ||info.availableVersionCode()!=target) {
+                downloaded=false;runtime.clearFlexibleInstall();runtime.unavailable();return;
+            }
+            if(info.installStatus()==InstallStatus.DOWNLOADED){
+                dismiss();
+                downloaded=false;
+                runtime.clearFlexibleInstall();
+                inFlow=true;
+                runtime.manager.completeUpdate().addOnFailureListener(error->{inFlow=false;runtime.unavailable();});
+                return;
+            }
+            downloaded=false;
+            int type=info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)||mode==UpdateDecision.Mode.REQUIRED
+                    ? AppUpdateType.IMMEDIATE : AppUpdateType.FLEXIBLE;
             boolean available=info.updateAvailability()==UpdateAvailability.UPDATE_AVAILABLE
                     ||info.updateAvailability()==UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS;
             if(!available||!info.isUpdateTypeAllowed(type)){runtime.unavailable();return;}
             try {inFlow=runtime.manager.startUpdateFlowForResult(info,activity,AppUpdateOptions.newBuilder(type).build(),REQUEST);}
             catch(Exception ignored){inFlow=false;runtime.unavailable();}
+            if(inFlow&&type==AppUpdateType.FLEXIBLE)runtime.acceptFlexibleInstall(target);
             if(!inFlow)runtime.unavailable();
         }).addOnFailureListener(error->{launching=false;runtime.unavailable();});
     }

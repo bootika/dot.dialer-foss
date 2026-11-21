@@ -10,7 +10,9 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.google.android.play.core.appupdate.AppUpdateOptions;
 import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager;
+import com.google.android.play.core.install.model.AppUpdateType;
 import dev.goodwy.rphone.R;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ public class PlayUpdateControllerTest {
         ReflectionHelpers.setField(runtime, "lastAttempt", SystemClock.elapsedRealtime());
         controller = new PlayUpdateController(activity, runtime, () -> phoneBusy,
                 R.string.app_update_title, R.string.app_update_required, R.string.app_update_now,
-                R.string.app_update_later, R.string.app_update_ready, R.string.app_update_restart,
+                R.string.app_update_later,
                 R.string.app_update_optional, 0xff00ac78, R.string.app_update_news);
     }
 
@@ -107,6 +109,53 @@ public class PlayUpdateControllerTest {
         setRequired(true);
         tick();
         assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(currentDialog()));
+    }
+
+    @Test public void recommendedUpdateNowAlsoPrefersImmediate() {
+        setRequired(false);
+        controller.onResume();
+        buttons(currentDialog()).get(0).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(play.isImmediateFlowVisible());
+    }
+
+    @Test public void updateNowInstallsAnAlreadyDownloadedRequiredBuild() {
+        setRequired(true);
+        assertTrue(play.startUpdateFlowForResult(play.getAppUpdateInfo().getResult(), activity,
+                AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(), 42));
+        play.userAcceptsUpdate();
+        play.downloadStarts();
+        play.downloadCompletes();
+        controller.onResume();
+        AlertDialog card = currentDialog();
+        assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(card));
+        buttons(card).get(0).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(play.isInstallSplashScreenVisible());
+        assertFalse(card.isShowing());
+    }
+
+    @Test public void acceptedFlexibleFallbackInstallsAfterCallWithoutAnotherPrompt() {
+        int offered = play.getAppUpdateInfo().getResult().availableVersionCode();
+        play.setUpdateAvailable(offered, AppUpdateType.FLEXIBLE);
+        setRequired(false);
+        controller.onResume();
+        AlertDialog card = currentDialog();
+        buttons(card).get(0).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(play.isConfirmationDialogVisible());
+        play.userAcceptsUpdate();
+        assertTrue(controller.onActivityResult(6142, Activity.RESULT_OK));
+        phoneBusy = true;
+        play.downloadStarts();
+        play.downloadCompletes();
+        tick();
+        assertFalse(play.isInstallSplashScreenVisible());
+        phoneBusy = false;
+        tick();
+        assertTrue(play.isInstallSplashScreenVisible());
+        assertFalse(card.isShowing());
+        assertSame(card, ShadowAlertDialog.getLatestAlertDialog());
     }
 
     private void setRequired(boolean required) {

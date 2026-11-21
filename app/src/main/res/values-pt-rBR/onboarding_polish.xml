@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">App de telefone</string>
+    <string name="welcome_reporting">Relatórios técnicos</string>
+    <string name="welcome_reporting_summary">Ativos por padrão. Você pode enviar só sob demanda nas Configurações.</string>
+    <string name="welcome_data_details">Quais dados são enviados?</string>
+    <string name="tour_avatar_short">Toque no avatar para abrir o contato. Pressione e segure para selecionar a linha.</string>
+    <string name="tour_search_short">Digite um nome ou número para filtrar contatos e chamadas.</string>
+    <string name="tour_favorites_short">Toque para ligar para o número escolhido. Pressione e segure para ver opções.</string>
+    <string name="welcome_privacy_summary">Seus contatos e histórico ficam no telefone, não nos nossos servidores.</string>
+    <string name="welcome_phone_summary">O Android pedirá o app de telefone padrão e as permissões necessárias.</string>
+</resources>

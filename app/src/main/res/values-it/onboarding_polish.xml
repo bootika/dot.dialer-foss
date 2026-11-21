@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">App Telefono</string>
+    <string name="welcome_reporting">Segnalazioni tecniche</string>
+    <string name="welcome_reporting_summary">Attive per impostazione predefinita. Nelle Impostazioni puoi scegliere l’invio su richiesta.</string>
+    <string name="welcome_data_details">Quali dati vengono inviati?</string>
+    <string name="tour_avatar_short">Tocca l’avatar per aprire il contatto. Tieni premuto per selezionare la riga.</string>
+    <string name="tour_search_short">Scrivi un nome o un numero per filtrare contatti e chiamate.</string>
+    <string name="tour_favorites_short">Tocca per chiamare il numero scelto. Tieni premuto per le opzioni.</string>
+    <string name="welcome_privacy_summary">I tuoi contatti e la cronologia restano sul telefono, non sui nostri server.</string>
+    <string name="welcome_phone_summary">Android chiederà di scegliere l’app telefono predefinita e concedere i permessi necessari.</string>
+</resources>

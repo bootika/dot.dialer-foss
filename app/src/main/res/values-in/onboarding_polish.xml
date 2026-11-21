@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Aplikasi telepon</string>
+    <string name="welcome_reporting">Laporan teknis</string>
+    <string name="welcome_reporting_summary">Aktif secara default. Pilih pelaporan sesuai permintaan di Setelan.</string>
+    <string name="welcome_data_details">Data apa yang dikirim?</string>
+    <string name="tour_avatar_short">Ketuk avatar untuk membuka kontak. Tekan lama untuk memilih baris.</string>
+    <string name="tour_search_short">Ketik nama atau nomor untuk memfilter kontak dan panggilan.</string>
+    <string name="tour_favorites_short">Ketuk untuk menelepon nomor pilihan. Tekan lama untuk melihat opsi.</string>
+    <string name="welcome_privacy_summary">Kontak dan riwayat panggilan tetap di ponsel, bukan di server kami.</string>
+    <string name="welcome_phone_summary">Android akan meminta aplikasi telepon default dan izin yang diperlukan.</string>
+</resources>

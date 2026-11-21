@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Ứng dụng điện thoại</string>
+    <string name="welcome_reporting">Báo cáo kỹ thuật</string>
+    <string name="welcome_reporting_summary">Bật theo mặc định. Bạn có thể chỉ báo cáo theo yêu cầu trong Cài đặt.</string>
+    <string name="welcome_data_details">Dữ liệu nào được gửi?</string>
+    <string name="tour_avatar_short">Chạm ảnh đại diện để mở liên hệ. Nhấn giữ để chọn dòng.</string>
+    <string name="tour_search_short">Nhập tên hoặc số để lọc danh bạ và cuộc gọi.</string>
+    <string name="tour_favorites_short">Chạm để gọi số đã chọn. Nhấn giữ để xem tùy chọn.</string>
+    <string name="welcome_privacy_summary">Danh bạ và lịch sử cuộc gọi ở trên điện thoại, không nằm trên máy chủ của chúng tôi.</string>
+    <string name="welcome_phone_summary">Android sẽ yêu cầu chọn ứng dụng điện thoại mặc định và cấp quyền cần thiết.</string>
+</resources>

@@ -9,6 +9,6 @@ internal object AppUpdates {
             activity.isHandlingPhoneNavigation() ||
                 GlobalContext.get().get<ICallRepository>().allCalls.value.isNotEmpty()
         },R.string.app_update_title,R.string.app_update_required,R.string.app_update_now,R.string.app_update_later,
-            R.string.app_update_ready,R.string.app_update_restart,R.string.app_update_optional,0xff00ac78.toInt(),R.string.app_update_news)
+            R.string.app_update_optional,0xff00ac78.toInt(),R.string.app_update_news)
     }
 }

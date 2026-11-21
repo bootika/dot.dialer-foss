@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.Density
 import dev.goodwy.rphone.controller.util.*
 import dev.goodwy.rphone.view.components.contactListRowPreferences
 import dev.goodwy.rphone.view.screen.onboarding.CallStyleChoiceContent
+import dev.goodwy.rphone.view.screen.onboarding.EssentialOnboardingPage
 import dev.goodwy.rphone.view.screen.onboarding.MorphingOnboardingScreen
 import dev.goodwy.rphone.view.theme.DotDialerTheme
 import java.io.File
@@ -36,6 +37,25 @@ class CallStyleSetupTest {
         org.koin.core.context.startKoin { modules(org.koin.dsl.module { single { prefs } }) }
     }
     @After fun cleanup() { runBlocking { prefs.getPersistedPreferences() }; org.koin.core.context.stopKoin() }
+
+    @Test
+    @Config(qualifiers = "ro-rRO-w320dp-h568dp-mdpi")
+    fun welcomeShowsBothRowsAndKeepsContinueVisibleWithDataDetailsOpen() {
+        var continued = false
+        rule.setContent {
+            DotDialerTheme(systemDark = false) { EssentialOnboardingPage { continued = true } }
+        }
+        rule.onNodeWithText("Aplicația de telefon").assertIsDisplayed()
+        rule.onNodeWithText("Raportare tehnică").assertIsDisplayed()
+        val continueButton = rule.onNodeWithTag("plan-guide-next")
+        continueButton.assertIsDisplayed()
+        capture("welcome-320x568")
+        rule.onNodeWithText("Ce date se trimit?").performClick()
+        rule.onNodeWithText("No contacts", substring = true).assertDoesNotExist()
+        rule.onNodeWithText("Fără contacte", substring = true).assertExists()
+        continueButton.assertIsDisplayed().performClick()
+        rule.runOnIdle { assertTrue(continued) }
+    }
 
     @Test fun bothPresetsAreDurableAndReachExistingDirectoryConsumers() = runBlocking {
         for (swipe in listOf(true, false)) {

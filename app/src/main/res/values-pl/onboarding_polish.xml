@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Aplikacja telefonu</string>
+    <string name="welcome_reporting">Raporty techniczne</string>
+    <string name="welcome_reporting_summary">Domyślnie włączone. W Ustawieniach możesz wybrać raporty na żądanie.</string>
+    <string name="welcome_data_details">Jakie dane są wysyłane?</string>
+    <string name="tour_avatar_short">Dotknij awatara, aby otworzyć kontakt. Przytrzymaj, aby zaznaczyć wiersz.</string>
+    <string name="tour_search_short">Wpisz nazwę lub numer, aby filtrować kontakty i połączenia.</string>
+    <string name="tour_favorites_short">Dotknij, aby zadzwonić na wybrany numer. Przytrzymaj, aby zobaczyć opcje.</string>
+    <string name="welcome_privacy_summary">Kontakty i historia połączeń pozostają na telefonie, nie na naszych serwerach.</string>
+    <string name="welcome_phone_summary">Android poprosi o wybór domyślnej aplikacji telefonu i wymagane uprawnienia.</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Telefon-App</string>
+    <string name="welcome_reporting">Technische Berichte</string>
+    <string name="welcome_reporting_summary">Standardmäßig aktiv. In den Einstellungen kannst du Berichte auf Anfrage wählen.</string>
+    <string name="welcome_data_details">Welche Daten werden gesendet?</string>
+    <string name="tour_avatar_short">Tippe auf den Avatar, um den Kontakt zu öffnen. Halte ihn gedrückt, um die Zeile auszuwählen.</string>
+    <string name="tour_search_short">Gib einen Namen oder eine Nummer ein, um Kontakte und Anrufe zu filtern.</string>
+    <string name="tour_favorites_short">Tippe zum Anrufen der gewählten Nummer. Halte für Optionen gedrückt.</string>
+    <string name="welcome_privacy_summary">Deine Kontakte und Anrufliste bleiben auf deinem Telefon, nicht auf unseren Servern.</string>
+    <string name="welcome_phone_summary">Android fragt nach der Standard-Telefon-App und den nötigen Berechtigungen.</string>
+</resources>

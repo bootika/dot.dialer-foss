@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_phone">Phone app</string>
+    <string name="welcome_reporting">Technical reporting</string>
+    <string name="welcome_reporting_summary">On by default. Choose on-demand reporting in Settings.</string>
+    <string name="welcome_data_details">What data is sent?</string>
+    <string name="tour_avatar_short">Tap the avatar to open the contact. Hold it to select the row.</string>
+    <string name="tour_search_short">Type a name or number to filter contacts and calls.</string>
+    <string name="tour_favorites_short">Tap to call the selected number. Hold for options.</string>
+    <string name="welcome_privacy_summary">Your contacts and call history stay on your phone, not on our servers.</string>
+    <string name="welcome_phone_summary">Android will ask for the default phone app and the permissions needed for calls.</string>
+</resources>

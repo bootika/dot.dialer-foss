@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +24,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +41,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -71,7 +80,7 @@ internal data class HomeTourStep(
 
 internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>, hasSwipeActions: Boolean = true): List<HomeTourStep> = buildList {
     if (HomeTourTarget.RecentAvatar in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.RecentAvatar, R.string.ui_tour_contact_title, R.string.ui_tour_contact_description, true, HomeTourDemo.AvatarLongPress))
+        add(HomeTourStep(HomeTourTarget.RecentAvatar, R.string.ui_tour_contact_title, R.string.tour_avatar_short, true, HomeTourDemo.AvatarLongPress))
     }
     if (HomeTourTarget.RecentRow in availableTargets) {
         add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_recent_tap_title, R.string.ui_tour_recent_tap_description, demo = HomeTourDemo.RowTap))
@@ -80,10 +89,10 @@ internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>, hasSwipeAction
         }
     }
     if (HomeTourTarget.Search in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.Search, R.string.ui_tour_search_title, R.string.ui_tour_search_description, demo = HomeTourDemo.SearchTyping))
+        add(HomeTourStep(HomeTourTarget.Search, R.string.ui_tour_search_title, R.string.tour_search_short, demo = HomeTourDemo.SearchTyping))
     }
     if (HomeTourTarget.Favorites in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.Favorites, R.string.ui_tour_favorites_title, R.string.ui_tour_favorites_description, demo = HomeTourDemo.FavoritesTap))
+        add(HomeTourStep(HomeTourTarget.Favorites, R.string.ui_tour_favorites_title, R.string.tour_favorites_short, demo = HomeTourDemo.FavoritesTap))
     }
     if (HomeTourTarget.Dialpad in availableTargets) {
         add(HomeTourStep(HomeTourTarget.Dialpad, R.string.ui_tour_dialpad_title, R.string.ui_tour_dialpad_description, demo = HomeTourDemo.DialpadTap))
@@ -193,50 +202,42 @@ internal fun HomeCoachMarkTourContent(
                 .then(Modifier.offset { IntOffset(horizontalOffset, verticalOffset) })
                 .testTag("tour-card"),
             shape = RoundedCornerShape(26.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            tonalElevation = 8.dp,
-            shadowElevation = 12.dp,
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 6.dp,
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 22.dp, vertical = 18.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.heightIn(max = (maxHeight - 40.dp).coerceAtLeast(1.dp))
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.ui_tour_step, safeStep + 1, steps.size),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.accentText,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
+                    Text(
+                        text = stringResource(R.string.ui_tour_step, safeStep + 1, steps.size),
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
                 Text(
                     text = stringResource(if (step.demo == HomeTourDemo.RowTap && actions != null)
                         R.string.setup_call_style_tap_gesture else step.title),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                 )
-                val description = when (step.demo) {
-                    HomeTourDemo.RowTap -> actions?.let {
-                        stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_tap_gesture), it.tap)
-                    }
-                    HomeTourDemo.RowSwipe -> actions?.let {
-                        listOfNotNull(
-                            it.swipeRight?.let { label ->
-                                stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_right_gesture), label)
-                            },
-                            it.swipeLeft?.let { label ->
-                                stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_left_gesture), label)
-                            },
-                        ).joinToString("\n")
-                    }
-                    else -> null
+                if (step.demo == HomeTourDemo.RowSwipe && actions != null) {
+                    actions.swipeRight?.let { TourSwipeDirection(true, it) }
+                    actions.swipeLeft?.let { TourSwipeDirection(false, it) }
+                } else {
+                    val description = if (step.demo == HomeTourDemo.RowTap && actions != null) {
+                        stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_tap_gesture), actions.tap)
+                    } else stringResource(step.description)
+                    Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Text(
-                    text = description ?: stringResource(step.description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                androidx.compose.material3.HorizontalDivider()
+                FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     TextButton(onClick = onComplete, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.skip)) }
-                    Spacer(Modifier.weight(1f))
                     if (safeStep > 0) {
                         TextButton(onClick = { currentStep-- }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.back)) }
                     }
@@ -250,6 +251,17 @@ internal fun HomeCoachMarkTourContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun TourSwipeDirection(right: Boolean, action: String) {
+    val direction = stringResource(if (right) R.string.setup_call_style_right_gesture else R.string.setup_call_style_left_gesture)
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Icon(if (right) Icons.AutoMirrored.Rounded.ArrowForward else Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = null, modifier = Modifier.size(17.dp), tint = MaterialTheme.colorScheme.accentText)
+        Text(stringResource(R.string.feature_tip_gesture_action, direction, action),
+            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

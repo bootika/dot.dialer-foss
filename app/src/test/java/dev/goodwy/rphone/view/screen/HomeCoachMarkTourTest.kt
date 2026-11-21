@@ -6,6 +6,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HomeCoachMarkTourTest {
+    @Test fun `disabled swipes keep tap and omit the swipe step`() {
+        val steps = homeTourSteps(setOf(HomeTourTarget.RecentRow), hasSwipeActions = false)
+        assertEquals(listOf(HomeTourDemo.RowTap), steps.map(HomeTourStep::demo))
+    }
+
     @Test fun `search example is George and has no text cursor character`() {
         assertEquals("George", HOME_TOUR_SEARCH_SAMPLE)
         assertEquals(6, tourTypedCharacterCount(0.57f, HOME_TOUR_SEARCH_SAMPLE.length))

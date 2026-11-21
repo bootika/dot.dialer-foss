@@ -4,7 +4,6 @@
     <string name="app_update_required">È disponibile un aggiornamento importante. Installalo per continuare.</string>
     <string name="app_update_now">Aggiorna ora</string>
     <string name="app_update_later">Più tardi, grazie</string>
-    <string name="app_update_close">Apri il tastierino telefonico</string>
     <string name="app_update_ready">L’aggiornamento è pronto. Riavvia quando preferisci.</string>
     <string name="app_update_restart">Riavvia ora</string>
     <string name="app_update_optional">Qualche miglioramento per rendere tutto più semplice.</string>

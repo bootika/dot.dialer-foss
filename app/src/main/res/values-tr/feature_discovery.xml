@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Aramadan metne</string>
+    <string name="feature_tip_recording_body">dot.dialer’da arama kaydını ayarla ve dot.dictate ile yazıya dök.</string>
+    <string name="feature_tip_see_how">Nasıl yapılır?</string>
+    <string name="feature_tip_hide">Gizle</string>
+    <string name="feature_tip_avatar_title">Avatara uzun bas</string>
+    <string name="feature_tip_avatar_body">Arama sırasında fotoğraf stilini değiştirebilir veya ortam damlalarını kapatabilirsin.</string>
+    <string name="feature_tip_try">Burada dene</string>
+</resources>

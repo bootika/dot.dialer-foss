@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="setup_call_style_title">What is your preference?</string>
+    <string name="setup_call_style_title">How do you prefer to call?</string>
     <string name="setup_call_style_subtitle">A tap or a slide. Your call.</string>
     <string name="setup_call_style_tap">I tap to call</string>
     <string name="setup_call_style_swipe">I slide to call</string>

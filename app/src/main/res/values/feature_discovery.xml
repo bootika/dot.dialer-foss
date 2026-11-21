@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">From call to text</string>
+    <string name="feature_tip_recording_body">Set up call recording in dot.dialer and transcribe with dot.dictate.</string>
+    <string name="feature_tip_see_how">See how</string>
+    <string name="feature_tip_hide">Hide</string>
+    <string name="feature_tip_avatar_title">Long-press the avatar</string>
+    <string name="feature_tip_avatar_body">During a call, change the photo style or turn off ambient droplets.</string>
+    <string name="feature_tip_try">Try it here</string>
+    <string name="feature_tip_gesture_action" translatable="false">%1$s: %2$s</string>
+</resources>

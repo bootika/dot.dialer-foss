@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Dari panggilan ke teks</string>
+    <string name="feature_tip_recording_body">Atur perekaman panggilan di dot.dialer dan transkripsikan dengan dot.dictate.</string>
+    <string name="feature_tip_see_how">Lihat caranya</string>
+    <string name="feature_tip_hide">Sembunyikan</string>
+    <string name="feature_tip_avatar_title">Tekan lama avatar</string>
+    <string name="feature_tip_avatar_body">Saat menelepon, Anda bisa mengubah gaya foto atau menonaktifkan tetesan ambient.</string>
+    <string name="feature_tip_try">Coba di sini</string>
+</resources>

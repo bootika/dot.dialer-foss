@@ -29,40 +29,52 @@ public final class PlayUpdateController implements UpdateHandle {
     private final Activity activity;
     private final UpdateRuntime runtime;
     private final BooleanSupplier busy;
-    private final Runnable criticalAccess;
-    private final int title,body,update,later,close,ready,restart,optional,accent,newsLabel;
+    private final int title,body,update,later,ready,restart,optional,accent,newsLabel;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private boolean resumed,destroyed,inFlow,downloaded,launching,resumeImmediate;
     private AlertDialog dialog;
+    private boolean requiredCard;
     private final InstallStateUpdatedListener listener=this::installState;
     private void installState(com.google.android.play.core.install.InstallState state) {
         if(state.installStatus()==InstallStatus.DOWNLOADED)downloaded=true;
         if(state.installStatus()==InstallStatus.FAILED){inFlow=false;runtime.unavailable();}
         if(state.installStatus()==InstallStatus.CANCELED)inFlow=false;
     }
-    public PlayUpdateController(Activity activity,UpdateRuntime runtime,BooleanSupplier busy,Runnable criticalAccess,
-            int title,int body,int update,int later,int close,int ready,int restart,int optional,int accent,int newsLabel) {
-        this.activity=activity;this.runtime=runtime;this.busy=busy;this.criticalAccess=criticalAccess;
-        this.title=title;this.body=body;this.update=update;this.later=later;this.close=close;this.ready=ready;this.restart=restart;this.optional=optional;this.accent=accent;this.newsLabel=newsLabel;
+    public PlayUpdateController(Activity activity,UpdateRuntime runtime,BooleanSupplier busy,
+            int title,int body,int update,int later,int ready,int restart,int optional,int accent,int newsLabel) {
+        this.activity=activity;this.runtime=runtime;this.busy=busy;
+        this.title=title;this.body=body;this.update=update;this.later=later;this.ready=ready;this.restart=restart;this.optional=optional;this.accent=accent;this.newsLabel=newsLabel;
         runtime.manager.registerListener(listener);
     }
     private final Runnable tick=new Runnable(){@Override public void run(){
         if(!resumed||destroyed)return;
         runtime.refresh();
         boolean unsafe=busy.getAsBoolean();
+        UpdateDecision.Mode mode=runtime.mode();
         if(unsafe||!runtime.online()){dismiss();}
         else if(resumeImmediate&&!inFlow&&!launching&&dialog==null)resumeUpdate();
-        else if(downloaded&&!inFlow&&!launching&&dialog==null)showDownloaded();
-        else if(runtime.mode()==UpdateDecision.Mode.NONE){dismiss();}
-        else if(!inFlow&&!launching&&dialog==null) {
-            if(downloaded)showDownloaded();
-            else if(runtime.required())showRequired();
-            else if(promptDue())showOptional();
+        else if(downloaded){
+            boolean required=mode==UpdateDecision.Mode.REQUIRED;
+            if(!inFlow&&!launching&&(dialog==null||requiredCard!=required)){
+                dismiss();
+                showDownloaded(required);
+            }
+        }
+        else if(mode==UpdateDecision.Mode.NONE){dismiss();}
+        else if(!inFlow&&!launching) {
+            if(mode==UpdateDecision.Mode.REQUIRED && !requiredCard) {
+                dismiss();
+                showCard(true);
+            } else if(mode==UpdateDecision.Mode.OPTIONAL && (dialog==null || requiredCard)) {
+                dismiss();
+                if(promptDue())showOptional();
+            }
         }
         handler.postDelayed(this,1000);
     }};
     @Override public void onResume(){
         if(!runtime.enabled())return;
+        runtime.refresh(runtime.snapshot()==null);
         resumed=true;handler.removeCallbacks(tick);handler.post(tick);
         runtime.manager.getAppUpdateInfo().addOnSuccessListener(info->{
             if(destroyed)return;
@@ -79,10 +91,7 @@ public final class PlayUpdateController implements UpdateHandle {
         if(resultCode!=Activity.RESULT_OK && resultCode!=Activity.RESULT_CANCELED)runtime.unavailable();
         return true;
     }
-    private void dismiss(){if(dialog!=null){dialog.dismiss();dialog=null;}}
-    private void showRequired(){
-        showCard(true);
-    }
+    private void dismiss(){if(dialog!=null){dialog.dismiss();dialog=null;}requiredCard=false;}
     private void showOptional(){
         UpdateRuntime.Snapshot s=runtime.snapshot();
         if(s!=null)activity.getSharedPreferences("app-update-prompts",0).edit().putLong("shown_"+s.info.availableVersionCode(),System.currentTimeMillis()).apply();
@@ -135,12 +144,15 @@ public final class PlayUpdateController implements UpdateHandle {
         Button primary=new Button(activity);primary.setText(update);primary.setTextSize(16);primary.setAllCaps(false);primary.setTypeface(Typeface.DEFAULT,Typeface.BOLD);primary.setTextColor(Color.WHITE);
         primary.setBackground(shape(accent,16));primary.setMinHeight(dp(52));primary.setPadding(dp(12),dp(12),dp(12),dp(12));
         LinearLayout.LayoutParams action=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);action.topMargin=dp(20);root.addView(primary,action);
-        Button secondary=new Button(activity);secondary.setText(required?close:later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));
-        root.addView(secondary,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         dialog=new AlertDialog.Builder(activity).setView(root).setCancelable(!required).create();
+        requiredCard=required;
         dialog.setOnCancelListener(d->dialog=null);
         primary.setOnClickListener(v->{dismiss();start(required?AppUpdateType.IMMEDIATE:AppUpdateType.FLEXIBLE);});
-        secondary.setOnClickListener(v->{dismiss();if(required){if(criticalAccess!=null)criticalAccess.run();else activity.finish();}});
+        if(!required){
+            Button secondary=new Button(activity);secondary.setText(later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));
+            root.addView(secondary,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+            secondary.setOnClickListener(v->dismiss());
+        }
         dialog.show();
         if(dialog.getWindow()!=null){dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setLayout(Math.min(dp(360),activity.getResources().getDisplayMetrics().widthPixels-dp(32)),ViewGroup.LayoutParams.WRAP_CONTENT);}
     }
@@ -158,12 +170,16 @@ public final class PlayUpdateController implements UpdateHandle {
             super.onMeasure(widthSpec,MeasureSpec.makeMeasureSpec(height,MeasureSpec.AT_MOST));
         }
     }
-    private void showDownloaded(){
-        dialog=new AlertDialog.Builder(activity).setMessage(ready)
+    private void showDownloaded(boolean required){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity).setMessage(ready).setCancelable(!required)
                 .setPositiveButton(restart,(d,w)->{
                     dialog=null;
+                    requiredCard=false;
                     if(resumed&&!busy.getAsBoolean())runtime.manager.completeUpdate().addOnFailureListener(e->runtime.unavailable());
-                }).setNegativeButton(later,(d,w)->{dialog=null;downloaded=false;}).create();
+                });
+        if(!required)builder.setNegativeButton(later,(d,w)->{dialog=null;downloaded=false;});
+        dialog=builder.create();
+        requiredCard=required;
         dialog.setOnCancelListener(d->{dialog=null;downloaded=false;});dialog.show();
     }
     @SuppressWarnings("deprecation")

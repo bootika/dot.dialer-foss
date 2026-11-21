@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Từ cuộc gọi thành văn bản</string>
+    <string name="feature_tip_recording_body">Thiết lập ghi âm trong dot.dialer và chép lời bằng dot.dictate.</string>
+    <string name="feature_tip_see_how">Xem cách làm</string>
+    <string name="feature_tip_hide">Ẩn</string>
+    <string name="feature_tip_avatar_title">Nhấn giữ ảnh đại diện</string>
+    <string name="feature_tip_avatar_body">Trong cuộc gọi, bạn có thể đổi kiểu ảnh hoặc tắt hiệu ứng giọt.</string>
+    <string name="feature_tip_try">Thử tại đây</string>
+</resources>

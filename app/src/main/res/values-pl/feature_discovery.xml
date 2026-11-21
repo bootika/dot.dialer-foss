@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Od rozmowy do tekstu</string>
+    <string name="feature_tip_recording_body">Skonfiguruj nagrywanie w dot.dialer i transkrybuj w dot.dictate.</string>
+    <string name="feature_tip_see_how">Zobacz jak</string>
+    <string name="feature_tip_hide">Ukryj</string>
+    <string name="feature_tip_avatar_title">Przytrzymaj awatar</string>
+    <string name="feature_tip_avatar_body">Podczas rozmowy możesz zmienić styl zdjęcia lub wyłączyć efekt kropli.</string>
+    <string name="feature_tip_try">Wypróbuj tutaj</string>
+</resources>

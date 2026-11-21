@@ -1003,6 +1003,15 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                     }
                 }
 
+                if (!browseContacts && query.isBlank() && !editFavorites && !showHomeTour &&
+                    filteredRecents.isNotEmpty() && prefs.getBoolean(PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, true)
+                ) {
+                    item(key = "recording-discovery") {
+                        RecordingDiscoveryCard {
+                            navigator.navigate(com.ramcosta.composedestinations.generated.destinations.RecordingsScreenDestination())
+                        }
+                    }
+                }
                 if (!browseContacts && filteredRecents.isNotEmpty()) {
                     item(key = "recents-title") {
                         HomeSectionHeader(
@@ -1246,7 +1255,15 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
     }
     GooglePhotoOffer(navigator, blocked = showHomeTour || !prefs.getBoolean(PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, false))
     if (showHomeTour) {
-        HomeCoachMarkTour(targets = tourTargets.toMap()) {
+        val tapChoices = dev.goodwy.rphone.view.screen.settings.homeRowActionChoices(includeQuickActions = true)
+        val swipeChoices = dev.goodwy.rphone.view.screen.settings.homeRowActionChoices(includeDelete = true)
+        val disabled = stringResource(R.string.no_action)
+        val actions = HomeTourActions(
+            tap = tapChoices.firstOrNull { it.second == recentTapAction }?.first ?: disabled,
+            swipeRight = swipeChoices.firstOrNull { swipeEnabled && swipeRightAction != PreferenceManager.SWIPE_ACTION_NONE && it.second == swipeRightAction }?.first,
+            swipeLeft = swipeChoices.firstOrNull { swipeEnabled && swipeLeftAction != PreferenceManager.SWIPE_ACTION_NONE && it.second == swipeLeftAction }?.first,
+        )
+        HomeCoachMarkTour(targets = tourTargets.toMap(), actions = actions) {
             prefs.setBoolean(PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, true)
             showHomeTour = false
         }

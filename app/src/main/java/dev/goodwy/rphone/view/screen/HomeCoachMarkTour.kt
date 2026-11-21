@@ -59,6 +59,8 @@ import kotlin.math.roundToInt
 internal enum class HomeTourTarget { Search, Favorites, RecentRow, RecentAvatar, Dialpad }
 internal enum class HomeTourDemo { AvatarLongPress, RowTap, RowSwipe, SearchTyping, FavoritesTap, DialpadTap }
 
+internal data class HomeTourActions(val tap: String, val swipeRight: String?, val swipeLeft: String?)
+
 internal data class HomeTourStep(
     val target: HomeTourTarget,
     @param:StringRes val title: Int,
@@ -67,13 +69,15 @@ internal data class HomeTourStep(
     val demo: HomeTourDemo,
 )
 
-internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>): List<HomeTourStep> = buildList {
+internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>, hasSwipeActions: Boolean = true): List<HomeTourStep> = buildList {
     if (HomeTourTarget.RecentAvatar in availableTargets) {
         add(HomeTourStep(HomeTourTarget.RecentAvatar, R.string.ui_tour_contact_title, R.string.ui_tour_contact_description, true, HomeTourDemo.AvatarLongPress))
     }
     if (HomeTourTarget.RecentRow in availableTargets) {
         add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_recent_tap_title, R.string.ui_tour_recent_tap_description, demo = HomeTourDemo.RowTap))
-        add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_swipe_title, R.string.ui_tour_swipe_description, demo = HomeTourDemo.RowSwipe))
+        if (hasSwipeActions) {
+            add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_swipe_title, R.string.ui_tour_swipe_description, demo = HomeTourDemo.RowSwipe))
+        }
     }
     if (HomeTourTarget.Search in availableTargets) {
         add(HomeTourStep(HomeTourTarget.Search, R.string.ui_tour_search_title, R.string.ui_tour_search_description, demo = HomeTourDemo.SearchTyping))
@@ -89,6 +93,7 @@ internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>): List<HomeTour
 @Composable
 internal fun HomeCoachMarkTour(
     targets: Map<HomeTourTarget, Rect>,
+    actions: HomeTourActions? = null,
     onComplete: () -> Unit,
 ) {
     var popupOrigin by remember { mutableStateOf(Offset.Zero) }
@@ -101,7 +106,7 @@ internal fun HomeCoachMarkTour(
         Box(Modifier.fillMaxSize().testTag("tour-popup-host")
             .semantics { homeTourPopupOrigin = popupOrigin }
             .homeTourBounds { popupOrigin = it.topLeft }) {
-            HomeCoachMarkTourContent(targets.mapValues { it.value.translate(-popupOrigin) }, onComplete)
+            HomeCoachMarkTourContent(targets.mapValues { it.value.translate(-popupOrigin) }, onComplete, actions = actions)
         }
     }
 }
@@ -111,9 +116,13 @@ internal fun HomeCoachMarkTourContent(
     targets: Map<HomeTourTarget, Rect>,
     onComplete: () -> Unit,
     demoProgress: Float? = null,
+    actions: HomeTourActions? = null,
 ) {
     val visibleTargets = targets.filterValues { it.width > 0f && it.height > 0f }
-    val steps = remember(visibleTargets.keys) { homeTourSteps(visibleTargets.keys) }
+    val steps = remember(visibleTargets.keys, actions) {
+        homeTourSteps(visibleTargets.keys,
+            hasSwipeActions = actions == null || actions.swipeRight != null || actions.swipeLeft != null)
+    }
     if (steps.isEmpty()) return
     var currentStep by remember { mutableIntStateOf(0) }
     val safeStep = currentStep.coerceIn(0, steps.lastIndex)
@@ -137,7 +146,7 @@ internal fun HomeCoachMarkTourContent(
                     onClick = {},
                 ),
         ) {
-            drawRect(Color.Black.copy(alpha = 0.72f))
+            drawRect(Color.Black.copy(alpha = 0.62f))
             spotlight?.let { rect ->
                 drawRoundRect(
                     color = Color.Transparent,
@@ -199,12 +208,29 @@ internal fun HomeCoachMarkTourContent(
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = stringResource(step.title),
+                    text = stringResource(if (step.demo == HomeTourDemo.RowTap && actions != null)
+                        R.string.setup_call_style_tap_gesture else step.title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                 )
+                val description = when (step.demo) {
+                    HomeTourDemo.RowTap -> actions?.let {
+                        stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_tap_gesture), it.tap)
+                    }
+                    HomeTourDemo.RowSwipe -> actions?.let {
+                        listOfNotNull(
+                            it.swipeRight?.let { label ->
+                                stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_right_gesture), label)
+                            },
+                            it.swipeLeft?.let { label ->
+                                stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_left_gesture), label)
+                            },
+                        ).joinToString("\n")
+                    }
+                    else -> null
+                }
                 Text(
-                    text = stringResource(step.description),
+                    text = description ?: stringResource(step.description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

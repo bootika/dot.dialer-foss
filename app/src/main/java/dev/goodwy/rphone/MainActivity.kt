@@ -22,10 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
@@ -42,7 +38,6 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.ui.platform.LocalConfiguration
@@ -70,6 +65,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -143,6 +140,15 @@ class MainActivity : FragmentActivity() {
 
     private var defaultDialerRevision by mutableIntStateOf(0)
     private var intentState by mutableStateOf<Intent?>(null)
+    private var phoneUpdateEntry: NavBackStackEntry? = null
+
+    internal fun isHandlingPhoneNavigation(): Boolean =
+        intentState?.isPhoneRequest() == true || phoneUpdateEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
+
+    private fun Intent.isPhoneRequest(): Boolean =
+        action == Intent.ACTION_DIAL || action == Intent.ACTION_CALL_BUTTON ||
+            (data?.scheme == "tel" && (action == Intent.ACTION_CALL || action == Intent.ACTION_VIEW))
+
     private var invitationLink by mutableStateOf<String?>(null)
     private var returnToCallOnBack by mutableStateOf(false)
     private lateinit var prefs: PreferenceManager
@@ -713,6 +719,7 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
         appUpdates.onResume()
+        GlobalContext.get().get<PurchaseHelper>().onAppForeground()
         if (BuildConfig.TEST_DISTRIBUTION) dev.goodwy.rphone.recordings.CaptureSetupNotifications.check(applicationContext)
         defaultDialerRevision++
         AppDiagnostics.record(DiagnosticEvent.ActivityLifecycle(ActivityStage.RESUMED))
@@ -737,6 +744,7 @@ class MainActivity : FragmentActivity() {
         super.onNewIntent(intent)
         AppDiagnostics.record(DiagnosticEvent.ActivityLifecycle(ActivityStage.NEW_INTENT))
         setIntent(intent)
+        phoneUpdateEntry = null
         intentState = intent
         returnToCallOnBack = intent.getBooleanExtra(EXTRA_RETURN_TO_CALL_ON_BACK, false)
 
@@ -745,6 +753,7 @@ class MainActivity : FragmentActivity() {
     }
 
     override fun onPause() {
+        phoneUpdateEntry = null
         appUpdates.onPause()
         super.onPause()
     }
@@ -784,60 +793,9 @@ class MainActivity : FragmentActivity() {
         target ?: return
         intentState = null
 
-        when (target) {
-            is NavigationTarget.OngoingCall -> startActivity(Intent(this, CallActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            })
-            is NavigationTarget.Search -> navController.navigate(com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination(initialQuery = target.query).route)
-            is NavigationTarget.Recents -> {
-                navController.navigate(RecentScreenDestination.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                        inclusive = false // Don't remove the home screen
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-
-                    // Disable the animation for instant opening from a notification
-                    anim {
-                        enter = 0
-                        exit = 0
-                        popEnter = 0
-                        popExit = 0
-                    }
-                }
-            }
-            is NavigationTarget.Dialpad -> {
-                io.github.bootika.dotdialer.diagnostics.recordDialNumber(
-                    io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.NAVIGATION, target.number)
-                navController.navigate(DialPadScreenDestination(initialNumber = target.number).route)
-            }
-            is NavigationTarget.ContactUnavailable -> {
-                android.widget.Toast.makeText(this, R.string.no_contacts_found, android.widget.Toast.LENGTH_SHORT).show()
-            }
-            is NavigationTarget.ContactDetails -> {
-                navController.navigate(ContactDetailsScreenDestination(contactId = target.contactId).route)
-            }
-            is NavigationTarget.ContactEdit -> {
-                navController.navigate(ContactEditScreenDestination(
-                    contactId = target.contactId,
-                    initialName = target.initialName,
-                    initialPhone = target.initialPhone
-                ).route) {
-                    launchSingleTop = true
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                }
-            }
-            is NavigationTarget.ContactPhotos -> {
-                navController.navigate(dev.goodwy.rphone.controller.contactPhotoReviewRoute(target.account)) { launchSingleTop = true }
-            }
-            is NavigationTarget.ContactManagement -> {
-                navController.navigate(dev.goodwy.rphone.controller.contactManagementIntentRoute()) {
-                    launchSingleTop = true
-                }
-            }
+        navigateExternalTarget(navController, target)
+        if (target is NavigationTarget.Dialpad && intent.isPhoneRequest()) {
+            phoneUpdateEntry = navController.currentBackStackEntry
         }
     }
 }

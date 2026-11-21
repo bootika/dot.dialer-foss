@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">De l’appel au texte</string>
+    <string name="feature_tip_recording_body">Configurez l’enregistrement dans dot.dialer et transcrivez avec dot.dictate.</string>
+    <string name="feature_tip_see_how">Voir comment</string>
+    <string name="feature_tip_hide">Masquer</string>
+    <string name="feature_tip_avatar_title">Maintenez le doigt sur l’avatar</string>
+    <string name="feature_tip_avatar_body">Pendant un appel, changez le style de la photo ou désactivez les gouttelettes d’ambiance.</string>
+    <string name="feature_tip_try">Essayer ici</string>
+</resources>

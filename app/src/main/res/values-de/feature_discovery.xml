@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Vom Anruf zum Text</string>
+    <string name="feature_tip_recording_body">Richte Anrufaufnahmen in dot.dialer ein und transkribiere sie mit dot.dictate.</string>
+    <string name="feature_tip_see_how">So geht’s</string>
+    <string name="feature_tip_hide">Ausblenden</string>
+    <string name="feature_tip_avatar_title">Avatar gedrückt halten</string>
+    <string name="feature_tip_avatar_body">Im Anruf kannst du den Fotostil ändern oder die Umgebungstropfen ausschalten.</string>
+    <string name="feature_tip_try">Hier ausprobieren</string>
+</resources>

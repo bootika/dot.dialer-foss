@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_tip_recording_title">Din apel în text</string>
+    <string name="feature_tip_recording_body">Configurează înregistrarea în dot.dialer și transcrie cu dot.dictate.</string>
+    <string name="feature_tip_see_how">Vezi cum</string>
+    <string name="feature_tip_hide">Ascunde</string>
+    <string name="feature_tip_avatar_title">Ține apăsat pe avatar</string>
+    <string name="feature_tip_avatar_body">În apel, poți schimba stilul fotografiei sau opri picăturile ambientale.</string>
+    <string name="feature_tip_try">Încearcă aici</string>
+</resources>

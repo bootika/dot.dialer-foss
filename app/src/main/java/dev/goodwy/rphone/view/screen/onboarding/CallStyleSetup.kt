@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.util.PreferenceManager
@@ -59,28 +61,34 @@ internal fun CallStyleSetup(prefs: PreferenceManager, swipe: Boolean, onSelect: 
 internal fun CallStyleChoiceContent(swipe: Boolean, saving: Boolean = false, failed: Boolean = false,
     onSelect: (Boolean) -> Unit, onBack: () -> Unit, onNext: () -> Unit) {
     Surface(Modifier.fillMaxSize().testTag("call-style-setup"), color = MaterialTheme.colorScheme.background) {
-        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(24.dp)) {
-            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Spacer(Modifier.height(12.dp))
-                Text("dot.dialer", style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(stringResource(R.string.setup_call_style_title), style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.SemiBold)
-                Text(stringResource(R.string.setup_call_style_subtitle), style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.height(4.dp))
+        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.weight(1f).widthIn(max = 460.dp).fillMaxWidth().testTag("call-style-body")
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("dot.dialer", style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.setup_call_style_title), style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,
+                        modifier = Modifier.semantics { heading() })
+                    Text(stringResource(R.string.setup_call_style_subtitle), style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                }
                 CallStyleCard(false, !swipe, !saving, onSelect)
                 CallStyleCard(true, swipe, !saving, onSelect)
                 Text(stringResource(R.string.setup_call_style_later), style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(4.dp))
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth())
                 if (failed) Text(stringResource(R.string.setup_call_style_save_failed),
                     color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("call-style-save-error"))
-                Spacer(Modifier.height(8.dp))
             }
-            Spacer(Modifier.height(16.dp))
-            if (saving) LinearProgressIndicator(Modifier.fillMaxWidth().testTag("call-style-saving"))
-            else Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp),
+            val footer = Modifier.widthIn(max = 460.dp).fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp)
+            if (saving) LinearProgressIndicator(footer.testTag("call-style-saving"))
+            else Row(footer, horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 FilledIconButton(onClick = onBack, modifier = Modifier.size(56.dp).testTag("plan-guide-back"),
                     shape = androidx.compose.foundation.shape.CircleShape,
@@ -88,9 +96,10 @@ internal fun CallStyleChoiceContent(swipe: Boolean, saving: Boolean = false, fai
                         contentColor = MaterialTheme.colorScheme.onSurface)) {
                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back))
                 }
-                Button(onClick = onNext, modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("plan-guide-next")) {
+                Button(onClick = onNext, shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("plan-guide-next")) {
                     Text(stringResource(R.string.setup_call_style_continue), modifier = Modifier.weight(1f),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                        textAlign = TextAlign.Center)
                     Spacer(Modifier.width(8.dp))
                     Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, Modifier.size(24.dp))
                 }
@@ -102,31 +111,30 @@ internal fun CallStyleChoiceContent(swipe: Boolean, saving: Boolean = false, fai
 @Composable
 private fun CallStyleCard(swipe: Boolean, chosen: Boolean, enabled: Boolean, onSelect: (Boolean) -> Unit) {
     val colors = MaterialTheme.colorScheme
-    Surface(onClick = { onSelect(swipe) }, enabled = enabled, shape = RoundedCornerShape(26.dp),
-        color = if (chosen) colors.primaryContainer else colors.surfaceBright,
-        border = BorderStroke(2.dp, if (chosen) colors.primary else colors.surfaceBright),
+    Surface(onClick = { onSelect(swipe) }, enabled = enabled, shape = RoundedCornerShape(22.dp),
+        color = if (chosen) colors.primaryContainer else colors.surfaceContainerLow,
+        border = BorderStroke(1.dp, if (chosen) colors.primary else colors.outlineVariant),
         modifier = Modifier.fillMaxWidth().testTag(if (swipe) "call-style-swipe" else "call-style-tap")
             .semantics { selected = chosen; role = Role.Button }) {
-        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween) {
-                Surface(shape = RoundedCornerShape(14.dp), color = if (chosen) colors.primary else colors.surfaceContainerHigh) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Surface(shape = RoundedCornerShape(12.dp), color = if (chosen) colors.primary else colors.surfaceContainerHigh) {
                     Icon(if (swipe) Icons.AutoMirrored.Rounded.ArrowForward else Icons.Rounded.TouchApp,
-                        null, Modifier.padding(10.dp).size(24.dp), tint = if (chosen) colors.onPrimary else colors.onSurface)
+                        null, Modifier.padding(8.dp).size(20.dp), tint = if (chosen) colors.onPrimary else colors.onSurface)
                 }
-                if (chosen) Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Icon(Icons.Rounded.Check, null, Modifier.size(16.dp), tint = colors.primary)
-                    Text(stringResource(R.string.setup_call_style_selected), style = MaterialTheme.typography.labelMedium,
-                        color = colors.primary)
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(stringResource(if (swipe) R.string.setup_call_style_swipe else R.string.setup_call_style_tap),
+                        style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(if (swipe) R.string.setup_call_style_swipe_body else R.string.setup_call_style_tap_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (chosen) colors.onPrimaryContainer else colors.onSurfaceVariant)
+                }
+                if (chosen) {
+                    Icon(Icons.Rounded.Check, null, Modifier.size(20.dp), tint = colors.onPrimaryContainer)
                 }
             }
-            Text(stringResource(if (swipe) R.string.setup_call_style_swipe else R.string.setup_call_style_tap),
-                style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text(stringResource(if (swipe) R.string.setup_call_style_swipe_body else R.string.setup_call_style_tap_body),
-                style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
-            HorizontalDivider(color = colors.outlineVariant)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 CallStyleMapping(0, if (swipe) R.string.contact_action else R.string.call,
                     stringResource(R.string.setup_call_style_tap_gesture))
                 CallStyleMapping(1, if (swipe) R.string.call else R.string.sms,
@@ -139,11 +147,14 @@ private fun CallStyleCard(swipe: Boolean, chosen: Boolean, enabled: Boolean, onS
 
 @Composable
 private fun CallStyleMapping(direction: Int, action: Int, gesture: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-        Icon(when (direction) { 0 -> Icons.Rounded.TouchApp; 1 -> Icons.AutoMirrored.Rounded.ArrowForward;
-            else -> Icons.AutoMirrored.Rounded.ArrowBack }, gesture, Modifier.size(15.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(stringResource(action), style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val colors = MaterialTheme.colorScheme
+    Surface(shape = RoundedCornerShape(8.dp), color = colors.surfaceContainerHigh) {
+        Row(Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Icon(when (direction) { 0 -> Icons.Rounded.TouchApp; 1 -> Icons.AutoMirrored.Rounded.ArrowForward;
+                else -> Icons.AutoMirrored.Rounded.ArrowBack }, gesture, Modifier.size(14.dp),
+                tint = colors.onSurfaceVariant)
+            Text(stringResource(action), style = MaterialTheme.typography.labelMedium, color = colors.onSurfaceVariant)
+        }
     }
 }

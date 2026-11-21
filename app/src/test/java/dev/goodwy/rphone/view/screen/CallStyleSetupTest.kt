@@ -87,6 +87,32 @@ class CallStyleSetupTest {
         }
     }
 
+    @Test @Config(qualifiers = "ro-rRO-w320dp-h568dp-mdpi")
+    fun compactPortraitShowsBothFullCardsAboveContinueWithoutScrolling() {
+        var swipe by mutableStateOf(false)
+        rule.setContent {
+            DotDialerTheme(systemDark = false) {
+                CallStyleChoiceContent(swipe, onSelect = { swipe = it }, onBack = {}, onNext = {})
+            }
+        }
+
+        val tap = rule.onNodeWithTag("call-style-tap")
+        val slide = rule.onNodeWithTag("call-style-swipe")
+        val body = rule.onNodeWithTag("call-style-body")
+        val next = rule.onNodeWithTag("plan-guide-next")
+        for (selectSwipe in listOf(false, true)) {
+            if (selectSwipe) slide.performClick().assertIsSelected() else tap.assertIsSelected()
+            tap.assertIsDisplayed()
+            slide.assertIsDisplayed()
+            next.assertIsDisplayed()
+            assertTrue(tap.getUnclippedBoundsInRoot().top >= body.getUnclippedBoundsInRoot().top)
+            assertTrue(tap.getUnclippedBoundsInRoot().bottom <= slide.getUnclippedBoundsInRoot().top)
+            assertTrue(slide.getUnclippedBoundsInRoot().bottom <= body.getUnclippedBoundsInRoot().bottom)
+            assertTrue(body.getUnclippedBoundsInRoot().bottom < next.getUnclippedBoundsInRoot().top)
+            capture("portrait-320x568-$selectSwipe")
+        }
+    }
+
     @Test @Config(qualifiers = "ro-rRO-w800dp-h360dp-land-mdpi")
     fun landscapeErrorAndBusyStatesKeepChoiceAndPreventSubmission() {
         var busy by mutableStateOf(false)

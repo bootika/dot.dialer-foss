@@ -4,6 +4,7 @@
     <string name="app_update_required">Önemli bir güncelleme var. Devam etmek için yükleyin.</string>
     <string name="app_update_now">Şimdi güncelle</string>
     <string name="app_update_later">Daha sonra, teşekkürler</string>
+    <string name="app_update_close">Telefon tuş takımını aç</string>
     <string name="app_update_ready">Güncelleme hazır. Uygun olduğunda yeniden başlatın.</string>
     <string name="app_update_restart">Şimdi yeniden başlat</string>
     <string name="app_update_optional">İşleri kolaylaştıracak birkaç iyileştirme.</string>

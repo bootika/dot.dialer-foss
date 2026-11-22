@@ -23,11 +23,10 @@ internal fun rememberPlanBillingActivity(helper: PurchaseHelper): ComponentActiv
     }
     DisposableEffect(activity) {
         val listener=LifecycleEventObserver {_,event ->
-            if(event==Lifecycle.Event.ON_STOP)helper.onPurchaseScreenClosed()
             if(event==Lifecycle.Event.ON_RESUME && latestLoading)helper.clearErrors()
         }
         activity?.lifecycle?.addObserver(listener)
-        onDispose {activity?.lifecycle?.removeObserver(listener);helper.onPurchaseScreenClosed()}
+        onDispose {activity?.lifecycle?.removeObserver(listener)}
     }
     LaunchedEffect(success) {if(success) {helper.checkProStatus();helper.clearPurchaseSuccess()}}
     return activity

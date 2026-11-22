@@ -4,6 +4,7 @@
     <string name="app_update_required">Dostępna jest ważna aktualizacja. Zainstaluj ją, aby kontynuować.</string>
     <string name="app_update_now">Aktualizuj teraz</string>
     <string name="app_update_later">Później, dziękuję</string>
+    <string name="app_update_close">Otwórz klawiaturę telefonu</string>
     <string name="app_update_ready">Aktualizacja jest gotowa. Uruchom ponownie w dogodnym momencie.</string>
     <string name="app_update_restart">Uruchom ponownie</string>
     <string name="app_update_optional">Kilka ulepszeń, które ułatwią Ci życie.</string>

@@ -40,16 +40,4 @@ internal class GiftLicenseStorage(context: Context, private val alias: String = 
         val out = file.startWrite()
         try { out.write(bytes); file.finishWrite(out) } catch (error: Exception) { file.failWrite(out); throw error }
     }
-
-    /** Invalidate only this record; an undeletable ciphertext must no longer have a usable key. */
-    fun invalidate() {
-        try { file.delete() } catch (error: Exception) {
-            android.util.Log.w("LicenseStorage", "invalidate: ${error.javaClass.simpleName}")
-        }
-        if (listOf(file.baseFile, File(file.baseFile.path + ".bak"), File(file.baseFile.path + ".new")).none { it.exists() }) return
-        check(keyProvider == null) { "Injected key invalidation unavailable" }
-        val keys = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-        keys.deleteEntry(alias)
-        check(!keys.containsAlias(alias)) { "Record key invalidation failed" }
-    }
 }

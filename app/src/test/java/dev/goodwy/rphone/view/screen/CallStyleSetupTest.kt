@@ -99,7 +99,7 @@ class CallStyleSetupTest {
         rule.setContent { CompositionLocalProvider(LocalDensity provides Density(1f, font)) {
             DotDialerTheme(systemDark = dark) { CallStyleChoiceContent(swipe, onSelect = { swipe = it }, onBack = {}, onNext = {}) }
         } }
-        for (theme in listOf(false, true)) for (scale in listOf(1f, 2f)) for (choice in listOf(false, true)) {
+        for (theme in listOf(false, true)) for (scale in listOf(1f, 1.5f, 2f)) for (choice in listOf(false, true)) {
             rule.runOnIdle { dark = theme; font = scale; swipe = choice }
             rule.onNodeWithTag("call-style-${if (choice) "swipe" else "tap"}").performScrollTo().assertIsSelected()
             rule.onNodeWithTag("plan-guide-next").assertIsDisplayed()
@@ -110,9 +110,12 @@ class CallStyleSetupTest {
     @Test @Config(qualifiers = "ro-rRO-w320dp-h568dp-mdpi")
     fun compactPortraitShowsBothFullCardsAboveContinueWithoutScrolling() {
         var swipe by mutableStateOf(false)
+        var font by mutableFloatStateOf(1f)
         rule.setContent {
-            DotDialerTheme(systemDark = false) {
-                CallStyleChoiceContent(swipe, onSelect = { swipe = it }, onBack = {}, onNext = {})
+            CompositionLocalProvider(LocalDensity provides Density(1f, font)) {
+                DotDialerTheme(systemDark = false) {
+                    CallStyleChoiceContent(swipe, onSelect = { swipe = it }, onBack = {}, onNext = {})
+                }
             }
         }
 
@@ -120,8 +123,9 @@ class CallStyleSetupTest {
         val slide = rule.onNodeWithTag("call-style-swipe")
         val body = rule.onNodeWithTag("call-style-body")
         val next = rule.onNodeWithTag("plan-guide-next")
-        for (selectSwipe in listOf(false, true)) {
-            if (selectSwipe) slide.performClick().assertIsSelected() else tap.assertIsSelected()
+        for (scale in listOf(1f, 1.5f)) for (selectSwipe in listOf(false, true)) {
+            rule.runOnIdle { font = scale; swipe = selectSwipe }
+            if (selectSwipe) slide.assertIsSelected() else tap.assertIsSelected()
             tap.assertIsDisplayed()
             slide.assertIsDisplayed()
             next.assertIsDisplayed()
@@ -129,7 +133,7 @@ class CallStyleSetupTest {
             assertTrue(tap.getUnclippedBoundsInRoot().bottom <= slide.getUnclippedBoundsInRoot().top)
             assertTrue(slide.getUnclippedBoundsInRoot().bottom <= body.getUnclippedBoundsInRoot().bottom)
             assertTrue(body.getUnclippedBoundsInRoot().bottom < next.getUnclippedBoundsInRoot().top)
-            capture("portrait-320x568-$selectSwipe")
+            capture("portrait-320x568-$scale-$selectSwipe")
         }
     }
 

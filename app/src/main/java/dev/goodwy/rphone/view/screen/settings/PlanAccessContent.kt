@@ -34,6 +34,8 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
     val activity=rememberPlanBillingActivity(helper)
     val store by helper.storePlan.collectAsState()
     val pro by helper.isPro.collectAsState()
+    val subscriptions by helper.ownedSubscriptions.collectAsState()
+    val recurringPlan by helper.subscriptionPlan.collectAsState()
     val ready by helper.isBillingReady.collectAsState()
     val iaps by helper.iapSkuDetailsInitialized.collectAsState()
     val subs by helper.subSkuDetailsInitialized.collectAsState()
@@ -48,6 +50,9 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
     LaunchedEffect(effective) {if(effective>initialPlan) onClose()}
     LaunchedEffect(helper) { manager.attach(helper) }
     val product=PlanProducts.all.first { it.tier==tier && it.period==period }
+    val recurring=helper.supportsSubscriptionManagement && subscriptions.isNotEmpty()
+    val changePeriod=recurring && recurringPlan==tier && manager.paid==tier && product.subscription && product.id !in subscriptions
+    val lifetimeBlocked=recurring && !product.subscription
     val loaded=if(product.subscription)subs else iaps
     val available=ready && loaded && helper.productAvailable(product.id,product.subscription)
     val price=if(available) {
@@ -97,7 +102,7 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
             for (value in listOf(AppPlan.PLUS, AppPlan.PREMIUM)) {
                 PlanOptionCard(value, tier == value, manager.paid >= value) { tier = value }
             }
-            if (manager.paid < AppPlan.PREMIUM) DotSettingsCard {
+            if (manager.paid < AppPlan.PREMIUM || recurring && manager.paid<=recurringPlan) DotSettingsCard {
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(stringResource(R.string.plan_period), style = MaterialTheme.typography.titleSmall)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -111,6 +116,12 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
                     Text(price, style = if (available) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.bodyMedium,
                         color = if (available) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag("plan-real-store-price"))
+                    if (lifetimeBlocked) Text(stringResource(R.string.plan_manage_before_purchase),
+                        modifier=Modifier.testTag("plan-lifetime-blocked"))
+                    else if (product.subscription) {
+                        Text(stringResource(R.string.plan_subscription_terms),style=MaterialTheme.typography.bodySmall)
+                        if(recurring)Text(stringResource(R.string.plan_replacement_terms),style=MaterialTheme.typography.bodySmall)
+                    }
                     Button(
                         onClick = {
                             val checkoutActivity = activity
@@ -119,11 +130,11 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
                                 else helper.purchaseDonation(product.id, checkoutActivity)
                             }
                         },
-                        enabled = available && activity != null && !loading && manager.paid < tier,
+                        enabled = available && activity != null && !loading && !lifetimeBlocked && (manager.paid < tier || changePeriod),
                         modifier = Modifier.fillMaxWidth().testTag("plan-buy"),
                     ) {
                         Text(stringResource(
-                            if (manager.paid >= tier) R.string.plan_current else R.string.plan_upgrade_to,
+                            if(changePeriod)R.string.plan_change_period else if (manager.paid >= tier) R.string.plan_current else R.string.plan_upgrade_to,
                             planName(tier),
                         ))
                     }
@@ -140,9 +151,21 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
                         modifier = Modifier.fillMaxWidth().testTag("plan-restore")) {
                         Text(stringResource(R.string.plan_restore))
                     }
+                    if(helper.supportsSubscriptionManagement) {
+                        DotSettingsDivider()
+                        TextButton(onClick={activity?.let(helper::manageSubscription)},enabled=activity!=null,
+                            modifier=Modifier.fillMaxWidth().testTag("plan-manage-subscription")) {
+                            Text(stringResource(R.string.plan_manage_subscription))
+                        }
+                    }
                 }
             }
-            if (error != null) Text(stringResource(R.string.operation_failed), color = MaterialTheme.colorScheme.error)
+            if (error != null) {
+                val notices = listOf(R.string.plan_purchase_pending, R.string.plan_manage_before_purchase,
+                    R.string.plan_subscription_check_required).map { stringResource(it) }
+                Text(error?.takeIf { it in notices } ?: stringResource(R.string.operation_failed),
+                    color = MaterialTheme.colorScheme.error)
+            }
             helper.giftLicenses?.let { gift ->
                 var expanded by remember { mutableStateOf(false) }
                 TextButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth()) {

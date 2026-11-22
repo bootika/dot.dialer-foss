@@ -13,4 +13,8 @@
     <string name="setup_call_style_right_gesture">Vuốt sang phải</string>
     <string name="setup_call_style_left_gesture">Vuốt sang trái</string>
     <string name="setup_call_style_continue">Tiếp tục</string>
+    <string name="setup_call_style_direction_right">Phải</string>
+    <string name="setup_call_style_direction_left">Trái</string>
+    <item type="string" name="setup_call_style_contact_destination">@string/contact_action</item>
+    <item type="string" name="setup_call_style_call_destination">@string/call</item>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Zarządzaj subskrypcją</string>
+    <string name="plan_change_period">Zmień okres rozliczeniowy</string>
+    <string name="plan_manage_before_purchase">Zarządzaj obecną subskrypcją w Google Play. Dostęp dożywotni będzie dostępny po jej zakończeniu.</string>
+    <string name="plan_purchase_pending">Jeden zakup nadal oczekuje. Dokończ go lub anuluj w Google Play przed rozpoczęciem kolejnego.</string>
+    <string name="plan_subscription_terms">Odnawia się automatycznie. Zarządzaj lub anuluj w Google Play.</string>
+    <string name="plan_replacement_terms">Google Play pokazuje kwotę opłaty i datę wejścia w życie przed potwierdzeniem.</string>
+    <string name="plan_subscription_check_required">Zarządzaj bieżącymi subskrypcjami w Google Play przed zmianą planu.</string>
+</resources>

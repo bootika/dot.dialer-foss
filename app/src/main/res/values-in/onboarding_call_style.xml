@@ -13,4 +13,8 @@
     <string name="setup_call_style_right_gesture">Geser ke kanan</string>
     <string name="setup_call_style_left_gesture">Geser ke kiri</string>
     <string name="setup_call_style_continue">Lanjutkan</string>
+    <string name="setup_call_style_direction_right">Kanan</string>
+    <string name="setup_call_style_direction_left">Kiri</string>
+    <item type="string" name="setup_call_style_contact_destination">@string/contact_action</item>
+    <item type="string" name="setup_call_style_call_destination">@string/call</item>
 </resources>

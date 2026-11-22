@@ -3,7 +3,6 @@ package dev.goodwy.rphone.controller
 import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
@@ -12,9 +11,6 @@ import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
-import com.android.billingclient.api.QueryProductDetailsParams
-import com.android.billingclient.api.QueryPurchasesParams
-import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,17 +21,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
 import androidx.lifecycle.viewModelScope
 import dev.goodwy.rphone.controller.license.GiftLicenseManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlayStoreViewModel internal constructor(
     application: Application,
     private val preferenceManager: PreferenceManager,
     override val giftLicenses: GiftLicenseManager? = null,
     private val ownershipCache: PlayStoreOwnershipCache = PlayStoreOwnershipCache(application),
+    private val purchaseAuthority: PlayPurchaseAuthority? = null,
+    private val serverAuthorityRequired: Boolean = false,
 ) : AndroidViewModel(application), PurchaseHelper {
 
     private var billingClient: BillingClient? = null
     private var connectionInProgress = false
-    private val cachedOwnership = ownershipCache.restore()
+    private val cachedOwnership = purchaseAuthority?.ownership() ?: ownershipCache.restore()
     private var ownershipKnown = cachedOwnership != null
     private val ownershipQueryGeneration = java.util.concurrent.atomic.AtomicLong()
     private val readyActions = mutableListOf<() -> Unit>()
@@ -61,7 +62,26 @@ class PlayStoreViewModel internal constructor(
     override val isBillingReady: StateFlow<Boolean> = _isBillingReady.asStateFlow()
     private val _isPro = MutableStateFlow(cachedOwnership?.isPro ?: false)
     private val mutableStorePlan = MutableStateFlow(cachedOwnership?.plan ?: io.github.bootika.dotdialer.core.license.AppPlan.FREE)
-    override val storePlan = mutableStorePlan.asStateFlow()
+    override val storePlan: StateFlow<io.github.bootika.dotdialer.core.license.AppPlan> = PlayReadThroughFlow(mutableStorePlan.asStateFlow()) { publishVerifiedAuthority();mutableStorePlan.value }
+    private val mutableSubscriptionPlan = MutableStateFlow(cachedOwnership?.subscriptionPlan ?: io.github.bootika.dotdialer.core.license.AppPlan.FREE)
+    override val subscriptionPlan: StateFlow<io.github.bootika.dotdialer.core.license.AppPlan> = PlayReadThroughFlow(mutableSubscriptionPlan.asStateFlow()) { publishVerifiedAuthority();mutableSubscriptionPlan.value }
+    override val ownedSubscriptions: StateFlow<Set<String>> = PlayReadThroughFlow(subPurchased.asStateFlow()) { publishVerifiedAuthority();subPurchased.value }
+    override val supportsSubscriptionManagement = true
+    private val foregroundRefresh by lazy {
+        ForegroundOwnershipRefresh(viewModelScope, {
+            val network = getApplication<Application>().getSystemService(android.net.ConnectivityManager::class.java)
+            network?.getNetworkCapabilities(network.activeNetwork)?.let {
+                it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+                    it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            } == true
+        }, { _isLoading.value }, android.os.SystemClock::elapsedRealtime) {
+            runWhenBillingReady { queryPurchases() }
+        }
+    }
+    override fun onAppForeground() = foregroundRefresh.onForeground()
+    override fun manageSubscription(activity: Activity) = PlaySubscriptionManagement.open(activity, subPurchased.value) {
+        _errorMessage.value = "Unable to open subscription management"
+    }
     override fun productAvailable(product: String, subscription: Boolean): Boolean = if (subscription)
         _subSkuDetails.value.any { it.productId == product && it.subscriptionOfferDetails?.isNotEmpty() == true }
         else _iapSkuDetails.value.any { it.productId == product && it.oneTimePurchaseOfferDetails != null }
@@ -70,16 +90,18 @@ class PlayStoreViewModel internal constructor(
         retrieveDonation(productIds.filter { id -> catalog.any { it.id == id && !it.subscription } },
             productIds.filter { id -> catalog.any { it.id == id && it.subscription } })
     }
-    override val isPro: StateFlow<Boolean> = giftLicenses?.let { gifts ->
+    private val proFlow: StateFlow<Boolean> = giftLicenses?.let { gifts ->
         combine(_isPro, gifts.isPro) { store, gift -> store || gift }
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     } ?: _isPro.asStateFlow()
+    override val isPro: StateFlow<Boolean> = PlayReadThroughFlow(proFlow) { publishVerifiedAuthority();_isPro.value || giftLicenses?.isPro?.value==true }
     private val _proCheckDone = MutableStateFlow(false)
     override val proCheckDone: StateFlow<Boolean> = _proCheckDone.asStateFlow()
-
     private var cachedIaps: List<String> = emptyList()
     private var cachedSubs: List<String> = emptyList()
 
+    init { if (serverAuthorityRequired) PlayAuthorityLifecycle.observe(viewModelScope, purchaseAuthority,
+        ownershipQueryGeneration::get, {_isLoading.value}, ::updateProStatus) }
     private val purchasesUpdatedListener = PurchasesUpdatedListener { result, purchases ->
         when (result.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
@@ -93,11 +115,9 @@ class PlayStoreViewModel internal constructor(
             else -> fail("Purchase failed", result)
         }
     }
-
     override fun initBilling() {
         ensureBillingClient()
     }
-
     fun retrieveDonation(iaps: List<String>, subs: List<String>) {
         cachedIaps = iaps
         cachedSubs = subs
@@ -108,7 +128,6 @@ class PlayStoreViewModel internal constructor(
         _subSkuDetailsInitialized.value = false
         runWhenBillingReady { loadProductDetails(iaps, subs) }
     }
-
     private fun ensureBillingClient(): BillingClient {
         billingClient?.let { return it }
         return BillingClient.newBuilder(getApplication())
@@ -119,7 +138,6 @@ class PlayStoreViewModel internal constructor(
             .build()
             .also { billingClient = it }
     }
-
     private fun runWhenBillingReady(action: () -> Unit) {
         val client = ensureBillingClient()
         if (client.isReady) {
@@ -153,62 +171,18 @@ class PlayStoreViewModel internal constructor(
             }
         })
     }
-
     private fun failPendingActions(message: String) {
         readyActions.clear()
         _errorMessage.value = message
         _isLoading.value = false
         _proCheckDone.value = true
     }
-
     private fun loadProductDetails(iaps: List<String>, subs: List<String>) {
         val client = billingClient ?: return failPendingActions("Billing is not initialized")
-        var pendingQueries = listOf(iaps, subs).count(List<String>::isNotEmpty)
-
-        fun finishQuery() {
-            pendingQueries--
-            if (pendingQueries <= 0) {
-                _isLoading.value = false
-                queryPurchases()
-            }
-        }
-
-        if (iaps.isEmpty()) {
-            _iapSkuDetails.value = emptyList()
-            _iapSkuDetailsInitialized.value = true
-        } else {
-            queryProductDetails(
-                client = client,
-                productIds = iaps,
-                productType = BillingClient.ProductType.INAPP,
-                onResult = {
-                    _iapSkuDetails.value = it
-                    _iapSkuDetailsInitialized.value = true
-                    finishQuery()
-                },
-            )
-        }
-
-        if (subs.isEmpty()) {
-            _subSkuDetails.value = emptyList()
-            _subSkuDetailsInitialized.value = true
-        } else {
-            queryProductDetails(
-                client = client,
-                productIds = subs,
-                productType = BillingClient.ProductType.SUBS,
-                onResult = {
-                    _subSkuDetails.value = it
-                    _subSkuDetailsInitialized.value = true
-                    finishQuery()
-                },
-            )
-        }
-
-        if (pendingQueries == 0) {
-            _isLoading.value = false
-            queryPurchases()
-        }
+        PlayCatalogueLoader { ids, type, done -> queryProductDetails(client,ids,type,done) }.load(iaps,subs,
+            { _iapSkuDetails.value=it;_iapSkuDetailsInitialized.value=true },
+            { _subSkuDetails.value=it;_subSkuDetailsInitialized.value=true },
+            { _isLoading.value=false;queryPurchases() })
     }
 
     private fun queryProductDetails(
@@ -217,45 +191,21 @@ class PlayStoreViewModel internal constructor(
         productType: String,
         onResult: (List<ProductDetails>) -> Unit,
     ) {
-        val products = productIds.map { productId ->
-            QueryProductDetailsParams.Product.newBuilder()
-                .setProductId(productId)
-                .setProductType(productType)
-                .build()
-        }
-        val params = QueryProductDetailsParams.newBuilder().setProductList(products).build()
-        try {
-            client.queryProductDetailsAsync(params) { result, details ->
-                if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                    onResult(details.productDetailsList)
-                } else {
-                    _errorMessage.value = billingError("Unable to load products", result)
-                    onResult(emptyList())
-                }
-            }
-        } catch (error: RuntimeException) {
-            _errorMessage.value = error.message ?: "Unable to load products"
-            onResult(emptyList())
-        }
+        PlayProductDetailsQuery(client) { result ->
+            _errorMessage.value = if(result == null) "Unable to load products" else billingError("Unable to load products", result)
+        }.read(productIds, productType, onResult)
     }
 
     private fun handlePurchaseUpdate(purchase: Purchase) {
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
-                if (purchase.isAcknowledged) {
-                    completePurchase()
+                if (serverAuthorityRequired) {
+                    queryPurchases(restore = false) { verified -> _purchaseSuccess.value = verified &&
+                        purchase.products.any { it in iapPurchased.value || it in subPurchased.value } }
                     return
                 }
-                val client = billingClient ?: return failPendingActions("Billing is not initialized")
-                val params = AcknowledgePurchaseParams.newBuilder()
-                    .setPurchaseToken(purchase.purchaseToken)
-                    .build()
-                client.acknowledgePurchase(params) { result ->
-                    if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        completePurchase()
-                    } else {
-                        fail("Unable to confirm purchase", result)
-                    }
+                PlayLegacyPurchaseUpdates.accept(billingClient, purchase, ::completePurchase) {
+                    failPendingActions("Unable to confirm purchase")
                 }
             }
             Purchase.PurchaseState.PENDING -> _isLoading.value = false
@@ -268,63 +218,44 @@ class PlayStoreViewModel internal constructor(
         queryPurchases()
     }
 
-    private fun queryPurchases(onComplete: () -> Unit = {}) {
+    private var ownershipSnapshot: PlayPurchaseSnapshot? = null
+    private var ownershipCompletion: ((Boolean) -> Unit)? = null
+    private fun queryPurchases(restore: Boolean = true, onComplete: (Boolean) -> Unit = {}) {
+        val superseded = ownershipCompletion
+        ownershipCompletion = null
+        ownershipQueryGeneration.incrementAndGet()
+        superseded?.invoke(false)
+        ownershipSnapshot = null
         val client = billingClient
         if (client == null || !client.isReady) {
             failPendingActions("Billing service is not ready")
-            onComplete()
+            onComplete(false)
             return
         }
-
         val generation = ownershipQueryGeneration.incrementAndGet()
-        val query = PlayStoreOwnershipQuery(
-            isCurrent = { ownershipQueryGeneration.get() == generation },
-            onComplete = { owned ->
-                if (owned != null) {
-                    iapPurchased.value = owned.inApps
-                    subPurchased.value = owned.subscriptions
-                    updateProStatus()
+        ownershipCompletion = onComplete
+        PlayStoreOwnershipRefresh(client, { ownershipQueryGeneration.get() == generation }, { result ->
+            _errorMessage.value = billingError("Unable to restore purchases", result)
+        }, serverAuthorityRequired).read { snapshot ->
+            if (ownershipQueryGeneration.get() != generation) return@read
+            if(serverAuthorityRequired && snapshot?.pending==true) _errorMessage.value=getApplication<Application>().getString(R.string.plan_purchase_pending)
+            viewModelScope.launch {
+                val accepted = PlayServerSnapshot.reconcile(snapshot, serverAuthorityRequired, purchaseAuthority, restore) {
+                    ownershipQueryGeneration.get() == generation
                 }
+                if (ownershipQueryGeneration.get() != generation) return@launch
+                if (accepted != null) {
+                    ownershipSnapshot = accepted
+                    iapPurchased.value = accepted.ownership.inApps
+                    subPurchased.value = accepted.ownership.subscriptions
+                    updateProStatus()
+                } else if (_errorMessage.value == null) _errorMessage.value = "Unable to confirm restored purchase"
                 _proCheckDone.value = true
                 _isLoading.value = false
-                onComplete()
-            },
-        )
-        fun complete(type: String, result: BillingResult, purchases: List<Purchase>) {
-            if (ownershipQueryGeneration.get() != generation) return
-            if (result.responseCode != BillingClient.BillingResponseCode.OK) {
-                _errorMessage.value = billingError("Unable to restore purchases", result)
-                query.accept(type == BillingClient.ProductType.SUBS, null)
-                return
+                val completion = ownershipCompletion
+                ownershipCompletion = null
+                completion?.invoke(accepted != null)
             }
-            PlayStoreRestoredPurchases(client) { ownershipQueryGeneration.get() == generation }.collect(purchases) { owned ->
-                if (owned == null) _errorMessage.value = "Unable to confirm restored purchase"
-                query.accept(type == BillingClient.ProductType.SUBS, owned)
-            }
-        }
-        queryPurchases(client, BillingClient.ProductType.INAPP, ::complete)
-        queryPurchases(client, BillingClient.ProductType.SUBS, ::complete)
-    }
-
-    private fun queryPurchases(
-        client: BillingClient,
-        productType: String,
-        onResult: (String, BillingResult, List<Purchase>) -> Unit,
-    ) {
-        val params = QueryPurchasesParams.newBuilder().setProductType(productType).build()
-        try {
-            client.queryPurchasesAsync(params) { result, purchases ->
-                onResult(productType, result, purchases)
-            }
-        } catch (error: RuntimeException) {
-            onResult(
-                productType,
-                BillingResult.newBuilder()
-                    .setResponseCode(BillingClient.BillingResponseCode.ERROR)
-                    .setDebugMessage(error.message.orEmpty())
-                    .build(),
-                emptyList(),
-            )
         }
     }
 
@@ -347,7 +278,7 @@ class PlayStoreViewModel internal constructor(
             return
         }
         launchBillingFlow(
-            activity,
+            activity, product,
             BillingFlowParams.ProductDetailsParams.newBuilder()
                 .setProductDetails(details)
                 .build(),
@@ -366,42 +297,68 @@ class PlayStoreViewModel internal constructor(
             return
         }
         launchBillingFlow(
-            activity,
+            activity, product,
             BillingFlowParams.ProductDetailsParams.newBuilder()
                 .setProductDetails(details)
                 .setOfferToken(offer.offerToken)
                 .build(),
         )
     }
-
-    private fun launchBillingFlow(
-        activity: Activity,
-        product: BillingFlowParams.ProductDetailsParams,
-    ) {
+    private val checkoutRequest = PlayCheckoutRequest()
+    override fun onPurchaseScreenClosed() {
+        if (checkoutRequest.cancel()) _isLoading.value = false
+    }
+    private fun launchBillingFlow(activity: Activity, productId: String, product: BillingFlowParams.ProductDetailsParams) {
+        if (_isLoading.value) return
         val client = billingClient
         if (client == null || !client.isReady) {
             _errorMessage.value = "Billing service is not ready"
             return
         }
+        val target = dev.goodwy.rphone.controller.license.PlanProducts.all.find { it.id == productId }
+            ?: return
+        val request = checkoutRequest.begin()
         _isLoading.value = true
         _errorMessage.value = null
-        val result = try {
-            client.launchBillingFlow(
-                activity,
-                BillingFlowParams.newBuilder()
-                    .setProductDetailsParamsList(listOf(product))
-                    .build(),
-            )
-        } catch (error: RuntimeException) {
-            _errorMessage.value = error.message ?: "Unable to start purchase"
-            _isLoading.value = false
-            return
-        }
-        if (result.responseCode != BillingClient.BillingResponseCode.OK) {
-            fail("Unable to start purchase", result)
+        // Never fall back to a token from another account/query when preparing a new charge.
+        queryPurchases { fresh ->
+            if (!checkoutRequest.isCurrent(request)) return@queryPurchases
+            val snapshot = ownershipSnapshot
+            if (!fresh || snapshot == null || activity.isFinishing || activity.isDestroyed) {
+                checkoutRequest.cancel(); _isLoading.value = false
+                return@queryPurchases
+            }
+            viewModelScope.launch {
+                val generation = ownershipQueryGeneration.get()
+                _isLoading.value = true
+                PlayBillingFlowLauncher(
+                    principal = { if(serverAuthorityRequired) withContext(Dispatchers.IO) {
+                        checkNotNull(purchaseAuthority).prepareCheckout()
+                    } else null },
+                    current = { checkoutRequest.isCurrent(request) && ownershipQueryGeneration.get() == generation && !activity.isFinishing && !activity.isDestroyed },
+                    decide = {
+                        val external = dev.goodwy.rphone.controller.license.PlanAccessManager.get(activity).state.value
+                        PlayPlanCheckout.decide(target, snapshot.ownership.inApps, snapshot.subscriptions,
+                            snapshot.pending, external.entitlements.paid, giftLicenses?.isPro?.value == true,
+                            external.ready && giftLicenses?.initialized != false)
+                    },
+                    finish = { checkoutRequest.finish(request); _isLoading.value = true },
+                    launch = { params -> client.launchBillingFlow(activity, params) },
+                    blocked = { decision ->
+                        checkoutRequest.cancel(); _isLoading.value = false
+                        _errorMessage.value = when(decision) {
+                            PlayCheckoutDecision.AlreadyOwned -> null
+                            PlayCheckoutDecision.ManageSubscription -> getApplication<Application>().getString(
+                                if(target.subscription) R.string.plan_subscription_check_required else R.string.plan_manage_before_purchase)
+                            PlayCheckoutDecision.Pending -> getApplication<Application>().getString(R.string.plan_purchase_pending)
+                            else -> "Unable to confirm independent access"
+                        }
+                    },
+                    failure = { checkoutRequest.cancel(); _isLoading.value = false; _errorMessage.value = "Unable to start purchase" },
+                ).start(product)
+            }
         }
     }
-
     override fun getPriceDonation(product: String): String =
         _iapSkuDetails.value.firstOrNull { it.productId == product }
             ?.oneTimePurchaseOfferDetails
@@ -416,10 +373,9 @@ class PlayStoreViewModel internal constructor(
             ?: noConnectionLabel()
     }
 
-    override fun isIapPurchased(product: String): Boolean = product in iapPurchased.value
+    override fun isIapPurchased(product: String): Boolean { publishVerifiedAuthority();return product in iapPurchased.value }
 
-    override fun isSubPurchased(product: String): Boolean = product in subPurchased.value
-
+    override fun isSubPurchased(product: String): Boolean { publishVerifiedAuthority();return product in subPurchased.value }
     override fun restorePurchases() {
         _isLoading.value = true
         _errorMessage.value = null
@@ -436,11 +392,13 @@ class PlayStoreViewModel internal constructor(
         _proCheckDone.value = false
         runWhenBillingReady { queryPurchases() }
     }
-
     private fun updateProStatus() {
         ownershipKnown = true
-        val owned = PlayStoreOwnership(iapPurchased.value, subPurchased.value)
+        val owned = purchaseAuthority?.ownership() ?: PlayStoreOwnership(iapPurchased.value, subPurchased.value)
+        iapPurchased.value = owned.inApps
+        subPurchased.value = owned.subscriptions
         mutableStorePlan.value = owned.plan
+        mutableSubscriptionPlan.value = owned.subscriptionPlan
         val iapPro = owned.legacyInApp
         val subscriptionPro = owned.legacySubscription
         val pro = owned.isPro
@@ -449,10 +407,17 @@ class PlayStoreViewModel internal constructor(
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_IAP, iapPro)
         preferenceManager.setBoolean(PreferenceManager.KEY_IS_PRO_SUB, subscriptionPro)
         try {
-            ownershipCache.save(owned)
+            val authority = purchaseAuthority
+            if(authority?.ownership() == null) ownershipCache.save(owned)
+            else PlayMigrationCache.after(ownershipCache.restore(), owned, authority.durable)?.let(ownershipCache::save)
         } catch (error: Exception) {
             android.util.Log.w("PlayOwnership", "save: ${error.javaClass.simpleName}")
         }
+    }
+
+    private fun publishVerifiedAuthority() {
+        val owned=purchaseAuthority?.ownership() ?: return
+        if(owned.inApps!=iapPurchased.value || owned.subscriptions!=subPurchased.value)updateProStatus()
     }
 
     override fun clearProPrefsIfNeeded() {
@@ -492,6 +457,10 @@ class PlayStoreViewModel internal constructor(
 
     override fun onCleared() {
         readyActions.clear()
+        ownershipQueryGeneration.incrementAndGet()
+        checkoutRequest.cancel()
+        ownershipSnapshot = null
+        ownershipCompletion = null
         billingClient?.endConnection()
         billingClient = null
         super.onCleared()

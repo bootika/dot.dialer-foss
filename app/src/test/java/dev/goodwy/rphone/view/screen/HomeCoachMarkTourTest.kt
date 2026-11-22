@@ -11,19 +11,18 @@ class HomeCoachMarkTourTest {
         assertEquals(listOf(HomeTourDemo.RowTap), steps.map(HomeTourStep::demo))
     }
 
-    @Test fun `search example is George and has no text cursor character`() {
-        assertEquals("George", HOME_TOUR_SEARCH_SAMPLE)
-        assertEquals(6, tourTypedCharacterCount(0.57f, HOME_TOUR_SEARCH_SAMPLE.length))
+    @Test fun `favorite spotlight surrounds only the measured avatar`() {
+        val avatar = Rect(22f, 174f, 78f, 230f)
+        val step = homeTourSteps(setOf(HomeTourTarget.Favorites)).single()
+        assertTrue(step.circularSpotlight)
+        assertEquals(Rect(19f, 171f, 81f, 233f),
+            homeTourSpotlight(avatar, step, Rect(0f, 0f, 360f, 800f), 3f))
     }
 
-    @Test fun `favorite spotlight includes measured header and row at every font size`() {
-        for (scale in listOf(1f, 1.5f, 2f)) {
-            val header = Rect(0f, 100f, 360f, 100f + 28f * scale)
-            val row = Rect(0f, header.bottom, 360f, header.bottom + 86f * scale)
-            val step = homeTourSteps(setOf(HomeTourTarget.Favorites)).single()
-            assertEquals(Rect(0f, header.top, 360f, row.bottom),
-                homeTourSpotlight(homeTourFavoritesBounds(header, row), step, Rect(0f, 0f, 360f, 800f), 12f))
-        }
+    @Test fun `search spotlight matches the real field width and height`() {
+        val search = Rect(16f, 30f, 304f, 86f)
+        val step = homeTourSteps(setOf(HomeTourTarget.Search)).single()
+        assertEquals(search, homeTourSpotlight(search, step, Rect(0f, 0f, 360f, 800f), 3f))
     }
 
     @Test fun `recent spotlight never expands into section title`() {
@@ -52,21 +51,6 @@ class HomeCoachMarkTourTest {
             HomeTourDemo.entries,
             steps.map(HomeTourStep::demo),
         )
-    }
-
-    @Test
-    fun `swipe demo travels left and right before returning to rest`() {
-        assertEquals(0f, tourSwipeOffset(0.1f))
-        assertTrue(tourSwipeOffset(0.3f) < 0f)
-        assertTrue(tourSwipeOffset(0.65f) > 0f)
-        assertEquals(0f, tourSwipeOffset(0.9f))
-    }
-
-    @Test
-    fun `search demo types all characters and clears before repeating`() {
-        assertEquals(0, tourTypedCharacterCount(0.1f, 3))
-        assertEquals(3, tourTypedCharacterCount(0.57f, 3))
-        assertEquals(0, tourTypedCharacterCount(0.9f, 3))
     }
 
     @Test
@@ -104,5 +88,11 @@ class HomeCoachMarkTourTest {
 
         assertEquals(530f, top)
         assertTrue(top >= 20f)
+    }
+    @Test
+    fun `extreme viewport keeps the card inside margins even when it must overlap`() {
+        val top = coachMarkCardTop(Rect(10f, 100f, 200f, 200f), 320f, 210f, 16f, 12f)
+        assertEquals(94f, top)
+        assertTrue(top + 210f <= 320f - 16f)
     }
 }

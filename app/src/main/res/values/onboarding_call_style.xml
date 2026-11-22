@@ -14,4 +14,8 @@
     <string name="setup_call_style_right_gesture">Slide right</string>
     <string name="setup_call_style_left_gesture">Slide left</string>
     <string name="setup_call_style_continue">Continue</string>
+    <string name="setup_call_style_direction_right">Right</string>
+    <string name="setup_call_style_direction_left">Left</string>
+    <item type="string" name="setup_call_style_contact_destination">@string/contact_action</item>
+    <item type="string" name="setup_call_style_call_destination">@string/call</item>
 </resources>

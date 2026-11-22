@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Gestisci abbonamento</string>
+    <string name="plan_change_period">Cambia periodo di fatturazione</string>
+    <string name="plan_manage_before_purchase">Gestisci l’abbonamento attuale in Google Play. L’accesso a vita sarà disponibile al termine.</string>
+    <string name="plan_purchase_pending">Un acquisto è ancora in sospeso. Completalo o annullalo in Google Play prima di iniziarne un altro.</string>
+    <string name="plan_subscription_terms">Si rinnova automaticamente. Gestisci o annulla in Google Play.</string>
+    <string name="plan_replacement_terms">Google Play mostra l’importo da pagare e la data di decorrenza prima della conferma.</string>
+    <string name="plan_subscription_check_required">Gestisci gli abbonamenti attuali in Google Play prima di cambiare piano.</string>
+</resources>

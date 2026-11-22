@@ -82,6 +82,7 @@ fun IPhoneFavoritesRow(
     isDragging: Boolean = false,
     onDraggingChange: (Boolean) -> Unit = {},
     avatarSize: Dp = 46.dp,
+    tourAvatarModifier: Modifier = Modifier,
 ) {
     val favoritesList = remember(favorites) {
         mutableStateListOf<Contact>().apply {
@@ -106,6 +107,12 @@ fun IPhoneFavoritesRow(
     val itemWidthPx = with(density) { itemWidth.toPx() }
     val spacingPx = with(density) { spacing.toPx() }
     val itemTotalWidthPx = itemWidthPx + spacingPx
+    val firstVisibleFavorite by remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo
+                .firstOrNull { it.offset >= 0 && it.key != "add-favorite" }?.key
+        }
+    }
 
     LaunchedEffect(favoriteIds) {
         if (!hasAlignedInitialFavorites && favoriteIds.isNotEmpty()) {
@@ -310,6 +317,7 @@ fun IPhoneFavoritesRow(
                                     photoUri = contact.photoUri,
                                     modifier = Modifier
                                         .size(avatarSize)
+                                        .then(if (contact.id == firstVisibleFavorite) tourAvatarModifier else Modifier)
                                         .then(if (isEditing) Modifier else Modifier.circularCombinedClickable(
                                             onClick = { onClick(contact) },
                                             onLongClick = {

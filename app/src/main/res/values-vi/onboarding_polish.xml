@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Chạm để gọi số đã chọn. Nhấn giữ để xem tùy chọn.</string>
     <string name="welcome_privacy_summary">Danh bạ và lịch sử cuộc gọi ở trên điện thoại, không nằm trên máy chủ của chúng tôi.</string>
     <string name="welcome_phone_summary">Android sẽ yêu cầu chọn ứng dụng điện thoại mặc định và cấp quyền cần thiết.</string>
+    <string name="tour_tap_to_call_title">Chạm để gọi</string>
+    <string name="tour_tap_to_call_short">Chạm vào hàng để gọi.</string>
+    <string name="tour_dialpad_title">Bàn phím quay số</string>
+    <string name="tour_dialpad_short">Chạm vào nút để mở bàn phím quay số.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Seçilen numarayı aramak için dokun. Seçenekler için basılı tut.</string>
     <string name="welcome_privacy_summary">Kişilerin ve arama geçmişin sunucularımızda değil, telefonunda kalır.</string>
     <string name="welcome_phone_summary">Android varsayılan telefon uygulamasını ve gerekli izinleri sorar.</string>
+    <string name="tour_tap_to_call_title">Aramak için dokun</string>
+    <string name="tour_tap_to_call_short">Aramak için satıra dokun.</string>
+    <string name="tour_dialpad_title">Tuş takımı</string>
+    <string name="tour_dialpad_short">Tuş takımını açmak için düğmeye dokun.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

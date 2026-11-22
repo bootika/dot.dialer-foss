@@ -13,4 +13,8 @@
     <string name="setup_call_style_right_gesture">Przesuń w prawo</string>
     <string name="setup_call_style_left_gesture">Przesuń w lewo</string>
     <string name="setup_call_style_continue">Dalej</string>
+    <string name="setup_call_style_direction_right">W prawo</string>
+    <string name="setup_call_style_direction_left">W lewo</string>
+    <item type="string" name="setup_call_style_contact_destination">@string/contact_action</item>
+    <item type="string" name="setup_call_style_call_destination">@string/call</item>
 </resources>

@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Tocca per chiamare il numero scelto. Tieni premuto per le opzioni.</string>
     <string name="welcome_privacy_summary">I tuoi contatti e la cronologia restano sul telefono, non sui nostri server.</string>
     <string name="welcome_phone_summary">Android chiederà di scegliere l’app telefono predefinita e concedere i permessi necessari.</string>
+    <string name="tour_tap_to_call_title">Tocca per chiamare</string>
+    <string name="tour_tap_to_call_short">Tocca la riga per chiamare.</string>
+    <string name="tour_dialpad_title">Tastierino</string>
+    <string name="tour_dialpad_short">Tocca il pulsante per aprire il tastierino.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

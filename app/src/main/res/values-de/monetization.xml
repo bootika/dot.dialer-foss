@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Abo verwalten</string>
+    <string name="plan_change_period">Abrechnungszeitraum ändern</string>
+    <string name="plan_manage_before_purchase">Verwalte dein aktuelles Abo in Google Play. Lebenslanger Zugriff ist verfügbar, sobald es endet.</string>
+    <string name="plan_purchase_pending">Ein Kauf ist noch ausstehend. Schließe ihn in Google Play ab oder storniere ihn, bevor du einen weiteren startest.</string>
+    <string name="plan_subscription_terms">Verlängert sich automatisch. In Google Play verwalten oder kündigen.</string>
+    <string name="plan_replacement_terms">Google Play zeigt den zu zahlenden Betrag und das Wirksamkeitsdatum vor deiner Bestätigung.</string>
+    <string name="plan_subscription_check_required">Verwalte deine aktuellen Abonnements in Google Play, bevor du den Tarif wechselst.</string>
+</resources>

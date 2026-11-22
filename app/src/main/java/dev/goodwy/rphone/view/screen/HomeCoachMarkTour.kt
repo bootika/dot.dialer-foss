@@ -4,25 +4,18 @@ import dev.goodwy.rphone.view.theme.accentText
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -49,20 +42,25 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.screen.onboarding.onboardingPrimaryButtonColors
 import kotlin.math.roundToInt
 
 internal enum class HomeTourTarget { Search, Favorites, RecentRow, RecentAvatar, Dialpad }
@@ -80,22 +78,22 @@ internal data class HomeTourStep(
 
 internal fun homeTourSteps(availableTargets: Set<HomeTourTarget>, hasSwipeActions: Boolean = true): List<HomeTourStep> = buildList {
     if (HomeTourTarget.RecentAvatar in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.RecentAvatar, R.string.ui_tour_contact_title, R.string.tour_avatar_short, true, HomeTourDemo.AvatarLongPress))
+        add(HomeTourStep(HomeTourTarget.RecentAvatar, R.string.tour_avatar_title, R.string.tour_avatar_short, true, HomeTourDemo.AvatarLongPress))
     }
     if (HomeTourTarget.RecentRow in availableTargets) {
         add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_recent_tap_title, R.string.ui_tour_recent_tap_description, demo = HomeTourDemo.RowTap))
         if (hasSwipeActions) {
-            add(HomeTourStep(HomeTourTarget.RecentRow, R.string.ui_tour_swipe_title, R.string.ui_tour_swipe_description, demo = HomeTourDemo.RowSwipe))
+            add(HomeTourStep(HomeTourTarget.RecentRow, R.string.tour_swipe_title, R.string.ui_tour_swipe_description, demo = HomeTourDemo.RowSwipe))
         }
     }
     if (HomeTourTarget.Search in availableTargets) {
         add(HomeTourStep(HomeTourTarget.Search, R.string.ui_tour_search_title, R.string.tour_search_short, demo = HomeTourDemo.SearchTyping))
     }
     if (HomeTourTarget.Favorites in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.Favorites, R.string.ui_tour_favorites_title, R.string.tour_favorites_short, demo = HomeTourDemo.FavoritesTap))
+        add(HomeTourStep(HomeTourTarget.Favorites, R.string.ui_tour_favorites_title, R.string.tour_favorites_short, circularSpotlight = true, demo = HomeTourDemo.FavoritesTap))
     }
     if (HomeTourTarget.Dialpad in availableTargets) {
-        add(HomeTourStep(HomeTourTarget.Dialpad, R.string.ui_tour_dialpad_title, R.string.ui_tour_dialpad_description, demo = HomeTourDemo.DialpadTap))
+        add(HomeTourStep(HomeTourTarget.Dialpad, R.string.tour_dialpad_title, R.string.tour_dialpad_short, demo = HomeTourDemo.DialpadTap))
     }
 }
 
@@ -106,6 +104,7 @@ internal fun HomeCoachMarkTour(
     onComplete: () -> Unit,
 ) {
     var popupOrigin by remember { mutableStateOf(Offset.Zero) }
+    val tourTitle = stringResource(R.string.ui_tour_title)
     Popup(
         alignment = androidx.compose.ui.Alignment.TopStart,
         onDismissRequest = onComplete,
@@ -113,7 +112,10 @@ internal fun HomeCoachMarkTour(
             dismissOnClickOutside = false, clippingEnabled = false),
     ) {
         Box(Modifier.fillMaxSize().testTag("tour-popup-host")
-            .semantics { homeTourPopupOrigin = popupOrigin }
+            .semantics {
+                homeTourPopupOrigin = popupOrigin
+                paneTitle = tourTitle
+            }
             .homeTourBounds { popupOrigin = it.topLeft }) {
             HomeCoachMarkTourContent(targets.mapValues { it.value.translate(-popupOrigin) }, onComplete, actions = actions)
         }
@@ -139,114 +141,104 @@ internal fun HomeCoachMarkTourContent(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val density = LocalDensity.current
-        val marginPx = with(density) { 12.dp.toPx() }
+        val alignWrappedActions = maxWidth <= 360.dp && density.fontScale >= 1.3f
+        val marginPx = with(density) { 3.dp.toPx() }
         val spotlight = targets[step.target]?.let {
             homeTourSpotlight(it, step, Rect(0f, 0f, constraints.maxWidth.toFloat(), constraints.maxHeight.toFloat()), marginPx)
         }
-        val interactionSource = remember { MutableInteractionSource() }
+        val spotlightRadius = if (step.circularSpotlight) {
+            spotlight?.let { minOf(it.width, it.height) / 2f } ?: 0f
+        } else with(density) { (if (step.target == HomeTourTarget.Search) 24.dp else 16.dp).toPx() }
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .testTag("tour-spotlight")
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    onClick = {},
-                ),
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) awaitPointerEvent().changes.forEach { it.consume() }
+                    }
+                },
         ) {
-            drawRect(Color.Black.copy(alpha = 0.62f))
+            drawRect(Color.Black.copy(alpha = 0.51f))
             spotlight?.let { rect ->
                 drawRoundRect(
                     color = Color.Transparent,
                     topLeft = Offset(rect.left, rect.top),
                     size = Size(rect.width, rect.height),
-                    cornerRadius = if (step.circularSpotlight) {
-                        CornerRadius(rect.width / 2f, rect.height / 2f)
-                    } else {
-                        CornerRadius(24.dp.toPx(), 24.dp.toPx())
-                    },
+                    cornerRadius = CornerRadius(spotlightRadius),
                     blendMode = BlendMode.Clear,
                 )
             }
         }
 
-        spotlight?.let { rect ->
-            HomeTourDemoOverlay(
-                demo = step.demo,
-                target = rect,
-                fixedProgress = demoProgress,
-            )
-        }
-
-        var cardSize by remember { mutableStateOf(IntSize.Zero) }
-        val screenWidthPx = constraints.maxWidth.toFloat()
-        val screenHeightPx = constraints.maxHeight.toFloat()
-        val cardWidth = minOf(maxWidth - 32.dp, 360.dp)
-        val cardWidthPx = with(density) { cardWidth.toPx() }
-        val estimatedHeightPx = with(density) { 190.dp.toPx() }
-        val cardHeightPx = cardSize.height.takeIf { it > 0 }?.toFloat() ?: estimatedHeightPx
-        val horizontalOffset = ((screenWidthPx - cardWidthPx) / 2f).roundToInt()
-        val verticalOffset = coachMarkCardTop(
-            target = spotlight,
-            screenHeightPx = screenHeightPx,
-            cardHeightPx = cardHeightPx,
-            marginPx = with(density) { 20.dp.toPx() },
-        ).roundToInt()
-
-        Surface(
-            modifier = Modifier
-                .width(cardWidth)
-                .widthIn(max = 360.dp)
-                .onSizeChanged { cardSize = it }
-                .then(Modifier.offset { IntOffset(horizontalOffset, verticalOffset) })
-                .testTag("tour-card"),
-            shape = RoundedCornerShape(26.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 6.dp,
-        ) {
-            Column(
-                modifier = Modifier.heightIn(max = (maxHeight - 40.dp).coerceAtLeast(1.dp))
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 18.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+        spotlight?.let { HomeTourDemoOverlay(step.demo, it, spotlightRadius, demoProgress) }
+        AnchoredTourCard(spotlight, keepFavoriteCaption = step.demo == HomeTourDemo.FavoritesTap) {
+            Surface(
+                modifier = Modifier.testTag("tour-card"),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.surface,
+                shadowElevation = 3.dp,
             ) {
-                Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
-                    Text(
-                        text = stringResource(R.string.ui_tour_step, safeStep + 1, steps.size),
-                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-                Text(
-                    text = stringResource(if (step.demo == HomeTourDemo.RowTap && actions != null)
-                        R.string.setup_call_style_tap_gesture else step.title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                if (step.demo == HomeTourDemo.RowSwipe && actions != null) {
-                    actions.swipeRight?.let { TourSwipeDirection(true, it) }
-                    actions.swipeLeft?.let { TourSwipeDirection(false, it) }
-                } else {
-                    val description = if (step.demo == HomeTourDemo.RowTap && actions != null) {
-                        stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_tap_gesture), actions.tap)
-                    } else stringResource(step.description)
-                    Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                androidx.compose.material3.HorizontalDivider()
-                FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TextButton(onClick = onComplete, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.skip)) }
-                    if (safeStep > 0) {
-                        TextButton(onClick = { currentStep-- }, colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.accentText)) { Text(stringResource(R.string.back)) }
-                    }
-                    Button(
-                        onClick = {
-                            if (safeStep == steps.lastIndex) onComplete() else currentStep++
-                        },
+                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
+                    Column(
+                        modifier = Modifier.weight(1f, fill = false)
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        Text(stringResource(if (safeStep == steps.lastIndex) R.string.done else R.string.next))
+                        Text(
+                            text = stringResource(R.string.ui_tour_step, safeStep + 1, steps.size),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        val callsOnTap = step.demo == HomeTourDemo.RowTap && actions?.tap == stringResource(R.string.call)
+                        val title = when {
+                            callsOnTap -> R.string.tour_tap_to_call_title
+                            step.demo == HomeTourDemo.RowTap && actions != null -> R.string.setup_call_style_tap_gesture
+                            else -> step.title
+                        }
+                        Text(
+                            text = stringResource(title),
+                            modifier = Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        if (step.demo == HomeTourDemo.RowSwipe && actions != null) {
+                            actions.swipeRight?.let { TourSwipeDirection(true, it) }
+                            actions.swipeLeft?.let { TourSwipeDirection(false, it) }
+                        } else {
+                            val description = when {
+                                callsOnTap -> stringResource(R.string.tour_tap_to_call_short)
+                                step.demo == HomeTourDemo.RowTap && actions != null ->
+                                    stringResource(R.string.feature_tip_gesture_action, stringResource(R.string.setup_call_style_tap_gesture), actions.tap)
+                                else -> stringResource(step.description)
+                            }
+                            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                    if (step.demo == HomeTourDemo.RowSwipe) {
+                        androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+                    val secondary = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    FlowRow(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = if (alignWrappedActions) Arrangement.End else Arrangement.SpaceBetween,
+                        itemVerticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextButton(onClick = onComplete, colors = secondary) { Text(stringResource(R.string.tour_skip_action)) }
+                        if (safeStep > 0) TextButton(onClick = { currentStep-- }, colors = secondary) {
+                            Text(stringResource(R.string.back))
+                        }
+                        Button(
+                            onClick = { if (safeStep == steps.lastIndex) onComplete() else currentStep++ },
+                            colors = onboardingPrimaryButtonColors(),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
+                            Text(stringResource(if (safeStep == steps.lastIndex) R.string.done else R.string.setup_call_style_continue))
+                        }
                     }
                 }
             }
@@ -254,9 +246,62 @@ internal fun HomeCoachMarkTourContent(
     }
 }
 
+/** Measure once against available space, with the footer outside the scrolling explanation. */
+@Composable
+private fun AnchoredTourCard(spotlight: Rect?, keepFavoriteCaption: Boolean, content: @Composable () -> Unit) {
+    val color = MaterialTheme.colorScheme.surface
+    SubcomposeLayout(Modifier.fillMaxSize()) { bounds ->
+        val margin = 16.dp.roundToPx()
+        val gap = 12.dp.roundToPx()
+        val width = minOf(bounds.maxWidth - margin * 2, 360.dp.roundToPx()).coerceAtLeast(1)
+        val viewportHeight = bounds.maxHeight
+        val availableHeight = (viewportHeight - margin * 2).coerceAtLeast(1)
+        val placementTarget = spotlight?.let {
+            if (keepFavoriteCaption) Rect(it.left, it.top, it.right, it.bottom + 22.sp.toPx()) else it
+        }
+        val room = placementTarget?.let {
+            maxOf(it.top - gap - margin, viewportHeight - it.bottom - gap - margin).toInt()
+        } ?: availableHeight
+        // Extreme viewport heights can require overlap; keep enough room for the wrapped footer.
+        val heightLimit = room.coerceIn(minOf(120.dp.roundToPx(), availableHeight), availableHeight)
+        val card = subcompose("card", content).single().measure(Constraints.fixedWidth(width).copy(maxHeight = heightLimit))
+        val x = (bounds.maxWidth - width) / 2
+        val y = coachMarkCardTop(placementTarget, viewportHeight.toFloat(), card.height.toFloat(), margin.toFloat(), gap.toFloat())
+            .roundToInt()
+        val notch = spotlight?.let { target ->
+            val pointsUp = y >= target.bottom
+            val pointsDown = y + card.height <= target.top
+            if (!pointsUp && !pointsDown) return@let null
+            val notchWidth = 22.dp.roundToPx()
+            val notchHeight = 8.dp.roundToPx()
+            val inset = minOf(20.dp.roundToPx(), (width - notchWidth).coerceAtLeast(0) / 2)
+            val left = (target.center.x.roundToInt() - notchWidth / 2)
+                .coerceIn(x + inset, maxOf(x + inset, x + width - inset - notchWidth))
+            val top = if (pointsUp) y - notchHeight + 1 else y + card.height - 1
+            val arrow = subcompose("notch") {
+                Canvas(Modifier.fillMaxSize()) {
+                    val base = if (pointsUp) size.height else 0f
+                    val tip = if (pointsUp) 0f else size.height
+                    drawPath(Path().apply {
+                        moveTo(0f, base)
+                        lineTo(size.width / 2f, tip)
+                        lineTo(size.width, base)
+                        close()
+                    }, color)
+                }
+            }.single().measure(Constraints.fixed(notchWidth, notchHeight))
+            Triple(arrow, left, top)
+        }
+        layout(bounds.maxWidth, viewportHeight) {
+            card.place(x, y)
+            notch?.let { (arrow, left, top) -> arrow.place(left, top) }
+        }
+    }
+}
+
 @Composable
 private fun TourSwipeDirection(right: Boolean, action: String) {
-    val direction = stringResource(if (right) R.string.setup_call_style_right_gesture else R.string.setup_call_style_left_gesture)
+    val direction = stringResource(if (right) R.string.setup_call_style_direction_right else R.string.setup_call_style_direction_left)
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(if (right) Icons.AutoMirrored.Rounded.ArrowForward else Icons.AutoMirrored.Rounded.ArrowBack,
             contentDescription = null, modifier = Modifier.size(17.dp), tint = MaterialTheme.colorScheme.accentText)
@@ -265,32 +310,18 @@ private fun TourSwipeDirection(right: Boolean, action: String) {
     }
 }
 
-internal fun tourSwipeOffset(progress: Float): Float = when {
-    progress < 0.18f -> 0f
-    progress < 0.42f -> -(progress - 0.18f) / 0.24f
-    progress < 0.58f -> -1f + ((progress - 0.42f) / 0.16f) * 2f
-    progress < 0.82f -> 1f - (progress - 0.58f) / 0.24f
-    else -> 0f
-}
-
-internal fun tourTypedCharacterCount(progress: Float, textLength: Int): Int =
-    when {
-        progress < 0.15f -> 0
-        progress > 0.82f -> 0
-        else -> (((progress - 0.15f) / 0.42f) * textLength)
-            .roundToInt()
-            .coerceIn(0, textLength)
-    }
-
 internal fun coachMarkCardTop(
     target: Rect?,
     screenHeightPx: Float,
     cardHeightPx: Float,
     marginPx: Float,
+    gapPx: Float = marginPx,
 ): Float {
-    if (target == null) return ((screenHeightPx - cardHeightPx) / 2f).coerceAtLeast(marginPx)
-    val below = target.bottom + marginPx
-    val above = target.top - cardHeightPx - marginPx
-    return if (below + cardHeightPx <= screenHeightPx - marginPx) below
-    else above.coerceAtLeast(marginPx)
+    val bottomSafe = (screenHeightPx - cardHeightPx - marginPx).coerceAtLeast(marginPx)
+    if (target == null) return ((screenHeightPx - cardHeightPx) / 2f).coerceIn(marginPx, bottomSafe)
+    val below = target.bottom + gapPx
+    val above = target.top - cardHeightPx - gapPx
+    if (below <= bottomSafe) return below.coerceAtLeast(marginPx)
+    if (above >= marginPx) return above.coerceAtMost(bottomSafe)
+    return if (target.center.y < screenHeightPx / 2f) bottomSafe else marginPx
 }

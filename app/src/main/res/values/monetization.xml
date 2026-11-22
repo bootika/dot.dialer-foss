@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Manage subscription</string>
+    <string name="plan_change_period">Change billing period</string>
+    <string name="plan_manage_before_purchase">Manage your current subscription in Google Play. Lifetime access becomes available after it ends.</string>
+    <string name="plan_purchase_pending">A purchase is still pending. Complete or cancel it in Google Play before starting another.</string>
+    <string name="plan_subscription_terms">Renews automatically. Manage or cancel in Google Play.</string>
+    <string name="plan_replacement_terms">Google Play shows the charge and effective date before you confirm.</string>
+    <string name="plan_subscription_check_required">Manage your current subscriptions in Google Play before changing plans.</string>
+</resources>

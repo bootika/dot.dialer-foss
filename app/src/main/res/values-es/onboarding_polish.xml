@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Toca para llamar al número elegido. Mantén pulsado para ver opciones.</string>
     <string name="welcome_privacy_summary">Tus contactos y el historial de llamadas permanecen en tu teléfono, no en nuestros servidores.</string>
     <string name="welcome_phone_summary">Android solicitará la aplicación de teléfono predeterminada y los permisos necesarios.</string>
+    <string name="tour_tap_to_call_title">Toca para llamar</string>
+    <string name="tour_tap_to_call_short">Toca la fila para llamar.</string>
+    <string name="tour_dialpad_title">Teclado de marcación</string>
+    <string name="tour_dialpad_short">Toca el botón para abrir el teclado de marcación.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

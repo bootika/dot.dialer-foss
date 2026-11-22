@@ -9,7 +9,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
+import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.screen.onboarding.EssentialOnboardingPage
 import dev.goodwy.rphone.view.screen.onboarding.MorphingOnboardingScreen
 import dev.goodwy.rphone.view.theme.DotDialerTheme
 import java.io.File
@@ -69,6 +71,58 @@ class EssentialOnboardingRenderingTest {
         rule.mainClock.advanceTimeBy(3000)
         assertArrayEquals(initial, pixels())
     }
+    @Test
+    @Config(qualifiers = "w320dp-h568dp-mdpi")
+    fun compactWelcomeKeepsContinueReachableWhenReportingDetailsExpand() {
+        var advances = 0
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(1f, 1.5f)) {
+                DotDialerTheme(systemDark = false) { EssentialOnboardingPage { advances++ } }
+            }
+        }
+        val next = rule.onNodeWithTag("plan-guide-next")
+        next.assertIsDisplayed()
+        capture("welcome-compact-150")
+        val details = rule.onNodeWithText(rule.activity.getString(R.string.welcome_data_details))
+        details.performScrollTo().performClick()
+        val activity = rule.activity
+        val paragraph = activity.getString(
+            if (BuildConfig.FLAVOR == "gplay") R.string.onboarding_essential_body_gplay else R.string.onboarding_essential_body,
+            activity.getString(R.string.privacy_and_blocking),
+            activity.getString(R.string.settings_reporting),
+        ).substringAfter("\n\n")
+        rule.onNodeWithText(paragraph).assertExists()
+        next.assertIsDisplayed().performClick()
+        rule.runOnIdle { assertEquals(1, advances) }
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h568dp-mdpi")
+    fun compactRolePageKeepsActionReachableAt150Percent() {
+        var pending by mutableStateOf(false)
+        var denied by mutableStateOf(false)
+        var attempts = 0
+        var settings = 0
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(1f, 1.5f)) {
+                DotDialerTheme(systemDark = false) {
+                    DefaultPhoneRoleContent(pending, denied, { attempts++; pending = true }, { settings++ })
+                }
+            }
+        }
+        val request = rule.onNodeWithTag("default-role-continue")
+        request.assertIsDisplayed()
+        capture("role-compact-150")
+        request.performClick().assertIsNotEnabled()
+        rule.runOnIdle { pending = false; denied = true }
+        rule.onNodeWithText(rule.activity.getString(R.string.open_app_settings))
+            .performScrollTo().performClick()
+        request.assertIsDisplayed().assertIsEnabled()
+        rule.runOnIdle {
+            assertEquals(1, attempts)
+            assertEquals(1, settings)
+        }
+    }
     @Test fun singleEssentialPageKeepsStartReachableInAllStyles() {
         var dark by mutableStateOf(false)
         var scale by mutableFloatStateOf(1f)
@@ -82,6 +136,7 @@ class EssentialOnboardingRenderingTest {
         for (mode in listOf(false, true)) for (font in listOf(1f, 1.5f)) {
             rule.runOnIdle { dark = mode; scale = font; iteration++ }
             rule.mainClock.advanceTimeBy(1000)
+            capture("welcome-${if (mode) "dark" else "light"}-${(font * 100).toInt()}")
             rule.onNodeWithTag("plan-guide-next").assertIsDisplayed().performClick()
             rule.onNodeWithTag("call-style-setup").assertExists()
             rule.onNodeWithTag("plan-guide-next").performClick()

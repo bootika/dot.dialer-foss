@@ -7,6 +7,16 @@
     <string name="tour_avatar_short">Tap the avatar to open the contact. Hold it to select the row.</string>
     <string name="tour_search_short">Type a name or number to filter contacts and calls.</string>
     <string name="tour_favorites_short">Tap to call the selected number. Hold for options.</string>
-    <string name="welcome_privacy_summary">Your contacts and call history stay on your phone, not on our servers.</string>
-    <string name="welcome_phone_summary">Android will ask for the default phone app and the permissions needed for calls.</string>
+    <string name="welcome_privacy_summary">Your contacts and call history stay on your phone.</string>
+    <string name="welcome_phone_summary">Android will ask you to choose the default phone app and allow call permissions.</string>
+    <string name="tour_tap_to_call_title">Tap to call</string>
+    <string name="tour_tap_to_call_short">Tap the row to call.</string>
+    <string name="tour_dialpad_title">Dial pad</string>
+    <string name="tour_dialpad_short">Tap the button to open the dial pad.</string>
+    <string name="onboarding_role_title">Set dot.dialer as default</string>
+    <string name="onboarding_role_summary">To make and receive calls, choose dot.dialer as your phone app.</string>
+    <string name="onboarding_role_action">Set as default</string>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

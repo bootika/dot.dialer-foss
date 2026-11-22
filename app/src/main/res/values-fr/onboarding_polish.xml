@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Touchez pour appeler le numéro choisi. Maintenez pour voir les options.</string>
     <string name="welcome_privacy_summary">Tes contacts et ton historique restent sur ton téléphone, pas sur nos serveurs.</string>
     <string name="welcome_phone_summary">Android demandera de choisir l’application de téléphone par défaut et les autorisations nécessaires.</string>
+    <string name="tour_tap_to_call_title">Toucher pour appeler</string>
+    <string name="tour_tap_to_call_short">Touchez la ligne pour appeler.</string>
+    <string name="tour_dialpad_title">Clavier de numérotation</string>
+    <string name="tour_dialpad_short">Touchez le bouton pour ouvrir le clavier de numérotation.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

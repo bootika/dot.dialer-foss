@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Toque para ligar para o número escolhido. Pressione e segure para ver opções.</string>
     <string name="welcome_privacy_summary">Seus contatos e histórico ficam no telefone, não nos nossos servidores.</string>
     <string name="welcome_phone_summary">O Android pedirá o app de telefone padrão e as permissões necessárias.</string>
+    <string name="tour_tap_to_call_title">Toque para ligar</string>
+    <string name="tour_tap_to_call_short">Toque na linha para ligar.</string>
+    <string name="tour_dialpad_title">Teclado de discagem</string>
+    <string name="tour_dialpad_short">Toque no botão para abrir o teclado de discagem.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

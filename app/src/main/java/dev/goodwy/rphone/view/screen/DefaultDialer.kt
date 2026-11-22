@@ -20,7 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,9 @@ import dev.goodwy.rphone.controller.util.SetupPermissions
 import dev.goodwy.rphone.controller.util.getDefaultDialerIntent
 import dev.goodwy.rphone.controller.util.isAlreadyDefaultDialer
 import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
+import dev.goodwy.rphone.view.screen.onboarding.OnboardingPhoneArt
+import dev.goodwy.rphone.view.screen.onboarding.OnboardingWordmark
+import dev.goodwy.rphone.view.screen.onboarding.onboardingPrimaryButtonColors
 import org.koin.compose.koinInject
 
 @Destination<RootGraph>()
@@ -143,6 +149,10 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
             if (!fullScreenAttempted) requestFullScreen()
         } else complete()
     }
+    if (!started || (next == null && !needsFullScreen)) {
+        DefaultPhoneRoleContent(rolePending, roleDenied, ::requestRole, ::openAppInfo)
+        return
+    }
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
@@ -151,34 +161,66 @@ fun DefaultDialerScreen(navController: NavController, navigator: DestinationsNav
                 Icon(DotDialerHandsetIcon, null, Modifier.size(48.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             Spacer(Modifier.height(24.dp))
-            if (started && (next != null || needsFullScreen)) {
-                val title = if (next != null) context.packageManager.getPermissionInfo(next.name, 0).loadLabel(context.packageManager).toString()
-                    else stringResource(R.string.fullscreen_calls)
-                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(16.dp))
-                Text(stringResource(next?.reason ?: R.string.setup_fullscreen), textAlign = TextAlign.Center)
-                if (denied != null || (needsFullScreen && fullScreenAttempted && !fullScreenPending)) {
-                    Spacer(Modifier.height(24.dp))
-                    Button(onClick = { if (next != null) { denied = null; revision++ } else requestFullScreen() }) {
-                        Text(stringResource(R.string.setup_retry))
-                    }
-                    TextButton(onClick = ::openAppInfo) { Text(stringResource(R.string.open_app_settings)) }
-                    if (next?.required == false || needsFullScreen) TextButton(onClick = {
-                        if (next != null) skipped = skipped + next.name else fullScreenSkipped = true
-                        denied = null; revision++
-                    }) { Text(stringResource(R.string.setup_continue_limited)) }
-                }
-            } else {
-                Text(stringResource(R.string.default_dialer_title), style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(16.dp))
-                Text(stringResource(R.string.default_dialer_subtitle), textAlign = TextAlign.Center)
-                if (roleDenied) {
-                    Spacer(Modifier.height(24.dp))
-                    RestrictedSetupHelp(onOpenSettings = ::openAppInfo)
-                }
+            val title = if (next != null) context.packageManager.getPermissionInfo(next.name, 0).loadLabel(context.packageManager).toString()
+                else stringResource(R.string.fullscreen_calls)
+            Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(16.dp))
+            Text(stringResource(next?.reason ?: R.string.setup_fullscreen), textAlign = TextAlign.Center)
+            if (denied != null || (needsFullScreen && fullScreenAttempted && !fullScreenPending)) {
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = ::requestRole, enabled = !rolePending) { Text(stringResource(R.string.set_as_default)) }
+                Button(onClick = { if (next != null) { denied = null; revision++ } else requestFullScreen() }) {
+                    Text(stringResource(R.string.setup_retry))
+                }
+                TextButton(onClick = ::openAppInfo) { Text(stringResource(R.string.open_app_settings)) }
+                if (next?.required == false || needsFullScreen) TextButton(onClick = {
+                    if (next != null) skipped = skipped + next.name else fullScreenSkipped = true
+                    denied = null; revision++
+                }) { Text(stringResource(R.string.setup_continue_limited)) }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun DefaultPhoneRoleContent(
+    pending: Boolean,
+    denied: Boolean,
+    onRequestRole: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    Surface(Modifier.fillMaxSize(), color = colors.background) {
+        BoxWithConstraints(
+            Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
+            contentAlignment = Alignment.Center,
+        ) {
+            val compact = maxHeight < 580.dp
+            Column(Modifier.widthIn(max = 460.dp).fillMaxSize().padding(horizontal = 16.dp)) {
+                Column(
+                    Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 16.dp, Alignment.CenterVertically),
+                ) {
+                    OnboardingPhoneArt(keypad = false, size = if (compact) 70.dp else 116.dp, roleCheck = true)
+                    OnboardingWordmark()
+                    Text(stringResource(R.string.onboarding_role_title), Modifier.semantics { heading() },
+                        style = if (compact) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.onboarding_role_summary), style = MaterialTheme.typography.bodyMedium,
+                        color = colors.onSurfaceVariant, textAlign = TextAlign.Center)
+                    if (denied) RestrictedSetupHelp(onOpenSettings = onOpenSettings)
+                }
+                Button(
+                    onClick = onRequestRole,
+                    enabled = !pending,
+                    shape = CircleShape,
+                    colors = onboardingPrimaryButtonColors(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp).heightIn(min = 56.dp)
+                        .testTag("default-role-continue"),
+                ) {
+                    Text(stringResource(R.string.onboarding_role_action), fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                }
             }
         }
     }

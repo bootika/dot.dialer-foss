@@ -4,9 +4,19 @@
     <string name="welcome_reporting">Raportare tehnică</string>
     <string name="welcome_reporting_summary">Activă implicit. Poți alege «Doar la cerere» din Setări.</string>
     <string name="welcome_data_details">Ce date se trimit?</string>
-    <string name="tour_avatar_short">Atinge avatarul ca să deschizi contactul. Ține apăsat ca să selectezi rândul.</string>
+    <string name="tour_avatar_short">Atinge avatarul pentru detalii. Ține apăsat pentru a selecta rândul.</string>
     <string name="tour_search_short">Scrie un nume sau un număr ca să filtrezi contactele și apelurile.</string>
-    <string name="tour_favorites_short">Atinge ca să suni la numărul ales. Ține apăsat pentru opțiuni.</string>
-    <string name="welcome_privacy_summary">Contactele și istoricul apelurilor rămân pe telefon, nu pe serverele noastre.</string>
-    <string name="welcome_phone_summary">Android îți va cere să alegi aplicația de telefon implicită și să acorzi permisiunile pentru apeluri.</string>
+    <string name="tour_favorites_short">Atinge ca să suni. Ține apăsat pentru opțiuni.</string>
+    <string name="welcome_privacy_summary">Contactele și istoricul apelurilor rămân pe telefon.</string>
+    <string name="welcome_phone_summary">Android îți cere să alegi aplicația implicită și să acorzi permisiunile de apel.</string>
+    <string name="tour_tap_to_call_title">Atinge pentru a suna</string>
+    <string name="tour_tap_to_call_short">Atinge rândul pentru a suna.</string>
+    <string name="tour_dialpad_title">Tastatura de apelare</string>
+    <string name="tour_dialpad_short">Atinge butonul ca să deschizi tastatura.</string>
+    <string name="onboarding_role_title">Setează dot.dialer ca implicită</string>
+    <string name="onboarding_role_summary">Pentru a iniția și primi apeluri, alege dot.dialer ca aplicație de telefon.</string>
+    <string name="onboarding_role_action">Setează ca implicită</string>
+    <string name="tour_avatar_title">Detalii contact</string>
+    <string name="tour_swipe_title">Glisează pentru acțiuni</string>
+    <string name="tour_skip_action">Sari peste</string>
 </resources>

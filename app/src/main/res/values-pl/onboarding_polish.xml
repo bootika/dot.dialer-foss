@@ -9,4 +9,14 @@
     <string name="tour_favorites_short">Dotknij, aby zadzwonić na wybrany numer. Przytrzymaj, aby zobaczyć opcje.</string>
     <string name="welcome_privacy_summary">Kontakty i historia połączeń pozostają na telefonie, nie na naszych serwerach.</string>
     <string name="welcome_phone_summary">Android poprosi o wybór domyślnej aplikacji telefonu i wymagane uprawnienia.</string>
+    <string name="tour_tap_to_call_title">Dotknij, aby zadzwonić</string>
+    <string name="tour_tap_to_call_short">Dotknij wiersza, aby zadzwonić.</string>
+    <string name="tour_dialpad_title">Klawiatura numeryczna</string>
+    <string name="tour_dialpad_short">Dotknij przycisku, aby otworzyć klawiaturę numeryczną.</string>
+    <item type="string" name="onboarding_role_title">@string/default_dialer_title</item>
+    <item type="string" name="onboarding_role_summary">@string/default_dialer_subtitle</item>
+    <item type="string" name="onboarding_role_action">@string/set_as_default</item>
+    <item type="string" name="tour_avatar_title">@string/ui_tour_contact_title</item>
+    <item type="string" name="tour_swipe_title">@string/ui_tour_swipe_title</item>
+    <item type="string" name="tour_skip_action">@string/skip</item>
 </resources>

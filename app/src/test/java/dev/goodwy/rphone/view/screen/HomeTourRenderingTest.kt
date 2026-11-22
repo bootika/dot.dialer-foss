@@ -3,7 +3,6 @@ package dev.goodwy.rphone.view.screen
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color as AndroidColor
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,9 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
@@ -25,7 +24,6 @@ import dev.goodwy.rphone.modal.data.Contact
 import dev.goodwy.rphone.view.components.*
 import dev.goodwy.rphone.view.theme.*
 import java.io.File
-import kotlin.math.abs
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -46,7 +44,6 @@ class HomeTourRenderingTest {
         Contact("third", givenName = "Mihai", familyName = "Ionescu"))
 
     @Composable private fun Fixture(targets: MutableMap<HomeTourTarget, Rect>) {
-        var header by remember { mutableStateOf<Rect?>(null) }
         val appearance = RillAvatarAppearance(false, true, false, true, false, false)
         CompositionLocalProvider(LocalRillAvatarAppearance provides appearance) {
             Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -59,12 +56,12 @@ class HomeTourRenderingTest {
                     Spacer(Modifier.height(12.dp))
                     }
                     item {
-                    FavoritesHeader(false, true, {}, {}, Modifier.homeTourBounds { header = it })
+                    FavoritesHeader(false, true, {}, {})
                     }
                     item {
                     IPhoneFavoritesRow(contacts, false, {}, {}, {}, { actualActions++ }, { actualActions++ },
-                        displayOrder = 0, avatarSize = 56.dp, modifier = Modifier.homeTourBounds {
-                            targets[HomeTourTarget.Favorites] = homeTourFavoritesBounds(header, it)
+                        displayOrder = 0, avatarSize = 56.dp, tourAvatarModifier = Modifier.homeTourBounds {
+                            targets[HomeTourTarget.Favorites] = it
                         })
                     }
                     item { HomeSectionHeader("Recents") }
@@ -86,7 +83,7 @@ class HomeTourRenderingTest {
         }
     }
 
-    @Test fun `all six production tour scenes keep opaque pointer measured spotlight and readable cards`() {
+    @Test fun `all six production tour scenes keep genuine targets readable and cards outside`() {
         var dark by mutableStateOf(false)
         var scale by mutableFloatStateOf(1f)
         var progress by mutableFloatStateOf(0.1f)
@@ -98,7 +95,8 @@ class HomeTourRenderingTest {
                     key(dark, scale) {
                         Box(Modifier.homeTourBounds { origin = it.topLeft }) {
                             Fixture(targets)
-                            if (targets.size == 5) HomeCoachMarkTourContent(targets.mapValues { it.value.translate(-origin) }, { completions++ }, progress)
+                            if (targets.size == 5) HomeCoachMarkTourContent(targets.mapValues { it.value.translate(-origin) }, { completions++ }, progress,
+                                HomeTourActions("Call", "SMS", "WhatsApp"))
                         }
                     }
                 }
@@ -110,30 +108,36 @@ class HomeTourRenderingTest {
             val steps = homeTourSteps(targets.keys)
             for ((index, step) in steps.withIndex()) {
                 for (pressed in listOf(false, true)) {
-                    rule.runOnIdle { progress = if (step.demo == HomeTourDemo.SearchTyping) 0.57f else if (pressed) 0.3f else 0.1f }
+                    rule.runOnIdle { progress = if (pressed) 0.6f else 0.1f }
                     rule.mainClock.advanceTimeBy(100)
                     val card = rule.onNodeWithTag("tour-card").fetchSemanticsNode().boundsInRoot
                     val demo = rule.onNodeWithTag("tour-demo").fetchSemanticsNode().boundsInRoot
                     assertTrue("card must not cover target: theme=$theme font=$font step=$index card=$card demo=$demo", card.bottom <= demo.top + 1f || card.top >= demo.bottom - 1f)
                     assertTrue(card.top >= 0f && card.bottom <= 801f)
-                    if (step.target == HomeTourTarget.RecentRow) {
-                        assertEquals(targets[step.target]!!.top - origin.y, demo.top, 0.1f)
-                        assertEquals(targets[step.target]!!.bottom - origin.y, demo.bottom, 0.1f)
+                    val original = targets[step.target]!!.translate(-origin)
+                    if (step.target == HomeTourTarget.RecentRow || step.target == HomeTourTarget.Search) {
+                        assertEquals(original.top, demo.top, 1f)
+                        assertEquals(original.bottom, demo.bottom, 1f)
                     }
                     if (step.target == HomeTourTarget.Favorites) {
-                        assertEquals(targets[step.target]!!.top - origin.y, demo.top, 0.1f)
+                        assertEquals(original.width + 6f, demo.width, 1f)
+                        assertEquals(original.height + 6f, demo.height, 1f)
+                        assertTrue(demo.width < 80f)
                     }
-                    if (step.demo == HomeTourDemo.SearchTyping) rule.onNodeWithText("George").assertExists()
-                    else {
-                        val pointer = rule.onNodeWithTag("tour-pointer", useUnmergedTree = true).fetchSemanticsNode()
-                        assertEquals(if (pressed) 0.95f else 1f, pointer.config[CallPressScaleKey], 0.001f)
-                        val bounds = pointer.boundsInRoot
-                        assertTrue("pointer must be completely visible", bounds.left >= 0 && bounds.top >= 0 && bounds.right <= 360 && bounds.bottom <= 800)
+                    if (step.demo == HomeTourDemo.SearchTyping) rule.onNodeWithText("Search contacts and calls").assertExists()
+                    if (step.demo == HomeTourDemo.RowSwipe) {
+                        rule.onNodeWithText("Right: SMS").assertIsDisplayed()
+                        rule.onNodeWithText("Left: WhatsApp").assertIsDisplayed()
                     }
-                    capture("${if (theme) "dark" else "light"}-font${(font * 100).toInt()}-step${index + 1}-${if (pressed) "press" else "idle"}",
-                        checkPointer = step.demo != HomeTourDemo.SearchTyping)
+                    rule.onNodeWithTag("tour-pointer", useUnmergedTree = true).assertDoesNotExist()
+                    rule.onNodeWithTag("tour-spotlight", useUnmergedTree = true)
+                        .assert(SemanticsMatcher.keyNotDefined(SemanticsActions.OnClick))
+                    capture("${if (theme) "dark" else "light"}-font${(font * 100).toInt()}-step${index + 1}-${if (pressed) "press" else "idle"}")
                 }
-                rule.onNodeWithText(if (index == steps.lastIndex) "Done" else "Next").performClick()
+                if (step.demo == HomeTourDemo.RowTap) {
+                    rule.onNodeWithTag("tour-demo").performTouchInput { click(center) }
+                }
+                rule.onNodeWithText(if (index == steps.lastIndex) "Done" else "Continue").performClick()
             }
         }
         rule.runOnIdle { assertEquals(4, completions); assertEquals(0, actualActions) }
@@ -157,33 +161,18 @@ class HomeTourRenderingTest {
         assertEquals(target.left, demo.left, 1f)
         assertEquals(target.top, demo.top, 1f)
         assertEquals(target.bottom, demo.bottom, 1f)
-        rule.onNodeWithText("Next").performClick()
+        rule.onNodeWithText("Continue").performClick()
         rule.onNodeWithText("Back").performClick()
         rule.onNodeWithText("Skip").performClick()
         rule.runOnIdle { assertEquals(1, completions) }
     }
 
-    private fun capture(name: String, checkPointer: Boolean) {
+    private fun capture(name: String) {
         rule.waitForIdle()
-        val bounds = if (checkPointer) rule.onNodeWithTag("tour-pointer", true).fetchSemanticsNode().boundsInRoot else null
         rule.runOnIdle {
             val view = rule.activity.window.decorView
             val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
             view.draw(Canvas(bitmap))
-            if (bounds != null) {
-                var green = 0
-                var white = 0
-                fun matches(pixel: Int, expected: Int) = abs(AndroidColor.red(pixel) - AndroidColor.red(expected)) <= 2 &&
-                    abs(AndroidColor.green(pixel) - AndroidColor.green(expected)) <= 2 &&
-                    abs(AndroidColor.blue(pixel) - AndroidColor.blue(expected)) <= 2
-                for (y in bounds.top.toInt() until bounds.bottom.toInt()) for (x in bounds.left.toInt() until bounds.right.toInt()) {
-                    val pixel = bitmap.getPixel(x, y)
-                    if (matches(pixel, CallActionColors.answerCommitted.toArgb())) green++
-                    if (matches(pixel, CallActionColors.onAction.toArgb())) white++
-                }
-                assertTrue("opaque Jade pointer in $name: $green", green > 800)
-                assertTrue("white hand in $name: $white", white > 50)
-            }
             val folder = File(System.getProperty("user.dir"), "build/reports/visual/home-tour/" + dev.goodwy.rphone.BuildConfig.FLAVOR)
             folder.mkdirs()
             File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

@@ -13,4 +13,8 @@
     <string name="setup_call_style_right_gesture">Scorri a destra</string>
     <string name="setup_call_style_left_gesture">Scorri a sinistra</string>
     <string name="setup_call_style_continue">Continua</string>
+    <string name="setup_call_style_direction_right">Destra</string>
+    <string name="setup_call_style_direction_left">Sinistra</string>
+    <item type="string" name="setup_call_style_contact_destination">@string/contact_action</item>
+    <item type="string" name="setup_call_style_call_destination">@string/call</item>
 </resources>

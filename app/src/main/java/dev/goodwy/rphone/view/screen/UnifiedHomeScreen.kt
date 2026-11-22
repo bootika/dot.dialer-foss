@@ -275,8 +275,6 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
     LaunchedEffect(showAllRecentCalls) { selectedRecentIds = emptySet() }
     var isRefreshing by remember { mutableStateOf(false) }
     val tourTargets = remember { mutableStateMapOf<HomeTourTarget, Rect>() }
-    var tourFavoritesHeader by remember { mutableStateOf<Rect?>(null) }
-    var tourFavoritesRow by remember { mutableStateOf<Rect?>(null) }
     var showHomeTour by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = browseContacts && selectedContactIds.isEmpty() && selectedRecentIds.isEmpty()) {
@@ -970,10 +968,6 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             hasFavorites = favorites.isNotEmpty(),
                             onAdd = { showFavoritePicker = true },
                             onEdit = { editFavorites = !editFavorites },
-                            modifier = Modifier.homeTourBounds {
-                                tourFavoritesHeader = it
-                                tourFavoritesRow?.let { row -> tourTargets[HomeTourTarget.Favorites] = homeTourFavoritesBounds(it, row) }
-                            },
                         )
                     }
                     item(key = "favorites-row") {
@@ -995,10 +989,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                             },
                             displayOrder = displayOrder,
                             avatarSize = (contactAvatarSize + FAVORITES_AVATAR_BOOST_DP).dp,
-                            modifier = Modifier.homeTourBounds {
-                                tourFavoritesRow = it
-                                tourTargets[HomeTourTarget.Favorites] = homeTourFavoritesBounds(tourFavoritesHeader, it)
-                            },
+                            tourAvatarModifier = Modifier.homeTourBounds { tourTargets[HomeTourTarget.Favorites] = it },
                         )
                     }
                 }
@@ -1263,7 +1254,9 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
             swipeRight = swipeChoices.firstOrNull { swipeEnabled && swipeRightAction != PreferenceManager.SWIPE_ACTION_NONE && it.second == swipeRightAction }?.first,
             swipeLeft = swipeChoices.firstOrNull { swipeEnabled && swipeLeftAction != PreferenceManager.SWIPE_ACTION_NONE && it.second == swipeLeftAction }?.first,
         )
-        HomeCoachMarkTour(targets = tourTargets.toMap(), actions = actions) {
+        HomeCoachMarkTour(targets = tourTargets.filterKeys {
+            it != HomeTourTarget.Favorites || showFavorites && favorites.isNotEmpty() && query.isBlank() && !browseContacts
+        }, actions = actions) {
             prefs.setBoolean(PreferenceManager.KEY_HOME_UI_TOUR_SHOWN, true)
             showHomeTour = false
         }

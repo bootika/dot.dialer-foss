@@ -29,8 +29,8 @@ internal fun Modifier.homeTourBounds(onBounds: (Rect) -> Unit): Modifier {
 }
 
 internal fun homeTourSpotlight(target: Rect, step: HomeTourStep, viewport: Rect, margin: Float): Rect {
-    // Rows stop at their real boundary; padding must not expose the preceding section title.
-    val padding = if (step.target == HomeTourTarget.RecentRow || step.target == HomeTourTarget.Favorites) 0f else margin
+    // Only the avatar and dialpad controls get a narrow ring outside the real target.
+    val padding = if (step.circularSpotlight || step.target == HomeTourTarget.Dialpad) margin else 0f
     return Rect(
         (target.left - padding).coerceAtLeast(viewport.left),
         (target.top - padding).coerceAtLeast(viewport.top),
@@ -38,8 +38,3 @@ internal fun homeTourSpotlight(target: Rect, step: HomeTourStep, viewport: Rect,
         (target.bottom + padding).coerceAtMost(viewport.bottom),
     )
 }
-
-internal fun homeTourFavoritesBounds(header: Rect?, row: Rect): Rect = if (header == null) row else Rect(
-    minOf(header.left, row.left), minOf(header.top, row.top),
-    maxOf(header.right, row.right), maxOf(header.bottom, row.bottom),
-)

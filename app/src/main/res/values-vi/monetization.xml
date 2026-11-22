@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Quản lý gói đăng ký</string>
+    <string name="plan_change_period">Đổi kỳ thanh toán</string>
+    <string name="plan_manage_before_purchase">Quản lý gói đăng ký hiện tại trong Google Play. Quyền truy cập trọn đời sẽ có sau khi gói này kết thúc.</string>
+    <string name="plan_purchase_pending">Một giao dịch mua vẫn đang chờ xử lý. Hãy hoàn tất hoặc hủy giao dịch trong Google Play trước khi bắt đầu giao dịch khác.</string>
+    <string name="plan_subscription_terms">Tự động gia hạn. Quản lý hoặc hủy trong Google Play.</string>
+    <string name="plan_replacement_terms">Google Play hiển thị số tiền và ngày áp dụng trước khi bạn xác nhận.</string>
+    <string name="plan_subscription_check_required">Quản lý các gói đăng ký hiện tại trong Google Play trước khi đổi gói.</string>
+</resources>

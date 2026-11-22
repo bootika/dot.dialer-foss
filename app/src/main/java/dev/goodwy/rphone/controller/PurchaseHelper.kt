@@ -33,6 +33,12 @@ interface PurchaseHelper {
     fun purchaseDonation(product: String, activity: Activity)
     fun purchaseSubscription(product: String, activity: Activity, planId: String? = null)
     fun restorePurchases()
+    val ownedSubscriptions: StateFlow<Set<String>> get() = EmptyStorePlan.subscriptions
+    val subscriptionPlan: StateFlow<io.github.bootika.dotdialer.core.license.AppPlan> get() = EmptyStorePlan.value
+    val supportsSubscriptionManagement: Boolean get() = false
+    fun manageSubscription(activity: Activity) {}
+    fun onAppForeground() {}
+    fun onPurchaseScreenClosed() {}
     fun refreshAllData()
     fun clearProPrefsIfNeeded()
 
@@ -44,5 +50,6 @@ interface PurchaseHelper {
 }
 
 private object EmptyStorePlan {
+    val subscriptions = kotlinx.coroutines.flow.MutableStateFlow<Set<String>>(emptySet()).asStateFlow()
     val value = kotlinx.coroutines.flow.MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE).asStateFlow()
 }

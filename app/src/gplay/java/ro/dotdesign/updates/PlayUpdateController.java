@@ -56,7 +56,7 @@ public final class PlayUpdateController implements UpdateHandle {
         boolean unsafe=busy.getAsBoolean();
         UpdateDecision.Mode mode=runtime.mode();
         if(unsafe||!runtime.online()){dismiss();}
-        else if(resumeImmediate&&!inFlow&&!launching&&dialog==null)resumeUpdate();
+        else if(mode==UpdateDecision.Mode.REQUIRED&&resumeImmediate&&!inFlow&&!launching&&dialog==null)resumeUpdate();
         else if(mode==UpdateDecision.Mode.NONE){dismiss();}
         else if(!inFlow&&!launching) {
             UpdateRuntime.Snapshot snapshot=runtime.snapshot();
@@ -183,7 +183,11 @@ public final class PlayUpdateController implements UpdateHandle {
             launching=false;
             if(destroyed||!resumed||busy.getAsBoolean()||!runtime.online())return;
             resumeImmediate=false;
-            if(info.updateAvailability()!=UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)return;
+            UpdateRuntime.Snapshot snapshot=runtime.snapshot();
+            if(runtime.mode()!=UpdateDecision.Mode.REQUIRED||snapshot==null
+                    ||snapshot.info.availableVersionCode()!=info.availableVersionCode()
+                    ||info.updateAvailability()!=UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                    ||!info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE))return;
             try{inFlow=runtime.manager.startUpdateFlowForResult(info,activity,AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build(),REQUEST);}
             catch(Exception ignored){inFlow=false;runtime.unavailable();}
         }).addOnFailureListener(error->{launching=false;resumeImmediate=false;runtime.unavailable();});
@@ -211,7 +215,7 @@ public final class PlayUpdateController implements UpdateHandle {
                 return;
             }
             downloaded=false;
-            int type=info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)||mode==UpdateDecision.Mode.REQUIRED
+            int type=mode==UpdateDecision.Mode.REQUIRED
                     ? AppUpdateType.IMMEDIATE : AppUpdateType.FLEXIBLE;
             boolean available=info.updateAvailability()==UpdateAvailability.UPDATE_AVAILABLE
                     ||info.updateAvailability()==UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS;

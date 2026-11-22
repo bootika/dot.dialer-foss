@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Gerenciar assinatura</string>
+    <string name="plan_change_period">Alterar período de cobrança</string>
+    <string name="plan_manage_before_purchase">Gerencie sua assinatura atual no Google Play. O acesso vitalício estará disponível quando ela terminar.</string>
+    <string name="plan_purchase_pending">Uma compra ainda está pendente. Conclua ou cancele no Google Play antes de iniciar outra.</string>
+    <string name="plan_subscription_terms">Renovação automática. Gerencie ou cancele no Google Play.</string>
+    <string name="plan_replacement_terms">O Google Play mostra o valor da cobrança e a data de início antes da confirmação.</string>
+    <string name="plan_subscription_check_required">Gerencie suas assinaturas atuais no Google Play antes de mudar de plano.</string>
+</resources>

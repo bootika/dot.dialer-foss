@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_manage_subscription">Aboneliği yönet</string>
+    <string name="plan_change_period">Faturalandırma dönemini değiştir</string>
+    <string name="plan_manage_before_purchase">Mevcut aboneliğinizi Google Play üzerinden yönetin. Ömür boyu erişim, abonelik sona erdikten sonra kullanılabilir.</string>
+    <string name="plan_purchase_pending">Bir satın alma işlemi hâlâ beklemede. Başka bir işlem başlatmadan önce Google Play üzerinden tamamlayın veya iptal edin.</string>
+    <string name="plan_subscription_terms">Otomatik yenilenir. Google Play üzerinden yönetin veya iptal edin.</string>
+    <string name="plan_replacement_terms">Google Play, onaylamadan önce ücreti ve yürürlük tarihini gösterir.</string>
+    <string name="plan_subscription_check_required">Plan değiştirmeden önce mevcut aboneliklerinizi Google Play üzerinden yönetin.</string>
+</resources>

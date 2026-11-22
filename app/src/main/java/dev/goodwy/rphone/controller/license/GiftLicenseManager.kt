@@ -18,13 +18,22 @@ class GiftLicenseException(val reason: GiftLicenseError) : Exception("License ac
 /** Network requests are restricted to explicit activation or refresh of an existing grant. */
 class GiftLicenseManager internal constructor(private val audience: String,
     private val storage: GiftLicenseStorage, private val verifier: GiftGrantVerifier,
-    private val scope: CoroutineScope, private val transport: ((String, JSONObject, String?) -> JSONObject)? = null) {
+    private val scope: CoroutineScope,
+    private val wallClock: () -> Long = { System.currentTimeMillis() / 1000 },
+    private val elapsedClock: () -> Long = SystemClock::elapsedRealtime,
+    private val expiryObservation: ExpiryObservation? = null,
+    private val writeRecord: (JSONObject) -> Unit = storage::write,
+    private val invalidateRecord: () -> Unit = storage::invalidate,
+    private val transport: ((String, JSONObject, String?) -> JSONObject)? = null) {
     constructor(context: Context): this(context.applicationContext.packageName, GiftLicenseStorage(context),
-        GiftGrantVerifier(), CoroutineScope(SupervisorJob() + Dispatchers.IO))
+        GiftGrantVerifier(), CoroutineScope(SupervisorJob() + Dispatchers.IO), expiryObservation = giftExpiryObservation(context))
     private val mutex = Mutex()
     private var record = JSONObject()
-    private var expiresAtElapsed = 0L
+    private var observedTime = 0L
+    private var observedElapsed = 0L
     private var lastRefreshAttempt = 0L
+    private var refreshedElapsed: Long? = null
+    private var refreshLeaseExpires = 0L
     private val _isPro = MutableStateFlow(false)
     val isPro = _isPro.asStateFlow()
     @Volatile var initialized: Boolean = false
@@ -42,7 +51,7 @@ class GiftLicenseManager internal constructor(private val audience: String,
         }
     }
 
-    private fun now() = System.currentTimeMillis() / 1000
+    private fun now() = wallClock()
     private fun failure(operation: String, error: Exception) {
         // Exception messages/stack traces can contain secrets. Keep only a fixed stage and type.
         android.util.Log.w("DotLicense", "$operation: ${error.javaClass.simpleName}")
@@ -53,12 +62,25 @@ class GiftLicenseManager internal constructor(private val audience: String,
     private fun validateCached() {
         if (!record.has("grant")) { _isPro.value = false; return }
         _isPro.value = try {
-            val current = now()
-            require(current >= record.optLong("last_clock") - 300)
-            val grant = verifier.verify(record.getString("grant"), audience, installation(), current)
-            val remaining = (grant.expires - current) * 1000
-            if (expiresAtElapsed == 0L) expiresAtElapsed = SystemClock.elapsedRealtime() + remaining
-            require(SystemClock.elapsedRealtime() < expiresAtElapsed)
+            val signed = record.getString("grant")
+            val verifiedAt = record.getLong("last_clock")
+            val grant = verifier.verify(signed, audience, installation(), verifiedAt)
+            val tick = elapsedClock()
+            if (refreshedElapsed == null) refreshedElapsed = tick
+            refreshLeaseExpires = grant.expires
+            val end = grant.accessUntil
+            val journal = try { expiryObservation?.floor(signed) ?: 0 } catch (error: Exception) {
+                failure("expiry-read", error); 0
+            }
+            observedTime = maxOf(now(), verifiedAt, record.optLong("clock_floor"), journal,
+                observedTime + if (observedElapsed == 0L) 0 else (tick - observedElapsed).coerceAtLeast(0) / 1000)
+            observedElapsed = tick
+            if (end != null && observedTime >= end && record.optLong("clock_floor") < end) {
+                val updated = JSONObject(record.toString()).put("clock_floor", end)
+                try { writeRecord(updated); record = updated } catch (error: Exception) { failure("expiry-write", error) }
+                try { expiryObservation?.save(signed, end) } catch (error: Exception) { failure("expiry-journal", error) }
+            }
+            require(end == null || now() >= verifiedAt - 300 && observedTime < end)
             true
         } catch (error: Exception) { failure("verify", error); false }
     }
@@ -86,9 +108,23 @@ class GiftLicenseManager internal constructor(private val audience: String,
         val current = now(); val verified = verifier.verify(grant, audience, installation(), current, nonce)
         val updated = JSONObject().put("installation", installation()).put("grant", grant).put("refresh_token", token)
             .put("refreshed", current).put("last_clock", current)
-        storage.write(updated) // Never publish entitlement before durable encrypted commit.
+        val previous = try { record.optString("grant").takeIf { it.isNotEmpty() }?.let {
+            verifier.verify(it, audience, installation(), record.getLong("last_clock"))
+        } } catch (error: Exception) { failure("previous", error); null }
+        val reducing = previous != null && verified.accessUntil != null &&
+            (previous.accessUntil == null || verified.accessUntil < previous.accessUntil)
+        if (reducing) {
+            // A signed reduction is authoritative even when replacement persistence fails.
+            record = updated
+            _isPro.value = current < verified.accessUntil
+            try { invalidateRecord() } catch (error: Exception) { failure("invalidate-reduction", error) }
+            try { writeRecord(updated) } catch (error: Exception) { failure("write-reduction", error) }
+        } else writeRecord(updated) // New activation never publishes before durable commit.
         record = updated
-        expiresAtElapsed = SystemClock.elapsedRealtime() + (verified.expires - current) * 1000
+        observedTime = current
+        observedElapsed = elapsedClock()
+        refreshedElapsed = elapsedClock()
+        refreshLeaseExpires = verified.expires
         _isPro.value = true
     }
 
@@ -96,22 +132,32 @@ class GiftLicenseManager internal constructor(private val audience: String,
         validateCached()
         if (!record.has("refresh_token")) return@withLock
         val current = now()
-        if (_isPro.value && current - record.optLong("refreshed") < 86400) return@withLock
-        if (lastRefreshAttempt != 0L && SystemClock.elapsedRealtime() - lastRefreshAttempt < 900_000) return@withLock
-        lastRefreshAttempt = SystemClock.elapsedRealtime()
+        val refreshed = record.optLong("refreshed")
+        val monotonicAge = refreshedElapsed?.let { (elapsedClock() - it).coerceAtLeast(0) / 1000 } ?: Long.MAX_VALUE
+        if (_isPro.value && current >= refreshed && current - refreshed < 86400 && monotonicAge < 86400 && current < refreshLeaseExpires) return@withLock
+        if (lastRefreshAttempt != 0L && elapsedClock() - lastRefreshAttempt < 900_000) return@withLock
+        lastRefreshAttempt = elapsedClock()
         val nonce = UUID.randomUUID().toString().replace("-", "")
         try {
             val response = request("refresh", identity(nonce), record.getString("refresh_token"))
             commit(response.getString("grant"), record.getString("refresh_token"), nonce)
         } catch (error: GiftLicenseException) {
             if (error.reason == GiftLicenseError.INVALID) {
-                _isPro.value = false; expiresAtElapsed = 0
+                _isPro.value = false; observedTime = 0; observedElapsed = 0
                 val cleared = JSONObject().put("installation", installation())
                 record = cleared
-                try { storage.write(cleared) } catch (error: Exception) { failure("clear", error) }
+                try { invalidateRecord() } catch (error: Exception) { failure("invalidate", error) }
+                try { writeRecord(cleared) } catch (error: Exception) { failure("clear", error) }
             }
         } catch (error: CancellationException) { throw error }
         catch (error: Exception) { failure("refresh", error) /* keep only the bounded verified grant */ }
+    }
+
+    companion object {
+        private fun giftExpiryObservation(context: Context): ExpiryObservation {
+            val storage = GiftLicenseStorage(context, "dot.dialer.gift-expiry.v1", "gift-expiry-v1.bin")
+            return ExpiryObservation(storage::read, storage::write)
+        }
     }
 
     private fun request(action: String, body: JSONObject, token: String? = null): JSONObject {
@@ -121,6 +167,7 @@ class GiftLicenseManager internal constructor(private val audience: String,
             connection.requestMethod = "POST"; connection.connectTimeout = 10_000; connection.readTimeout = 10_000
             connection.instanceFollowRedirects = false; connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json")
+            connection.setRequestProperty("X-Dot-Gift-Grant", "2")
             token?.let { connection.setRequestProperty("Authorization", "Bearer $it") }
             connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
             when (connection.responseCode) {

@@ -13,6 +13,19 @@ internal data class PlanGrant(
     val expires: Long,
     val paidTerms: Map<AppPlan, Long?>? = null,
 ) {
+    /** Compare the whole remaining rights envelope, including a lower tier surviving a higher one. */
+    fun reduces(previous: PlanGrant): Boolean {
+        fun rights(grant: PlanGrant): List<Pair<AppPlan, Long?>> = buildList {
+            val terms = grant.paidTerms ?: mapOf(grant.entitlements.paid to grant.expires)
+            terms.filterKeys { it != AppPlan.FREE }.forEach { (plan, end) -> add(plan to end) }
+            if (grant.entitlements.trialEnds > 0) add(AppPlan.PREMIUM to grant.entitlements.trialEnds)
+        }
+        val next = rights(this)
+        return rights(previous).any { (oldPlan, oldEnd) ->
+            next.none { (plan, end) -> plan >= oldPlan && (end == null || oldEnd != null && end >= oldEnd) }
+        }
+    }
+
     fun entitlementsAt(time: Long, leaseValid: Boolean, clockTrusted: Boolean): PlanEntitlements {
         val terms = paidTerms ?: return if (leaseValid) entitlements else PlanEntitlements()
         val paid = terms.filterValues { end -> end == null || (clockTrusted && time < end) }

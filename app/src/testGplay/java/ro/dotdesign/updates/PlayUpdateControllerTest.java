@@ -111,12 +111,35 @@ public class PlayUpdateControllerTest {
         assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(currentDialog()));
     }
 
-    @Test public void recommendedUpdateNowAlsoPrefersImmediate() {
+    @Test public void recommendedUpdateUsesFlexibleEvenWhenImmediateIsAvailable() {
         setRequired(false);
         controller.onResume();
         buttons(currentDialog()).get(0).performClick();
         shadowOf(Looper.getMainLooper()).idle();
-        assertTrue(play.isImmediateFlowVisible());
+        assertTrue(play.isConfirmationDialogVisible());
+        assertFalse(play.isImmediateFlowVisible());
+    }
+
+    @Test public void recommendedUpdateCannotResumeImmediateFlow() {
+        setRequired(false);
+        ReflectionHelpers.setField(controller, "resumeImmediate", true);
+        controller.onResume();
+        assertEquals(List.of(activity.getString(R.string.app_update_now),
+                activity.getString(R.string.app_update_later)), labels(currentDialog()));
+        assertFalse(play.isImmediateFlowVisible());
+    }
+
+    @Test public void stalePolicyCannotResumeImmediateFlow() {
+        setRequired(true);
+        ReflectionHelpers.setField(runtime, "lastAttempt", SystemClock.elapsedRealtime());
+        ReflectionHelpers.setField(runtime, "snapshot", new UpdateRuntime.Snapshot(
+                play.getAppUpdateInfo().getResult(), new UpdateRuntime.Policy(true, new String[0]),
+                SystemClock.elapsedRealtime() - UpdateDecision.FRESH_MS));
+        ReflectionHelpers.setField(controller, "resumeImmediate", true);
+        controller.onResume();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+        assertFalse(play.isImmediateFlowVisible());
     }
 
     @Test public void updateNowInstallsAnAlreadyDownloadedRequiredBuild() {

@@ -109,19 +109,20 @@ class LocalizationContractTest {
     }
 
     @Test
-    fun `purchase management guidance is translated in every shipped locale`() {
-        val keys = setOf("plan_manage_subscription", "plan_change_period", "plan_manage_before_purchase",
-            "plan_purchase_pending", "plan_subscription_terms", "plan_replacement_terms", "plan_subscription_check_required")
-        val base = resourcesInDirectory(repoFile("app/src/main/res/values"))
+    fun `Play purchase confirmation is flavor scoped and translated in every shipped locale`() {
+        val key = "plan_purchase_complete"
+        val base = resourcesInDirectory(repoFile("app/src/gplay/res/values"))
+        assertEquals(setOf(key), base.keys)
+        assertEquals(listOf("Your plan is active."), base.getValue(key).values)
         SUPPORTED_LOCALES.forEach { (locale, directory) ->
-            val translated = resourcesInDirectory(repoFile("app/src/main/res/$directory"))
-            keys.forEach { key ->
-                val value = translated.getValue(key).values.single()
-                assertTrue("Empty purchase guidance for $locale/$key", value.isNotBlank())
-                assertEquals(placeholderSignature(base.getValue(key).values.single()), placeholderSignature(value))
-                if (locale != "en") assertFalse("Untranslated purchase guidance for $locale/$key", base.getValue(key).values == translated.getValue(key).values)
-            }
-            assertFalse("Unused purchase confirmation must not return", translated.containsKey("plan_purchase_complete"))
+            val translated = resourcesInDirectory(repoFile("app/src/gplay/res/$directory"))
+            assertEquals("Play resource coverage differs for $locale", base.keys, translated.keys)
+            val value = translated.getValue(key).values.single()
+            assertTrue("Empty Play confirmation for $locale", value.isNotBlank())
+            assertEquals(placeholderSignature(base.getValue(key).values.single()), placeholderSignature(value))
+            assertFalse("Play-only confirmation leaked into common resources", resourcesInDirectory(
+                repoFile("app/src/main/res/$directory"),
+            ).containsKey(key))
         }
     }
 

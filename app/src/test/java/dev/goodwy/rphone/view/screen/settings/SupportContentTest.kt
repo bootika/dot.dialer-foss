@@ -145,9 +145,6 @@ class SupportContentTest {
         val calls=mutableListOf<Pair<String,List<Any?>>>()
         val pro=MutableStateFlow(false)
         val store=MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
-        val ownedSubscriptions=MutableStateFlow<Set<String>>(emptySet())
-        val recurringPlan=MutableStateFlow(io.github.bootika.dotdialer.core.license.AppPlan.FREE)
-        var canManage by mutableStateOf(false)
         val success=MutableStateFlow(false)
         val loading=MutableStateFlow(false)
         val ready=MutableStateFlow(true)
@@ -161,9 +158,6 @@ class SupportContentTest {
                 "hashCode" -> System.identityHashCode(proxy)
                 "toString" -> "Fixture purchase helper"
                 "getStorePlan" -> store
-                "getOwnedSubscriptions" -> ownedSubscriptions
-                "getSubscriptionPlan" -> recurringPlan
-                "getSupportsSubscriptionManagement" -> canManage
                 "getIsPro","isPro" -> pro
                 "getProCheckDone" -> MutableStateFlow(true)
                 "getPurchaseSuccess" -> success
@@ -266,29 +260,9 @@ class SupportContentTest {
             capture("plans-premium-current")
             rule.runOnIdle { error.value = "Restore temporarily unavailable" }
             rule.onNodeWithText(rule.activity.getString(R.string.operation_failed)).performScrollTo().assertIsDisplayed()
-            for (notice in listOf(R.string.plan_purchase_pending,R.string.plan_subscription_check_required)) {
-                rule.runOnIdle { error.value = rule.activity.getString(notice) }
-                rule.onNodeWithText(rule.activity.getString(notice)).performScrollTo().assertIsDisplayed()
-            }
             rule.onNodeWithTag("plan-restore").performScrollTo().assertIsEnabled()
             rule.runOnIdle { error.value = null }
             rule.onNodeWithTag("plan-buy").assertDoesNotExist()
-            rule.runOnIdle {
-                canManage=true
-                ownedSubscriptions.value=setOf("dot_premium_monthly")
-                recurringPlan.value=io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM
-            }
-            rule.onNodeWithTag("plan-period-YEARLY").performScrollTo().performClick()
-            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsEnabled()
-            capture("plans-managed-period-change")
-            rule.onNodeWithTag("plan-period-MONTHLY").performScrollTo().performClick()
-            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
-            rule.onNodeWithTag("plan-period-LIFETIME").performScrollTo().performClick()
-            rule.onNodeWithTag("plan-lifetime-blocked").performScrollTo().assertIsDisplayed()
-            rule.onNodeWithTag("plan-buy").performScrollTo().assertIsNotEnabled()
-            rule.onNodeWithTag("plan-manage-subscription").performScrollTo().performClick()
-            assertTrue(calls.any {it.first=="manageSubscription"})
-            rule.runOnIdle {canManage=false;ownedSubscriptions.value=emptySet();recurringPlan.value=io.github.bootika.dotdialer.core.license.AppPlan.FREE}
             rule.onNodeWithContentDescription(rule.activity.getString(R.string.back)).performClick()
             assertEquals(3,backs)
             val trialManager = dev.goodwy.rphone.controller.license.verifiedPlanFixture(rule.activity.packageName,

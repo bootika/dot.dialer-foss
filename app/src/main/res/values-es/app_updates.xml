@@ -4,6 +4,7 @@
     <string name="app_update_required">Hay una actualización importante. Instálala para continuar.</string>
     <string name="app_update_now">Actualizar ahora</string>
     <string name="app_update_later">Más tarde, gracias</string>
+    <string name="app_update_close">Abrir teclado de llamadas</string>
     <string name="app_update_ready">La actualización está lista. Reinicia cuando te venga bien.</string>
     <string name="app_update_restart">Reiniciar ahora</string>
     <string name="app_update_optional">Algunas mejoras para ponértelo más fácil.</string>

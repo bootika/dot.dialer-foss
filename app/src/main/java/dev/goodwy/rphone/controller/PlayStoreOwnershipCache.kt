@@ -15,8 +15,6 @@ internal data class PlayStoreOwnership(
     val legacyInApp get() = BuildConfig.PRODUCT_ID_X1 in inApps
     val legacySubscription get() = BuildConfig.SUBSCRIPTION_ID_X1 in subscriptions ||
         BuildConfig.SUBSCRIPTION_YEAR_ID_X1 in subscriptions
-    val subscriptionPlan get() = maxOf(PlanProducts.purchased(subscriptions),
-        if (legacySubscription) io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM else io.github.bootika.dotdialer.core.license.AppPlan.FREE)
     val isPro get() = legacyInApp || legacySubscription ||
         plan == io.github.bootika.dotdialer.core.license.AppPlan.PREMIUM
 }
@@ -33,10 +31,18 @@ internal class PlayStoreOwnershipCache(
         listOf(BuildConfig.SUBSCRIPTION_ID_X1, BuildConfig.SUBSCRIPTION_YEAR_ID_X1).filter { it.isNotBlank() }
 
     constructor(context: Context) : this(
-        GiftLicenseStorage(context, "dot.dialer.play-ownership.v1", "play-ownership-v1.bin"),
+        GiftLicenseStorage(context, "dot.dialer.play-ownership.v1", "play-ownership-v1.bin"), context,
     )
 
-    private constructor(storage: GiftLicenseStorage) : this(storage::read, storage::write, storage::invalidate)
+    private constructor(storage: GiftLicenseStorage, context: Context) : this(storage::read, storage::write, {
+        val file = java.io.File(context.noBackupFilesDir, "play-ownership-v1.bin")
+        android.util.AtomicFile(file).delete()
+        if (listOf(file, java.io.File(file.path + ".bak"), java.io.File(file.path + ".new")).any { it.exists() }) {
+            val keys = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            keys.deleteEntry("dot.dialer.play-ownership.v1")
+            check(!keys.containsAlias("dot.dialer.play-ownership.v1"))
+        }
+    })
 
     fun restore(): PlayStoreOwnership? = try {
         readRecord()?.let { record ->

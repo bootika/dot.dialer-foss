@@ -21,6 +21,8 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
@@ -45,10 +47,10 @@ public final class UpdateRuntime {
     private int flexibleInstallBuild;
     public static final class Snapshot {
         final AppUpdateInfo info;
-        final boolean requiredBuild;
+        final UpdateDecision.Mode requestedMode;
         final long received;
         final String[] notes;
-        Snapshot(AppUpdateInfo info, Policy policy, long received) {this.info=info;this.requiredBuild=policy.required;this.received=received;this.notes=policy.notes;}
+        Snapshot(AppUpdateInfo info, Policy policy, long received) {this.info=info;this.requestedMode=policy.mode;this.received=received;this.notes=policy.notes;}
     }
     private UpdateRuntime(Context context,String endpoint,String audience,String key) {
         this(context,endpoint,audience,key,AppUpdateManagerFactory.create(context));
@@ -73,7 +75,7 @@ public final class UpdateRuntime {
                 || s.info.updateAvailability()==UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS;
         return UpdateDecision.decide(installed,s.info.availableVersionCode(),available,
                 s.info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE),s.info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE),
-                true,s.requiredBuild,SystemClock.elapsedRealtime()-s.received);
+                true,s.requestedMode,SystemClock.elapsedRealtime()-s.received);
     }
     public boolean required() {return mode()==UpdateDecision.Mode.REQUIRED;}
     public boolean available() {return mode()!=UpdateDecision.Mode.NONE;}
@@ -127,8 +129,8 @@ public final class UpdateRuntime {
         } finally {connection.disconnect();}
     }
     static final class Policy {
-        final boolean required; final String[] notes;
-        Policy(boolean required,String[] notes){this.required=required;this.notes=notes;}
+        final UpdateDecision.Mode mode; final String[] notes;
+        Policy(UpdateDecision.Mode mode,String[] notes){this.mode=mode;this.notes=notes;}
     }
     static Policy verify(String payload,String signature,String key,String audience,String nonce,long installed,long target,String locale) throws Exception {
         if(payload.length()>60000||signature.length()>1024)throw new SecurityException("update_policy_size");
@@ -141,15 +143,12 @@ public final class UpdateRuntime {
                 ||!body.getString("package").equals(audience)||!body.getString("nonce").equals(nonce)
                 ||body.getLong("expires_at")-body.getLong("issued_at")!=3600||body.getLong("issued_at")<=0)
             throw new SecurityException("update_policy_scope");
-        JSONArray builds=body.getJSONArray("required_builds");
-        if(builds.length()>500)throw new SecurityException("update_policy_size");
-        boolean required=false;
-        for(int i=0;i<builds.length();i++){
-            Object value=builds.get(i);
-            if(!(value instanceof Integer)&&!(value instanceof Long))throw new SecurityException("update_policy_build");
-            long build=((Number)value).longValue();if(build<1||build>2100000000)throw new SecurityException("update_policy_build");
-            if(build==installed)required=true;
-        }
+        Set<Long> seen = new HashSet<>();
+        boolean required = containsBuild(body.getJSONArray("required_builds"), installed, seen);
+        boolean recommended = body.has("recommended_builds")
+                && containsBuild(body.getJSONArray("recommended_builds"), installed, seen);
+        UpdateDecision.Mode mode = required ? UpdateDecision.Mode.REQUIRED
+                : recommended ? UpdateDecision.Mode.OPTIONAL : UpdateDecision.Mode.NONE;
         JSONObject release=body.getJSONObject("release");
         if(release.getLong("build")!=target)throw new SecurityException("update_policy_target");
         JSONObject translations=release.getJSONObject("notes");
@@ -163,6 +162,23 @@ public final class UpdateRuntime {
             notes[i]=selected.getString(i);
             if(notes[i].length()>500)throw new SecurityException("update_notes_size");
         }
-        return new Policy(required,notes);
+        return new Policy(mode,notes);
+    }
+
+    private static boolean containsBuild(JSONArray builds, long installed, Set<Long> seen) throws Exception {
+        if (builds.length() > 500 - seen.size()) throw new SecurityException("update_policy_size");
+        boolean matches = false;
+        for (int i = 0; i < builds.length(); i++) {
+            Object value = builds.get(i);
+            if (!(value instanceof Integer) && !(value instanceof Long)) {
+                throw new SecurityException("update_policy_build");
+            }
+            long build = ((Number) value).longValue();
+            if (build < 1 || build > 2100000000 || !seen.add(build)) {
+                throw new SecurityException("update_policy_build");
+            }
+            if (build == installed) matches = true;
+        }
+        return matches;
     }
 }

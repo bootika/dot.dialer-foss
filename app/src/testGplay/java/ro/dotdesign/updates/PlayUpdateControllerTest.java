@@ -111,6 +111,23 @@ public class PlayUpdateControllerTest {
         assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(currentDialog()));
     }
 
+    @Test public void noMessageModeClosesRecommendationAndDoesNotReopenIt() {
+        setRequired(false);
+        controller.onResume();
+        AlertDialog recommendation = currentDialog();
+
+        setMode(UpdateDecision.Mode.NONE);
+        tick();
+        assertFalse(recommendation.isShowing());
+        controller.onPause();
+        controller.onResume();
+        tick();
+
+        assertSame(recommendation, ShadowAlertDialog.getLatestAlertDialog());
+        assertFalse(play.isImmediateFlowVisible());
+        assertFalse(play.isConfirmationDialogVisible());
+    }
+
     @Test public void recommendedUpdateUsesFlexibleEvenWhenImmediateIsAvailable() {
         setRequired(false);
         controller.onResume();
@@ -133,7 +150,7 @@ public class PlayUpdateControllerTest {
         setRequired(true);
         ReflectionHelpers.setField(runtime, "lastAttempt", SystemClock.elapsedRealtime());
         ReflectionHelpers.setField(runtime, "snapshot", new UpdateRuntime.Snapshot(
-                play.getAppUpdateInfo().getResult(), new UpdateRuntime.Policy(true, new String[0]),
+                play.getAppUpdateInfo().getResult(), new UpdateRuntime.Policy(UpdateDecision.Mode.REQUIRED, new String[0]),
                 SystemClock.elapsedRealtime() - UpdateDecision.FRESH_MS));
         ReflectionHelpers.setField(controller, "resumeImmediate", true);
         controller.onResume();
@@ -158,7 +175,7 @@ public class PlayUpdateControllerTest {
         assertFalse(card.isShowing());
     }
 
-    @Test public void acceptedFlexibleFallbackInstallsAfterCallWithoutAnotherPrompt() {
+    @Test public void acceptedRecommendationInstallsAfterCallWithoutAnotherPrompt() {
         int offered = play.getAppUpdateInfo().getResult().availableVersionCode();
         play.setUpdateAvailable(offered, AppUpdateType.FLEXIBLE);
         setRequired(false);
@@ -182,8 +199,12 @@ public class PlayUpdateControllerTest {
     }
 
     private void setRequired(boolean required) {
+        setMode(required ? UpdateDecision.Mode.REQUIRED : UpdateDecision.Mode.OPTIONAL);
+    }
+
+    private void setMode(UpdateDecision.Mode mode) {
         ReflectionHelpers.setField(runtime, "snapshot", new UpdateRuntime.Snapshot(
-                play.getAppUpdateInfo().getResult(), new UpdateRuntime.Policy(required, new String[0]),
+                play.getAppUpdateInfo().getResult(), new UpdateRuntime.Policy(mode, new String[0]),
                 SystemClock.elapsedRealtime()));
     }
 

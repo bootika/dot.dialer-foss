@@ -7,11 +7,12 @@ public final class UpdateDecision {
     private UpdateDecision() {}
     public static Mode decide(long installed, long offered, boolean playAvailable,
             boolean immediateAllowed, boolean flexibleAllowed, boolean policyVerified,
-            boolean requiredBuild, long ageMillis) {
+            Mode requestedMode, long ageMillis) {
         if (installed <= 0 || offered <= installed || !playAvailable || !policyVerified
                 || ageMillis < 0 || ageMillis >= FRESH_MS) return Mode.NONE;
-        if (requiredBuild && immediateAllowed) return Mode.REQUIRED;
-        return flexibleAllowed ? Mode.OPTIONAL : Mode.NONE;
+        if (requestedMode == Mode.REQUIRED && immediateAllowed) return Mode.REQUIRED;
+        if (requestedMode == Mode.OPTIONAL && flexibleAllowed) return Mode.OPTIONAL;
+        return Mode.NONE;
     }
     public static boolean shouldPrompt(long now, long lastShown) {
         return lastShown <= 0 || (now >= lastShown && now - lastShown >= 86_400_000L);

@@ -65,7 +65,10 @@ def bridgeCandidateMatches = { candidate, version, sourceHash ->
 def verifiedPlayBridge = bridgeReceiptAllowsIntegration(bridgeReceipt, bridgeSourceHash)
 def internalPlayBridgeCandidate = bridgeReceiptAllowsIntegration(bridgeReceipt, bridgeReceipt.consumerSourceSha256) &&
     bridgeCandidateMatches(bridgeReceipt.internalCandidate, effectiveVersionCode, bridgeSourceHash)
-def dictateIntegrationEnabled = verifiedPlayBridge || internalPlayBridgeCandidate
+// The owner approved Open testing on this exact candidate before the live device probe.
+def approvedOpenBridgeCandidate = bridgeReceiptAllowsIntegration(bridgeReceipt, bridgeReceipt.consumerSourceSha256) &&
+    bridgeCandidateMatches(bridgeReceipt.approvedOpenCandidate, effectiveVersionCode, bridgeSourceHash)
+def dictateIntegrationEnabled = verifiedPlayBridge || internalPlayBridgeCandidate || approvedOpenBridgeCandidate
 tasks.register('verifyDictateIntegrationGate') {
     doLast {
         def valid = [schemaVersion:1, protocolVersion:1, status:'verified', providerPackage:'ro.dotdesign.dotdictate', realProviderTranscriptionCompleted:true,
@@ -86,7 +89,7 @@ tasks.register('verifyDictateIntegrationGate') {
         assert !bridgeCandidateMatches(candidate,332,bridgeSourceHash)
         assert !bridgeCandidateMatches(candidate,331,'stale')
         assert !bridgeCandidateMatches(null,331,bridgeSourceHash)
-        println "Dictate integration Play enabled=${dictateIntegrationEnabled}; provider verified for source=${verifiedPlayBridge}; Internal candidate=${internalPlayBridgeCandidate}; source SHA256=${bridgeSourceHash}"
+        println "Dictate integration Play enabled=${dictateIntegrationEnabled}; provider verified for source=${verifiedPlayBridge}; Internal candidate=${internalPlayBridgeCandidate}; approved Open candidate=${approvedOpenBridgeCandidate}; source SHA256=${bridgeSourceHash}"
     }
 }
 

@@ -21,7 +21,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun GiftLicenseControl(manager: GiftLicenseManager) {
+internal fun GiftLicenseControl(manager: GiftLicenseManager, onConfirmed: (PlanConfirmation) -> Unit = {}) {
     val active by manager.isPro.collectAsStateWithLifecycle()
     var showing by remember { mutableStateOf(false) }
     var code by remember { mutableStateOf("") } // Secret is deliberately not saved in instance state.
@@ -54,7 +54,7 @@ internal fun GiftLicenseControl(manager: GiftLicenseManager) {
             TextButton(enabled = !busy && code.isNotBlank(), onClick = {
                 busy = true; error = null
                 scope.launch {
-                    try { manager.activate(code); showing = false; code = "" }
+                    try { manager.activate(code)?.let(onConfirmed); showing = false; code = "" }
                     catch (cancelled: CancellationException) { throw cancelled }
                     catch (failure: Exception) {
                         error = when ((failure as? GiftLicenseException)?.reason) {

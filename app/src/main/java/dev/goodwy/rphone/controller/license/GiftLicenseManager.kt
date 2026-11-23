@@ -2,6 +2,7 @@ package dev.goodwy.rphone.controller.license
 
 import android.content.Context
 import android.os.SystemClock
+import io.github.bootika.dotdialer.core.license.AppPlan
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
@@ -63,7 +64,7 @@ class GiftLicenseManager internal constructor(private val audience: String,
         } catch (error: Exception) { failure("verify", error); false }
     }
 
-    suspend fun activate(code: String) = withContext(Dispatchers.IO) {
+    internal suspend fun activate(code: String): PlanConfirmation? = withContext(Dispatchers.IO) {
         mutex.withLock {
             if (!initialized) {
                 record = readStored()
@@ -77,12 +78,17 @@ class GiftLicenseManager internal constructor(private val audience: String,
             val response = request("redeem", body)
             val token = response.getString("refresh_token")
             require(token.matches(Regex("[A-Za-z0-9_-]{43}")))
+            val wasActive = _isPro.value
             commit(response.getString("grant"), token, nonce)
+            if (wasActive) null else PlanConfirmation(
+                AppPlan.PREMIUM, PlanConfirmationSource.GIFT,
+
+            )
         }
     }
 
     private fun identity(nonce: String) = JSONObject().put("package", audience).put("installation", installation()).put("nonce", nonce)
-    private fun commit(grant: String, token: String, nonce: String) {
+    private fun commit(grant: String, token: String, nonce: String): GiftGrant {
         val current = now(); val verified = verifier.verify(grant, audience, installation(), current, nonce)
         val updated = JSONObject().put("installation", installation()).put("grant", grant).put("refresh_token", token)
             .put("refreshed", current).put("last_clock", current)
@@ -90,6 +96,7 @@ class GiftLicenseManager internal constructor(private val audience: String,
         record = updated
         expiresAtElapsed = SystemClock.elapsedRealtime() + (verified.expires - current) * 1000
         _isPro.value = true
+        return verified
     }
 
     private suspend fun refreshIfNeeded() = mutex.withLock {

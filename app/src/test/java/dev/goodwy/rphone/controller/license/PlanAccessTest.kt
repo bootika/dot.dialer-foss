@@ -112,6 +112,54 @@ class PlanAccessTest {
             assertEquals(AppPlan.FREE, m.effective)
         } finally { worker.cancel() }
     }
+    @Test fun `first verified trial waits for acknowledgement and survives restart once`() = runBlocking {
+        var stored: JSONObject? = null
+        var worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        var offline = true
+        suspend fun start(): PlanAccessManager {
+            val manager = PlanAccessManager("dot.dialer.test", { id }, { stored }, { stored = it }, verifier, worker, { body ->
+                if (offline) throw java.io.IOException()
+                if (body.getString("start_trial") == "1" && trial == 0L) trial = clock
+                JSONObject().put("grant", sign(body))
+            }, { clock }, { elapsed })
+            withTimeout(5000) { while (manager.state.value.revision < 3 || manager.state.value.busy) delay(10) }
+            return manager
+        }
+        suspend fun restart(): PlanAccessManager {
+            worker.cancel()
+            worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            return start()
+        }
+        try {
+            var manager = start()
+            assertNull(manager.confirmation.value)
+            offline = false
+            assertTrue(manager.refresh(startTrial = true, force = true))
+            val newlyStarted = manager.confirmation.value!!
+            assertEquals(PlanConfirmationSource.TRIAL, newlyStarted.source)
+            assertEquals(trial + 30 * 86400, newlyStarted.until)
+            manager = restart()
+            assertEquals(newlyStarted, manager.confirmation.value)
+            manager.acknowledgeConfirmation(newlyStarted)
+            withTimeout(5000) { while (stored?.has("confirmation") == true) delay(10) }
+            manager = restart()
+            assertNull(manager.confirmation.value)
+            assertTrue(manager.refresh(startTrial = true, force = true))
+            assertNull(manager.confirmation.value)
+        } finally { worker.cancel() }
+    }
+
+    @Test fun `historical trial and same paid tier cannot produce activation notices`() {
+        val historical = PlanGrant(PlanEntitlements(AppPlan.FREE, 1L, 30 * 86400L + 1), 10 * 86400L)
+        assertNull(newPlanConfirmation(null, historical, clock, clock, false, AppPlan.FREE))
+        assertNull(newPlanConfirmation(null, historical, clock, null, false, AppPlan.FREE))
+        val existing = PlanGrant(PlanEntitlements(AppPlan.PREMIUM, 0, 0), 10 * 86400L)
+        val renewal = existing.copy(paidTerms = mapOf(AppPlan.PREMIUM to 20 * 86400L))
+        assertNull(newPlanConfirmation(existing, renewal, clock, null, false, AppPlan.PREMIUM))
+        val assigned = newPlanConfirmation(historical, renewal, clock, null, false, AppPlan.FREE)
+        assertEquals(PlanConfirmationSource.DESK, assigned?.source)
+        assertEquals(20 * 86400L, assigned?.until)
+    }
     @Test fun `trial expiry remains local inside valid ten day paid grant`() = runBlocking {
         val worker = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {

@@ -34,6 +34,36 @@ internal class PlanAccessManager internal constructor(
     private val mutex = Mutex()
     private val mutableState = MutableStateFlow(PlanAccessState())
     val state = mutableState.asStateFlow()
+    private val mutableConfirmation = MutableStateFlow<PlanConfirmation?>(null)
+    val confirmation = mutableConfirmation.asStateFlow()
+    @Volatile var lastConfirmedPlan: AppPlan? = null
+        private set
+
+    fun offerConfirmation(value: PlanConfirmation) {
+        mutableConfirmation.update { current ->
+            if (current == null || current.source == PlanConfirmationSource.TRIAL) value else current
+        }
+    }
+
+    suspend fun acknowledgeConfirmation(value: PlanConfirmation) = withContext(Dispatchers.IO) {
+        mutex.withLock {
+            if (mutableConfirmation.value != value) return@withLock
+            if (PlanConfirmation.fromRecord(record.optJSONObject("confirmation"), now()) == value) {
+                val updated = JSONObject(record.toString())
+                updated.remove("confirmation")
+                try {
+                    write(updated)
+                    record = updated
+                } catch (error: Exception) {
+                    failure(error)
+                    return@withLock
+                }
+            }
+            lastConfirmedPlan = value.plan
+            mutableConfirmation.compareAndSet(value, null)
+            Unit
+        }
+    }
     private val requests = MutableSharedFlow<PlanFeature>(extraBufferCapacity = 4)
     val upgradeRequests = requests.asSharedFlow()
     fun requestUpgrade(feature: PlanFeature) { requests.tryEmit(feature) }
@@ -101,8 +131,19 @@ internal class PlanAccessManager internal constructor(
             val verifiedAt = record.getLong("last_clock")
             val grant = verifier.verifyCached(signed, audience, installation, wall)
             cached = CachedPlan(grant, verifiedAt, maxOf(wall, verifiedAt), elapsed())
+            val access = entitlements(cached, wall, elapsed())
+            PlanConfirmation.fromRecord(record.optJSONObject("confirmation"), wall)
+                ?.takeIf { matchesConfirmation(it, access, wall) }
+                ?.let(::offerConfirmation)
         } catch (error: Exception) { failure(error) }
     }
+    private fun matchesConfirmation(notice: PlanConfirmation, access: PlanEntitlements, time: Long): Boolean =
+        when (notice.source) {
+            PlanConfirmationSource.TRIAL -> access.trialEnds == notice.until && access.trialEnds > time
+            PlanConfirmationSource.DESK, PlanConfirmationSource.INVITATION -> access.paid >= notice.plan
+            else -> true
+        }
+
     fun retry() { scope.launch { refresh(force = true) } }
     fun startTrial() { scope.launch { refresh(startTrial = true, force = true) } }
     internal suspend fun refresh(startTrial: Boolean = false, force: Boolean = false, invitation: String? = null): Boolean = mutex.withLock {
@@ -116,12 +157,25 @@ internal class PlanAccessManager internal constructor(
                 .put("offline_days", "10")
                 .put("start_trial", if (startTrial) "1" else "0")
             if(invitation!=null) {require(invitation.matches(Regex("[a-f0-9]{64}")));body.put("invitation",invitation)}
+            val trialRequestStarted = now().takeIf { startTrial }
             val signed = transport(body).getString("grant")
             val wall = now()
             val grant = verifier.verify(signed, audience, installation, wall, nonce)
             val updated = JSONObject().put("grant", signed).put("last_clock", wall)
+            val access = grant.entitlementsAt(wall, leaseValid = true, clockTrusted = true)
+            val previousRecord = record.optJSONObject("confirmation")
+            val existing = PlanConfirmation.fromRecord(previousRecord, wall)
+                ?.takeIf { it == mutableConfirmation.value && matchesConfirmation(it, access, wall) }
+            val basePlan = if (startTrial) paid else AppPlan.FREE
+            val next = if (existing != null && existing.source != PlanConfirmationSource.TRIAL) existing
+                else newPlanConfirmation(cached?.grant, grant, wall, trialRequestStarted, invitation != null, basePlan) ?: existing
+            if (next != null) updated.put("confirmation", if (next == existing) previousRecord else next.toRecord(wall))
             write(updated)
+            record = updated
             cached = CachedPlan(grant, wall, wall, elapsed())
+            mutableConfirmation.value?.takeUnless { matchesConfirmation(it, access, wall) }
+                ?.let { mutableConfirmation.compareAndSet(it, null) }
+            if (next != null && next != existing) offerConfirmation(next)
             publish()
             true
         } catch (error: CancellationException) { publish(); throw error }

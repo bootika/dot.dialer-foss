@@ -707,10 +707,14 @@ class MainActivity : FragmentActivity() {
                         )
                         LaunchedEffect(planSettingsRoute) { planSettingsRoute?.let { navController.navigate(it); planSettingsRoute=null } }
                         invitationLink?.takeUnless {hasOngoingCall}?.let {link -> dev.goodwy.rphone.view.screen.settings.PlanInvitationDialog(link) {invitationLink=null} }
-                        if(!hasOngoingCall && invitationLink==null && planSettingsRoute==null && defaultRoleHeld) {
-                            dev.goodwy.rphone.view.screen.settings.PlanGuideHost { tier ->
-                                navController.navigate(if(tier == io.github.bootika.dotdialer.core.license.AppPlan.PLUS)
-                                    com.ramcosta.composedestinations.generated.destinations.ContactPhotosScreenDestination().route else InterfaceScreenDestination().route)
+                        val canShowConfirmation = !hasOngoingCall && !suppressCallBanner && !isAppLocked &&
+                            defaultRoleHeld && invitationLink == null && !isHandlingPhoneNavigation()
+                        dev.goodwy.rphone.view.screen.settings.PlanConfirmationHost(canShowConfirmation) { alreadyConfirmed ->
+                            if (canShowConfirmation && invitationLink == null && planSettingsRoute == null) {
+                                dev.goodwy.rphone.view.screen.settings.PlanGuideHost(skipWelcome = alreadyConfirmed) { tier ->
+                                    navController.navigate(if(tier == io.github.bootika.dotdialer.core.license.AppPlan.PLUS)
+                                        com.ramcosta.composedestinations.generated.destinations.ContactPhotosScreenDestination().route else InterfaceScreenDestination().route)
+                                }
                             }
                         }
                     } // end blurred Column

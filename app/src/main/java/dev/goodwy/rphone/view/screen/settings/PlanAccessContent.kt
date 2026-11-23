@@ -30,6 +30,7 @@ import org.koin.compose.koinInject
 internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = null) {
     val manager=rememberPlanAccessManager()
     val state by manager.state.collectAsState()
+    val confirmation by manager.confirmation.collectAsState()
     val helper=koinInject<PurchaseHelper>()
     val activity=rememberPlanBillingActivity(helper)
     val store by helper.storePlan.collectAsState()
@@ -45,7 +46,7 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
     if(invitation)PlanInvitationDialog(onClose={invitation=false})
     val effective=remember(state,store,pro) { manager.effective }
     val initialPlan=remember {manager.effective}
-    LaunchedEffect(effective) {if(effective>initialPlan) onClose()}
+    LaunchedEffect(effective, confirmation) {if(effective>initialPlan && confirmation==null) onClose()}
     LaunchedEffect(helper) { manager.attach(helper) }
     val product=PlanProducts.all.first { it.tier==tier && it.period==period }
     val loaded=if(product.subscription)subs else iaps
@@ -148,7 +149,7 @@ internal fun PlanAccessContent(onClose: () -> Unit, onGuides: (() -> Unit)? = nu
                 TextButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.gift_activate))
                 }
-                if (expanded) GiftLicenseControl(gift)
+                if (expanded) GiftLicenseControl(gift, manager::offerConfirmation)
             }
             if(BuildConfig.FLAVOR=="foss") FossPlanSupport()
             Spacer(Modifier.height(24.dp))

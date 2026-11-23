@@ -67,7 +67,14 @@ internal fun PlanInvitationContent(initialLink: String="",onClose: () -> Unit,
                     }}
                     Button(onClick={scope.launch {
                         busy=true;failed=false
-                        try {activated=withContext(Dispatchers.IO) {manager.refresh(force=true,invitation=token)};failed=!activated}
+                        try {
+                            activated = withContext(Dispatchers.IO) { manager.refresh(force = true, invitation = token) }
+                            failed = !activated
+                            if (activated && manager.confirmation.value?.source ==
+                                dev.goodwy.rphone.controller.license.PlanConfirmationSource.INVITATION) {
+                                onClose()
+                            }
+                        }
                         finally {busy=false}
                     }},enabled=!busy && state.ready && token!=null,modifier=Modifier.fillMaxWidth().testTag("invitation-activate")) {
                         Text(stringResource(R.string.invitation_confirm))

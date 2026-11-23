@@ -13,14 +13,17 @@ class PlayStoreBillingContractTest {
         val source = billingSource()
         val acknowledgement = source
             .substringAfter("client.acknowledgePurchase(params)")
-            .substringBefore("private fun completePurchase()")
+            .substringBefore("private fun completePurchase(")
         val completion = source
-            .substringAfter("private fun completePurchase()")
+            .substringAfter("private fun completePurchase(")
             .substringBefore("private fun queryPurchases(")
 
         assertTrue(acknowledgement.contains("BillingResponseCode.OK"))
-        assertTrue(acknowledgement.contains("completePurchase()"))
+        assertTrue(acknowledgement.contains("completePurchase(purchase.products, previouslyOwned)"))
         assertTrue(completion.contains("_purchaseSuccess.value = true"))
+        assertTrue(completion.contains("queryPurchases { verified ->"))
+        assertTrue(completion.contains("if (verified)"))
+        assertTrue(completion.contains("it.id in owned && it.id !in previouslyOwned"))
         assertEquals(1, source.split("_purchaseSuccess.value = true").size - 1)
     }
 

@@ -25,6 +25,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
 import androidx.lifecycle.viewModelScope
 import dev.goodwy.rphone.controller.license.GiftLicenseManager
+import dev.goodwy.rphone.controller.license.PlanAccessManager
+import dev.goodwy.rphone.controller.license.PlanConfirmation
+import dev.goodwy.rphone.controller.license.PlanConfirmationSource
+import dev.goodwy.rphone.controller.license.PlanProducts
 
 class PlayStoreViewModel internal constructor(
     application: Application,
@@ -242,8 +246,9 @@ class PlayStoreViewModel internal constructor(
     private fun handlePurchaseUpdate(purchase: Purchase) {
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
+                val previouslyOwned = iapPurchased.value + subPurchased.value
                 if (purchase.isAcknowledged) {
-                    completePurchase()
+                    completePurchase(purchase.products, previouslyOwned)
                     return
                 }
                 val client = billingClient ?: return failPendingActions("Billing is not initialized")
@@ -252,7 +257,7 @@ class PlayStoreViewModel internal constructor(
                     .build()
                 client.acknowledgePurchase(params) { result ->
                     if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        completePurchase()
+                        completePurchase(purchase.products, previouslyOwned)
                     } else {
                         fail("Unable to confirm purchase", result)
                     }
@@ -263,16 +268,29 @@ class PlayStoreViewModel internal constructor(
         }
     }
 
-    private fun completePurchase() {
+    private fun completePurchase(products: List<String>, previouslyOwned: Set<String>) {
         _purchaseSuccess.value = true
-        queryPurchases()
+        queryPurchases { verified ->
+            if (verified) {
+                val owned = iapPurchased.value + subPurchased.value
+                val plan = PlanProducts.all.filter { it.id in products && it.id in owned && it.id !in previouslyOwned }
+                    .maxByOrNull { it.tier }
+                if (plan != null) {
+                    val source = if (plan.subscription) PlanConfirmationSource.PLAY_SUBSCRIPTION
+                        else PlanConfirmationSource.PLAY_LIFETIME
+                    PlanAccessManager.get(getApplication<Application>()).offerConfirmation(
+                        PlanConfirmation(plan.tier, source, permanent = !plan.subscription),
+                    )
+                }
+            }
+        }
     }
 
-    private fun queryPurchases(onComplete: () -> Unit = {}) {
+    private fun queryPurchases(onComplete: (Boolean) -> Unit = {}) {
         val client = billingClient
         if (client == null || !client.isReady) {
             failPendingActions("Billing service is not ready")
-            onComplete()
+            onComplete(false)
             return
         }
 
@@ -287,7 +305,7 @@ class PlayStoreViewModel internal constructor(
                 }
                 _proCheckDone.value = true
                 _isLoading.value = false
-                onComplete()
+                onComplete(owned != null)
             },
         )
         fun complete(type: String, result: BillingResult, purchases: List<Purchase>) {

@@ -83,7 +83,7 @@ internal fun PlanGuideContent(tier: AppPlan, onNext: () -> Unit, onMore: () -> U
 
 /** Render only inside the unlocked main surface, never over an ongoing call. */
 @Composable
-internal fun PlanGuideHost(onMore: (AppPlan) -> Unit) {
+internal fun PlanGuideHost(skipWelcome: Boolean = false, onMore: (AppPlan) -> Unit) {
     val manager=rememberPlanAccessManager()
     val state by manager.state.collectAsState()
     var deferred by androidx.compose.runtime.saveable.rememberSaveable(manager.effective) { mutableStateOf(false) }
@@ -97,6 +97,6 @@ internal fun PlanGuideHost(onMore: (AppPlan) -> Unit) {
         properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false,decorFitsSystemWindows=false)) {
         PlanGuideSequenceContent(pending, onFinished = { acknowledge(pending.last()) },
             onMore = { current -> acknowledge(current); deferred=true; onMore(current) },
-            onBackAtStart = { deferred=true }, welcomePlan = manager.effective)
+            onBackAtStart = { deferred=true }, welcomePlan = manager.effective.takeUnless { skipWelcome })
     }
 }

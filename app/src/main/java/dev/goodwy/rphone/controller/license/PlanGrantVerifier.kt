@@ -12,6 +12,7 @@ internal data class PlanGrant(
     val entitlements: PlanEntitlements,
     val expires: Long,
     val paidTerms: Map<AppPlan, Long?>? = null,
+    val issuedAt: Long? = null,
 ) {
     fun entitlementsAt(time: Long, leaseValid: Boolean, clockTrusted: Boolean): PlanEntitlements {
         val terms = paidTerms ?: return if (leaseValid) entitlements else PlanEntitlements()
@@ -68,6 +69,6 @@ internal class PlanGrantVerifier(publicKey: String = GiftGrantVerifier.PUBLIC_KE
                 }
             }.also { require((it.keys.maxOrNull() ?: AppPlan.FREE) == tier) }
         } else null
-        return PlanGrant(PlanEntitlements(tier, trial, end), expires, paidTerms)
+        return PlanGrant(PlanEntitlements(tier, trial, end), expires, paidTerms, issuedAt = issued)
     }
 }

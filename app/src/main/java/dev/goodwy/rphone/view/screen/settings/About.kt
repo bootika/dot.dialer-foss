@@ -1,6 +1,8 @@
 package dev.goodwy.rphone.view.screen.settings
 
 import dev.goodwy.rphone.view.theme.accentText
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.view.Surface
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -44,6 +46,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import dev.goodwy.rphone.AppUpdates
 import dev.goodwy.rphone.GITHUB_URL
 import dev.goodwy.rphone.privacyPolicyUrl
 import dev.goodwy.rphone.termsAndConditionsUrl
@@ -87,6 +92,17 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val language = LocalConfiguration.current.locales[0].language
     val appInfo = getAppVersion(context)
+    var offeredVersionCode by remember(context) { mutableIntStateOf(0) }
+    LifecycleResumeEffect(context) {
+        var observing = true
+        AppUpdates.checkAboutVersion(context) { versionCode ->
+            if (observing) offeredVersionCode = versionCode
+        }
+        onPauseOrDispose {
+            observing = false
+            offeredVersionCode = 0
+        }
+    }
     val storeName = when (BuildConfig.FLAVOR) {
         "gplay" -> "GPlay"
         "rustore" -> "RuStore"
@@ -246,6 +262,23 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         fontWeight = FontWeight.Bold
                     )
+                }
+            }
+
+            if (offeredVersionCode > 0) {
+                val version = "${offeredVersionCode / 100}.${offeredVersionCode / 10 % 10}.${offeredVersionCode % 10}"
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(onClick = {
+                    val listing = Intent(Intent.ACTION_VIEW, GP_URL.toUri())
+                        .setPackage("com.android.vending")
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    try {
+                        context.startActivity(listing)
+                    } catch (_: ActivityNotFoundException) {
+                        openLink(context, GP_URL)
+                    }
+                }) {
+                    Text("${stringResource(R.string.app_update_now)} · $version")
                 }
             }
 

@@ -63,6 +63,22 @@ public class PlayUpdateControllerTest {
         controller.onDestroy();
     }
 
+    @Test public void aboutReturnsPlayOfferWithoutADeskPolicy() throws Exception {
+        int installed = (int) activity.getPackageManager()
+                .getPackageInfo(activity.getPackageName(), 0).getLongVersionCode();
+        int[] offered = {-1};
+        runtime.checkAboutVersion(version -> offered[0] = version);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(installed + 1, offered[0]);
+        assertEquals(UpdateDecision.Mode.NONE, runtime.mode());
+
+        play.setUpdateAvailable(installed);
+        runtime.checkAboutVersion(version -> offered[0] = version);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(0, offered[0]);
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+    }
+
     @Test public void requiredCardHasOneActionAndReturnsAfterPhoneUseAndForegrounding() {
         setRequired(true);
         controller.onResume();

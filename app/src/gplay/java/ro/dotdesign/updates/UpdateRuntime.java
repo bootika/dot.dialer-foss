@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
 /** Process-scoped, coalesced asynchronous checks; never called synchronously by capture/upload. */
 public final class UpdateRuntime {
@@ -80,6 +81,29 @@ public final class UpdateRuntime {
     public boolean required() {return mode()==UpdateDecision.Mode.REQUIRED;}
     public boolean available() {return mode()!=UpdateDecision.Mode.NONE;}
     public boolean enabled() {return context.getPackageName().equals(audience);}
+
+    /** Availability for a user-initiated visit to the Play listing, independent of Desk. */
+    public void checkAboutVersion(Consumer<Integer> result) {
+        if (!enabled() || installed <= 0) {
+            result.accept(0);
+            return;
+        }
+        try {
+            manager.getAppUpdateInfo()
+                    .addOnSuccessListener(info -> result.accept(isNewerOffer(info) ? info.availableVersionCode() : 0))
+                    .addOnFailureListener(error -> result.accept(0));
+        } catch (RuntimeException unavailable) {
+            result.accept(0);
+        }
+    }
+
+    private boolean isNewerOffer(AppUpdateInfo info) {
+        int availability = info.updateAvailability();
+        return info.availableVersionCode() > installed
+                && (availability == UpdateAvailability.UPDATE_AVAILABLE
+                || availability == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS);
+    }
+
     Snapshot snapshot() {return snapshot;}
     void acceptFlexibleInstall(int build) {flexibleInstallBuild=build;}
     boolean matchesFlexibleInstall(int build) {return flexibleInstallBuild==build;}
@@ -94,9 +118,11 @@ public final class UpdateRuntime {
         attempted=true;lastAttempt=now;checking=true;
         // Fetch Play first. No policy HTTP call is needed for an ineligible/latest installation.
         manager.getAppUpdateInfo().addOnSuccessListener(info -> {
-            int availability=info.updateAvailability();
-            if((availability!=UpdateAvailability.UPDATE_AVAILABLE && availability!=UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
-                    ||info.availableVersionCode()<=installed){snapshot=null;checking=false;return;}
+            if (!isNewerOffer(info)) {
+                snapshot = null;
+                checking = false;
+                return;
+            }
             executor.execute(() -> {
                 Policy policy=null;
                 try {policy=fetchPolicy(info.availableVersionCode());}catch(Exception ignored) { /* No transport error is a denial. */ }

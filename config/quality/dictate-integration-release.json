@@ -15,7 +15,7 @@
   "evidence": "Fresh synthetic WAV import on Google-signed Dialer348 and public Dictate99 completed real-provider transcription and Romanian translation. Explicit pairing consent and signed reviewer access passed. Saved results survived client update; superseded failure appears only in processing history. Public tool exclusion is checked separately.",
   "approvedOpenCandidate": {
     "status": "pending_device_verification",
-    "versionCode": 368,
+    "versionCode": 370,
     "consumerSourceSha256": "e9897b2a2c69f38111285e613b6afdfcaaccde6bf1fa91f536d6749b5d1cde13"
   }
 }

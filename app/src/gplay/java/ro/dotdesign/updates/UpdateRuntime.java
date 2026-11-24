@@ -82,7 +82,7 @@ public final class UpdateRuntime {
     public boolean available() {return mode()!=UpdateDecision.Mode.NONE;}
     public boolean enabled() {return context.getPackageName().equals(audience);}
 
-    /** Availability for a user-initiated visit to the Play listing, independent of Desk. */
+    /** Play offer for About, independent of Desk. A negative result means the check failed. */
     public void checkAboutVersion(Consumer<Integer> result) {
         if (!enabled() || installed <= 0) {
             result.accept(0);
@@ -90,10 +90,13 @@ public final class UpdateRuntime {
         }
         try {
             manager.getAppUpdateInfo()
-                    .addOnSuccessListener(info -> result.accept(isNewerOffer(info) ? info.availableVersionCode() : 0))
-                    .addOnFailureListener(error -> result.accept(0));
+                    .addOnSuccessListener(info -> {
+                        if(info.updateAvailability()==UpdateAvailability.UNKNOWN)result.accept(-1);
+                        else result.accept(isNewerOffer(info) ? info.availableVersionCode() : 0);
+                    })
+                    .addOnFailureListener(error -> result.accept(-1));
         } catch (RuntimeException unavailable) {
-            result.accept(0);
+            result.accept(-1);
         }
     }
 

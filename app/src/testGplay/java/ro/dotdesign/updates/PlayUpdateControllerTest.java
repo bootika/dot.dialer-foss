@@ -79,6 +79,40 @@ public class PlayUpdateControllerTest {
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
+    @Test public void aboutOfferIsDismissibleAndCanBeCheckedAgainWithoutADeskRule() throws Exception {
+        int target = (int) activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0)
+                .getLongVersionCode() + 1;
+        int[] listingOpens = {0};
+        controller.onResume();
+        controller.showAboutUpdate(target, "3.7.2", () -> listingOpens[0]++);
+        AlertDialog offered = currentDialog();
+        assertEquals(List.of(activity.getString(R.string.app_update_now),
+                activity.getString(R.string.app_update_later)), labels(offered));
+        tick();
+        assertTrue(offered.isShowing());
+        buttons(offered).get(1).performClick();
+        assertFalse(offered.isShowing());
+
+        controller.showAboutUpdate(target, "3.7.2", () -> listingOpens[0]++);
+        buttons(currentDialog()).get(0).performClick();
+        assertEquals(1, listingOpens[0]);
+        assertFalse(play.isImmediateFlowVisible());
+    }
+
+    @Test public void aboutUpToDateHasOnlyOkAndDoesNotCoverMandatoryUpdate() {
+        controller.onResume();
+        controller.showAboutUpToDate(activity.getString(R.string.app_update_none));
+        AlertDialog upToDate = currentDialog();
+        assertEquals(List.of(activity.getString(android.R.string.ok)), labels(upToDate));
+        buttons(upToDate).get(0).performClick();
+        assertFalse(upToDate.isShowing());
+
+        controller.showAboutUpToDate(activity.getString(R.string.app_update_none));
+        setRequired(true);
+        tick();
+        assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(currentDialog()));
+    }
+
     @Test public void requiredCardHasOneActionAndReturnsAfterPhoneUseAndForegrounding() {
         setRequired(true);
         controller.onResume();

@@ -33,7 +33,7 @@ public final class PlayUpdateController implements UpdateHandle {
     private final Handler handler=new Handler(Looper.getMainLooper());
     private boolean resumed,destroyed,inFlow,downloaded,launching,resumeImmediate;
     private AlertDialog dialog;
-    private boolean requiredCard;
+    private boolean requiredCard, aboutCard;
     private final InstallStateUpdatedListener listener=this::installState;
     private void installState(com.google.android.play.core.install.InstallState state) {
         if(state.installStatus()==InstallStatus.DOWNLOADED)downloaded=true;
@@ -57,7 +57,7 @@ public final class PlayUpdateController implements UpdateHandle {
         UpdateDecision.Mode mode=runtime.mode();
         if(unsafe||!runtime.online()){dismiss();}
         else if(mode==UpdateDecision.Mode.REQUIRED&&resumeImmediate&&!inFlow&&!launching&&dialog==null)resumeUpdate();
-        else if(mode==UpdateDecision.Mode.NONE){dismiss();}
+        else if(mode==UpdateDecision.Mode.NONE&&!aboutCard){dismiss();}
         else if(!inFlow&&!launching) {
             UpdateRuntime.Snapshot snapshot=runtime.snapshot();
             if(downloaded && snapshot!=null && runtime.matchesFlexibleInstall(snapshot.info.availableVersionCode())) {
@@ -92,7 +92,45 @@ public final class PlayUpdateController implements UpdateHandle {
         if(resultCode!=Activity.RESULT_OK && resultCode!=Activity.RESULT_CANCELED)runtime.unavailable();
         return true;
     }
-    private void dismiss(){if(dialog!=null){dialog.dismiss();dialog=null;}requiredCard=false;}
+    private void dismiss(){
+        if(dialog!=null){dialog.dismiss();dialog=null;}
+        requiredCard=false;
+        aboutCard=false;
+    }
+
+    @Override public void dismissAboutUpdate(){
+        if(aboutCard)dismiss();
+    }
+
+    @Override public void showAboutUpToDate(String message){
+        if(!canShowAboutCard()||runtime.required())return;
+        aboutCard=true;
+        showCard(false,0,null,this::dismiss,message);
+    }
+
+    private boolean canShowAboutCard(){
+        return resumed&&!destroyed&&!inFlow&&!launching&&dialog==null&&!busy.getAsBoolean();
+    }
+
+    @Override public void showAboutUpdate(int target, String version, Runnable openListing){
+        if(target<=0||!canShowAboutCard())return;
+        UpdateRuntime.Snapshot offer=runtime.snapshot();
+        if(offer!=null&&offer.info.availableVersionCode()==target&&runtime.required()){
+            showCard(true);
+            return;
+        }
+        aboutCard=true;
+        showCard(false,target,version,()->{
+            UpdateRuntime.Snapshot current=runtime.snapshot();
+            dismiss();
+            if(busy.getAsBoolean()||!resumed)return;
+            if(current!=null&&current.info.availableVersionCode()==target&&runtime.available()){
+                start(target);
+            }else{
+                openListing.run();
+            }
+        },null);
+    }
     private void showOptional(){
         UpdateRuntime.Snapshot s=runtime.snapshot();
         if(s!=null)activity.getSharedPreferences("app-update-prompts",0).edit().putLong("shown_"+s.info.availableVersionCode(),System.currentTimeMillis()).apply();
@@ -111,6 +149,10 @@ public final class PlayUpdateController implements UpdateHandle {
         if(bold)v.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return v;
     }
     private void showCard(boolean required){
+        showCard(required,0,null,null,null);
+    }
+
+    private void showCard(boolean required, int aboutTarget, String aboutVersion, Runnable aboutAction, String statusTitle){
         boolean dark=(activity.getResources().getConfiguration().uiMode&0x30)==0x20;
         int foreground=dark?0xfff7f5fc:0xff25252c, muted=dark?0xffc7c1ce:0xff77747f;
         LinearLayout root=new LinearLayout(activity);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(24),dp(20),dp(24),dp(10));
@@ -123,10 +165,19 @@ public final class PlayUpdateController implements UpdateHandle {
         content.addView(illustration,new LinearLayout.LayoutParams(dp(126),dp(122)));
         int ink=accent==0xff00ac78?(dark?0xff9eedd0:0xff008761):(dark?0xffddd4ee:0xff5942bd);
         TextView brand=text(activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString(),12,ink,true);content.addView(brand);
-        TextView heading=text(activity.getString(title),26,foreground,true);heading.setAccessibilityHeading(true);heading.setPadding(0,dp(6),0,dp(12));content.addView(heading);
-        TextView description=text(activity.getString(required?body:optional),14,muted,false);description.setPadding(0,0,0,dp(20));content.addView(description);
+        TextView heading=text(statusTitle==null?activity.getString(title):statusTitle,26,foreground,true);heading.setAccessibilityHeading(true);heading.setPadding(0,dp(6),0,dp(12));content.addView(heading);
+        if(statusTitle==null){
+            TextView description=text(activity.getString(required?body:optional),14,muted,false);
+            description.setPadding(0,0,0,dp(20));
+            content.addView(description);
+        }
+        if(aboutVersion!=null){
+            TextView version=text(aboutVersion,12,ink,true);
+            version.setPadding(0,0,0,dp(12));
+            content.addView(version);
+        }
         UpdateRuntime.Snapshot s=runtime.snapshot();
-        if(s!=null&&s.notes.length>0){
+        if(statusTitle==null&&s!=null&&(aboutTarget==0||s.info.availableVersionCode()==aboutTarget)&&s.notes.length>0){
             LinearLayout panel=new LinearLayout(activity);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(14),dp(16),dp(10));
             panel.setBackground(shape(dark?0xff34303f:(accent==0xff00ac78?0xffeaf7f0:0xfff2eefc),17));
             TextView label=text(activity.getString(newsLabel),12,ink,true);label.setAccessibilityHeading(true);label.setGravity(Gravity.START);label.setPadding(0,0,0,dp(8));panel.addView(label);
@@ -142,19 +193,23 @@ public final class PlayUpdateController implements UpdateHandle {
             panel.addView(notes);content.addView(panel,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         upper.addView(content);root.addView(upper);
-        Button primary=new Button(activity);primary.setText(update);primary.setTextSize(16);primary.setAllCaps(false);primary.setTypeface(Typeface.DEFAULT,Typeface.BOLD);primary.setTextColor(Color.WHITE);
+        Button primary=new Button(activity);primary.setText(statusTitle==null?update:android.R.string.ok);primary.setTextSize(16);primary.setAllCaps(false);primary.setTypeface(Typeface.DEFAULT,Typeface.BOLD);primary.setTextColor(Color.WHITE);
         primary.setBackground(shape(accent,16));primary.setMinHeight(dp(52));primary.setPadding(dp(12),dp(12),dp(12),dp(12));
         LinearLayout.LayoutParams action=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);action.topMargin=dp(20);root.addView(primary,action);
         dialog=new AlertDialog.Builder(activity).setView(root).setCancelable(!required).create();
         requiredCard=required;
-        dialog.setOnCancelListener(d->dialog=null);
+        dialog.setOnCancelListener(d->{dialog=null;requiredCard=false;aboutCard=false;});
         primary.setOnClickListener(v->{
+            if(aboutAction!=null){
+                aboutAction.run();
+                return;
+            }
             UpdateRuntime.Snapshot snapshot=runtime.snapshot();
             if(snapshot==null)return;
             dismiss();
             start(snapshot.info.availableVersionCode());
         });
-        if(!required){
+        if(!required&&statusTitle==null){
             Button secondary=new Button(activity);secondary.setText(later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));
             root.addView(secondary,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
             secondary.setOnClickListener(v->dismiss());

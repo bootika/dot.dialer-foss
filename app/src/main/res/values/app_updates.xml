@@ -9,4 +9,7 @@
     <string name="app_update_restart">Restart now</string>
     <string name="app_update_optional">A few improvements to make things easier.</string>
     <string name="app_update_news">What’s new</string>
+    <string name="app_update_check">Check for updates</string>
+    <string name="app_update_none">You\'re up to date.</string>
+    <string name="app_update_check_failed">Couldn’t check for updates. Try again.</string>
 </resources>

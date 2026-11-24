@@ -9,4 +9,7 @@
     <string name="app_update_restart">Riavvia ora</string>
     <string name="app_update_optional">Qualche miglioramento per rendere tutto più semplice.</string>
     <string name="app_update_news">Novità</string>
+    <string name="app_update_check">Controlla aggiornamenti</string>
+    <string name="app_update_none">L’app è aggiornata.</string>
+    <string name="app_update_check_failed">Impossibile controllare gli aggiornamenti. Riprova.</string>
 </resources>

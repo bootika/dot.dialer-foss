@@ -9,4 +9,7 @@
     <string name="app_update_restart">Redémarrer</string>
     <string name="app_update_optional">Quelques améliorations pour vous simplifier la vie.</string>
     <string name="app_update_news">Nouveautés</string>
+    <string name="app_update_check">Rechercher des mises à jour</string>
+    <string name="app_update_none">L’application est à jour.</string>
+    <string name="app_update_check_failed">Impossible de rechercher des mises à jour. Réessayez.</string>
 </resources>

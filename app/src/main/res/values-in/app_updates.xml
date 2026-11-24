@@ -9,4 +9,7 @@
     <string name="app_update_restart">Mulai ulang sekarang</string>
     <string name="app_update_optional">Beberapa perbaikan agar semuanya lebih mudah.</string>
     <string name="app_update_news">Yang baru</string>
+    <string name="app_update_check">Periksa pembaruan</string>
+    <string name="app_update_none">Aplikasi sudah versi terbaru.</string>
+    <string name="app_update_check_failed">Tidak dapat memeriksa pembaruan. Coba lagi.</string>
 </resources>

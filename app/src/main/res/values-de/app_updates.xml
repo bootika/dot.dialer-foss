@@ -9,4 +9,7 @@
     <string name="app_update_restart">Jetzt neu starten</string>
     <string name="app_update_optional">Ein paar Verbesserungen, die den Alltag leichter machen.</string>
     <string name="app_update_news">Was ist neu?</string>
+    <string name="app_update_check">Nach Updates suchen</string>
+    <string name="app_update_none">Die App ist auf dem neuesten Stand.</string>
+    <string name="app_update_check_failed">Suche nach Updates fehlgeschlagen. Versuche es erneut.</string>
 </resources>

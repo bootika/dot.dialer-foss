@@ -123,7 +123,7 @@ import io.github.bootika.dotdialer.core.diagnostics.DiagnosticEvent
 import io.github.bootika.dotdialer.diagnostics.AppDiagnostics
 
 class MainActivity : FragmentActivity() {
-    private val appUpdates by lazy { AppUpdates.create(this) }
+    internal val appUpdates by lazy { AppUpdates.create(this) }
     companion object {
         const val EXTRA_RETURN_TO_CALL_ON_BACK = "return_to_call_on_back"
     }

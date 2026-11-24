@@ -4,6 +4,7 @@ import dev.goodwy.rphone.view.theme.accentText
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.view.Surface
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Canvas
@@ -49,6 +50,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import dev.goodwy.rphone.AppUpdates
+import dev.goodwy.rphone.MainActivity
 import dev.goodwy.rphone.GITHUB_URL
 import dev.goodwy.rphone.privacyPolicyUrl
 import dev.goodwy.rphone.termsAndConditionsUrl
@@ -92,15 +94,48 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val language = LocalConfiguration.current.locales[0].language
     val appInfo = getAppVersion(context)
-    var offeredVersionCode by remember(context) { mutableIntStateOf(0) }
-    LifecycleResumeEffect(context) {
-        var observing = true
+    val updateHost = LocalActivity.current as? MainActivity
+    val isGooglePlay = BuildConfig.FLAVOR == "gplay"
+    var checkedOnEntry by remember { mutableStateOf(false) }
+    var checking by remember { mutableStateOf(false) }
+    var checkGeneration by remember { mutableIntStateOf(0) }
+
+    fun checkForUpdates(manual: Boolean) {
+        if (!isGooglePlay || checking || updateHost == null) return
+        checking = true
+        val generation = ++checkGeneration
         AppUpdates.checkAboutVersion(context) { versionCode ->
-            if (observing) offeredVersionCode = versionCode
+            if (generation == checkGeneration) {
+                checking = false
+                checkedOnEntry = true
+                when {
+                    versionCode > 0 -> {
+                        val version = listOf(versionCode / 100, versionCode / 10 % 10, versionCode % 10).joinToString(".")
+                        updateHost.appUpdates.showAboutUpdate(versionCode, version) {
+                            val listing = Intent(Intent.ACTION_VIEW, GP_URL.toUri())
+                                .setPackage("com.android.vending")
+                            try {
+                                updateHost.startActivity(listing)
+                            } catch (_: ActivityNotFoundException) {
+                                openLink(context, GP_URL)
+                            }
+                        }
+                    }
+                    manual && versionCode == 0 -> updateHost.appUpdates.showAboutUpToDate(
+                        context.getString(R.string.app_update_none)
+                    )
+                    manual -> context.toast(context.getString(R.string.app_update_check_failed))
+                }
+            }
         }
+    }
+
+    LifecycleResumeEffect(context, updateHost) {
+        if (!checkedOnEntry) checkForUpdates(manual = false)
         onPauseOrDispose {
-            observing = false
-            offeredVersionCode = 0
+            checkGeneration++
+            checking = false
+            updateHost?.appUpdates?.dismissAboutUpdate()
         }
     }
     val storeName = when (BuildConfig.FLAVOR) {
@@ -265,23 +300,6 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            if (offeredVersionCode > 0) {
-                val version = "${offeredVersionCode / 100}.${offeredVersionCode / 10 % 10}.${offeredVersionCode % 10}"
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(onClick = {
-                    val listing = Intent(Intent.ACTION_VIEW, GP_URL.toUri())
-                        .setPackage("com.android.vending")
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    try {
-                        context.startActivity(listing)
-                    } catch (_: ActivityNotFoundException) {
-                        openLink(context, GP_URL)
-                    }
-                }) {
-                    Text("${stringResource(R.string.app_update_now)} · $version")
-                }
-            }
-
             Spacer(modifier = Modifier.height(32.dp))
 
             SettingsImmediateSection() {
@@ -326,6 +344,20 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                         trailingIcon = Icons.Default.ChevronRight,
                         onClick = { openLink(context, termsAndConditionsUrl(language)) }
                     )
+                    if (isGooglePlay) {
+                        RillListItem(
+                            headline = stringResource(R.string.app_update_check),
+                            expandText = true,
+                            leadingIcon = Icons.Rounded.Refresh,
+                            iconContainerColor = Color.Black,
+                            iconBgContainerColor = MaterialTheme.colorScheme.customColors.colorAmber,
+                            trailingIcon = if (checking) null else Icons.Default.ChevronRight,
+                            trailingContent = if (checking) {
+                                { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) }
+                            } else null,
+                            onClick = { checkForUpdates(manual = true) }
+                        )
+                    }
                     RillListItem(
                         headline = stringResource(R.string.contributors),
                         expandText = true,

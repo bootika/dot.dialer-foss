@@ -105,6 +105,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Check source size, dependencies and legacy code
+        run: timeout --kill-after=30s 8m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process architectureCheck sourceSizeRatchet legacySmellRatchet
+
       - name: Verify uncached Robolectric runtime
         run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testFossDebugUnitTest --tests '*AppModuleResolutionTest' --tests '*PlanGuideRenderingTest' --tests '*CallConferenceMistRenderingTest' --tests '*VoiceSearchRenderingTest'
 

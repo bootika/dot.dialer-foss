@@ -40,9 +40,7 @@ import dev.goodwy.rphone.view.theme.DotDialerAppTheme
 import dev.goodwy.rphone.view.theme.TabTransitionStyle
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.ContactDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DialPadScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ContactEditScreenDestination
 import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.ui.platform.LocalConfiguration
@@ -799,63 +797,9 @@ class MainActivity : FragmentActivity() {
         target ?: return
         intentState = null
 
-        when (target) {
-            is NavigationTarget.OngoingCall -> startActivity(Intent(this, CallActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            })
-            is NavigationTarget.Search -> navController.navigate(com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination(initialQuery = target.query).route)
-            is NavigationTarget.Recents -> {
-                navController.navigate(RecentScreenDestination.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                        inclusive = false // Don't remove the home screen
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-
-                    // Disable the animation for instant opening from a notification
-                    anim {
-                        enter = 0
-                        exit = 0
-                        popEnter = 0
-                        popExit = 0
-                    }
-                }
-            }
-            is NavigationTarget.Dialpad -> {
-                io.github.bootika.dotdialer.diagnostics.recordDialNumber(
-                    io.github.bootika.dotdialer.core.diagnostics.DialNumberStage.NAVIGATION, target.number)
-                navController.navigate(DialPadScreenDestination(initialNumber = target.number).route)
-                if (intent.isPhoneRequest()) {
-                    phoneUpdateEntry = navController.currentBackStackEntry
-                }
-            }
-            is NavigationTarget.ContactUnavailable -> {
-                android.widget.Toast.makeText(this, R.string.no_contacts_found, android.widget.Toast.LENGTH_SHORT).show()
-            }
-            is NavigationTarget.ContactDetails -> {
-                navController.navigate(ContactDetailsScreenDestination(contactId = target.contactId).route)
-            }
-            is NavigationTarget.ContactEdit -> {
-                navController.navigate(ContactEditScreenDestination(
-                    contactId = target.contactId,
-                    initialName = target.initialName,
-                    initialPhone = target.initialPhone
-                ).route) {
-                    launchSingleTop = true
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                }
-            }
-            is NavigationTarget.ContactPhotos -> {
-                navController.navigate(dev.goodwy.rphone.controller.contactPhotoReviewRoute(target.account)) { launchSingleTop = true }
-            }
-            is NavigationTarget.ContactManagement -> {
-                navController.navigate(dev.goodwy.rphone.controller.contactManagementIntentRoute()) {
-                    launchSingleTop = true
-                }
-            }
+        navigateExternalTarget(navController, target)
+        if (target is NavigationTarget.Dialpad && intent.isPhoneRequest()) {
+            phoneUpdateEntry = navController.currentBackStackEntry
         }
     }
 }

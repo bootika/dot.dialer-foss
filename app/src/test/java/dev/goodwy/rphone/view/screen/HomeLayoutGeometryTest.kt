@@ -16,11 +16,9 @@ class HomeLayoutGeometryTest {
 
     @Test
     fun `home top bar stays inside horizontal safe drawing bounds`() {
-        val source = repoFile(
-            "app/src/main/java/dev/goodwy/rphone/view/screen/UnifiedHomeScreen.kt",
+        val topBar = repoFile(
+            "app/src/main/java/dev/goodwy/rphone/view/screen/UnifiedHomeTopBar.kt",
         ).readText()
-        val topBar = source.substringAfter("internal fun UnifiedHomeTopBar(")
-            .substringBefore("private fun UnifiedHomeContent(")
 
         assertTrue(
             topBar.contains(

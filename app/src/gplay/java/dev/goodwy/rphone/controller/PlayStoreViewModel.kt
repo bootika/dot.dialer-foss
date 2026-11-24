@@ -12,7 +12,6 @@ import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
-import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
@@ -181,10 +180,11 @@ class PlayStoreViewModel internal constructor(
             _iapSkuDetails.value = emptyList()
             _iapSkuDetailsInitialized.value = true
         } else {
-            queryProductDetails(
+            queryPlayProductDetails(
                 client = client,
                 productIds = iaps,
                 productType = BillingClient.ProductType.INAPP,
+                onError = { _errorMessage.value = it },
                 onResult = {
                     _iapSkuDetails.value = it
                     _iapSkuDetailsInitialized.value = true
@@ -197,10 +197,11 @@ class PlayStoreViewModel internal constructor(
             _subSkuDetails.value = emptyList()
             _subSkuDetailsInitialized.value = true
         } else {
-            queryProductDetails(
+            queryPlayProductDetails(
                 client = client,
                 productIds = subs,
                 productType = BillingClient.ProductType.SUBS,
+                onError = { _errorMessage.value = it },
                 onResult = {
                     _subSkuDetails.value = it
                     _subSkuDetailsInitialized.value = true
@@ -212,34 +213,6 @@ class PlayStoreViewModel internal constructor(
         if (pendingQueries == 0) {
             _isLoading.value = false
             queryPurchases()
-        }
-    }
-
-    private fun queryProductDetails(
-        client: BillingClient,
-        productIds: List<String>,
-        productType: String,
-        onResult: (List<ProductDetails>) -> Unit,
-    ) {
-        val products = productIds.map { productId ->
-            QueryProductDetailsParams.Product.newBuilder()
-                .setProductId(productId)
-                .setProductType(productType)
-                .build()
-        }
-        val params = QueryProductDetailsParams.newBuilder().setProductList(products).build()
-        try {
-            client.queryProductDetailsAsync(params) { result, details ->
-                if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                    onResult(details.productDetailsList)
-                } else {
-                    _errorMessage.value = billingError("Unable to load products", result)
-                    onResult(emptyList())
-                }
-            }
-        } catch (error: RuntimeException) {
-            _errorMessage.value = error.message ?: "Unable to load products"
-            onResult(emptyList())
         }
     }
 
@@ -497,12 +470,6 @@ class PlayStoreViewModel internal constructor(
     private fun fail(prefix: String, result: BillingResult) {
         _errorMessage.value = billingError(prefix, result)
         _isLoading.value = false
-    }
-
-    private fun billingError(prefix: String, result: BillingResult): String {
-        val detail = result.debugMessage.takeIf(String::isNotBlank)
-            ?: result.responseCode.toString()
-        return "$prefix: $detail"
     }
 
     private fun noConnectionLabel(): String =

@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.*
@@ -42,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.controller.license.PlanConfirmation
 import dev.goodwy.rphone.controller.license.PlanConfirmationSource
+import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
 import dev.goodwy.rphone.view.screen.onboarding.onboardingPrimaryButtonColors
 import dev.goodwy.rphone.view.theme.DotJade
 import dev.goodwy.rphone.view.theme.accentText
@@ -298,7 +298,7 @@ private fun ConfirmationArt(size: Dp) {
             Box(contentAlignment = Alignment.Center) {
                 Spacer(Modifier.align(Alignment.TopCenter).padding(top = size * .09f).width(size * .12f)
                     .height(size * .02f).background(brand.copy(alpha = .42f), CircleShape))
-                Icon(Icons.Outlined.Phone, null, Modifier.size(size * .23f), tint = brand)
+                Icon(DotDialerHandsetIcon, null, Modifier.size(size * .23f), tint = brand)
             }
         }
         Canvas(Modifier.fillMaxSize()) {

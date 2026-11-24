@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
+import dev.goodwy.rphone.view.components.DotDialerHandsetIcon
 import dev.goodwy.rphone.view.theme.DotJade
 
 @Composable
@@ -87,7 +87,7 @@ internal fun EssentialOnboardingPage(onNext: () -> Unit) {
                     ) {
                         Column(Modifier.fillMaxWidth().padding(if (dense) 10.dp else 14.dp),
                             verticalArrangement = Arrangement.spacedBy(if (dense) 6.dp else 10.dp)) {
-                            WelcomeInformationRow(Icons.Rounded.Call, R.string.welcome_phone, R.string.welcome_phone_summary, dense)
+                            WelcomeInformationRow(DotDialerHandsetIcon, R.string.welcome_phone, R.string.welcome_phone_summary, dense)
                             HorizontalDivider(color = colors.outlineVariant)
                             WelcomeInformationRow(
                                 Icons.Rounded.Description, R.string.welcome_reporting, R.string.welcome_reporting_summary, dense,
@@ -224,7 +224,7 @@ internal fun OnboardingPhoneArt(keypad: Boolean, size: Dp, roleCheck: Boolean = 
                 .size(size * 0.29f).background(colors.primary, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(Icons.Rounded.Call, null, Modifier.size(size * 0.16f), tint = colors.onPrimary)
+            Icon(DotDialerHandsetIcon, null, Modifier.size(size * 0.16f), tint = colors.onPrimary)
         }
     }
 }

@@ -5,6 +5,7 @@
     <string name="feature_tip_see_how">See how</string>
     <string name="feature_tip_hide">Hide</string>
     <string name="feature_tip_avatar_title">Long-press the avatar</string>
+    <string name="avatar_preview_initials" translatable="false">AM</string>
     <string name="feature_tip_avatar_body">During a call, change the photo style or turn off ambient droplets.</string>
     <string name="feature_tip_try">Try it here</string>
     <string name="feature_tip_gesture_action" translatable="false">%1$s: %2$s</string>

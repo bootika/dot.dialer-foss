@@ -51,8 +51,8 @@ class CallStyleSetupTest {
         continueButton.assertIsDisplayed()
         capture("welcome-320x568")
         rule.onNodeWithText("Ce date se trimit?").performClick()
-        rule.onNodeWithText("No contacts", substring = true).assertDoesNotExist()
-        rule.onNodeWithText("Fără contacte", substring = true).assertExists()
+        rule.onNodeWithText("Technical error reports are automatic by default.", substring = true).assertDoesNotExist()
+        rule.onNodeWithText("Rapoartele tehnice de eroare sunt automate implicit.", substring = true).assertExists()
         continueButton.assertIsDisplayed().performClick()
         rule.runOnIdle { assertTrue(continued) }
     }

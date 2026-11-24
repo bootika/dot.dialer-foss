@@ -62,7 +62,7 @@ private fun CallAvatarGesturePreview(appearance: String) {
                     .combinedClickable(onClick = { expanded = true }, onLongClick = { expanded = true }),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("AM", style = MaterialTheme.typography.titleLarge, color = colors.onPrimaryContainer)
+                Text(stringResource(R.string.avatar_preview_initials), style = MaterialTheme.typography.titleLarge, color = colors.onPrimaryContainer)
                 if (previewDroplets) {
                     Box(Modifier.align(Alignment.TopEnd).padding(5.dp).size(12.dp)
                         .background(colors.primary.copy(alpha = 0.35f), CircleShape))

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.*
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.core.graphics.createBitmap
@@ -110,12 +111,13 @@ class SmallCallPhotoSettingTest {
         }
         val smallPhotoSwitch = rule.onNode(isToggleable() and hasAnyAncestor(hasText(title)))
         smallPhotoSwitch.assertIsOn()
-        rule.onNodeWithText(title).performClick()
-        rule.waitUntil(5_000) { full == true && !prefs.getBoolean(SmallCallPhotoPreference.KEY, true) }
-        assertEquals(fullStyle, prefs.getString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, null))
+        smallPhotoSwitch.performSemanticsAction(SemanticsActions.OnClick) { assertTrue(it()) }
         assertEquals(false, runBlocking { prefs.getPersistedPreferences() }[SmallCallPhotoPreference.KEY])
+        rule.waitUntil(5_000) { full == true }
+        assertEquals(fullStyle, prefs.getString(PreferenceManager.KEY_CALL_SCREEN_APPEARANCE, null))
         smallPhotoSwitch.assertIsOff()
-        rule.onNodeWithText(title).performClick()
+        smallPhotoSwitch.performSemanticsAction(SemanticsActions.OnClick) { assertTrue(it()) }
+        assertEquals(true, runBlocking { prefs.getPersistedPreferences() }[SmallCallPhotoPreference.KEY])
         rule.waitUntil(5_000) { full == false }
         replacePhoto(512)
         org.robolectric.Shadows.shadowOf(rule.activity.contentResolver).registerInputStreamSupplier(Uri.parse("content://avatar.fixture/revision")) { java.io.ByteArrayInputStream(file.readBytes()) }
@@ -131,8 +133,8 @@ class SmallCallPhotoSettingTest {
         rule.runOnIdle { revision++ }
         rule.waitForIdle()
         rule.waitUntil(5_000) { full == false }
-        rule.onNodeWithText(title).performClick()
-        rule.waitUntil(5_000) { !prefs.getBoolean(SmallCallPhotoPreference.KEY, true) }
+        smallPhotoSwitch.performSemanticsAction(SemanticsActions.OnClick) { assertTrue(it()) }
+        assertEquals(false, runBlocking { prefs.getPersistedPreferences() }[SmallCallPhotoPreference.KEY])
         rule.runOnIdle { uri = "file:///missing-photo.png" }
         rule.waitUntil(5_000) { full == true }
         assertEquals(1, settingsFocusIndex("C09", SettingsEditor.CALL_UI))

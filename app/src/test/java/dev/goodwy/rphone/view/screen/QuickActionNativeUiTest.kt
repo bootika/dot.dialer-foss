@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
@@ -73,6 +74,60 @@ class QuickActionNativeUiTest {
             rule.onRoot().performTouchInput {if(move>0)moveTo(start+Offset(move,0f));up()}
             rule.onNodeWithText(context.getString(R.string.copy_action)).assertDoesNotExist()
             assertEquals(-1,action);assertEquals(0,more);assertEquals(0,taps)
+        }
+    }
+
+    @Test fun quickActionsHoldOpeningChecksCurrentEntitlementForTouchAndAccessibility() {
+        var allowed = true
+        var requests = 0
+        var actions = 0
+        var taps = 0
+        startKoin { modules(module { single { PreferenceManager(context) } }) }
+        val name = "Test Alexandru Butica"
+        rule.setContent {
+            DotDialerTheme {
+                Surface {
+                    HomeResultRow(
+                        name, "0700000101", null, "0700000101",
+                        quickActionsEnabled = true,
+                        onQuickActionsOpen = { if (!allowed) requests++; allowed },
+                        onQuickAction = { actions++ },
+                        swipeEnabled = false,
+                        swipeRightAction = 0,
+                        swipeLeftAction = 0,
+                        haptics = false,
+                        hapticsStrength = "light",
+                        hapticsIntensity = .5f,
+                        onAction = {},
+                        onAvatarClick = {},
+                        onClick = { taps++ },
+                        isLastInSection = true,
+                        contactNameSize = 18,
+                        avatarSize = 46,
+                    )
+                }
+            }
+        }
+        val row = rule.onNode(hasText(name) and SemanticsMatcher.keyIsDefined(SemanticsActions.OnLongClick))
+        val tray = rule.onNodeWithText(context.getString(R.string.copy_action))
+        row.performSemanticsAction(SemanticsActions.OnLongClick) { assertTrue(it()) }
+        tray.assertIsDisplayed()
+        rule.runOnIdle { rule.activity.onBackPressedDispatcher.onBackPressed() }
+        tray.assertDoesNotExist()
+
+        rule.runOnIdle { allowed = false }
+        row.performSemanticsAction(SemanticsActions.OnLongClick) { assertFalse(it()) }
+        tray.assertDoesNotExist()
+        val start = row.fetchSemanticsNode().boundsInRoot.center
+        rule.onRoot().performTouchInput { down(start) }
+        rule.mainClock.advanceTimeBy(700)
+        tray.assertDoesNotExist()
+        rule.onRoot().performTouchInput { up() }
+
+        rule.runOnIdle {
+            assertEquals(2, requests)
+            assertEquals(0, actions)
+            assertEquals(0, taps)
         }
     }
 

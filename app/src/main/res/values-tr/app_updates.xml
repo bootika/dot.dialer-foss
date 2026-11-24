@@ -10,6 +10,7 @@
     <string name="app_update_optional">İşleri kolaylaştıracak birkaç iyileştirme.</string>
     <string name="app_update_news">Yenilikler</string>
     <string name="app_update_check">Güncellemeleri denetle</string>
-    <string name="app_update_none">Uygulaman güncel.</string>
+    <string name="app_update_none">Google Play bir güncelleme bildirmedi.</string>
     <string name="app_update_check_failed">Güncellemeler denetlenemedi. Tekrar dene.</string>
+    <string name="app_update_open_store">Google Play’i aç</string>
 </resources>

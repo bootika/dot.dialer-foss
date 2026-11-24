@@ -2,7 +2,7 @@ package ro.dotdesign.updates;
 
 public interface UpdateHandle {
     default void showAboutUpdate(int target, String version, Runnable openListing) {}
-    default void showAboutUpToDate(String message) {}
+    default void showAboutStatus(String message, String storeLabel, Runnable openListing) {}
     default void dismissAboutUpdate() {}
 
     void onResume();

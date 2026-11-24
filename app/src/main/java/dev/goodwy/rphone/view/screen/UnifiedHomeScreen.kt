@@ -1024,7 +1024,7 @@ fun UnifiedHomeScreen(navigator: DestinationsNavigator) {
                         HomeResultRow(
                             quickActionsOnTap = recentTapAction == dev.goodwy.rphone.controller.util.HOME_TAP_QUICK_ACTIONS && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && callEntry.number.isNotBlank(),
                             onQuickActionsOpen = { prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY) },
-                            quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty(),
+                            quickActionsEnabled = prefs.getBoolean(dev.goodwy.rphone.controller.util.HOME_QUICK_ACTION_GESTURE, false) && selectedRecentIds.isEmpty() && selectedContactIds.isEmpty() && callEntry.number.isNotBlank(),
                             onQuickAction = { action ->
                                 if (prefs.requireFeature(io.github.bootika.dotdialer.core.license.PlanFeature.CALL_PRODUCTIVITY)) {
                                     runContactNumberAction(listOf(ContactNumberMenuAction.Call, ContactNumberMenuAction.Message,
@@ -1423,6 +1423,7 @@ internal fun HomeResultRow(
     val context = LocalContext.current
     val quickGesture = remember(phoneNumber, title) { HomeQuickGestureState() }
     LaunchedEffect(quickActionsEnabled, quickActionsOnTap) { if (!quickActionsEnabled && !quickActionsOnTap) quickGesture.expanded = false }
+    val allowQuickActions by rememberUpdatedState(onQuickActionsOpen)
     val quickAction by rememberUpdatedState(onQuickAction)
     val rowTextColor = if (callVisual?.accentMetadata == true) {
         callStatusColor(callVisual.status)
@@ -1460,7 +1461,11 @@ internal fun HomeResultRow(
                         .homeCombinedClickable(
                             context, haptics, hapticsStrength, hapticsIntensity, if (quickActionsOnTap) ({ quickGesture.toggleForTap(onQuickActionsOpen) }) else onClick, if (quickActionsEnabled) null else onLongClick,
                         )
-                        .then(if (quickActionsEnabled) Modifier.quickActionGesture(quickGesture) { quickAction(it) } else Modifier)
+                        .then(
+                            if (quickActionsEnabled) {
+                                Modifier.quickActionGesture(quickGesture, allowOpen = { allowQuickActions() }) { quickAction(it) }
+                            } else Modifier
+                        )
                         .padding(
                             horizontal = 14.dp,
                             vertical = HOME_RESULT_VERTICAL_PADDING_DP.dp,

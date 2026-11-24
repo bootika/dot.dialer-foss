@@ -99,15 +99,23 @@ public class PlayUpdateControllerTest {
         assertFalse(play.isImmediateFlowVisible());
     }
 
-    @Test public void aboutUpToDateHasOnlyOkAndDoesNotCoverMandatoryUpdate() {
+    @Test public void aboutStatusOffersStoreAndDoesNotCoverMandatoryUpdate() {
         controller.onResume();
-        controller.showAboutUpToDate(activity.getString(R.string.app_update_none));
+        int[] listingOpens = {0};
+        String status = activity.getString(R.string.app_update_none);
+        String store = activity.getString(R.string.app_update_open_store);
+        controller.showAboutStatus(status, store, () -> listingOpens[0]++);
         AlertDialog upToDate = currentDialog();
-        assertEquals(List.of(activity.getString(android.R.string.ok)), labels(upToDate));
+        assertEquals(List.of(activity.getString(android.R.string.ok), store), labels(upToDate));
         buttons(upToDate).get(0).performClick();
         assertFalse(upToDate.isShowing());
 
-        controller.showAboutUpToDate(activity.getString(R.string.app_update_none));
+        controller.showAboutStatus(status, store, () -> listingOpens[0]++);
+        buttons(currentDialog()).get(1).performClick();
+        assertEquals(1, listingOpens[0]);
+        assertFalse(play.isImmediateFlowVisible());
+
+        controller.showAboutStatus(status, store, () -> listingOpens[0]++);
         setRequired(true);
         tick();
         assertEquals(List.of(activity.getString(R.string.app_update_now)), labels(currentDialog()));

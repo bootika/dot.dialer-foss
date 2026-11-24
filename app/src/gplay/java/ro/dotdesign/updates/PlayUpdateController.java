@@ -102,10 +102,10 @@ public final class PlayUpdateController implements UpdateHandle {
         if(aboutCard)dismiss();
     }
 
-    @Override public void showAboutUpToDate(String message){
+    @Override public void showAboutStatus(String message, String storeLabel, Runnable openListing){
         if(!canShowAboutCard()||runtime.required())return;
         aboutCard=true;
-        showCard(false,0,null,this::dismiss,message);
+        showCard(false,0,null,openListing,message,storeLabel);
     }
 
     private boolean canShowAboutCard(){
@@ -129,7 +129,7 @@ public final class PlayUpdateController implements UpdateHandle {
             }else{
                 openListing.run();
             }
-        },null);
+        },null,null);
     }
     private void showOptional(){
         UpdateRuntime.Snapshot s=runtime.snapshot();
@@ -149,10 +149,10 @@ public final class PlayUpdateController implements UpdateHandle {
         if(bold)v.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return v;
     }
     private void showCard(boolean required){
-        showCard(required,0,null,null,null);
+        showCard(required,0,null,null,null,null);
     }
 
-    private void showCard(boolean required, int aboutTarget, String aboutVersion, Runnable aboutAction, String statusTitle){
+    private void showCard(boolean required, int aboutTarget, String aboutVersion, Runnable aboutAction, String statusTitle, String storeLabel){
         boolean dark=(activity.getResources().getConfiguration().uiMode&0x30)==0x20;
         int foreground=dark?0xfff7f5fc:0xff25252c, muted=dark?0xffc7c1ce:0xff77747f;
         LinearLayout root=new LinearLayout(activity);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(24),dp(20),dp(24),dp(10));
@@ -200,6 +200,10 @@ public final class PlayUpdateController implements UpdateHandle {
         requiredCard=required;
         dialog.setOnCancelListener(d->{dialog=null;requiredCard=false;aboutCard=false;});
         primary.setOnClickListener(v->{
+            if(statusTitle!=null){
+                dismiss();
+                return;
+            }
             if(aboutAction!=null){
                 aboutAction.run();
                 return;
@@ -213,6 +217,16 @@ public final class PlayUpdateController implements UpdateHandle {
             Button secondary=new Button(activity);secondary.setText(later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));
             root.addView(secondary,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
             secondary.setOnClickListener(v->dismiss());
+        }
+        if(storeLabel!=null){
+            Button store=new Button(activity);
+            store.setText(storeLabel);store.setTextColor(muted);store.setTextSize(13);
+            store.setAllCaps(false);store.setBackgroundColor(Color.TRANSPARENT);store.setMinHeight(dp(48));
+            root.addView(store,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+            store.setOnClickListener(v->{
+                dismiss();
+                if(resumed&&!busy.getAsBoolean()&&!runtime.required())aboutAction.run();
+            });
         }
         dialog.show();
         if(dialog.getWindow()!=null){dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);dialog.getWindow().setLayout(Math.min(dp(360),activity.getResources().getDisplayMetrics().widthPixels-dp(32)),ViewGroup.LayoutParams.WRAP_CONTENT);}

@@ -10,6 +10,7 @@
     <string name="app_update_optional">Một vài cải tiến giúp mọi thứ dễ dàng hơn.</string>
     <string name="app_update_news">Có gì mới</string>
     <string name="app_update_check">Kiểm tra cập nhật</string>
-    <string name="app_update_none">Bạn đang dùng phiên bản mới nhất.</string>
+    <string name="app_update_none">Google Play không báo có bản cập nhật.</string>
     <string name="app_update_check_failed">Không thể kiểm tra cập nhật. Hãy thử lại.</string>
+    <string name="app_update_open_store">Mở Google Play</string>
 </resources>

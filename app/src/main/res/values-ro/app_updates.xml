@@ -10,6 +10,7 @@
     <string name="app_update_optional">Câteva lucruri noi, ca să-ți fie și mai ușor.</string>
     <string name="app_update_news">Ce e nou</string>
     <string name="app_update_check">Verifică actualizările</string>
-    <string name="app_update_none">Ai cea mai recentă versiune.</string>
+    <string name="app_update_none">Google Play nu a semnalat o actualizare.</string>
     <string name="app_update_check_failed">Verificarea a eșuat. Încearcă din nou.</string>
+    <string name="app_update_open_store">Deschide Google Play</string>
 </resources>

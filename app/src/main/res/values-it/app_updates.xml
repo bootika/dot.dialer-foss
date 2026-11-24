@@ -10,6 +10,7 @@
     <string name="app_update_optional">Qualche miglioramento per rendere tutto più semplice.</string>
     <string name="app_update_news">Novità</string>
     <string name="app_update_check">Controlla aggiornamenti</string>
-    <string name="app_update_none">L’app è aggiornata.</string>
+    <string name="app_update_none">Google Play non segnala aggiornamenti.</string>
     <string name="app_update_check_failed">Impossibile controllare gli aggiornamenti. Riprova.</string>
+    <string name="app_update_open_store">Apri Google Play</string>
 </resources>

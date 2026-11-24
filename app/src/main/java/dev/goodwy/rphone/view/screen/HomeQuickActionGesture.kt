@@ -34,21 +34,52 @@ internal class HomeQuickGestureState {
     }
 }
 
-internal fun Modifier.quickActionGesture(state: HomeQuickGestureState, onAction: (Int) -> Unit): Modifier =
+internal fun Modifier.quickActionGesture(
+    state: HomeQuickGestureState,
+    allowOpen: () -> Boolean,
+    onAction: (Int) -> Unit,
+): Modifier =
     onGloballyPositioned { state.origin = it.boundsInRoot().topLeft }
-        .semantics { onLongClick { state.expanded = true; true } }
+        .semantics {
+            onLongClick {
+                allowOpen().also { allowed -> if (allowed) state.expanded = true }
+            }
+        }
         .pointerInput(state) {
-            detectDragGesturesAfterLongPress(onDragStart = { start ->
-                state.pointer = state.origin + start; state.distance = 0f; state.hovered = -1; state.expanded = true
-            }, onDrag = { change, amount ->
-                change.consume(); state.pointer += amount; state.distance += amount.getDistance()
-                state.hovered = state.bounds.entries.firstOrNull { it.value.contains(state.pointer) }?.key ?: -1
-            }, onDragEnd = {
-                val chosen = state.hovered
-                state.expanded = false
-                state.hovered = -1
-                if (state.distance > viewConfiguration.touchSlop && chosen >= 0) onAction(chosen)
-            }, onDragCancel = { state.expanded = false; state.hovered = -1 })
+            var openedByHold = false
+            detectDragGesturesAfterLongPress(
+                onDragStart = { start ->
+                    openedByHold = allowOpen()
+                    if (openedByHold) {
+                        state.pointer = state.origin + start
+                        state.distance = 0f
+                        state.hovered = -1
+                        state.expanded = true
+                    }
+                },
+                onDrag = { change, amount ->
+                    if (openedByHold) {
+                        change.consume()
+                        state.pointer += amount
+                        state.distance += amount.getDistance()
+                        state.hovered = state.bounds.entries.firstOrNull { it.value.contains(state.pointer) }?.key ?: -1
+                    }
+                },
+                onDragEnd = {
+                    if (openedByHold) {
+                        val chosen = state.hovered
+                        state.expanded = false
+                        state.hovered = -1
+                        if (state.distance > viewConfiguration.touchSlop && chosen >= 0) onAction(chosen)
+                    }
+                },
+                onDragCancel = {
+                    if (openedByHold) {
+                        state.expanded = false
+                        state.hovered = -1
+                    }
+                },
+            )
         }
 
 @Composable

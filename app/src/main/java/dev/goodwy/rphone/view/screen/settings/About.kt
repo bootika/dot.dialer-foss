@@ -100,6 +100,15 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
     var checking by remember { mutableStateOf(false) }
     var checkGeneration by remember { mutableIntStateOf(0) }
 
+    fun openUpdateListing() {
+        val listing = Intent(Intent.ACTION_VIEW, GP_URL.toUri()).setPackage("com.android.vending")
+        try {
+            updateHost?.startActivity(listing)
+        } catch (_: ActivityNotFoundException) {
+            openLink(context, GP_URL)
+        }
+    }
+
     fun checkForUpdates(manual: Boolean) {
         if (!isGooglePlay || checking || updateHost == null) return
         checking = true
@@ -111,20 +120,18 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                 when {
                     versionCode > 0 -> {
                         val version = listOf(versionCode / 100, versionCode / 10 % 10, versionCode % 10).joinToString(".")
-                        updateHost.appUpdates.showAboutUpdate(versionCode, version) {
-                            val listing = Intent(Intent.ACTION_VIEW, GP_URL.toUri())
-                                .setPackage("com.android.vending")
-                            try {
-                                updateHost.startActivity(listing)
-                            } catch (_: ActivityNotFoundException) {
-                                openLink(context, GP_URL)
-                            }
+                        updateHost.appUpdates.showAboutUpdate(versionCode, version, ::openUpdateListing)
+                    }
+                    manual -> {
+                        val message = if (versionCode == 0) R.string.app_update_none else R.string.app_update_check_failed
+                        updateHost.appUpdates.showAboutStatus(
+                            context.getString(message),
+                            context.getString(R.string.app_update_open_store)
+                        ) {
+                            checkedOnEntry = false
+                            openUpdateListing()
                         }
                     }
-                    manual && versionCode == 0 -> updateHost.appUpdates.showAboutUpToDate(
-                        context.getString(R.string.app_update_none)
-                    )
-                    manual -> context.toast(context.getString(R.string.app_update_check_failed))
                 }
             }
         }

@@ -85,7 +85,7 @@ public final class UpdateRuntime {
     /** Play offer for About, independent of Desk. A negative result means the check failed. */
     public void checkAboutVersion(Consumer<Integer> result) {
         if (!enabled() || installed <= 0) {
-            result.accept(0);
+            result.accept(-1);
             return;
         }
         try {

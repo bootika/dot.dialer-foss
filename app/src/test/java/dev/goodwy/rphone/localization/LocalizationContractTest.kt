@@ -99,8 +99,12 @@ class LocalizationContractTest {
             }
 
             val intentional = COMMON_INTENTIONAL_IDENTICAL_TRANSLATIONS + INTENTIONAL_IDENTICAL_TRANSLATIONS.getValue(locale)
+            val intentionalAliases = identical.filter { name ->
+                val target = base.getValue(name).aliasTarget
+                target != null && target == translated.getValue(name).aliasTarget && target in intentional
+            }
             // Search aliases retain the old localized labels, including previously approved cognates.
-            val unexpected = identical - intentional - intentional.map { "settings_alias_$it" }.toSet()
+            val unexpected = identical - intentional - intentionalAliases - intentional.map { "settings_alias_$it" }.toSet()
             assertTrue(
                 "Unexpected English fallback in $locale: $unexpected",
                 unexpected.isEmpty(),
@@ -109,20 +113,25 @@ class LocalizationContractTest {
     }
 
     @Test
-    fun `Play purchase confirmation is flavor scoped and translated in every shipped locale`() {
+    fun `Play purchase and update text is flavor scoped and translated in every shipped locale`() {
         val key = "plan_purchase_complete"
         val base = resourcesInDirectory(repoFile("app/src/gplay/res/values"))
-        assertEquals(setOf(key), base.keys)
+        assertEquals(
+            setOf(key, "app_update_title", "app_update_required", "app_update_now", "app_update_later",
+                "app_update_optional", "app_update_news"),
+            base.keys,
+        )
         assertEquals(listOf("Your plan is active."), base.getValue(key).values)
         SUPPORTED_LOCALES.forEach { (locale, directory) ->
             val translated = resourcesInDirectory(repoFile("app/src/gplay/res/$directory"))
             assertEquals("Play resource coverage differs for $locale", base.keys, translated.keys)
-            val value = translated.getValue(key).values.single()
-            assertTrue("Empty Play confirmation for $locale", value.isNotBlank())
-            assertEquals(placeholderSignature(base.getValue(key).values.single()), placeholderSignature(value))
-            assertFalse("Play-only confirmation leaked into common resources", resourcesInDirectory(
-                repoFile("app/src/main/res/$directory"),
-            ).containsKey(key))
+            val shared = resourcesInDirectory(repoFile("app/src/main/res/$directory"))
+            base.forEach { (name, source) ->
+                val value = translated.getValue(name).values.single()
+                assertTrue("Empty Play resource: $locale/$name", value.isNotBlank())
+                assertEquals(placeholderSignature(source.values.single()), placeholderSignature(value))
+                assertFalse("Play-only resource leaked into common resources: $locale/$name", shared.containsKey(name))
+            }
         }
     }
 
@@ -147,6 +156,7 @@ class LocalizationContractTest {
         val translatable: Boolean,
         val kind: String,
         val quantities: List<String>,
+        val aliasTarget: String? = null,
     )
 
     private fun resourcesIn(file: File): LinkedHashMap<String, Resource> {
@@ -155,15 +165,16 @@ class LocalizationContractTest {
         val children = document.documentElement.childNodes
         for (index in 0 until children.length) {
             val element = children.item(index) as? Element ?: continue
-            if (element.tagName !in setOf("string", "plurals", "string-array")) continue
+            val kind = if (element.tagName == "item") element.getAttribute("type") else element.tagName
+            if (kind !in setOf("string", "plurals", "string-array")) continue
             val name = element.getAttribute("name")
-            val values = if (element.tagName == "string") {
+            val values = if (kind == "string") {
                 listOf(element.textContent)
             } else {
                 val items = element.getElementsByTagName("item")
                 (0 until items.length).map(items::item).map { it.textContent }
             }
-            check(result.put(name, Resource(values, element.getAttribute("translatable") != "false", element.tagName,
+            check(result.put(name, Resource(values, element.getAttribute("translatable") != "false", kind,
                 (0 until element.getElementsByTagName("item").length).map { (element.getElementsByTagName("item").item(it) as Element).getAttribute("quantity") })) == null) {
                 "Duplicate resource $name in $file"
             }
@@ -177,6 +188,21 @@ class LocalizationContractTest {
             resourcesIn(file).forEach { (name, resource) ->
                 check(result.put(name, resource) == null) { "Duplicate resource $name in $directory" }
             }
+        }
+        result.replaceAll { name, resource ->
+            if (resource.kind != "string") return@replaceAll resource
+            var value = resource.values.single()
+            var lastTarget: String? = null
+            val visited = mutableSetOf(name)
+            while (value.startsWith("@string/")) {
+                val target = value.removePrefix("@string/")
+                check(visited.add(target)) { "Cyclic string alias $name in $directory" }
+                val resolved = checkNotNull(result[target]) { "Missing string alias target $target for $name in $directory" }
+                check(resolved.kind == "string") { "Invalid string alias target $target for $name in $directory" }
+                lastTarget = resolved.aliasTarget ?: target
+                value = resolved.values.single()
+            }
+            resource.copy(values = listOf(value), aliasTarget = lastTarget)
         }
         return result
     }

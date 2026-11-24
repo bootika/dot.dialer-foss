@@ -14,8 +14,6 @@ import android.view.WindowManager
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -24,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -124,7 +121,7 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                 val callerMetadata by callViewModel.callerMetadataMap.collectAsStateWithLifecycle()
                 val settingsState by preferenceManager.settingsChanged.collectAsStateWithLifecycle()
                 val awaitingOutgoingSession = pendingOutgoingLaunch
-                val displaySession = rememberPresentedCallSession(session, outgoingLaunch, ::dismissCallScreen)
+                val displaySession = rememberPresentedCallSession(session, outgoingLaunch, pendingDirect != null, ::dismissCallScreen)
                 val displayCall = displaySession?.call
                 val callState = session?.state
                 LaunchedEffect(displayCall) {
@@ -218,53 +215,32 @@ class CallActivity : FragmentActivity() { //ComponentActivity()
                     }
                 }
 
-                CallSurfaceTransition(displayCall, pendingDirect != null) { targetCall ->
+                CallSurface(displayCall, pendingDirect?.id) {
+                    if (identity != null) {
                         val answeredFromNotification = intent?.getBooleanExtra("ANSWERED_FROM_NOTIFICATION", false) ?: false
-
-                        if (targetCall == null && pendingDirect == null) {
-                            Box(modifier = Modifier.fillMaxSize())
-                        } else {
-                            val isDisplayed = targetCall === displayCall
-                            val targetIdentity =
-                                if (isDisplayed && identity != null) {
-                                    identity
-                                } else {
-                                    identityResolver.rememberIdentity(targetCall, identityVersion, targetCall?.let { callerMetadata[eligibleCallPhotoNumber(it)] }, pendingDirect)
-                                }
-                            val targetState = if (isDisplayed) {
-                                displaySession?.state ?: Call.STATE_CONNECTING
-                            } else {
-                                targetCall?.currentTelecomState() ?: Call.STATE_CONNECTING
-                            }
-                            val connectTime = if (isDisplayed) {
-                                displaySession?.connectTimeMillis ?: 0L
-                            } else {
-                                targetCall?.details?.connectTimeMillis ?: 0L
-                            }
-
-                            val liquidGlassBackdrop = rememberLayerBackdrop()
-                            CompositionLocalProvider(LocalLiquidGlassBackdrop provides liquidGlassBackdrop,
-                                dev.goodwy.rphone.view.components.LocalCallPhotoRevision provides identityVersion,
-                                dev.goodwy.rphone.view.components.LocalCallTapHapticsEnabled provides preferenceManager.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
-                                ExpressiveCallScreen(
-                                    call = targetCall,
-                                    awaitingTelecomAccount = dev.goodwy.rphone.controller.util.callingAccountHandleFromKey(pendingDirect?.accountKey),
-                                    onCancelAwaitingTelecom = ::cancelDirect,
-                                    callState = targetState,
-                                    contactName = targetIdentity.name,
-                                    companyName = targetIdentity.company,
-                                    phoneNumber = targetIdentity.number,
-                                    photoUri = targetIdentity.photoUri,
-                                    photoLookupComplete = targetIdentity.photoLookupComplete,
-                                    audioState = audioState,
-                                    initialConnectTime = connectTime,
-                                    backgroundUri = targetIdentity.backgroundUri,
-                                    skipIncomingScreen = answeredFromNotification,
-                                    liquidGlassBackdrop = liquidGlassBackdrop,
-                                    frostedWindow = frostedCallEffect.translucentBackground,
-                                )
-                            }
+                        val liquidGlassBackdrop = rememberLayerBackdrop()
+                        CompositionLocalProvider(LocalLiquidGlassBackdrop provides liquidGlassBackdrop,
+                            dev.goodwy.rphone.view.components.LocalCallPhotoRevision provides identityVersion,
+                            dev.goodwy.rphone.view.components.LocalCallTapHapticsEnabled provides preferenceManager.getBoolean(PreferenceManager.KEY_APP_HAPTICS, true)) {
+                            ExpressiveCallScreen(
+                                call = displayCall,
+                                awaitingTelecomAccount = dev.goodwy.rphone.controller.util.callingAccountHandleFromKey(pendingDirect?.accountKey),
+                                onCancelAwaitingTelecom = ::cancelDirect,
+                                callState = displaySession?.state ?: Call.STATE_CONNECTING,
+                                contactName = identity.name,
+                                companyName = identity.company,
+                                phoneNumber = identity.number,
+                                photoUri = identity.photoUri,
+                                photoLookupComplete = identity.photoLookupComplete,
+                                audioState = audioState,
+                                initialConnectTime = displaySession?.connectTimeMillis ?: 0L,
+                                backgroundUri = identity.backgroundUri,
+                                skipIncomingScreen = answeredFromNotification,
+                                liquidGlassBackdrop = liquidGlassBackdrop,
+                                frostedWindow = frostedCallEffect.translucentBackground,
+                            )
                         }
+                    }
                 }
             }
         }

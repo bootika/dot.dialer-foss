@@ -163,6 +163,28 @@ class CallActivitySessionEndTest {
         assertTrue(host.isFinishing)
     }
 
+    @Test fun secondOutgoingCallImmediatelyReplacesFirstCallerInTheActivity() {
+        val first = call(Call.STATE_ACTIVE)
+        ReflectionHelpers.setField(first.details, "mCallerDisplayName", "First caller")
+        publish(listOf(first), first)
+        launch()
+        rule.onNodeWithText("First caller").assertExists()
+
+        val second = call(Call.STATE_DIALING)
+        ReflectionHelpers.setField(second.details, "mCallerDisplayName", "Second caller")
+        ReflectionHelpers.setField(second.details, "mHandle", Uri.fromParts("tel", "0700000022", null))
+        rule.runOnIdle {
+            ReflectionHelpers.setField(first, "mState", Call.STATE_DISCONNECTED)
+            ReflectionHelpers.setField(first.details, "mState", Call.STATE_DISCONNECTED)
+            publish(listOf(second), second)
+        }
+
+        advance(32)
+        rule.onNodeWithText("First caller").assertDoesNotExist()
+        rule.onNodeWithText("Second caller").assertExists()
+        assertFalse(host.isFinishing)
+    }
+
     @Test fun failedOutgoingLaunchExpiresDespiteExternalTelecomCall() {
         shadowOf(telecom).setIsInCall(true)
         launch(outgoing = true)

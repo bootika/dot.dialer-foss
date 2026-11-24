@@ -1,5 +1,6 @@
 package dev.goodwy.rphone.controller
 
+import android.telecom.Call
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,19 +24,32 @@ internal fun rememberDirectCallRequest(hasManagedCall: () -> Boolean, cancel: ()
 
 @Composable
 internal fun rememberPresentedCallSession(
-    session: CallSession?, outgoing: PendingOutgoingCallLaunch, onExpired: () -> Unit,
+    session: CallSession?,
+    outgoing: PendingOutgoingCallLaunch,
+    hasDeferredPresentation: Boolean,
+    onExpired: () -> Unit,
 ): CallSession? {
     var retained by remember { mutableStateOf<CallSession?>(null) }
+    var replacedCall by remember { mutableStateOf<Call?>(null) }
+    val waitingForReplacement = (outgoing.isPending || hasDeferredPresentation) &&
+        (session == null || session.state == Call.STATE_DISCONNECTING || session.state == Call.STATE_DISCONNECTED)
+    val visibleSession = session?.takeUnless { waitingForReplacement || it.call === replacedCall }
+    SideEffect {
+        if (waitingForReplacement) {
+            replacedCall = session?.call ?: retained?.call ?: replacedCall
+            retained = null
+        }
+    }
     LaunchedEffect(outgoing.deadlineMillis) {
         if (outgoing.awaitExpiry()) { DirectCallWindow.cancel(); onExpired() }
     }
-    LaunchedEffect(session, outgoing.deadlineMillis) {
-        session?.let {
+    LaunchedEffect(visibleSession, outgoing.deadlineMillis) {
+        visibleSession?.let {
             if (DirectCallWindow.state.value?.submitted == false) DirectCallWindow.cancel()
             DirectCallWindow.consume(directCallRequestId(it.call))
             retained = it
             outgoing.consume()
         }
     }
-    return session ?: retained
+    return if (waitingForReplacement) null else visibleSession ?: retained
 }

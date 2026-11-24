@@ -427,17 +427,12 @@
     <string name="ui_tour_title">Przewodnik po interfejsie</string>
     <string name="ui_tour_step">Krok %1$d z %2$d</string>
     <string name="ui_tour_contact_title">Szczegóły kontaktu</string>
-    <string name="ui_tour_contact_description">Dotknij awatara lub kółka po lewej stronie wiersza, aby otworzyć kontakt.</string>
     <string name="ui_tour_recent_tap_title">Połączenie z listy ostatnich</string>
     <string name="ui_tour_recent_tap_description">Domyślnie dotknij wiersza, aby zadzwonić. Przytrzymaj, aby zaznaczyć, skopiować, zobaczyć historię i więcej. Zmień dotknięcie lub przesunięcie w ustawieniach: kontakt, połączenie lub wiadomość.</string>
     <string name="ui_tour_swipe_title">Gesty przesuwania</string>
     <string name="ui_tour_swipe_description">Domyślnie przesuń w prawo dla SMS, a w lewo dla WhatsApp. Obie czynności można zmienić w ustawieniach.</string>
     <string name="ui_tour_search_title">Szybkie wyszukiwanie</string>
-    <string name="ui_tour_search_description">Wpisz nazwę, numer lub kilka liter. Połączenia i kontakty zostaną od razu przefiltrowane.</string>
     <string name="ui_tour_favorites_title">Ulubione</string>
-    <string name="ui_tour_favorites_description">Dotknij ulubionego, aby zadzwonić na wybrany numer. Przytrzymaj awatar, aby wybrać inne czynności lub numer szybkiego wybierania.</string>
-    <string name="ui_tour_dialpad_title">Klawiatura i kontakty</string>
-    <string name="ui_tour_dialpad_description">Dotknij tego przycisku, aby otworzyć klawiaturę. Alfabetyczna lista kontaktów pozostanie w tle.</string>
     <string name="add_favorites">Dodaj ulubione</string>
     <string name="frequent_contacts_last_30_days">Często wybierane w ciągu ostatnich 30 dni</string>
     <string name="no_recent_contact_suggestions">Brak ostatnich sugestii. Wyszukaj dowolny kontakt.</string>

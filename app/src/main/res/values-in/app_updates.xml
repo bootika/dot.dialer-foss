@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_update_title">Pembaruan kecil.\nSelangkah lebih maju.</string>
-    <string name="app_update_required">Ada pembaruan penting. Instal untuk melanjutkan.</string>
-    <string name="app_update_now">Perbarui sekarang</string>
-    <string name="app_update_later">Nanti saja, terima kasih</string>
-    <string name="app_update_close">Buka papan tombol telepon</string>
-    <string name="app_update_ready">Pembaruan siap. Mulai ulang saat Anda siap.</string>
-    <string name="app_update_restart">Mulai ulang sekarang</string>
-    <string name="app_update_optional">Beberapa perbaikan agar semuanya lebih mudah.</string>
-    <string name="app_update_news">Yang baru</string>
     <string name="app_update_check">Periksa pembaruan</string>
     <string name="app_update_none">Google Play tidak melaporkan pembaruan.</string>
     <string name="app_update_check_failed">Tidak dapat memeriksa pembaruan. Coba lagi.</string>

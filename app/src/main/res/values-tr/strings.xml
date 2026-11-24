@@ -425,17 +425,12 @@
     <string name="ui_tour_title">Arayüz turu</string>
     <string name="ui_tour_step">Adım %1$d / %2$d</string>
     <string name="ui_tour_contact_title">Kişi ayrıntıları</string>
-    <string name="ui_tour_contact_description">Kişiyi açmak için satırın solundaki avatara veya daireye dokunun.</string>
     <string name="ui_tour_recent_tap_title">Son aramalardan ara</string>
     <string name="ui_tour_recent_tap_description">Varsayılan olarak, aramak için satıra dokunun. Seçmek, kopyalamak, geçmişi görmek ve diğer işlemler için basılı tutun. Ayarlarda dokunma veya kaydırmayı değiştirin: kişi, arama veya mesaj.</string>
     <string name="ui_tour_swipe_title">Kaydırma işlemleri</string>
     <string name="ui_tour_swipe_description">Varsayılan olarak SMS için sağa, WhatsApp için sola kaydırın. Her iki işlemi de Ayarlardan değiştirebilirsiniz.</string>
     <string name="ui_tour_search_title">Hızlı arama</string>
-    <string name="ui_tour_search_description">Bir ad, numara veya birkaç harf yazın. Aramalar ve kişiler anında filtrelenir.</string>
     <string name="ui_tour_favorites_title">Favoriler</string>
-    <string name="ui_tour_favorites_description">Seçilen numarayı aramak için bir favoriye dokunun. Diğer işlemler veya hızlı arama numarasını seçmek için avatara basılı tutun.</string>
-    <string name="ui_tour_dialpad_title">Tuş takımı ve kişiler</string>
-    <string name="ui_tour_dialpad_description">Tuş takımını açmak için bu düğmeye dokunun. Alfabetik kişi listeniz arkada kalır.</string>
     <string name="add_favorites">Favori ekle</string>
     <string name="frequent_contacts_last_30_days">Son 30 günde sık arananlar</string>
     <string name="no_recent_contact_suggestions">Yakın tarihli öneri yok. Herhangi bir kişiyi arayın.</string>

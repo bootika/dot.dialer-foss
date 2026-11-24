@@ -420,17 +420,12 @@ Nếu anh thích những gì chúng tôi đang xây dựng, hãy nghĩ đến vi
     <string name="ui_tour_title">Hướng dẫn giao diện</string>
     <string name="ui_tour_step">Bước %1$d trên %2$d</string>
     <string name="ui_tour_contact_title">Chi tiết liên hệ</string>
-    <string name="ui_tour_contact_description">Chạm vào ảnh đại diện hoặc vòng tròn bên trái một hàng để mở liên hệ.</string>
     <string name="ui_tour_recent_tap_title">Gọi từ Gần đây</string>
     <string name="ui_tour_recent_tap_description">Mặc định, chạm vào hàng để gọi. Nhấn giữ để chọn, sao chép, xem lịch sử và các thao tác khác. Đổi thao tác chạm hoặc vuốt trong Cài đặt: liên hệ, cuộc gọi hoặc tin nhắn.</string>
     <string name="ui_tour_swipe_title">Thao tác vuốt</string>
     <string name="ui_tour_swipe_description">Mặc định, vuốt sang phải để gửi SMS và sang trái để mở WhatsApp. Có thể đổi cả hai thao tác trong Cài đặt.</string>
     <string name="ui_tour_search_title">Tìm kiếm nhanh</string>
-    <string name="ui_tour_search_description">Nhập tên, số hoặc vài chữ cái. Cuộc gọi và liên hệ được lọc ngay lập tức.</string>
     <string name="ui_tour_favorites_title">Yêu thích</string>
-    <string name="ui_tour_favorites_description">Chạm vào mục yêu thích để gọi số đã chọn. Nhấn giữ ảnh đại diện để dùng các thao tác khác hoặc chọn số gọi nhanh.</string>
-    <string name="ui_tour_dialpad_title">Bàn phím và danh bạ</string>
-    <string name="ui_tour_dialpad_description">Chạm nút này để mở bàn phím. Danh sách liên hệ theo bảng chữ cái vẫn ở phía sau.</string>
     <string name="add_favorites">Thêm mục yêu thích</string>
     <string name="frequent_contacts_last_30_days">Thường gọi trong 30 ngày qua</string>
     <string name="no_recent_contact_suggestions">Không có đề xuất gần đây. Hãy tìm một liên hệ.</string>

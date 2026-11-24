@@ -426,17 +426,12 @@
     <string name="ui_tour_title">Visite de l’interface</string>
     <string name="ui_tour_step">Étape %1$d sur %2$d</string>
     <string name="ui_tour_contact_title">Détails du contact</string>
-    <string name="ui_tour_contact_description">Touchez l’avatar ou le cercle à gauche d’une ligne pour ouvrir le contact.</string>
     <string name="ui_tour_recent_tap_title">Appeler depuis Récents</string>
     <string name="ui_tour_recent_tap_description">Par défaut, touchez une ligne pour appeler. Appui long pour sélectionner, copier, voir l’historique et plus. Configurez le toucher ou le balayage dans les paramètres : contact, appel ou message.</string>
     <string name="ui_tour_swipe_title">Actions par glissement</string>
     <string name="ui_tour_swipe_description">Par défaut, balayez à droite pour un SMS et à gauche pour WhatsApp. Les deux actions sont configurables dans les paramètres.</string>
     <string name="ui_tour_search_title">Recherche rapide</string>
-    <string name="ui_tour_search_description">Saisissez un nom, un numéro ou quelques lettres. Les appels et contacts sont filtrés immédiatement.</string>
     <string name="ui_tour_favorites_title">Favoris</string>
-    <string name="ui_tour_favorites_description">Touchez un favori pour appeler le numéro choisi. Appui long sur son avatar pour plus d’actions ou choisir le numéro d’appel rapide.</string>
-    <string name="ui_tour_dialpad_title">Clavier et contacts</string>
-    <string name="ui_tour_dialpad_description">Touchez ce bouton pour le clavier. La liste alphabétique des contacts reste derrière.</string>
     <string name="add_favorites">Ajouter des favoris</string>
     <string name="frequent_contacts_last_30_days">Appelés fréquemment ces 30 derniers jours</string>
     <string name="no_recent_contact_suggestions">Aucune suggestion récente. Recherchez un contact.</string>

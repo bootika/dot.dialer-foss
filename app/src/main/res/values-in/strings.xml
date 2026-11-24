@@ -418,17 +418,12 @@
     <string name="ui_tour_title">Tur antarmuka</string>
     <string name="ui_tour_step">Langkah %1$d dari %2$d</string>
     <string name="ui_tour_contact_title">Detail kontak</string>
-    <string name="ui_tour_contact_description">Ketuk avatar atau lingkaran di kiri baris untuk membuka kontak.</string>
     <string name="ui_tour_recent_tap_title">Telepon dari Terbaru</string>
     <string name="ui_tour_recent_tap_description">Secara default, ketuk baris untuk menelepon. Tekan lama untuk memilih, menyalin, melihat riwayat, dan lainnya. Atur ketukan atau geser di Setelan: kontak, panggilan, atau pesan.</string>
     <string name="ui_tour_swipe_title">Tindakan geser</string>
     <string name="ui_tour_swipe_description">Secara default, geser ke kanan untuk SMS dan ke kiri untuk WhatsApp. Kedua tindakan dapat diubah di Setelan.</string>
     <string name="ui_tour_search_title">Pencarian cepat</string>
-    <string name="ui_tour_search_description">Ketik nama, nomor, atau beberapa huruf. Panggilan dan kontak langsung disaring.</string>
     <string name="ui_tour_favorites_title">Favorit</string>
-    <string name="ui_tour_favorites_description">Ketuk favorit untuk menelepon nomor yang dipilih. Tekan lama avatar untuk tindakan lain atau memilih nomor panggilan cepat.</string>
-    <string name="ui_tour_dialpad_title">Papan tombol dan kontak</string>
-    <string name="ui_tour_dialpad_description">Ketuk tombol ini untuk papan tombol. Daftar kontak alfabetis tetap ada di belakangnya.</string>
     <string name="add_favorites">Tambah favorit</string>
     <string name="frequent_contacts_last_30_days">Sering ditelepon dalam 30 hari terakhir</string>
     <string name="no_recent_contact_suggestions">Tidak ada saran terbaru. Cari kontak apa saja.</string>

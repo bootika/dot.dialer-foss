@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_update_title">Un piccolo aggiornamento.\nUn passo avanti.</string>
-    <string name="app_update_required">È disponibile un aggiornamento importante. Installalo per continuare.</string>
-    <string name="app_update_now">Aggiorna ora</string>
-    <string name="app_update_later">Più tardi, grazie</string>
-    <string name="app_update_close">Apri il tastierino telefonico</string>
-    <string name="app_update_ready">L’aggiornamento è pronto. Riavvia quando preferisci.</string>
-    <string name="app_update_restart">Riavvia ora</string>
-    <string name="app_update_optional">Qualche miglioramento per rendere tutto più semplice.</string>
-    <string name="app_update_news">Novità</string>
     <string name="app_update_check">Controlla aggiornamenti</string>
     <string name="app_update_none">Google Play non segnala aggiornamenti.</string>
     <string name="app_update_check_failed">Impossibile controllare gli aggiornamenti. Riprova.</string>

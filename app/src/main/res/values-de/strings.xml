@@ -425,17 +425,12 @@
     <string name="ui_tour_title">Oberflächentour</string>
     <string name="ui_tour_step">Schritt %1$d von %2$d</string>
     <string name="ui_tour_contact_title">Kontaktdetails</string>
-    <string name="ui_tour_contact_description">Tippen Sie auf den Avatar oder Kreis links in einer Zeile, um den Kontakt zu öffnen.</string>
     <string name="ui_tour_recent_tap_title">Aus Anrufliste anrufen</string>
     <string name="ui_tour_recent_tap_description">Standardmäßig ruft Tippen auf eine Zeile an. Lange drücken für Auswahl, Kopieren, Verlauf und mehr. In den Einstellungen lassen sich Tippen und Wischen ändern: Kontakt, Anruf oder Nachricht.</string>
     <string name="ui_tour_swipe_title">Wischaktionen</string>
     <string name="ui_tour_swipe_description">Standardmäßig nach rechts wischen für SMS, nach links für WhatsApp. Beide Aktionen sind in den Einstellungen anpassbar.</string>
     <string name="ui_tour_search_title">Schnellsuche</string>
-    <string name="ui_tour_search_description">Geben Sie einen Namen, eine Nummer oder einige Buchstaben ein. Anrufe und Kontakte werden sofort gefiltert.</string>
     <string name="ui_tour_favorites_title">Favoriten</string>
-    <string name="ui_tour_favorites_description">Tippe auf einen Favoriten, um seine gewählte Nummer anzurufen. Halte den Avatar gedrückt für weitere Aktionen oder zur Wahl der Schnellwahlnummer.</string>
-    <string name="ui_tour_dialpad_title">Wähltasten und Kontakte</string>
-    <string name="ui_tour_dialpad_description">Tippen Sie für die Wähltasten auf diese Schaltfläche. Die alphabetische Kontaktliste bleibt dahinter.</string>
     <string name="add_favorites">Favoriten hinzufügen</string>
     <string name="frequent_contacts_last_30_days">In den letzten 30 Tagen häufig angerufen</string>
     <string name="no_recent_contact_suggestions">Keine aktuellen Vorschläge. Suchen Sie nach einem Kontakt.</string>

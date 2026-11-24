@@ -420,17 +420,12 @@
     <string name="ui_tour_title">Turul interfeței</string>
     <string name="ui_tour_step">Pasul %1$d din %2$d</string>
     <string name="ui_tour_contact_title">Detaliile contactului</string>
-    <string name="ui_tour_contact_description">Apasă avatarul ca să deschizi contactul. Ține-l apăsat ca să selectezi rândul; avatarul se transformă într-o bifă.</string>
     <string name="ui_tour_recent_tap_title">Apel din Recente</string>
     <string name="ui_tour_recent_tap_description">Implicit, atinge rândul pentru a suna. Ține apăsat și glisează spre o acțiune rapidă. Din Setări poți alege ce se întâmplă la atingere sau glisare.</string>
     <string name="ui_tour_swipe_title">Acțiuni prin glisare</string>
     <string name="ui_tour_swipe_description">Implicit, glisează spre dreapta pentru SMS și spre stânga pentru WhatsApp. Poți schimba ambele acțiuni în Setări.</string>
     <string name="ui_tour_search_title">Căutare rapidă</string>
-    <string name="ui_tour_search_description">Scrie un nume, un număr sau câteva litere. Apelurile și contactele se filtrează pe loc.</string>
     <string name="ui_tour_favorites_title">Favorite</string>
-    <string name="ui_tour_favorites_description">Atinge un favorit pentru a apela numărul ales. Apasă lung pe avatar pentru alte acțiuni sau alegerea numărului de apelare rapidă.</string>
-    <string name="ui_tour_dialpad_title">Tastatură și contacte</string>
-    <string name="ui_tour_dialpad_description">Apasă acest buton pentru tastatură. În spate rămâne lista alfabetică de contacte.</string>
     <string name="add_favorites">Adaugă favorite</string>
     <string name="frequent_contacts_last_30_days">Apelate frecvent în ultimele 30 de zile</string>
     <string name="no_recent_contact_suggestions">Nu există sugestii recente. Caută orice contact.</string>

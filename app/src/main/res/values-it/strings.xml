@@ -426,17 +426,12 @@
     <string name="ui_tour_title">Tour dell’interfaccia</string>
     <string name="ui_tour_step">Passaggio %1$d di %2$d</string>
     <string name="ui_tour_contact_title">Dettagli del contatto</string>
-    <string name="ui_tour_contact_description">Tocca l’avatar o il cerchio a sinistra di una riga per aprire il contatto.</string>
     <string name="ui_tour_recent_tap_title">Chiama da Recenti</string>
     <string name="ui_tour_recent_tap_description">Per impostazione predefinita, tocca una riga per chiamare. Premi a lungo per selezionare, copiare, vedere la cronologia e altro. Configura tocco o scorrimento nelle impostazioni: contatto, chiamata o messaggio.</string>
     <string name="ui_tour_swipe_title">Azioni con scorrimento</string>
     <string name="ui_tour_swipe_description">Per impostazione predefinita, scorri a destra per SMS e a sinistra per WhatsApp. Puoi cambiare entrambe le azioni nelle impostazioni.</string>
     <string name="ui_tour_search_title">Ricerca rapida</string>
-    <string name="ui_tour_search_description">Digita un nome, un numero o alcune lettere. Chiamate e contatti vengono filtrati subito.</string>
     <string name="ui_tour_favorites_title">Preferiti</string>
-    <string name="ui_tour_favorites_description">Tocca un preferito per chiamare il numero scelto. Premi a lungo l’avatar per altre azioni o per scegliere il numero di chiamata rapida.</string>
-    <string name="ui_tour_dialpad_title">Tastierino e contatti</string>
-    <string name="ui_tour_dialpad_description">Tocca questo pulsante per il tastierino. La lista alfabetica dei contatti resta dietro.</string>
     <string name="add_favorites">Aggiungi preferiti</string>
     <string name="frequent_contacts_last_30_days">Chiamati spesso negli ultimi 30 giorni</string>
     <string name="no_recent_contact_suggestions">Nessun suggerimento recente. Cerca un contatto.</string>

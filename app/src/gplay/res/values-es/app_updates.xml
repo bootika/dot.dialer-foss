@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_update_title">Una pequeña actualización.\nUn paso adelante.</string>
+    <string name="app_update_required">Hay una actualización importante. Instálala para continuar.</string>
+    <string name="app_update_now">Actualizar ahora</string>
+    <string name="app_update_later">Más tarde, gracias</string>
+    <string name="app_update_optional">Algunas mejoras para ponértelo más fácil.</string>
+    <string name="app_update_news">Novedades</string>
+</resources>

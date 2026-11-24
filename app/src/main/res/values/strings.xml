@@ -477,17 +477,12 @@
     <string name="ui_tour_title">Interface tour</string>
     <string name="ui_tour_step">Step %1$d of %2$d</string>
     <string name="ui_tour_contact_title">Contact details</string>
-    <string name="ui_tour_contact_description">Tap the avatar to open the contact. Press and hold it to select the row; the avatar changes into a check mark.</string>
     <string name="ui_tour_recent_tap_title">Call from Recents</string>
     <string name="ui_tour_recent_tap_description">By default, tap a row to call. Long press to select, copy, view history or more. In Settings, change tap or swipe to open the contact, call or message.</string>
     <string name="ui_tour_swipe_title">Swipe actions</string>
     <string name="ui_tour_swipe_description">By default, swipe right for SMS and left for WhatsApp. You can change both actions in Settings.</string>
     <string name="ui_tour_search_title">Quick search</string>
-    <string name="ui_tour_search_description">Type a name, number or a few letters. Calls and contacts are filtered as you type.</string>
     <string name="ui_tour_favorites_title">Favorites</string>
-    <string name="ui_tour_favorites_description">Tap a favorite to call its selected number. Long press the avatar for more actions or to choose the quick-call number.</string>
-    <string name="ui_tour_dialpad_title">Dial pad and contacts</string>
-    <string name="ui_tour_dialpad_description">Tap this button for the dial pad. Your alphabetical contact list remains behind it.</string>
     <string name="add_favorites">Add favorites</string>
     <string name="frequent_contacts_last_30_days">Frequently called in the last 30 days</string>
     <string name="no_recent_contact_suggestions">No recent contacts to suggest. Search to choose anyone.</string>

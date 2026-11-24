@@ -35,12 +35,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Could not extract the exact committed source.' }
 
     $gradle = if ($IsWindows) { '.\gradlew.bat' } else { './gradlew' }
-    $lintArgs = @('--no-daemon', '--max-workers=1', '-Pkotlin.compiler.execution.strategy=in-process', ':app:lintFossDebug')
+    $lintArgs = @('--no-daemon', '--max-workers=1', '-Pkotlin.compiler.execution.strategy=in-process', 'lintWarningRatchet')
     if ($Offline) { $lintArgs += '--offline' }
     Push-Location -LiteralPath $snapshot
     try {
         & $gradle @lintArgs
-        if ($LASTEXITCODE -ne 0) { throw "FOSS lint failed for $commit. Push stopped." }
+        if ($LASTEXITCODE -ne 0) { throw "FOSS lint or its warning ratchet failed for $commit. Push stopped." }
     } finally {
         Pop-Location
     }

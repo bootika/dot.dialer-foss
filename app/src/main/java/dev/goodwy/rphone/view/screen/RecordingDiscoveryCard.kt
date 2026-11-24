@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.R
 import dev.goodwy.rphone.recordings.RecordingsRepository
@@ -69,7 +70,7 @@ internal fun RecordingDiscoveryCard(onOpen: () -> Unit) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = onOpen) { Text(stringResource(R.string.feature_tip_see_how)) }
                 TextButton(onClick = {
-                    preferences.edit().putBoolean("recording_dismissed", true).apply()
+                    preferences.edit { putBoolean("recording_dismissed", true) }
                     dismissed = true
                 }) { Text(stringResource(R.string.feature_tip_hide)) }
             }

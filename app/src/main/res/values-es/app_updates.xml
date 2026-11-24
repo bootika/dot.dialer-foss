@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_update_title">Una pequeña actualización.\nUn paso adelante.</string>
-    <string name="app_update_required">Hay una actualización importante. Instálala para continuar.</string>
-    <string name="app_update_now">Actualizar ahora</string>
-    <string name="app_update_later">Más tarde, gracias</string>
-    <string name="app_update_close">Abrir teclado de llamadas</string>
-    <string name="app_update_ready">La actualización está lista. Reinicia cuando te venga bien.</string>
-    <string name="app_update_restart">Reiniciar ahora</string>
-    <string name="app_update_optional">Algunas mejoras para ponértelo más fácil.</string>
-    <string name="app_update_news">Novedades</string>
     <string name="app_update_check">Buscar actualizaciones</string>
     <string name="app_update_none">Google Play no indica ninguna actualización.</string>
     <string name="app_update_check_failed">No se pudieron buscar actualizaciones. Inténtalo de nuevo.</string>

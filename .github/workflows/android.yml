@@ -108,7 +108,7 @@ jobs:
       - name: Verify uncached Robolectric runtime
         run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testFossDebugUnitTest --tests '*AppModuleResolutionTest' --tests '*PlanGuideRenderingTest' --tests '*CallConferenceMistRenderingTest' --tests '*VoiceSearchRenderingTest'
 
-      - name: Verify foundation
+      - name: Start runner memory monitoring
         shell: bash
         run: |
           mkdir -p ci-diagnostics
@@ -120,18 +120,28 @@ jobs:
               ps -eo pid,ppid,comm,rss --sort=-rss | sed -n '1,12p'
               sleep 15
             done
-          ) > ci-diagnostics/runner-memory.log &
-          memory_monitor=$!
-          trap 'kill "$memory_monitor" 2>/dev/null || true' EXIT
+          ) </dev/null > ci-diagnostics/runner-memory.log 2>&1 &
+          echo "MEMORY_MONITOR_PID=$!" >> "$GITHUB_ENV"
 
-          # Bound each phase to one JVM/worker and release compiler memory before lint,
-          # R8 and Robolectric. The final unfiltered gate still enforces every check.
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
-          # Finish debug packaging and release compilation before the independent R8/lint budget.
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:compileFossReleaseKotlin :app:compileFossReleaseJavaWithJavac
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossRelease
-          timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
+      # Each phase releases its compiler memory before starting the next one.
+      - name: Compile Android variants and test sources
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:compileFossDebugKotlin :app:compileGplayDebugKotlin :app:compileRustoreDebugKotlin :app:compileFossDebugAndroidTestKotlin :app:compileFossDebugUnitTestKotlin
+
+      - name: Run FOSS debug lint
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:lintFossDebug
+
+      - name: Build FOSS debug and compile release
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossDebug :app:compileFossReleaseKotlin :app:compileFossReleaseJavaWithJavac
+
+      - name: Build FOSS release
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:assembleFossRelease
+
+      - name: Run full quality gate
+        run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process qualityGate
+
+      - name: Stop runner memory monitoring
+        if: ${{ always() && env.MEMORY_MONITOR_PID != '' }}
+        run: kill "$MEMORY_MONITOR_PID" 2>/dev/null || true
 
       - name: Verify store dependency graphs
         run: timeout --kill-after=30s 15m ./gradlew --no-daemon --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process :app:testGplayDebugUnitTest --tests '*AppModuleResolutionTest' :app:testRustoreDebugUnitTest --tests '*AppModuleResolutionTest'

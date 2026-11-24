@@ -15,7 +15,7 @@ if ((Test-Path -LiteralPath $targetRoot) -and @(Get-ChildItem -LiteralPath $targ
 $paths = @(& git -C $sourceRoot ls-files)
 if ($LASTEXITCODE -ne 0) { throw 'Cannot read the reviewed Git file inventory.' }
 $rootFiles = @('.gitignore', 'README.md', 'UPSTREAM.md', 'LICENSE', 'build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat')
-$tools = @('tools/branding/BrandAssetGenerator.java', 'tools/check-private-documentation.ps1', 'tools/export-public-source.ps1')
+$tools = @('tools/branding/BrandAssetGenerator.java', 'tools/check-private-documentation.ps1', 'tools/export-public-source.ps1', 'tools/push-public-source.ps1')
 $selected = @($paths | Where-Object {
     $_ -in $rootFiles -or $_ -in $tools -or
     $_ -eq '.github/workflows/android.yml' -or

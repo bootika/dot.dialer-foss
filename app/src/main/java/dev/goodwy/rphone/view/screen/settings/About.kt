@@ -109,6 +109,10 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
         }
     }
 
+    val noUpdateMessage by rememberUpdatedState(stringResource(R.string.app_update_none))
+    val updateCheckFailedMessage by rememberUpdatedState(stringResource(R.string.app_update_check_failed))
+    val openStoreLabel by rememberUpdatedState(stringResource(R.string.app_update_open_store))
+
     fun checkForUpdates(manual: Boolean) {
         if (!isGooglePlay || checking || updateHost == null) return
         checking = true
@@ -123,10 +127,9 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                         updateHost.appUpdates.showAboutUpdate(versionCode, version, ::openUpdateListing)
                     }
                     manual -> {
-                        val message = if (versionCode == 0) R.string.app_update_none else R.string.app_update_check_failed
                         updateHost.appUpdates.showAboutStatus(
-                            context.getString(message),
-                            context.getString(R.string.app_update_open_store)
+                            if (versionCode == 0) noUpdateMessage else updateCheckFailedMessage,
+                            openStoreLabel
                         ) {
                             checkedOnEntry = false
                             openUpdateListing()

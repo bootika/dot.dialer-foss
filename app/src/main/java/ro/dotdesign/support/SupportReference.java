@@ -2,7 +2,6 @@ package ro.dotdesign.support;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Locale;
 
 /** Product-scoped lookup reference. Never an authentication or recovery credential. */
 public final class SupportReference {
@@ -13,16 +12,19 @@ public final class SupportReference {
         try {
             byte[] bytes = MessageDigest.getInstance("SHA-256").digest(
                     ("dot-support-v1|" + product + "|" + identity).getBytes(StandardCharsets.UTF_8));
-            StringBuilder out = new StringBuilder("dictate".equals(product) ? "DCT" : "DLR");
-            for (int i=0;i<10;i++) {
-                if(i%2==0)out.append('-');
-                out.append(String.format(Locale.ROOT,"%02X",bytes[i]&255));
+            String alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+            long value = 0;
+            for (int i=0;i<5;i++) value = (value << 8) | (bytes[i] & 255L);
+            StringBuilder out = new StringBuilder("dictate".equals(product) ? "DIC" : "DIA");
+            for (int i=0;i<8;i++) {
+                if(i%4==0)out.append('-');
+                out.append(alphabet.charAt((int)((value >>> (35-i*5)) & 31)));
             }
             return out.toString();
         } catch (java.security.NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
     }
     public static String subject(String title, String code, boolean technical) {
-        return technical && code != null && code.matches("(?:DCT|DLR)(?:-[A-F0-9]{4}){5}")
+        return technical && code != null && code.matches("(?:DIC|DIA)(?:-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}){2}")
                 ? title + " [" + code + "]" : title;
     }
 }

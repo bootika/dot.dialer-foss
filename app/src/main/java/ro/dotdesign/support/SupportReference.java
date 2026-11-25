@@ -23,6 +23,9 @@ public final class SupportReference {
             return out.toString();
         } catch (java.security.NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
     }
+    public static String subjectTitle(String appName, String title) {
+        return appName + " - " + title;
+    }
     public static String subject(String title, String code, boolean technical) {
         return technical && code != null && code.matches("(?:DIC|DIA)(?:-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}){2}")
                 ? title + " [" + code + "]" : title;

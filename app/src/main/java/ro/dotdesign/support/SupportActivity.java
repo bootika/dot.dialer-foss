@@ -169,7 +169,7 @@ public final class SupportActivity extends Activity {
         String body = SupportReport.body(category == 0 ? s("other") : categories[category],
                 description.getText().toString(), technical.isChecked(), version,
                 Build.VERSION.RELEASE + " (SDK " + Build.VERSION.SDK_INT + ")", Build.MANUFACTURER + " " + Build.MODEL, provider);
-        String subject = SupportReference.subject((dictate ? "dot.dictate" : "dot.dialer") + " · " + s("title"), supportCode, technical.isChecked());
+        String subject = SupportReference.subject(SupportReference.subjectTitle(dictate ? "dot.dictate" : "dot.dialer", s("title")), supportCode, technical.isChecked());
         Uri uri = Uri.parse("mailto:" + SupportReport.recipient(dictate)
                 + "?subject=" + Uri.encode(subject) + "&body=" + Uri.encode(body));
         try { startActivity(new Intent(Intent.ACTION_SENDTO, uri)); }

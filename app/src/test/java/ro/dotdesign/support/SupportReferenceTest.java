@@ -7,4 +7,12 @@ public class SupportReferenceTest {
  @Test public void missingOrUntrustedIdentityHasNoInventedReference(){assertEquals("",SupportReference.code("dictate",null));assertEquals("",SupportReference.code("other","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));assertEquals("",SupportReference.code("dialer","user@example.test"));}
  @Test public void optingOutOmitsReferenceFromSubject(){assertEquals("Help",SupportReference.subject("Help","DIC-PR5D-MLKF",false));}
  @Test public void optedInSubjectIncludesOnlyAValidReference(){assertEquals("Help [DIC-PR5D-MLKF]",SupportReference.subject("Help","DIC-PR5D-MLKF",true));assertEquals("Help",SupportReference.subject("Help","credential-or-invalid-value",true));}
+ @Test public void emailTitleUsesAsciiHyphenAndPreservesLocalizedText(){
+  assertEquals("dot.dictate - Help & feedback",SupportReference.subjectTitle("dot.dictate","Help & feedback"));
+  assertEquals("dot.dialer - Aide et commentaires",SupportReference.subjectTitle("dot.dialer","Aide et commentaires"));
+  assertEquals("dot.dictate - Ajutor și feedback",SupportReference.subjectTitle("dot.dictate","Ajutor și feedback"));
+  String title=SupportReference.subjectTitle("dot.dictate","Help & feedback");
+  assertEquals(title,SupportReference.subject(title,"DIC-PR5D-MLKF",false));
+  assertEquals(title+" [DIC-PR5D-MLKF]",SupportReference.subject(title,"DIC-PR5D-MLKF",true));
+ }
 }

@@ -38,6 +38,7 @@ public final class SupportActivity extends Activity {
     private int category;
     private String[] categories;
     private String provider = "";
+    private String supportCode = "";
     AlertDialog activeDialog;
 
     public static void open(Context context) { open(context, ""); }
@@ -111,6 +112,13 @@ public final class SupportActivity extends Activity {
         technical.setButtonTintList(android.content.res.ColorStateList.valueOf(accent));
         technical.setChecked(state == null || state.getBoolean("technical", true));
         privacy.addView(technical); privacy.addView(note(s("technical_detail"), 13));
+        supportCode = SupportResources.supportCode(this);
+        TextView reference = note(supportCode.isEmpty() ? s("reference_unavailable")
+                : getString(SupportResources.string("reference"), supportCode), 13);
+        reference.setTextIsSelectable(true);
+        reference.setVisibility(technical.isChecked() ? View.VISIBLE : View.GONE);
+        technical.setOnCheckedChangeListener((button, checked) -> reference.setVisibility(checked ? View.VISIBLE : View.GONE));
+        add(privacy, reference, 10);
         add(content, privacy, 16); add(content, note(s(dictate ? "privacy_dictate" : "privacy_dialer"), 13), 12);
         Button send = button(s("send"), true); send.setOnClickListener(v -> compose()); add(content, send, 24);
         TextView recipient = note(SupportReport.recipient(dictate), 15); recipient.setTextColor(accent);
@@ -161,7 +169,7 @@ public final class SupportActivity extends Activity {
         String body = SupportReport.body(category == 0 ? s("other") : categories[category],
                 description.getText().toString(), technical.isChecked(), version,
                 Build.VERSION.RELEASE + " (SDK " + Build.VERSION.SDK_INT + ")", Build.MANUFACTURER + " " + Build.MODEL, provider);
-        String subject = (dictate ? "dot.dictate" : "dot.dialer") + " · " + s("title");
+        String subject = SupportReference.subject((dictate ? "dot.dictate" : "dot.dialer") + " · " + s("title"), supportCode, technical.isChecked());
         Uri uri = Uri.parse("mailto:" + SupportReport.recipient(dictate)
                 + "?subject=" + Uri.encode(subject) + "&body=" + Uri.encode(body));
         try { startActivity(new Intent(Intent.ACTION_SENDTO, uri)); }

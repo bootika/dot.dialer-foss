@@ -7,7 +7,7 @@
     <string name="support_category">Perlu bantuan tentang apa?</string>
     <string name="support_description">Apa yang terjadi?</string>
     <string name="support_technical">Sertakan detail teknis</string>
-    <string name="support_technical_detail">Versi aplikasi, versi Android, dan model ponsel.</string>
+    <string name="support_technical_detail">Versi aplikasi, versi Android, model ponsel, dan kode dukungan.</string>
     <string name="support_privacy_dictate">Tanpa kunci API, audio, atau teks dikte.</string>
     <string name="support_privacy_dialer">Tanpa kontak, nomor telepon, atau riwayat panggilan.</string>
     <string name="support_send">Kirim melalui email</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Batal</string>
     <string name="support_hint_dictate">Contoh: saya selesai mendikte, tetapi teks tidak muncul dalam percakapan.</string>
     <string name="support_hint_dialer">Contoh: saya mengetuk kontak, tetapi panggilan tidak dimulai.</string>
+    <string name="support_reference">Kode dukungan: %1$s</string>
+    <string name="support_reference_unavailable">Kode dukungan tidak tersedia. Kamu tetap bisa mengirim pesan.</string>
 </resources>

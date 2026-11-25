@@ -7,7 +7,7 @@
     <string name="support_category">Bạn cần trợ giúp về việc gì?</string>
     <string name="support_description">Điều gì đã xảy ra?</string>
     <string name="support_technical">Kèm thông tin kỹ thuật</string>
-    <string name="support_technical_detail">Phiên bản ứng dụng, phiên bản Android và mẫu điện thoại.</string>
+    <string name="support_technical_detail">Phiên bản ứng dụng, phiên bản Android, mẫu điện thoại và mã hỗ trợ.</string>
     <string name="support_privacy_dictate">Không kèm khóa API, âm thanh hoặc văn bản đã đọc.</string>
     <string name="support_privacy_dialer">Không kèm danh bạ, số điện thoại hoặc lịch sử cuộc gọi.</string>
     <string name="support_send">Gửi qua email</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Hủy</string>
     <string name="support_hint_dictate">Ví dụ: tôi đọc xong nhưng văn bản không xuất hiện trong cuộc trò chuyện.</string>
     <string name="support_hint_dialer">Ví dụ: tôi chạm vào một liên hệ nhưng cuộc gọi không bắt đầu.</string>
+    <string name="support_reference">Mã hỗ trợ: %1$s</string>
+    <string name="support_reference_unavailable">Không có mã hỗ trợ. Bạn vẫn có thể gửi tin nhắn.</string>
 </resources>

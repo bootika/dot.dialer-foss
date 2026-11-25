@@ -7,7 +7,7 @@
     <string name="support_category">Hangi konuda yardım gerekiyor?</string>
     <string name="support_description">Ne oldu?</string>
     <string name="support_technical">Teknik ayrıntıları ekle</string>
-    <string name="support_technical_detail">Uygulama sürümü, Android sürümü ve telefon modeli.</string>
+    <string name="support_technical_detail">Uygulama sürümü, Android sürümü, telefon modeli ve destek kodu.</string>
     <string name="support_privacy_dictate">API anahtarı, ses veya dikte edilen metin içermez.</string>
     <string name="support_privacy_dialer">Kişi, telefon numarası veya arama geçmişi içermez.</string>
     <string name="support_send">E-postayla gönder</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">İptal</string>
     <string name="support_hint_dictate">Örneğin: dikteyi bitiriyorum ancak konuşmada metin görünmüyor.</string>
     <string name="support_hint_dialer">Örneğin: kişiye dokunuyorum ancak arama başlamıyor.</string>
+    <string name="support_reference">Destek kodu: %1$s</string>
+    <string name="support_reference_unavailable">Destek kodu kullanılamıyor. Mesajını yine de gönderebilirsin.</string>
 </resources>

@@ -7,7 +7,7 @@
     <string name="support_category">Wobei brauchst du Hilfe?</string>
     <string name="support_description">Was ist passiert?</string>
     <string name="support_technical">Technische Details hinzufügen</string>
-    <string name="support_technical_detail">App-Version, Android-Version und Telefonmodell.</string>
+    <string name="support_technical_detail">App-Version, Android-Version, Telefonmodell und Supportcode.</string>
     <string name="support_privacy_dictate">Keine API-Schlüssel, Audiodaten oder diktierten Texte.</string>
     <string name="support_privacy_dialer">Keine Kontakte, Telefonnummern oder Anruflisten.</string>
     <string name="support_send">Per E-Mail senden</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Abbrechen</string>
     <string name="support_hint_dictate">Zum Beispiel: Ich beende das Diktieren, aber im Gespräch erscheint kein Text.</string>
     <string name="support_hint_dialer">Zum Beispiel: Ich tippe auf einen Kontakt, aber der Anruf startet nicht.</string>
+    <string name="support_reference">Supportcode: %1$s</string>
+    <string name="support_reference_unavailable">Supportcode nicht verfügbar. Du kannst deine Nachricht trotzdem senden.</string>
 </resources>

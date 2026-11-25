@@ -3,7 +3,10 @@ import dev.goodwy.rphone.R;
 final class SupportResources {
 static final int DESCRIPTION_ID=R.id.support_description_field;
 static final int TECHNICAL_ID=R.id.support_technical_field;
+static String supportCode(android.content.Context context) {return dev.goodwy.rphone.controller.license.SupportIdentity.code(context);}
 static int string(String key) {switch(key) {
+case "reference": return R.string.support_reference;
+case "reference_unavailable": return R.string.support_reference_unavailable;
 case "title": return R.string.support_title;
 case "headline": return R.string.support_headline;
 case "subtitle": return R.string.support_subtitle;

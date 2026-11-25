@@ -7,7 +7,7 @@
     <string name="support_category">What do you need help with?</string>
     <string name="support_description">What happened?</string>
     <string name="support_technical">Include technical details</string>
-    <string name="support_technical_detail">App version, Android version and phone model.</string>
+    <string name="support_technical_detail">App version, Android version, phone model and support code.</string>
     <string name="support_privacy_dictate">No API keys, audio or dictated text.</string>
     <string name="support_privacy_dialer">No contacts, phone numbers or call history.</string>
     <string name="support_send">Send by email</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Cancel</string>
     <string name="support_hint_dictate">For example: I finish dictating, but no text appears in the conversation.</string>
     <string name="support_hint_dialer">For example: I tap a contact, but the call does not start.</string>
+    <string name="support_reference">Support code: %1$s</string>
+    <string name="support_reference_unavailable">Support code unavailable. You can still send your message.</string>
 </resources>

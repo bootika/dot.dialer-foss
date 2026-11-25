@@ -7,7 +7,7 @@
     <string name="support_category">Cu ce ai nevoie de ajutor?</string>
     <string name="support_description">Ce s-a întâmplat?</string>
     <string name="support_technical">Include detalii tehnice</string>
-    <string name="support_technical_detail">Versiunea aplicației, versiunea Android și modelul telefonului.</string>
+    <string name="support_technical_detail">Versiunea aplicației, versiunea Android, modelul telefonului și codul de suport.</string>
     <string name="support_privacy_dictate">Fără chei API, audio sau textele dictate.</string>
     <string name="support_privacy_dialer">Fără contacte, numere de telefon sau istoricul apelurilor.</string>
     <string name="support_send">Trimite prin e-mail</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Anulează</string>
     <string name="support_hint_dictate">De exemplu: închei dictarea, dar textul nu apare în conversație.</string>
     <string name="support_hint_dialer">De exemplu: apăs pe un contact, dar apelul nu pornește.</string>
+    <string name="support_reference">Cod de suport: %1$s</string>
+    <string name="support_reference_unavailable">Codul de suport nu este disponibil. Poți trimite în continuare mesajul.</string>
 </resources>

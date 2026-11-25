@@ -7,7 +7,7 @@
     <string name="support_category">W czym potrzebujesz pomocy?</string>
     <string name="support_description">Co się stało?</string>
     <string name="support_technical">Dołącz szczegóły techniczne</string>
-    <string name="support_technical_detail">Wersja aplikacji, wersja Androida i model telefonu.</string>
+    <string name="support_technical_detail">Wersja aplikacji, wersja Androida, model telefonu i kod pomocy.</string>
     <string name="support_privacy_dictate">Bez kluczy API, nagrań i dyktowanego tekstu.</string>
     <string name="support_privacy_dialer">Bez kontaktów, numerów telefonów i historii połączeń.</string>
     <string name="support_send">Wyślij e-mailem</string>
@@ -27,4 +27,6 @@
     <string name="support_cancel">Anuluj</string>
     <string name="support_hint_dictate">Na przykład: kończę dyktowanie, ale tekst nie pojawia się w rozmowie.</string>
     <string name="support_hint_dialer">Na przykład: dotykam kontaktu, ale połączenie się nie rozpoczyna.</string>
+    <string name="support_reference">Kod pomocy: %1$s</string>
+    <string name="support_reference_unavailable">Kod pomocy jest niedostępny. Nadal możesz wysłać wiadomość.</string>
 </resources>

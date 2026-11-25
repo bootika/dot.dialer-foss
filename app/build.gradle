@@ -435,3 +435,9 @@ dependencies {
 configurations.matching { it.name.endsWith('UnitTestRuntimeClasspath') }.configureEach {
     exclude group: 'org.conscrypt', module: 'conscrypt-android'
 }
+
+// Isolated native verification; release identifiers and signing stay unchanged.
+if (providers.gradleProperty('supportUiProbe').orNull == 'true') {
+    android.buildTypes.debug.applicationIdSuffix = '.supportpreview'
+    android.defaultConfig.testApplicationId = android.namespace + '.supportinstrumentation'
+}

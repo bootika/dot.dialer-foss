@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Hilfe und Feedback</string>
+    <string name="support_headline">Etwas funktioniert nicht?</string>
+    <string name="support_subtitle">Wir finden gemeinsam eine Lösung.</string>
+    <string name="support_intro">Beschreibe, was passiert ist und welche Schritte das Problem auslösen. So können wir die Ursache finden.</string>
+    <string name="support_quick">Schnelle Lösungen</string>
+    <string name="support_category">Wobei brauchst du Hilfe?</string>
+    <string name="support_description">Was ist passiert?</string>
+    <string name="support_technical">Technische Details hinzufügen</string>
+    <string name="support_technical_detail">App-Version, Android-Version und Telefonmodell.</string>
+    <string name="support_privacy_dictate">Keine API-Schlüssel, Audiodaten oder diktierten Texte.</string>
+    <string name="support_privacy_dialer">Keine Kontakte, Telefonnummern oder Anruflisten.</string>
+    <string name="support_send">Per E-Mail senden</string>
+    <string name="support_review">Du kannst die Nachricht vor dem Senden prüfen.</string>
+    <string name="support_no_mail">Keine E-Mail-App gefunden</string>
+    <string name="support_copy">Nachricht kopieren</string>
+    <string name="support_copied">Nachricht kopiert.</string>
+    <string name="support_required">Bitte beschreibe das Problem.</string>
+    <string name="support_choose">Kategorie auswählen</string>
+    <string name="support_dictation">Diktieren</string>
+    <string name="support_translation">Übersetzung</string>
+    <string name="support_calls">Anrufe</string>
+    <string name="support_contacts">Kontakte</string>
+    <string name="support_access">Zugriff und Lizenz</string>
+    <string name="support_other">Sonstiges</string>
+    <string name="support_back">Zurück</string>
+    <string name="support_cancel">Abbrechen</string>
+    <string name="support_hint_dictate">Zum Beispiel: Ich beende das Diktieren, aber im Gespräch erscheint kein Text.</string>
+    <string name="support_hint_dialer">Zum Beispiel: Ich tippe auf einen Kontakt, aber der Anruf startet nicht.</string>
+</resources>

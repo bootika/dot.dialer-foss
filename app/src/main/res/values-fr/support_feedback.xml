@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Aide et commentaires</string>
+    <string name="support_headline">Un problème ?</string>
+    <string name="support_subtitle">Trouvons une solution ensemble.</string>
+    <string name="support_intro">Décris ce qui s’est passé et les étapes qui provoquent le problème. Cela nous aide à en trouver la cause.</string>
+    <string name="support_quick">Solutions rapides</string>
+    <string name="support_category">De quoi as-tu besoin ?</string>
+    <string name="support_description">Que s’est-il passé ?</string>
+    <string name="support_technical">Inclure les détails techniques</string>
+    <string name="support_technical_detail">Version de l’application, version Android et modèle du téléphone.</string>
+    <string name="support_privacy_dictate">Sans clés API, audio ni texte dicté.</string>
+    <string name="support_privacy_dialer">Sans contacts, numéros de téléphone ni historique des appels.</string>
+    <string name="support_send">Envoyer par e-mail</string>
+    <string name="support_review">Tu peux vérifier le message avant de l’envoyer.</string>
+    <string name="support_no_mail">Aucune application de messagerie trouvée</string>
+    <string name="support_copy">Copier le message</string>
+    <string name="support_copied">Message copié.</string>
+    <string name="support_required">Décris le problème.</string>
+    <string name="support_choose">Choisir une catégorie</string>
+    <string name="support_dictation">Dictée</string>
+    <string name="support_translation">Traduction</string>
+    <string name="support_calls">Appels</string>
+    <string name="support_contacts">Répertoire</string>
+    <string name="support_access">Accès et licence</string>
+    <string name="support_other">Autre</string>
+    <string name="support_back">Retour</string>
+    <string name="support_cancel">Annuler</string>
+    <string name="support_hint_dictate">Par exemple : je termine la dictée, mais aucun texte n’apparaît dans la conversation.</string>
+    <string name="support_hint_dialer">Par exemple : je touche un contact, mais l’appel ne démarre pas.</string>
+</resources>

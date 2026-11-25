@@ -385,6 +385,7 @@
 
         <service android:name=".controller.util.ContactsOptimizerJob" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="false" />
         <service android:name=".recordings.RecordingSyncJob" android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE" />
+    <activity android:name="ro.dotdesign.support.SupportActivity" android:exported="false" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

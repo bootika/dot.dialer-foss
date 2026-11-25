@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Trợ giúp và phản hồi</string>
+    <string name="support_headline">Có gì không hoạt động?</string>
+    <string name="support_subtitle">Cùng tìm cách giải quyết nhé.</string>
+    <string name="support_intro">Hãy mô tả điều đã xảy ra và các bước gây ra sự cố. Điều này giúp chúng tôi tìm nguyên nhân.</string>
+    <string name="support_quick">Giải pháp nhanh</string>
+    <string name="support_category">Bạn cần trợ giúp về việc gì?</string>
+    <string name="support_description">Điều gì đã xảy ra?</string>
+    <string name="support_technical">Kèm thông tin kỹ thuật</string>
+    <string name="support_technical_detail">Phiên bản ứng dụng, phiên bản Android và mẫu điện thoại.</string>
+    <string name="support_privacy_dictate">Không kèm khóa API, âm thanh hoặc văn bản đã đọc.</string>
+    <string name="support_privacy_dialer">Không kèm danh bạ, số điện thoại hoặc lịch sử cuộc gọi.</string>
+    <string name="support_send">Gửi qua email</string>
+    <string name="support_review">Bạn có thể kiểm tra thư trước khi gửi.</string>
+    <string name="support_no_mail">Không tìm thấy ứng dụng email</string>
+    <string name="support_copy">Sao chép thư</string>
+    <string name="support_copied">Đã sao chép thư.</string>
+    <string name="support_required">Vui lòng mô tả sự cố.</string>
+    <string name="support_choose">Chọn danh mục</string>
+    <string name="support_dictation">Nhập bằng giọng nói</string>
+    <string name="support_translation">Dịch</string>
+    <string name="support_calls">Cuộc gọi</string>
+    <string name="support_contacts">Danh bạ</string>
+    <string name="support_access">Quyền truy cập và giấy phép</string>
+    <string name="support_other">Khác</string>
+    <string name="support_back">Quay lại</string>
+    <string name="support_cancel">Hủy</string>
+    <string name="support_hint_dictate">Ví dụ: tôi đọc xong nhưng văn bản không xuất hiện trong cuộc trò chuyện.</string>
+    <string name="support_hint_dialer">Ví dụ: tôi chạm vào một liên hệ nhưng cuộc gọi không bắt đầu.</string>
+</resources>

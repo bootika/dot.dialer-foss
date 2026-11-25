@@ -45,7 +45,7 @@ fun TestAccessScreen(state: TestAccessState, retry: () -> Unit) {
         TextButton(colors = linkColors, onClick = { open(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=dot.dialer".toUri())) }) {
             Text("Google Play")
         }
-        TextButton(colors = linkColors, onClick = { open(Intent(Intent.ACTION_SENDTO, "mailto:diler@dotdesign.ro".toUri())) }) { Text("diler@dotdesign.ro") }
+        TextButton(colors = linkColors, onClick = { open(Intent(Intent.ACTION_SENDTO, "mailto:dialer@dotdesign.ro".toUri())) }) { Text("dialer@dotdesign.ro") }
         TextButton(colors = linkColors, onClick = { open(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)) }) { Text(stringResource(R.string.test_access_phone_settings)) }
     }
 }

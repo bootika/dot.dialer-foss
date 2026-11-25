@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Ayuda y comentarios</string>
+    <string name="support_headline">¿Algo no funciona?</string>
+    <string name="support_subtitle">Busquemos una solución juntos.</string>
+    <string name="support_intro">Cuéntanos qué ocurrió y los pasos que provocan el problema. Así podremos encontrar la causa.</string>
+    <string name="support_quick">Soluciones rápidas</string>
+    <string name="support_category">¿Con qué necesitas ayuda?</string>
+    <string name="support_description">¿Qué ocurrió?</string>
+    <string name="support_technical">Incluir detalles técnicos</string>
+    <string name="support_technical_detail">Versión de la app, versión de Android y modelo del teléfono.</string>
+    <string name="support_privacy_dictate">Sin claves API, audio ni texto dictado.</string>
+    <string name="support_privacy_dialer">Sin contactos, números de teléfono ni historial de llamadas.</string>
+    <string name="support_send">Enviar por correo</string>
+    <string name="support_review">Puedes revisar el mensaje antes de enviarlo.</string>
+    <string name="support_no_mail">No se encontró una app de correo</string>
+    <string name="support_copy">Copiar mensaje</string>
+    <string name="support_copied">Mensaje copiado.</string>
+    <string name="support_required">Describe el problema.</string>
+    <string name="support_choose">Selecciona una categoría</string>
+    <string name="support_dictation">Dictado</string>
+    <string name="support_translation">Traducción</string>
+    <string name="support_calls">Llamadas</string>
+    <string name="support_contacts">Contactos</string>
+    <string name="support_access">Acceso y licencia</string>
+    <string name="support_other">Otro</string>
+    <string name="support_back">Atrás</string>
+    <string name="support_cancel">Cancelar</string>
+    <string name="support_hint_dictate">Por ejemplo: termino de dictar, pero no aparece texto en la conversación.</string>
+    <string name="support_hint_dialer">Por ejemplo: pulso un contacto, pero la llamada no comienza.</string>
+</resources>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Ajutor și feedback</string>
+    <string name="support_headline">Ceva nu merge?</string>
+    <string name="support_subtitle">Hai să vedem împreună.</string>
+    <string name="support_intro">Spune-ne ce s-a întâmplat și în ce pași apare problema. Ne ajută să găsim mai repede cauza.</string>
+    <string name="support_quick">Soluții rapide</string>
+    <string name="support_category">Cu ce ai nevoie de ajutor?</string>
+    <string name="support_description">Ce s-a întâmplat?</string>
+    <string name="support_technical">Include detalii tehnice</string>
+    <string name="support_technical_detail">Versiunea aplicației, versiunea Android și modelul telefonului.</string>
+    <string name="support_privacy_dictate">Fără chei API, audio sau textele dictate.</string>
+    <string name="support_privacy_dialer">Fără contacte, numere de telefon sau istoricul apelurilor.</string>
+    <string name="support_send">Trimite prin e-mail</string>
+    <string name="support_review">Poți verifica mesajul înainte să-l trimiți.</string>
+    <string name="support_no_mail">Nu există o aplicație de e-mail</string>
+    <string name="support_copy">Copiază mesajul</string>
+    <string name="support_copied">Mesaj copiat.</string>
+    <string name="support_required">Descrie problema, te rog.</string>
+    <string name="support_choose">Selectează o categorie</string>
+    <string name="support_dictation">Dictare</string>
+    <string name="support_translation">Traducere</string>
+    <string name="support_calls">Apeluri</string>
+    <string name="support_contacts">Contacte</string>
+    <string name="support_access">Acces și licență</string>
+    <string name="support_other">Altele</string>
+    <string name="support_back">Înapoi</string>
+    <string name="support_cancel">Anulează</string>
+    <string name="support_hint_dictate">De exemplu: închei dictarea, dar textul nu apare în conversație.</string>
+    <string name="support_hint_dialer">De exemplu: apăs pe un contact, dar apelul nu pornește.</string>
+</resources>

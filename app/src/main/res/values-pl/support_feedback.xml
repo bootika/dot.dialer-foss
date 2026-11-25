@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Pomoc i opinie</string>
+    <string name="support_headline">Coś nie działa?</string>
+    <string name="support_subtitle">Znajdźmy razem rozwiązanie.</string>
+    <string name="support_intro">Opisz, co się stało i jakie kroki powodują problem. Pomoże nam to znaleźć przyczynę.</string>
+    <string name="support_quick">Szybkie rozwiązania</string>
+    <string name="support_category">W czym potrzebujesz pomocy?</string>
+    <string name="support_description">Co się stało?</string>
+    <string name="support_technical">Dołącz szczegóły techniczne</string>
+    <string name="support_technical_detail">Wersja aplikacji, wersja Androida i model telefonu.</string>
+    <string name="support_privacy_dictate">Bez kluczy API, nagrań i dyktowanego tekstu.</string>
+    <string name="support_privacy_dialer">Bez kontaktów, numerów telefonów i historii połączeń.</string>
+    <string name="support_send">Wyślij e-mailem</string>
+    <string name="support_review">Możesz sprawdzić wiadomość przed wysłaniem.</string>
+    <string name="support_no_mail">Nie znaleziono aplikacji pocztowej</string>
+    <string name="support_copy">Kopiuj wiadomość</string>
+    <string name="support_copied">Wiadomość skopiowana.</string>
+    <string name="support_required">Opisz problem.</string>
+    <string name="support_choose">Wybierz kategorię</string>
+    <string name="support_dictation">Dyktowanie</string>
+    <string name="support_translation">Tłumaczenie</string>
+    <string name="support_calls">Połączenia</string>
+    <string name="support_contacts">Kontakty</string>
+    <string name="support_access">Dostęp i licencja</string>
+    <string name="support_other">Inne</string>
+    <string name="support_back">Wstecz</string>
+    <string name="support_cancel">Anuluj</string>
+    <string name="support_hint_dictate">Na przykład: kończę dyktowanie, ale tekst nie pojawia się w rozmowie.</string>
+    <string name="support_hint_dialer">Na przykład: dotykam kontaktu, ale połączenie się nie rozpoczyna.</string>
+</resources>

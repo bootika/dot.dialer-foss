@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Help &amp; feedback</string>
+    <string name="support_headline">Something not working?</string>
+    <string name="support_subtitle">Let’s work it out together.</string>
+    <string name="support_intro">Tell us what happened and the steps that trigger the problem. This helps us find the cause.</string>
+    <string name="support_quick">Quick solutions</string>
+    <string name="support_category">What do you need help with?</string>
+    <string name="support_description">What happened?</string>
+    <string name="support_technical">Include technical details</string>
+    <string name="support_technical_detail">App version, Android version and phone model.</string>
+    <string name="support_privacy_dictate">No API keys, audio or dictated text.</string>
+    <string name="support_privacy_dialer">No contacts, phone numbers or call history.</string>
+    <string name="support_send">Send by email</string>
+    <string name="support_review">You can review the message before sending.</string>
+    <string name="support_no_mail">No email app found</string>
+    <string name="support_copy">Copy message</string>
+    <string name="support_copied">Message copied.</string>
+    <string name="support_required">Please describe the problem.</string>
+    <string name="support_choose">Choose a category</string>
+    <string name="support_dictation">Dictation</string>
+    <string name="support_translation">Translation</string>
+    <string name="support_calls">Calls</string>
+    <string name="support_contacts">Contacts</string>
+    <string name="support_access">Access and license</string>
+    <string name="support_other">Other</string>
+    <string name="support_back">Back</string>
+    <string name="support_cancel">Cancel</string>
+    <string name="support_hint_dictate">For example: I finish dictating, but no text appears in the conversation.</string>
+    <string name="support_hint_dialer">For example: I tap a contact, but the call does not start.</string>
+</resources>

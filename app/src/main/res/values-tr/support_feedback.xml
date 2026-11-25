@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Yardım ve geri bildirim</string>
+    <string name="support_headline">Bir şey çalışmıyor mu?</string>
+    <string name="support_subtitle">Birlikte çözüm bulalım.</string>
+    <string name="support_intro">Ne olduğunu ve soruna yol açan adımları anlatın. Böylece nedenini bulabiliriz.</string>
+    <string name="support_quick">Hızlı çözümler</string>
+    <string name="support_category">Hangi konuda yardım gerekiyor?</string>
+    <string name="support_description">Ne oldu?</string>
+    <string name="support_technical">Teknik ayrıntıları ekle</string>
+    <string name="support_technical_detail">Uygulama sürümü, Android sürümü ve telefon modeli.</string>
+    <string name="support_privacy_dictate">API anahtarı, ses veya dikte edilen metin içermez.</string>
+    <string name="support_privacy_dialer">Kişi, telefon numarası veya arama geçmişi içermez.</string>
+    <string name="support_send">E-postayla gönder</string>
+    <string name="support_review">Göndermeden önce mesajı inceleyebilirsiniz.</string>
+    <string name="support_no_mail">E-posta uygulaması bulunamadı</string>
+    <string name="support_copy">Mesajı kopyala</string>
+    <string name="support_copied">Mesaj kopyalandı.</string>
+    <string name="support_required">Lütfen sorunu açıklayın.</string>
+    <string name="support_choose">Kategori seçin</string>
+    <string name="support_dictation">Dikte</string>
+    <string name="support_translation">Çeviri</string>
+    <string name="support_calls">Aramalar</string>
+    <string name="support_contacts">Kişiler</string>
+    <string name="support_access">Erişim ve lisans</string>
+    <string name="support_other">Diğer</string>
+    <string name="support_back">Geri</string>
+    <string name="support_cancel">İptal</string>
+    <string name="support_hint_dictate">Örneğin: dikteyi bitiriyorum ancak konuşmada metin görünmüyor.</string>
+    <string name="support_hint_dialer">Örneğin: kişiye dokunuyorum ancak arama başlamıyor.</string>
+</resources>

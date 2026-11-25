@@ -27,6 +27,7 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
     // Compatibility for old saved routes; the single canonical editor is now Interface.
     if (category == "keypad") { InterfaceScreen(navigator); return }
     if (category == "effects" || category == "compatibility") { AdvancedSettingsScreen(navigator); return }
+    val supportContext = androidx.compose.ui.platform.LocalContext.current
     val prefs = org.koin.compose.koinInject<dev.goodwy.rphone.controller.util.PreferenceManager>()
     val title = when (category) {
         "help" -> helpSettingsTitle
@@ -58,6 +59,9 @@ fun SettingsCategoryScreen(navigator: DestinationsNavigator, category: String) {
                             }
                         }
                         "help" -> {
+                            SettingsCategoryLink(R.string.support_title, Icons.Rounded.Email) {
+                                ro.dotdesign.support.SupportActivity.open(supportContext)
+                            }
                             if (dev.goodwy.rphone.BuildConfig.TEST_DISTRIBUTION) {
                                 SettingsCategoryLink(R.string.diagnostics, Icons.Rounded.BugReport) {
                                     navigator.navigate(SettingsOptionScreenDestination("O02"))

@@ -1,0 +1,30 @@
+<resources>
+    <string name="support_title">Bantuan dan masukan</string>
+    <string name="support_headline">Ada yang tidak berfungsi?</string>
+    <string name="support_subtitle">Mari kita cari solusinya bersama.</string>
+    <string name="support_intro">Ceritakan apa yang terjadi dan langkah yang memicu masalah. Ini membantu kami menemukan penyebabnya.</string>
+    <string name="support_quick">Solusi cepat</string>
+    <string name="support_category">Perlu bantuan tentang apa?</string>
+    <string name="support_description">Apa yang terjadi?</string>
+    <string name="support_technical">Sertakan detail teknis</string>
+    <string name="support_technical_detail">Versi aplikasi, versi Android, dan model ponsel.</string>
+    <string name="support_privacy_dictate">Tanpa kunci API, audio, atau teks dikte.</string>
+    <string name="support_privacy_dialer">Tanpa kontak, nomor telepon, atau riwayat panggilan.</string>
+    <string name="support_send">Kirim melalui email</string>
+    <string name="support_review">Anda dapat memeriksa pesan sebelum mengirimnya.</string>
+    <string name="support_no_mail">Aplikasi email tidak ditemukan</string>
+    <string name="support_copy">Salin pesan</string>
+    <string name="support_copied">Pesan disalin.</string>
+    <string name="support_required">Jelaskan masalahnya.</string>
+    <string name="support_choose">Pilih kategori</string>
+    <string name="support_dictation">Dikte</string>
+    <string name="support_translation">Terjemahan</string>
+    <string name="support_calls">Panggilan</string>
+    <string name="support_contacts">Kontak</string>
+    <string name="support_access">Akses dan lisensi</string>
+    <string name="support_other">Lainnya</string>
+    <string name="support_back">Kembali</string>
+    <string name="support_cancel">Batal</string>
+    <string name="support_hint_dictate">Contoh: saya selesai mendikte, tetapi teks tidak muncul dalam percakapan.</string>
+    <string name="support_hint_dialer">Contoh: saya mengetuk kontak, tetapi panggilan tidak dimulai.</string>
+</resources>

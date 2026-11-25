@@ -30,7 +30,7 @@ class TestAccessRenderingTest {
         var state by mutableStateOf(TestAccessState.BLOCKED); var count=0
         rule.setContent { DotDialerTheme(systemDark=false) { TestAccessScreen(state) { count++ } } }
         rule.onNodeWithText(rule.activity.getString(R.string.test_access_blocked)).assertIsDisplayed()
-        rule.onNodeWithText("diler@dotdesign.ro").assertIsDisplayed()
+        rule.onNodeWithText("dialer@dotdesign.ro").assertIsDisplayed()
         rule.onNodeWithText(rule.activity.getString(R.string.test_access_retry)).performClick()
         assertEquals(1,count)
         capture("blocked")

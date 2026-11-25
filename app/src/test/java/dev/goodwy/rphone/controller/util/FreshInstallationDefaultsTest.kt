@@ -31,10 +31,16 @@ class FreshInstallationDefaultsTest {
         assertEquals(2, initial[intPreferencesKey(D.INSTALLATION_PROFILE_KEY)])
         assertEquals("light", initial[stringPreferencesKey("theme_mode")])
         assertEquals("full_photo", initial[stringPreferencesKey("call_screen_appearance")])
-        val edited = initial.toMutablePreferences().apply { this[stringPreferencesKey("theme_mode")] = "dark" }
+        val brightnessKey = intPreferencesKey("ambient_droplet_brightness")
+        assertEquals(120, initial[brightnessKey])
+        val edited = initial.toMutablePreferences().apply {
+            this[stringPreferencesKey("theme_mode")] = "dark"
+            this[brightnessKey] = 140
+        }
         assertFalse(migration.shouldMigrate(edited))
         assertSame(edited, migration.migrate(edited))
         assertEquals("dark", edited[stringPreferencesKey("theme_mode")])
+        assertEquals(140, edited[brightnessKey])
     }
 
     @Test fun restoredSettingsAreNotTreatedAsAnEmptyInstallationAndProfileCannotBeImported() = runBlocking {

@@ -14,6 +14,7 @@ object DotDialerPreferenceDefaults {
     const val DEFAULT_CALL_SCREEN_APPEARANCE = "full_photo"
     const val DEFAULT_FROSTED_CALL_BACKGROUND = false
     const val DEFAULT_DROPLET_BRIGHTNESS = 140
+    private const val FRESH_INSTALL_DROPLET_BRIGHTNESS = 120
     const val DEFAULT_IGNORE_SYSTEM_FONT_SCALE = true
     const val DEFAULT_QUICK_RESPONSES = "Nu pot vorbi, scrie-mi pe WhatsApp|||Nu pot vorbi, te sun eu mai tarziu|||Nu pot vorbi, suna-ma mai tarziu"
     private val booleanDefaults = mapOf(
@@ -69,11 +70,11 @@ object DotDialerPreferenceDefaults {
     fun intFor(key: String): Int? = intDefaults[key]
 
     /** Explicit allowlist of the reusable device snapshot; never seed account or runtime state. */
-    fun freshInstallPreset(): Map<String, Any> = setOf("ambient_droplet_brightness", "android_auto_enabled",
+    fun freshInstallPreset(): Map<String, Any> = setOf("android_auto_enabled",
         "BLUR_dialpad", "call_avatar_size", "call_screen_appearance", "contact_avatar_size",
         "dialpad_glass_strength_percent", "frosted_call_background", "hangup_button_width",
         "ignore_system_font_scale", "incoming_call_ui_mode", "lg_dialpad", "recent_history_max_entries",
         "show_first_letter", "show_picture", "theme_mode", "custom_quick_responses").associateWith { key ->
         booleanFor(key) ?: stringFor(key) ?: intFor(key) ?: floatFor(key) ?: error("Unspecified preset key")
-    }
+    } + ("ambient_droplet_brightness" to FRESH_INSTALL_DROPLET_BRIGHTNESS)
 }

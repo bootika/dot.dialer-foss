@@ -22,7 +22,7 @@ fun termsAndConditionsUrl(language: String): String = if (isRomanian(language))
     "https://dotdesign.ro/aplicatii/dot-dialer/termeni/" else TERMS_AND_CONDITIONS
 
 fun dotDictateUrl(language: String): String = if (isRomanian(language))
-    "https://dotdesign.ro/aplicatii/dot-dictation/" else "https://dotdesign.ro/en/apps/dot-dictation/"
+    "https://dotdesign.ro/aplicatii/dot-dictate/" else "https://dotdesign.ro/en/apps/dot-dictate/"
 
 private fun isRomanian(language: String): Boolean = language.substringBefore('-').equals("ro", ignoreCase = true)
 

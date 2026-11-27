@@ -2,10 +2,12 @@ package io.github.bootika.dotdialer.observability
 
 import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.AtomicFile
 import dev.goodwy.rphone.BuildConfig
+import dev.goodwy.rphone.controller.license.scopedLicenseInstallationId
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import java.io.File
 import java.net.HttpURLConnection
@@ -30,6 +32,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     private val file = AtomicFile(File(app.noBackupFilesDir, "product-statistics-v1.json"))
     private var queued: Job? = null
     private var lastSentDay = ""
+    private var lastSentAction = 0L
     private var dirty = false
     private fun failure(operation: String, error: Exception) {
         // Never log exception messages, payloads, SIM values or pseudonyms.
@@ -38,7 +41,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     init {
         if (BuildConfig.FLAVOR == "gplay") scope.launch {
             prefs.settingsChanged.collect {
-                if (!allowed()) mutex.withLock { queued?.cancel(); queued=null; file.delete(); lastSentDay=""; dirty=false }
+                if (!allowed()) mutex.withLock { queued?.cancel(); queued=null; file.delete(); lastSentDay=""; lastSentAction=0; dirty=false }
             }
         }
     }
@@ -54,6 +57,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
                 val state = read()
                 if (event != null) {
                     state.getJSONObject("counts").apply { put(event.key,(optInt(event.key)+1).coerceAtMost(10000)) }
+                    if (activityReportingEnabled()) state.put("last_action_at", System.currentTimeMillis() / 1000)
                     dirty = true
                 }
                 write(state)
@@ -71,13 +75,19 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             catch (error: Exception) { failure("update", error) }
         }
     }
-    private fun needsSend(state: JSONObject) = dirty || lastSentDay != state.getString("day")
+    private fun needsSend(state: JSONObject) = dirty || lastSentDay != state.getString("day") || pendingActivity(state) > 0
+    private fun pendingActivity(state: JSONObject): Long {
+        val action = state.optLong("last_action_at")
+        return action.takeIf { activityReportingEnabled() && transport == null && it > lastSentAction && it >= System.currentTimeMillis() / 1000 - 30 * 86400 } ?: 0
+    }
+    private fun activityReportingEnabled() = BuildConfig.BUILD_TYPE == "internal" && app.packageName == "ro.dotdesign.dotdialer"
     private fun read(): JSONObject {
         val old = if (!file.baseFile.exists()) JSONObject() else try { JSONObject(String(file.readFully(),Charsets.UTF_8)) }
             catch (error: Exception) { failure("read", error); JSONObject() }
         val day = LocalDate.now(ZoneOffset.UTC).toString()
         if (old.optString("day") == day && old.has("counts") && old.optString("seed").matches(Regex("[a-f0-9-]{36}"))) return old
         return JSONObject().put("day",day).put("seed",old.optString("seed").takeIf { it.matches(Regex("[a-f0-9-]{36}")) } ?: UUID.randomUUID().toString())
+            .put("last_action_at",old.optLong("last_action_at"))
             .put("counts",JSONObject().put("favorites",0).put("swipes",0).put("dialpad",0))
     }
     private fun write(state: JSONObject) {
@@ -103,6 +113,9 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     }
     private fun send(state: JSONObject) {
         if (!allowed()) return
+        val action = pendingActivity(state)
+        if (action > 0 && sendActivity(action)) lastSentAction = action
+        if (!dirty && lastSentDay == state.getString("day")) return
         val day=state.getString("day")
         val region=prefs.getString(PreferenceManager.KEY_OUTGOING_NUMBER_REGION_ISO, "").orEmpty().uppercase(Locale.ROOT).takeIf { it in Locale.getISOCountries() }.orEmpty()
         fun safe(text: String, maximum: Int) = text.replace(Regex("[\\p{Cntrl}@]"), "").take(maximum).ifBlank { "Unknown" }
@@ -126,6 +139,29 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             if (connection.responseCode == 200) { lastSentDay=day; dirty=false }
         } catch (error: Exception) { failure("send", error) /* retry at next Home visit/event */ }
         finally { connection?.disconnect() }
+    }
+    @android.annotation.SuppressLint("HardwareIds")
+    private fun sendActivity(action: Long): Boolean {
+        if (!activityReportingEnabled() || !allowed()) return false
+        val androidId = Settings.Secure.getString(app.contentResolver, Settings.Secure.ANDROID_ID)
+        if (androidId.isNullOrBlank()) return false
+        var connection: HttpURLConnection? = null
+        return try {
+            val body = JSONObject().put("installation", scopedLicenseInstallationId(androidId, app.packageName)).put("acted_at", action)
+            connection = URL("https://dialer.dotdesign.ro/api/v1/installation-activity").openConnection() as HttpURLConnection
+            connection.requestMethod = "POST"
+            connection.instanceFollowRedirects = false
+            connection.connectTimeout = 5_000
+            connection.readTimeout = 5_000
+            connection.doOutput = true
+            connection.setRequestProperty("Content-Type", "application/json")
+            if (!allowed()) return false
+            connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
+            connection.responseCode == 200
+        } catch (error: Exception) {
+            failure("activity", error)
+            false
+        } finally { connection?.disconnect() }
     }
     companion object {
         @Volatile private var automaticGate = true

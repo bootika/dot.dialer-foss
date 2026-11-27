@@ -48,7 +48,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     private fun allowed() = automaticGate && BuildConfig.FLAVOR == "gplay" && ReportingMode.parse(prefs.getString(AppTelemetry.REPORTING_KEY,null)) == ReportingMode.Automatic
     fun homeVisible() = update(null)
     fun record(event: Event) = update(event)
-    enum class Event(val key: String) { Favorite("favorites"), Swipe("swipes"), Dialpad("dialpad") }
+    enum class Event(val key: String) { Favorite("favorites"), Swipe("swipes"), Dialpad("dialpad"), ConnectedCall("calls") }
     private fun update(event: Event?) {
         if (!allowed()) return
         scope.launch {
@@ -57,7 +57,9 @@ class ProductStatistics internal constructor(context: Context, private val prefs
                 val state = read()
                 if (event != null) {
                     state.getJSONObject("counts").apply { put(event.key,(optInt(event.key)+1).coerceAtMost(10000)) }
-                    if (activityReportingEnabled()) state.put("last_action_at", System.currentTimeMillis() / 1000)
+                    if (event != Event.ConnectedCall && activityReportingEnabled()) {
+                        state.put("last_action_at", System.currentTimeMillis() / 1000)
+                    }
                     dirty = true
                 }
                 write(state)
@@ -119,10 +121,12 @@ class ProductStatistics internal constructor(context: Context, private val prefs
         val day=state.getString("day")
         val region=prefs.getString(PreferenceManager.KEY_OUTGOING_NUMBER_REGION_ISO, "").orEmpty().uppercase(Locale.ROOT).takeIf { it in Locale.getISOCountries() }.orEmpty()
         fun safe(text: String, maximum: Int) = text.replace(Regex("[\\p{Cntrl}@]"), "").take(maximum).ifBlank { "Unknown" }
+        val counts = JSONObject(state.getJSONObject("counts").toString())
+        if (!counts.has(Event.ConnectedCall.key)) counts.put(Event.ConnectedCall.key, 0)
         val body=JSONObject().put("package",app.packageName).put("day",day).put("daily_id",dailyId(state.getString("seed"),day))
             .put("version",BuildConfig.VERSION_NAME).put("android",Build.VERSION.SDK_INT)
             .put("manufacturer",safe(Build.MANUFACTURER,40)).put("model",safe(Build.MODEL,80))
-            .put("language",app.resources.configuration.locales[0].toLanguageTag()).put("sim",sims()).put("region",region).put("counts",state.getJSONObject("counts"))
+            .put("language",app.resources.configuration.locales[0].toLanguageTag()).put("sim",sims()).put("region",region).put("counts",counts)
             .put("appearance",JSONObject()
                 .put("accent",prefs.getString(PreferenceManager.KEY_ACCENT_COLOR,"jade").takeIf {it in setOf("jade","blue","violet","coral")} ?: "jade")
                 .put("plan",dev.goodwy.rphone.controller.license.PlanAccessManager.get(app).effective.name.lowercase(Locale.ROOT)))

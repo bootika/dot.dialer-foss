@@ -68,6 +68,7 @@ class CallService : InCallService() {
     private var notificationAttempt = 0
     private val lifecycleCoordinator = CallLifecycleCoordinator()
     private val callSessionIds = IdentityHashMap<Call, String>()
+    private val connectedCallCounter by lazy { ConnectedCallCounter(applicationContext, preferenceManager) }
     private val registeredCalls = Collections.newSetFromMap(IdentityHashMap<Call, Boolean>())
     private val pendingFullScreenLaunchSessionIds = mutableSetOf<String>()
     private var nextCallSessionId = 1L
@@ -152,6 +153,7 @@ class CallService : InCallService() {
 
             if (state == Call.STATE_ACTIVE) {
                 redialCount = 0
+                if (callSessionIds.containsKey(call)) connectedCallCounter.onActive(call)
             }
 
             if (state == Call.STATE_DISCONNECTED) {
@@ -433,7 +435,9 @@ class CallService : InCallService() {
         )
         if (!isUssd) {
             val sessionId = sessionIdFor(call)
-            val initialPhase = telecomCallPhase(call.currentTelecomState())
+            val initialState = call.currentTelecomState()
+            connectedCallCounter.onAdded(call, initialState)
+            val initialPhase = telecomCallPhase(initialState)
             lifecycleCoordinator.dispatch(
                 CallLifecycleEvent.CallAdded(sessionId, initialPhase)
             )
@@ -491,6 +495,7 @@ class CallService : InCallService() {
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        connectedCallCounter.onRemoved(call)
         unregisterCallCallback(call)
         callSessionIds.remove(call)?.let { sessionId ->
             pendingFullScreenLaunchSessionIds.remove(sessionId)

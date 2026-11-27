@@ -83,6 +83,18 @@ class HomeTourRenderingTest {
         }
     }
 
+    @Test fun `floating keypad button invokes its action once on tap`() {
+        rule.setContent {
+            DotDialerTheme(systemDark = false) {
+                DialpadFloatingActionButton({ actualActions++ }, Modifier.testTag("floating-keypad"))
+            }
+        }
+
+        rule.runOnIdle { assertEquals(0, actualActions) }
+        rule.onNodeWithTag("floating-keypad").assertIsDisplayed().performClick()
+        rule.runOnIdle { assertEquals(1, actualActions) }
+    }
+
     @Test fun `all six production tour scenes keep genuine targets readable and cards outside`() {
         var dark by mutableStateOf(false)
         var scale by mutableFloatStateOf(1f)

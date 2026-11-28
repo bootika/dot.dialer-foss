@@ -314,6 +314,7 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
 
             SettingsImmediateSection() {
                 RillExpressiveCard {
+                    SupportFeedbackEntry()
                     val isGPlay = BuildConfig.FLAVOR == "gplay"
                     if (isGPlay) {
                         RillListItem(

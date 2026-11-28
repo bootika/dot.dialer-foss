@@ -6,4 +6,5 @@
     <string name="app_update_later">Để sau, cảm ơn</string>
     <string name="app_update_optional">Một vài cải tiến giúp mọi thứ dễ dàng hơn.</string>
     <string name="app_update_news">Có gì mới</string>
+    <string name="app_update_new_version">Phiên bản mới: %1$s</string>
 </resources>

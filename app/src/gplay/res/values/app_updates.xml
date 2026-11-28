@@ -6,4 +6,5 @@
     <string name="app_update_later">Later, thank you</string>
     <string name="app_update_optional">A few improvements to make things easier.</string>
     <string name="app_update_news">What’s new</string>
+    <string name="app_update_new_version">New version: %1$s</string>
 </resources>

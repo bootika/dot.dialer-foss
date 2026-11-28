@@ -6,4 +6,5 @@
     <string name="app_update_later">Mai târziu, mulțumesc</string>
     <string name="app_update_optional">Câteva lucruri noi, ca să-ți fie și mai ușor.</string>
     <string name="app_update_news">Ce e nou</string>
+    <string name="app_update_new_version">Versiune nouă: %1$s</string>
 </resources>

@@ -6,4 +6,5 @@
     <string name="app_update_later">Nanti saja, terima kasih</string>
     <string name="app_update_optional">Beberapa perbaikan agar semuanya lebih mudah.</string>
     <string name="app_update_news">Yang baru</string>
+    <string name="app_update_new_version">Versi baru: %1$s</string>
 </resources>

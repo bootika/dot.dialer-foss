@@ -123,7 +123,7 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
                 checkedOnEntry = true
                 when {
                     versionCode > 0 -> {
-                        val version = listOf(versionCode / 100, versionCode / 10 % 10, versionCode % 10).joinToString(".")
+                        val version = ro.dotdesign.updates.PlayVersionName.fromOffer(versionCode)
                         updateHost.appUpdates.showAboutUpdate(versionCode, version, ::openUpdateListing)
                     }
                     manual -> {
@@ -314,7 +314,6 @@ fun AboutAppScreen(navigator: DestinationsNavigator) {
 
             SettingsImmediateSection() {
                 RillExpressiveCard {
-                    SupportFeedbackEntry()
                     val isGPlay = BuildConfig.FLAVOR == "gplay"
                     if (isGPlay) {
                         RillListItem(

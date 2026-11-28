@@ -22,6 +22,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import java.util.function.BooleanSupplier;
+import dev.goodwy.rphone.R;
 
 /** UI only. Captures/calls have priority and remain outside this controller. */
 public final class PlayUpdateController implements UpdateHandle {
@@ -34,6 +35,7 @@ public final class PlayUpdateController implements UpdateHandle {
     private boolean resumed,destroyed,inFlow,downloaded,launching,resumeImmediate;
     private AlertDialog dialog;
     private boolean requiredCard, aboutCard;
+    private int automaticTarget;
     private final InstallStateUpdatedListener listener=this::installState;
     private void installState(com.google.android.play.core.install.InstallState state) {
         if(state.installStatus()==InstallStatus.DOWNLOADED)downloaded=true;
@@ -60,6 +62,7 @@ public final class PlayUpdateController implements UpdateHandle {
         else if(mode==UpdateDecision.Mode.NONE&&!aboutCard){dismiss();}
         else if(!inFlow&&!launching) {
             UpdateRuntime.Snapshot snapshot=runtime.snapshot();
+            if (automaticTarget>0 && snapshot!=null && snapshot.info.availableVersionCode()!=automaticTarget) dismiss();
             if(downloaded && snapshot!=null && runtime.matchesFlexibleInstall(snapshot.info.availableVersionCode())) {
                 start(snapshot.info.availableVersionCode());
             } else if(mode==UpdateDecision.Mode.REQUIRED && !requiredCard) {
@@ -96,6 +99,7 @@ public final class PlayUpdateController implements UpdateHandle {
         if(dialog!=null){dialog.dismiss();dialog=null;}
         requiredCard=false;
         aboutCard=false;
+        automaticTarget=0;
     }
 
     @Override public void dismissAboutUpdate(){
@@ -153,6 +157,12 @@ public final class PlayUpdateController implements UpdateHandle {
     }
 
     private void showCard(boolean required, int aboutTarget, String aboutVersion, Runnable aboutAction, String statusTitle, String storeLabel){
+        UpdateRuntime.Snapshot s=runtime.snapshot();
+        int target=aboutTarget==0 && statusTitle==null && s!=null ? s.info.availableVersionCode() : 0;
+        if (aboutTarget==0 && statusTitle==null && target<=0) return;
+        String versionLabel=target>0
+                ? activity.getString(R.string.app_update_new_version, PlayVersionName.fromOffer(target))
+                : aboutVersion;
         boolean dark=(activity.getResources().getConfiguration().uiMode&0x30)==0x20;
         int foreground=dark?0xfff7f5fc:0xff25252c, muted=dark?0xffc7c1ce:0xff77747f;
         LinearLayout root=new LinearLayout(activity);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(24),dp(20),dp(24),dp(10));
@@ -171,12 +181,11 @@ public final class PlayUpdateController implements UpdateHandle {
             description.setPadding(0,0,0,dp(20));
             content.addView(description);
         }
-        if(aboutVersion!=null){
-            TextView version=text(aboutVersion,12,ink,true);
+        if(versionLabel!=null){
+            TextView version=text(versionLabel,12,ink,true);
             version.setPadding(0,0,0,dp(12));
             content.addView(version);
         }
-        UpdateRuntime.Snapshot s=runtime.snapshot();
         if(statusTitle==null&&s!=null&&(aboutTarget==0||s.info.availableVersionCode()==aboutTarget)&&s.notes.length>0){
             LinearLayout panel=new LinearLayout(activity);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(16),dp(14),dp(16),dp(10));
             panel.setBackground(shape(dark?0xff34303f:(accent==0xff00ac78?0xffeaf7f0:0xfff2eefc),17));
@@ -198,7 +207,8 @@ public final class PlayUpdateController implements UpdateHandle {
         LinearLayout.LayoutParams action=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);action.topMargin=dp(20);root.addView(primary,action);
         dialog=new AlertDialog.Builder(activity).setView(root).setCancelable(!required).create();
         requiredCard=required;
-        dialog.setOnCancelListener(d->{dialog=null;requiredCard=false;aboutCard=false;});
+        automaticTarget=target;
+        dialog.setOnCancelListener(d->{dialog=null;requiredCard=false;aboutCard=false;automaticTarget=0;});
         primary.setOnClickListener(v->{
             if(statusTitle!=null){
                 dismiss();
@@ -208,10 +218,8 @@ public final class PlayUpdateController implements UpdateHandle {
                 aboutAction.run();
                 return;
             }
-            UpdateRuntime.Snapshot snapshot=runtime.snapshot();
-            if(snapshot==null)return;
             dismiss();
-            start(snapshot.info.availableVersionCode());
+            start(target);
         });
         if(!required&&statusTitle==null){
             Button secondary=new Button(activity);secondary.setText(later);secondary.setTextColor(muted);secondary.setTextSize(13);secondary.setAllCaps(false);secondary.setBackgroundColor(Color.TRANSPARENT);secondary.setMinHeight(dp(48));

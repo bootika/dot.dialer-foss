@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.google.android.play.core.appupdate.AppUpdateOptions;
 import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager;
 import com.google.android.play.core.install.model.AppUpdateType;
@@ -258,6 +259,35 @@ public class PlayUpdateControllerTest {
 
     private void setRequired(boolean required) {
         setMode(required ? UpdateDecision.Mode.REQUIRED : UpdateDecision.Mode.OPTIONAL);
+    }
+
+    @Test public void automaticCardsShowTheOfferVersionAndReplaceAChangedTarget() {
+        ReflectionHelpers.setField(runtime, "installed", 387L);
+        play.setUpdateAvailable(391);
+        setRequired(false);
+        controller.onResume();
+        AlertDialog optional = currentDialog();
+        assertTrue(hasLabel(optional.getWindow().getDecorView(), "New version: 3.9.1"));
+
+        play.setUpdateAvailable(392);
+        setRequired(false);
+        tick();
+        assertFalse(optional.isShowing());
+        assertTrue(hasLabel(currentDialog().getWindow().getDecorView(), "New version: 3.9.2"));
+
+        setRequired(true);
+        tick();
+        assertTrue(hasLabel(currentDialog().getWindow().getDecorView(), "New version: 3.9.2"));
+    }
+
+    private static boolean hasLabel(View view, String label) {
+        if (view instanceof TextView text && label.contentEquals(text.getText())) return true;
+        if (view instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                if (hasLabel(group.getChildAt(i), label)) return true;
+            }
+        }
+        return false;
     }
 
     private void setMode(UpdateDecision.Mode mode) {

@@ -6,4 +6,5 @@
     <string name="app_update_later">Daha sonra, teşekkürler</string>
     <string name="app_update_optional">İşleri kolaylaştıracak birkaç iyileştirme.</string>
     <string name="app_update_news">Yenilikler</string>
+    <string name="app_update_new_version">Yeni sürüm: %1$s</string>
 </resources>

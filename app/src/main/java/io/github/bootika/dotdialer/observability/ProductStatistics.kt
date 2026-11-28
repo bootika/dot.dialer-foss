@@ -41,7 +41,10 @@ class ProductStatistics internal constructor(context: Context, private val prefs
     init {
         if (BuildConfig.FLAVOR == "gplay") scope.launch {
             prefs.settingsChanged.collect {
-                if (!allowed()) mutex.withLock { queued?.cancel(); queued=null; file.delete(); lastSentDay=""; lastSentAction=0; dirty=false }
+                if (!allowed()) mutex.withLock {
+                    queued?.cancel(); queued=null; file.delete(); lastSentDay=""; lastSentAction=0; dirty=false
+                    ConnectedCallStatisticsJob.cancel(app)
+                }
             }
         }
     }
@@ -55,19 +58,31 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             try { mutex.withLock {
                 if (!allowed()) return@withLock
                 val state = read()
+                val connectedCall = event == Event.ConnectedCall
                 if (event != null) {
                     state.getJSONObject("counts").apply { put(event.key,(optInt(event.key)+1).coerceAtMost(10000)) }
-                    if (event != Event.ConnectedCall && activityReportingEnabled()) {
+                    if (connectedCall) state.put(CONNECTED_CALL_PENDING, true)
+                    if (!connectedCall && activityReportingEnabled()) {
                         state.put("last_action_at", System.currentTimeMillis() / 1000)
                     }
                     dirty = true
                 }
                 write(state)
-                if (event == null && needsSend(state)) {
-                    send(state)
-                    if (!needsSend(state)) { queued?.cancel(); queued=null }
+                // Register recovery before attempting the send, so process loss during I/O
+                // does not leave a persisted call waiting for the next Home visit.
+                val retryScheduled = connectedCall && ConnectedCallStatisticsJob.schedule(app)
+                if (event == null || connectedCall) {
+                    val callPending = state.optBoolean(CONNECTED_CALL_PENDING)
+                    if (needsSend(state)) send(state)
+                    if (callPending && !state.optBoolean(CONNECTED_CALL_PENDING)) ConnectedCallStatisticsJob.cancel(app)
+                    val stillPending = needsSend(state)
+                    if (!stillPending) {
+                        queued?.cancel()
+                        queued = null
+                    }
+                    if (event == null || retryScheduled || !stillPending) return@withLock
                 }
-                else if (event != null && queued?.isActive != true) queued = scope.launch {
+                if (queued?.isActive != true) queued = scope.launch {
                     delay(60_000)
                     try { mutex.withLock { if (allowed()) read().let { if (needsSend(it)) send(it) } } }
                     catch (error: CancellationException) { throw error }
@@ -77,7 +92,18 @@ class ProductStatistics internal constructor(context: Context, private val prefs
             catch (error: Exception) { failure("update", error) }
         }
     }
-    private fun needsSend(state: JSONObject) = dirty || lastSentDay != state.getString("day") || pendingActivity(state) > 0
+    internal suspend fun retryConnectedCalls(): Boolean = mutex.withLock {
+        if (!allowed() || !file.baseFile.exists()) return@withLock false
+        try {
+            val state = read()
+            if (!state.optBoolean(CONNECTED_CALL_PENDING)) return@withLock false
+            send(state)
+            state.optBoolean(CONNECTED_CALL_PENDING)
+        } catch (error: CancellationException) { throw error }
+        catch (error: Exception) { failure("connected_call_retry", error); true }
+    }
+    private fun needsSend(state: JSONObject) = dirty || lastSentDay != state.getString("day") ||
+        state.optBoolean(CONNECTED_CALL_PENDING) || pendingActivity(state) > 0
     private fun pendingActivity(state: JSONObject): Long {
         val action = state.optLong("last_action_at")
         return action.takeIf { activityReportingEnabled() && transport == null && it > lastSentAction && it >= System.currentTimeMillis() / 1000 - 30 * 86400 } ?: 0
@@ -117,7 +143,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
         if (!allowed()) return
         val action = pendingActivity(state)
         if (action > 0 && sendActivity(action)) lastSentAction = action
-        if (!dirty && lastSentDay == state.getString("day")) return
+        if (!dirty && lastSentDay == state.getString("day") && !state.optBoolean(CONNECTED_CALL_PENDING)) return
         val day=state.getString("day")
         val region=prefs.getString(PreferenceManager.KEY_OUTGOING_NUMBER_REGION_ISO, "").orEmpty().uppercase(Locale.ROOT).takeIf { it in Locale.getISOCountries() }.orEmpty()
         fun safe(text: String, maximum: Int) = text.replace(Regex("[\\p{Cntrl}@]"), "").take(maximum).ifBlank { "Unknown" }
@@ -133,16 +159,24 @@ class ProductStatistics internal constructor(context: Context, private val prefs
         var connection: HttpURLConnection? = null
         try {
             if (!allowed()) return
-            transport?.let { if (it(body)) { lastSentDay=day; dirty=false }; return }
+            transport?.let { if (it(body)) acknowledge(state, day); return }
             connection=URL("https://dialer.dotdesign.ro/api/v1/statistics").openConnection() as HttpURLConnection
             connection.requestMethod="POST"; connection.connectTimeout=10_000; connection.readTimeout=10_000
             connection.instanceFollowRedirects=false; connection.doOutput=true; connection.setRequestProperty("Content-Type","application/json")
             // Re-check just before transport; an already dispatched request cannot be withdrawn.
             if (!allowed()) return
             connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
-            if (connection.responseCode == 200) { lastSentDay=day; dirty=false }
+            if (connection.responseCode == 200) acknowledge(state, day)
         } catch (error: Exception) { failure("send", error) /* retry at next Home visit/event */ }
         finally { connection?.disconnect() }
+    }
+    private fun acknowledge(state: JSONObject, day: String) {
+        if (state.remove(CONNECTED_CALL_PENDING) != null) {
+            try { write(state) }
+            catch (error: Exception) { state.put(CONNECTED_CALL_PENDING, true); throw error }
+        }
+        lastSentDay = day
+        dirty = false
     }
     @android.annotation.SuppressLint("HardwareIds")
     private fun sendActivity(action: Long): Boolean {
@@ -168,6 +202,7 @@ class ProductStatistics internal constructor(context: Context, private val prefs
         } finally { connection?.disconnect() }
     }
     companion object {
+        private const val CONNECTED_CALL_PENDING = "connected_call_pending"
         @Volatile private var automaticGate = true
         internal fun setReportingGate(mode: ReportingMode) { automaticGate = mode == ReportingMode.Automatic }
         @Volatile private var instance: ProductStatistics? = null

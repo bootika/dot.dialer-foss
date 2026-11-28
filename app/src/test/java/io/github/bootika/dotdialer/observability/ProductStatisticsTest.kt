@@ -7,6 +7,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import android.app.Application
+import android.app.job.JobScheduler
+import android.net.NetworkCapabilities
 import dev.goodwy.rphone.BuildConfig
 import dev.goodwy.rphone.controller.util.PreferenceManager
 import kotlinx.coroutines.*
@@ -153,13 +155,89 @@ class ProductStatisticsTest {
             assertEquals("Already delivered counts must not be sent by stale queue", 2, delivered.size)
             stats.record(ProductStatistics.Event.ConnectedCall)
             testScheduler.runCurrent()
+            assertEquals("A connected call flushes before Home or the UI batching delay", 3, delivered.size)
+            assertEquals(1, delivered.last().getJSONObject("counts").getInt("dialpad"))
+            assertEquals(1, delivered.last().getJSONObject("counts").getInt("calls"))
             testScheduler.advanceTimeBy(60_000)
             testScheduler.runCurrent()
             assertEquals(3, delivered.size)
-            assertEquals(1, delivered.last().getJSONObject("counts").getInt("dialpad"))
-            assertEquals(1, delivered.last().getJSONObject("counts").getInt("calls"))
         } finally {
             worker.cancel()
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            file.delete()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `failed connected call report survives process restart and retries without Home`() = runTest {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+        ProductStatistics.setReportingGate(ReportingMode.Automatic)
+        val file = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        file.delete()
+        val firstProcess = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        val secondProcess = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        val attempts = mutableListOf<JSONObject>()
+        try {
+            val initial = ProductStatistics(app, prefs, firstProcess) { attempts += JSONObject(it.toString()); false }
+            initial.record(ProductStatistics.Event.ConnectedCall)
+            testScheduler.runCurrent()
+            assertEquals(1, attempts.size)
+            assertTrue(JSONObject(file.readText()).getBoolean("connected_call_pending"))
+            val job = app.getSystemService(JobScheduler::class.java).allPendingJobs.single {
+                it.service.className == ConnectedCallStatisticsJob::class.java.name
+            }
+            assertTrue(job.requiredNetwork?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true)
+            assertTrue(job.isPersisted)
+            firstProcess.cancel()
+
+            val restarted = ProductStatistics(app, prefs, secondProcess) { attempts += JSONObject(it.toString()); attempts.size >= 3 }
+            assertTrue("A failed worker attempt remains pending", restarted.retryConnectedCalls())
+            assertFalse("A successful worker attempt clears pending state", restarted.retryConnectedCalls())
+            assertFalse("A stale job exits without transmitting another report", restarted.retryConnectedCalls())
+            assertEquals(3, attempts.size)
+            assertTrue(attempts.all { it.getJSONObject("counts").getInt("calls") == 1 })
+            assertFalse(JSONObject(file.readText()).has("connected_call_pending"))
+        } finally {
+            firstProcess.cancel(); secondProcess.cancel()
+            ConnectedCallStatisticsJob.cancel(app)
+            ProductStatistics.setReportingGate(ReportingMode.Automatic)
+            file.delete()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `revoking automatic reporting cancels a pending connected call job`() = runTest {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR == "gplay")
+        val app = RuntimeEnvironment.getApplication()
+        val prefs = PreferenceManager(app)
+        prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.Automatic.value))
+        ProductStatistics.setReportingGate(ReportingMode.Automatic)
+        val file = java.io.File(app.noBackupFilesDir, "product-statistics-v1.json")
+        file.delete()
+        val worker = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+        var attempts = 0
+        try {
+            val stats = ProductStatistics(app, prefs, worker) { attempts++; false }
+            stats.record(ProductStatistics.Event.ConnectedCall)
+            testScheduler.runCurrent()
+            assertEquals(1, attempts)
+            ProductStatistics.setReportingGate(ReportingMode.OnDemand)
+            assertFalse(stats.retryConnectedCalls())
+            runBlocking { prefs.restoreAllPreferences(mapOf(AppTelemetry.REPORTING_KEY to ReportingMode.OnDemand.value)) }
+            testScheduler.runCurrent()
+            assertFalse(file.exists())
+            assertTrue(app.getSystemService(JobScheduler::class.java).allPendingJobs.none {
+                it.service.className == ConnectedCallStatisticsJob::class.java.name
+            })
+            assertEquals(1, attempts)
+        } finally {
+            worker.cancel()
+            ConnectedCallStatisticsJob.cancel(app)
             ProductStatistics.setReportingGate(ReportingMode.Automatic)
             file.delete()
         }

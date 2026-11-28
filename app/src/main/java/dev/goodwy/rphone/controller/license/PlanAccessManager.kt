@@ -203,9 +203,6 @@ internal class PlanAccessManager internal constructor(
                 connection.instanceFollowRedirects = false; connection.doOutput = true
                 connection.setRequestProperty("Content-Type", "application/json")
                 connection.setRequestProperty("X-Dot-Plan-Grant", "2")
-                if (BuildConfig.BUILD_TYPE == "internal" && body.optString("package") == "ro.dotdesign.dotdialer") {
-                    connection.setRequestProperty("X-Dot-Android-Version", android.os.Build.VERSION.RELEASE)
-                }
                 connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
                 require(connection.responseCode == 200)
                 val bytes = connection.inputStream.use { input ->
